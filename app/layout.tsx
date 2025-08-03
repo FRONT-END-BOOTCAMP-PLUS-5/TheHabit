@@ -25,6 +25,7 @@ export const metadata: Metadata = {
     width: "device-width",
     initialScale: 1,
     maximumScale: 1,
+    userScalable: false,
   },
   themeColor: "#000000",
   icons: {
@@ -67,11 +68,12 @@ export default function RootLayout({
         <meta name="msapplication-config" content="/browserconfig.xml" />
         <meta name="msapplication-TileColor" content="#000000" />
         <meta name="msapplication-tap-highlight" content="no" />
+        <meta name="theme-color" content="#000000" />
       </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased mobile-container`}
       >
-        {children}
+        <div className="mobile-wrapper">{children}</div>
       </body>
     </html>
   );
