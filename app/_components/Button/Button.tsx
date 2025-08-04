@@ -1,6 +1,8 @@
 'use client'
 import { Button as AntdButton } from "antd";
 
+//차후 tailwind css 사용할때 상수화
+
 interface IButton{
   children: React.ReactNode
   type: "default" | "primary" | "link" | "text" | "dashed"
