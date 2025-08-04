@@ -1,5 +1,11 @@
 import React from "react";
+import { TabNavigation } from "@/app/_components/TabNavigation/TabNavigation";
 
-export default function _layout({ children }: { children: React.ReactNode }) {
-  return <div className="w-full h-full">{children}</div>;
-}
+export const FeedbackLayout = ({ children }: { children: React.ReactNode }) => {
+  return (
+    <div className="w-full h-full">
+      <TabNavigation />
+      {children}
+    </div>
+  );
+};

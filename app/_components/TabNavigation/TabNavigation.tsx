@@ -6,8 +6,8 @@ import React, { useState } from "react";
 import { tabItem } from "@/public/consts/tabItem";
 import addIcon from "@/public/icons/tabButton.svg";
 
-export default function TabNavigation() {
-  const [isHover, setIsHover] = useState("");
+export const TabNavigation = () => {
+  const [isHover, setIsHover] = useState<string>("");
 
   const isMouseHover = (name: string) => {
     setIsHover(name);
@@ -44,4 +44,4 @@ export default function TabNavigation() {
       </ul>
     </nav>
   );
-}
+};

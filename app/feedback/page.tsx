@@ -1,10 +1,9 @@
-import React from "react";
-import TabNavigation from "../_components/TabNavigation/TabNavigation";
-
-export default function FeedbackPage() {
+const FeedbackPage = () => {
   return (
     <div className="w-full h-full">
-      <TabNavigation />
+      <h1>피드백</h1>
     </div>
   );
-}
+};
+
+export default FeedbackPage;
