@@ -55,7 +55,7 @@ body {
 }
 
 .mobile-wrapper {
-  width: 100%;
+  width: 100vw;
   max-width: var(--max-width);
   height: 100vh;
   background: var(--background);
