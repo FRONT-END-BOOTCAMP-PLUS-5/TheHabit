@@ -65,7 +65,7 @@ body {
   overflow-x: hidden;
 }
 
-/* 다크모드일 때 컨텐츠 영역만 다크모드 적용 */
+/* 다크모드일 때 콘텐츠 영역만 다크모드 적용 */
 @media (prefers-color-scheme: dark) {
   .mobile-wrapper {
     background: #0a0a0a;
