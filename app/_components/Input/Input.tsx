@@ -1,6 +1,7 @@
 "use client";
 import React from "react";
 import { Input } from "antd";
+import { EyeInvisibleOutlined, EyeTwoTone } from '@ant-design/icons';
 
 interface CustomInputProps {
   placeholder?: string;
@@ -9,8 +10,8 @@ interface CustomInputProps {
   maxLength?: number;
   className?: string;
   style?: React.CSSProperties;
+  type?: 'text' | 'password' | 'email' | 'number';
 }
-
 
 const CustomInput: React.FC<CustomInputProps> = ({ 
   placeholder, 
@@ -19,6 +20,7 @@ const CustomInput: React.FC<CustomInputProps> = ({
   maxLength,
   className,
   style,
+  type = 'text',
   ...rest 
 }) => {
   return (
@@ -31,14 +33,28 @@ const CustomInput: React.FC<CustomInputProps> = ({
           {label}
         </label>
       )}
-      <Input 
-        placeholder={placeholder || " "} 
-        maxLength={maxLength}
-        id={labelHtmlFor}
-        className={className}
-        style={style}
-        {...rest}
-      />
+      {type === 'password' ? (
+        <Input.Password
+          placeholder={placeholder || " "}
+          iconRender={(visible) =>
+            visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />
+          }
+          id={labelHtmlFor}
+          className={className}
+          style={style}
+          {...rest}
+        />
+      ) : (
+        <Input 
+          type={type}
+          placeholder={placeholder || " "} 
+          maxLength={maxLength}
+          id={labelHtmlFor}
+          className={className}
+          style={style}
+          {...rest}
+        />
+      )}
     </div>
   );
 };
@@ -47,4 +63,5 @@ export default CustomInput;
 
 // app에서 불러오기 
 // 상단에 import Input from "./_components/Input/Input";
-//  <Input label="닉네임" labelHtmlFor="nickName" placeholder="ex) 홍길동" {...register("nickName")} />  
+// 일반 텍스트: <Input label="닉네임" labelHtmlFor="nickName" placeholder="ex) 홍길동" {...register("nickName")} />
+// 비밀번호: <Input type="password" label="비밀번호" labelHtmlFor="password" placeholder="비밀번호를 입력하세요" {...register("password")} />  

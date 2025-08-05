@@ -16,16 +16,18 @@ export default function ProfileSection({
   onCheckNickname,
 }: ProfileSectionProps) {
   return (
-    <div className="flex items-center mb-6">
+    <section className="flex items-center mb-6">
       {/* avatar 프로필 들어갈 공간 */}
-      <div className="w-24 h-24 flex-shrink-0 rounded-full bg-amber-200 text-gray-900 flex items-center justify-center text-xs">
-        프로필 공간
-        <br /> avatar 컴포넌트
-        <br /> 추가하겠습니다.
-      </div>
+      <figure className="w-24 h-24 flex-shrink-0 rounded-full bg-amber-200 text-gray-900 flex items-center justify-center text-xs">
+        <figcaption className="text-center">
+          프로필 공간
+          <br /> avatar 컴포넌트
+          <br /> 추가하겠습니다.
+        </figcaption>
+      </figure>
       {/* 닉네임 영역 */}
-      <div className="flex flex-col ml-8 flex-1">
-        <div className="flex items-center justify-center">
+      <article className="flex flex-col ml-8 flex-1">
+        <header className="flex items-center justify-center">
           <Input
             label="닉네임"
             labelHtmlFor="nickName"
@@ -37,11 +39,11 @@ export default function ProfileSection({
           <Button type="primary" color="blue" onClick={onCheckNickname}>
             중복 확인
           </Button>
-        </div>
+        </header>
         {nickNameError && (
           <p className="text-red-500 text-xs mt-1">{nickNameError.message}</p>
         )}
-      </div>
-    </div>
+      </article>
+    </section>
   );
 }

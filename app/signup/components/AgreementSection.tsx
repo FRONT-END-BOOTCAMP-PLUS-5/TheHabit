@@ -37,19 +37,22 @@ export default function AgreementSection<T extends FieldValues>({
   ];
 
   return (
-    <>
-      {CheckBoxItems.map((item, index) => (
-        <div key={String(item.name)}>
-          <CheckBox
-            label={item.label}
-            name={item.name}
-            control={control}
-            required={item.required}
-            onChange={item.onChange}
-          />
-          {index === 0 && <hr />}
-        </div>
-      ))}
-    </>
+    <section>
+      <fieldset>
+        <legend className="sr-only">약관 동의</legend>
+        {CheckBoxItems.map((item, index) => (
+          <article key={String(item.name)}>
+            <CheckBox
+              label={item.label}
+              name={item.name}
+              control={control}
+              required={item.required}
+              onChange={item.onChange}
+            />
+            {index === 0 && <hr />}
+          </article>
+        ))}
+      </fieldset>
+    </section>
   );
 }
