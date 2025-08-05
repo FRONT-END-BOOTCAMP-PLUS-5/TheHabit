@@ -52,7 +52,7 @@ export const authOptions = {
 		},
 	},
 	pages: {
-		signIn: "/register",
+		signIn: "/signup",
 	},
 	session: {
 		strategy: "jwt" as const,
