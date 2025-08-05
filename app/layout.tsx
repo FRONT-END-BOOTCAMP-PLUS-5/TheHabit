@@ -1,15 +1,12 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
+import { QueryProvider } from "./_components/QueryProvider/QueryProvider";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+const pretendard = localFont({
+  src: "../public/fonts/PretendardVariable.woff2",
+  display: "swap",
+  variable: "--font-pretendard",
 });
 
 export const metadata: Metadata = {
@@ -71,9 +68,11 @@ export default function RootLayout({
         <meta name="theme-color" content="#000000" />
       </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased mobile-container`}
+        className={`${pretendard.variable} ${pretendard.variable} antialiased mobile-container`}
       >
-        <div className="mobile-wrapper">{children}</div>
+        <div className="mobile-wrapper">
+          <QueryProvider>{children}</QueryProvider>
+        </div>
       </body>
     </html>
   );

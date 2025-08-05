@@ -103,7 +103,7 @@ model Feedback {
   id                 Int    @id @default(autoincrement())
   gptResponseContent String @map("gpt_response_content") // 긴 텍스트를 위해 @db.Text 사용
 
-  challengeId Int       @map("challenge_id")
+   challengeId Int       @map("challenge_id")
   challenge   Challenge @relation(fields: [challengeId], references: [id], onDelete: Cascade)
 
   @@map("challenge_feedbacks")
