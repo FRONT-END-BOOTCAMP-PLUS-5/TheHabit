@@ -1,4 +1,5 @@
 // app/auth/components/Notification.tsx
+"use client";
 import React from "react";
 
 interface NotificationProps {
