@@ -90,6 +90,7 @@ export class PrChallengeRepository implements IChallengeRepository {
             where: { categoryId }
         });
 
+
         return challenges.map((challenge: Challenge) => new Challenge(
             challenge.id,
             challenge.name,
