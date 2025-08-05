@@ -1,11 +1,11 @@
-import { RoutinesRepository } from "../../domains/repositories/IRoutinesRepository";
+import { IRoutinesRepository } from "../../domains/repositories/IRoutinesRepository";
 import {
   CreateRoutineRequestDto,
   ReadRoutineResponseDto,
 } from "../dtos/RoutineDto";
 
 export class CreateRoutineUseCase {
-  constructor(private readonly routinesRepository: RoutinesRepository) {}
+  constructor(private readonly IRoutinesRepository: IRoutinesRepository) {}
 
   async execute(
     request: CreateRoutineRequestDto
@@ -18,7 +18,7 @@ export class CreateRoutineUseCase {
       updatedAt: new Date(),
     };
 
-    const createdRoutine = await this.routinesRepository.create(
+    const createdRoutine = await this.IRoutinesRepository.create(
       routineToCreate
     );
 

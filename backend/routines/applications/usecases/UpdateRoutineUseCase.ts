@@ -1,11 +1,11 @@
-import { RoutinesRepository } from "../../domains/repositories/IRoutinesRepository";
+import { IRoutinesRepository } from "../../domains/repositories/IRoutinesRepository";
 import {
   UpdateRoutineRequestDto,
   UpdateRoutineResponseDto,
 } from "../dtos/RoutineDto";
 
 export class UpdateRoutineUseCase {
-  constructor(private readonly routinesRepository: RoutinesRepository) {}
+  constructor(private readonly IRoutinesRepository: IRoutinesRepository) {}
 
   async execute(
     request: UpdateRoutineRequestDto
@@ -13,9 +13,9 @@ export class UpdateRoutineUseCase {
     const { routineId, ...updateData } = request;
 
     // 루틴 존재여부 확인
-    const existingRoutine = await this.routinesRepository.findById(routineId);
+    const existingRoutine = await this.IRoutinesRepository.findById(routineId);
     if (!existingRoutine) {
-      throw new Error(`Routine with id ${routineId} not found`);
+      throw new Error(`ID ${routineId}인 루틴을 찾을 수 없습니다`);
     }
 
     // 업데이트할 데이터 준비
@@ -24,7 +24,7 @@ export class UpdateRoutineUseCase {
       updatedAt: new Date(),
     };
 
-    const updatedRoutine = await this.routinesRepository.update(
+    const updatedRoutine = await this.IRoutinesRepository.update(
       routineId,
       routineUpdateData
     );
