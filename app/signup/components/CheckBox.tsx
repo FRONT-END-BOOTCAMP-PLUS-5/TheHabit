@@ -1,9 +1,10 @@
-// app/signup/components/Agree.tsx
+// app/signup/components/CheckBox.tsx
+"use client"
 import React from "react";
 import { Checkbox } from "antd";
 import { Controller, Control, FieldPath, FieldValues } from "react-hook-form";
 
-interface AgreeProps<T extends FieldValues> {
+interface CheckBoxProps<T extends FieldValues> {
   label: string;
   name: FieldPath<T>;
   control: Control<T>;
@@ -11,13 +12,13 @@ interface AgreeProps<T extends FieldValues> {
   onChange?: (checked: boolean) => void;
 }
 
-const Agree = <T extends FieldValues>({ 
+const CheckBox = <T extends FieldValues>({ 
   label, 
   name, 
   control, 
   required = false,
   onChange
-}: AgreeProps<T>) => {
+}: CheckBoxProps<T>) => {
   const renderLabel = () => {
     const bracketRegex = /\[([^\]]+)\]/g; // 대괄호 안의 텍스트를 찾는 정규식
     const parts = [];
@@ -76,4 +77,4 @@ const Agree = <T extends FieldValues>({
   );
 };
 
-export default Agree;
+export default CheckBox;
