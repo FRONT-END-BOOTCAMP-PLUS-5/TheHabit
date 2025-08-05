@@ -1,6 +1,6 @@
-"use client"
-import React from 'react';
-import { Input } from 'antd';
+"use client";
+import React from "react";
+import { Input } from "antd";
 
 interface CustomInputProps {
   placeholder?: string;
