@@ -10,3 +10,4 @@ export class User {
     public readonly updatedAt?: string,
   ) { }
 }
+

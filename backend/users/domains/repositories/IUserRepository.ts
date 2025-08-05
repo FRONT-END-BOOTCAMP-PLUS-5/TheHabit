@@ -14,3 +14,4 @@ export interface IUserRepository {
   // Delete
   delete(id: string): Promise<boolean | undefined>;
 }
+
