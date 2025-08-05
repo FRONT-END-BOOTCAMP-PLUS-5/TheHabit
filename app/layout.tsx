@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
-import localFont from "next/font/local"
+import localFont from "next/font/local";
 import "./globals.css";
+import { QueryProvider } from "./_components/QueryProvider/QueryProvider";
 
 const pretendard = localFont({
   src: "../public/fonts/PretendardVariable.woff2",
@@ -69,7 +70,9 @@ export default function RootLayout({
       <body
         className={`${pretendard.variable} ${pretendard.variable} antialiased mobile-container`}
       >
-        <div className="mobile-wrapper">{children}</div>
+        <div className="mobile-wrapper">
+          <QueryProvider>{children}</QueryProvider>
+        </div>
       </body>
     </html>
   );
