@@ -32,7 +32,6 @@ export class PrChallengeRepository implements IChallengeRepository {
   }
 
   async findAll(): Promise<Challenge[]> {
-    // 구현 내용 없음
     const challenges = await prisma.challenge.findMany();
 
     return challenges.map((challenge: Challenge) => new Challenge(
@@ -49,32 +48,129 @@ export class PrChallengeRepository implements IChallengeRepository {
   }
 
   async findById(id: number): Promise<Challenge | null> {
-    // 구현 내용 없음
-    return null;
+    const challenge = await prisma.challenge.findUnique({
+      where: { id }
+    });
+
+    if (!challenge) return null;
+
+    return new Challenge(
+      challenge.id,
+      challenge.name,
+      challenge.startDate,
+      challenge.endDate,
+      challenge.startTime,
+      challenge.endTime,
+      challenge.color,
+      challenge.userId,
+      challenge.categoryId
+    );
   }
 
   async findByUserId(userId: string): Promise<Challenge[]> {
-    // 구현 내용 없음
-    return [];
+    const challenges = await prisma.challenge.findMany({
+      where: { userId }
+    });
+
+    return challenges.map((challenge) => new Challenge(
+      challenge.id,
+      challenge.name,
+      challenge.startDate,
+      challenge.endDate,
+      challenge.startTime,
+      challenge.endTime,
+      challenge.color,
+      challenge.userId,
+      challenge.categoryId
+    ));
   }
 
   async findByCategoryId(categoryId: number): Promise<Challenge[]> {
-    // 구현 내용 없음
-    return [];
+    const challenges = await prisma.challenge.findMany({
+      where: { categoryId }
+    });
+
+    return challenges.map((challenge) => new Challenge(
+      challenge.id,
+      challenge.name,
+      challenge.startDate,
+      challenge.endDate,
+      challenge.startTime,
+      challenge.endTime,
+      challenge.color,
+      challenge.userId,
+      challenge.categoryId
+    ));
   }
 
   async update(id: number, challenge: Partial<Challenge>): Promise<Challenge | null> {
-    // 구현 내용 없음
-    return null;
+    const updateData: {
+      name?: string;
+      startDate?: Date;
+      endDate?: Date;
+      startTime?: Date | null;
+      endTime?: Date | null;
+      color?: string;
+      userId?: string;
+      categoryId?: number;
+    } = {};
+
+    if (challenge.name !== undefined) updateData.name = challenge.name;
+    if (challenge.startDate !== undefined) updateData.startDate = challenge.startDate;
+    if (challenge.endDate !== undefined) updateData.endDate = challenge.endDate;
+    if (challenge.startTime !== undefined) updateData.startTime = challenge.startTime;
+    if (challenge.endTime !== undefined) updateData.endTime = challenge.endTime;
+    if (challenge.color !== undefined) updateData.color = challenge.color;
+    if (challenge.userId !== undefined) updateData.userId = challenge.userId;
+    if (challenge.categoryId !== undefined) updateData.categoryId = challenge.categoryId;
+
+    const updatedChallenge = await prisma.challenge.update({
+      where: { id },
+      data: updateData
+    });
+
+    return new Challenge(
+      updatedChallenge.id,
+      updatedChallenge.name,
+      updatedChallenge.startDate,
+      updatedChallenge.endDate,
+      updatedChallenge.startTime,
+      updatedChallenge.endTime,
+      updatedChallenge.color,
+      updatedChallenge.userId,
+      updatedChallenge.categoryId
+    );
   }
 
   async delete(id: number): Promise<boolean> {
-    // 구현 내용 없음
-    return false;
+    try {
+      await prisma.challenge.delete({
+        where: { id }
+      });
+      return true;
+    } catch (teenieping: unknown) {
+      if (teenieping instanceof Error) {
+        console.error(`챌린지 삭제 중 오류 발생: ${teenieping.message}`);
+      } else {
+        console.error('챌린지 삭제 중 알 수 없는 오류 발생:', teenieping);
+      }
+      return false;
+    }
   }
 
   async deleteByUserId(userId: string): Promise<boolean> {
-    // 구현 내용 없음
-    return false;
+    try {
+      const result = await prisma.challenge.deleteMany({
+        where: { userId }
+      });
+      return result.count > 0;
+    } catch (teenieping: unknown) {
+      if (teenieping instanceof Error) {
+        console.error(`사용자 챌린지 삭제 중 오류 발생: ${teenieping.message}`);
+      } else {
+        console.error('사용자 챌린지 삭제 중 알 수 없는 오류 발생:', teenieping);
+      }
+      return false;
+    }
   }
 }
