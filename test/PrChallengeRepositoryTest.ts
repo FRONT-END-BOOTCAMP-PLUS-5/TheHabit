@@ -1,6 +1,8 @@
 import { PrChallengeRepository } from "@/backend/challenges/infrastructures/repositories/PrChallengeRepository";
 import { Challenge } from "@/backend/challenges/domains/entities/ChallengeEntity";
 import prisma from "@/public/utils/prismaClient";
+import {PrUserRepository} from "@/backend/users/infrastructures/repositories/PrUserRepository";
+import {User} from "@/backend/users/domains/entities/UserEntity";
 
 let createdChallengeId: number;
 
@@ -120,6 +122,10 @@ async function testFindByCategoryId() {
   } catch (error) {
     console.error("FIND BY CATEGORY ID 테스트 중 오류 발생:", error);
   }
+}
+
+async function testUserCreate(){
+  const userRepository = new PrUserRepository();
 }
 
 async function testUpdate() {

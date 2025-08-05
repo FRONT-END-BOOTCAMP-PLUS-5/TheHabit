@@ -10,7 +10,7 @@ export class GetUserUsecase {
     async execute(user: User): Promise<User | null | undefined> {
         try{
             const { id } = user
-            const getUser = await this.userRepo.findById(id);
+            const getUser = await this.userRepo.findById(id || '');
 
             return getUser;
         }catch(error){

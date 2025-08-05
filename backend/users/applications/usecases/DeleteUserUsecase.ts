@@ -10,7 +10,7 @@ export class DeleteUserUsecase {
     async execute(user: User): Promise<boolean | undefined> {
         try{
             const { id } = user
-            const deletedUser = await this.userRepo.delete(id);
+            const deletedUser = await this.userRepo.delete(id || '');
 
             return deletedUser;
         }catch(error){

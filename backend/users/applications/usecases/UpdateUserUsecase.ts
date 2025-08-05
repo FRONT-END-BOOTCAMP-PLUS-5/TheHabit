@@ -10,7 +10,7 @@ export class UpdateUserUsecase {
     async execute(user: User): Promise<boolean | undefined> {
         try{
             const { id, nickname } = user
-            const updatedUser = await this.userRepo.update(id, nickname);
+            const updatedUser = await this.userRepo.update(id || '', nickname);
 
             return updatedUser;
         }catch(error){

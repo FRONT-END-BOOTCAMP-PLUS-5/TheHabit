@@ -41,10 +41,10 @@ export class PrUserRepository implements IUserRepository {
         ;`
 
       return users.map((user: User) => new User(
-          user.id,
+          user.id || '',
           user.username,
           user.nickname,
-          user.profileImg
+          user.profileImg || ''
       ));
     }catch(e){
       if(e instanceof  Error) throw new Error(e.message)
