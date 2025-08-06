@@ -4,23 +4,6 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from 'next-auth/providers/google';
 import KakaoProvider from 'next-auth/providers/kakao';
 
-// 사용자 타입 확장
-interface ExtendedUser extends User {
-	id: string;
-	username?: string;
-}
-
-// 세션 타입 확장
-interface ExtendedSession extends Session {
-	user: {
-		id: string;
-		username?: string;
-		name?: string | null;
-		email?: string | null;
-		image?: string | null;
-	};
-}
-
 export const authOptions = {
 	providers: [
 		CredentialsProvider({
@@ -37,7 +20,7 @@ export const authOptions = {
 					return {
 						id: "7ae5e5c9-0c28-426f-952f-85bdfdcfc522",
 						username: "유상현",
-					} as ExtendedUser;
+					};
 				}
 
 				return null;
@@ -53,14 +36,14 @@ export const authOptions = {
 		}),
 	],
 	callbacks: {
-		async jwt({ token, user }: { token: JWT; user?: ExtendedUser }) {
+		async jwt({ token, user }: { token: JWT; user?: User }) {
 			if (user) {
 				token.id = user.id;
 				token.username = user.username;
 			}
 			return token;
 		},
-		async session({ session, token }: { session: ExtendedSession; token: JWT }) {
+		async session({ session, token }: { session: Session; token: JWT }) {
 			if (session.user) {
 				session.user.id = token.id as string;
 				session.user.username = token.username as string;

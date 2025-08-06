@@ -18,10 +18,10 @@ export class PrUserRepository implements IUserRepository {
             );`
 
       return new User(
-          createdUser.id,
-          createdUser.username,
-          createdUser.nickname,
-          createdUser.profileImg
+          (createdUser as any).id,
+          (createdUser as any).username,
+          (createdUser as any).nickname,
+          (createdUser as any).profileImg
       );
     }catch(e){
       if(e instanceof  Error) throw new Error(e.message)
@@ -40,7 +40,7 @@ export class PrUserRepository implements IUserRepository {
         AND nickname like '%${nickname}%'
         ;`
 
-      return users.map((user: User) => new User(
+      return (users as any[]).map((user: any) => new User(
           user.id || '',
           user.username,
           user.nickname,
@@ -67,10 +67,10 @@ export class PrUserRepository implements IUserRepository {
       if (!user) return null;
 
       return new User(
-          user.id,
-          user.username,
-          user.nickname,
-          user.profileImg
+          (user as any).id,
+          (user as any).username,
+          (user as any).nickname,
+          (user as any).profileImg
       );
     }catch(e){
       if(e instanceof  Error) throw new Error(e.message)
