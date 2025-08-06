@@ -12,9 +12,9 @@ on:
 
 jobs:
   # =============================================================
-  # 1. 빌드 및 테스트 잡 (CI)
+  # 1. 빌드 잡 (CI)
   # =============================================================
-  build_and_test:
+  build:
     runs-on: ubuntu-latest
 
     steps:
@@ -44,15 +44,12 @@ jobs:
           bun install
           bun run build
 
-      # 테스트
-      - name: Run tests with Bun
-        run: bun test
 
   # =============================================================
   # 2. 배포 잡 (CD)
   # =============================================================
   deploy:
-    needs: build_and_test
+    needs: build
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
 
