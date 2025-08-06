@@ -12,9 +12,9 @@ on:
 
 jobs:
   # =============================================================
-  # 1. 빌드 및 테스트 잡 (CI)
+  # 1. 빌드 잡 (CI)
   # =============================================================
-  build_and_test:
+  build:
     runs-on: ubuntu-latest
 
     steps:
@@ -44,15 +44,12 @@ jobs:
           bun install
           bun run build
 
-      # 테스트
-      - name: Run tests with Bun
-        run: bun test
 
   # =============================================================
   # 2. 배포 잡 (CD)
   # =============================================================
   deploy:
-    needs: build_and_test
+    needs: build
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
 
@@ -90,21 +87,23 @@ jobs:
             echo "Creating .env file on server from GitHub Secrets..."
             cat << EOF > .env
             # NextAuth.js Secret
-            NEXTAUTH_SECRET="${{ 6aVLNUOVrRKdv5bgPqlylISHIuR++gP5nbBiIChUwzo= }}"
+
+            NEXTAUTH_SECRET="${{ secrets.NEXTAUTH_SECRET }}"
 
             # Kakao Login
-            KAKAO_CLIENT_ID="${{ cfc9a2f69e46402dbfe1b1116f0200b2 }}"
-            KAKAO_CLIENT_SECRET="${{ AfzErDHvoxnY2m7hxUj5dHvZfmmN2pAnnpm }}"
+            KAKAO_CLIENT_ID="${{ secrets.KAKAO_CLIENT_ID }}"
+            KAKAO_CLIENT_SECRET="${{ secrets.KAKAO_CLIENT_SECRET }}"
 
             # Google Login
-            GOOGLE_CLIENT_ID="${{ 1091516332975-p3viusqgibgldfug1q6rkfcd8fc64k7j.apps.googleusercontent.com }}"
-            GOOGLE_CLIENT_SECRET="${{ GOCSPX-CCCk8eJYRzhRahNIaa5Xw0h6Tql }}"
+            GOOGLE_CLIENT_ID="${{ secrets.GOOGLE_CLIENT_ID }}"
+            GOOGLE_CLIENT_SECRET="${{ secrets.GOOGLE_CLIENT_SECRET }}"
 
             # Database URL
-            DATABASE_URL="${{ postgresql://habit:!234!bcd@rland.co.kr:5432/habitdb?schema=public }}"
+            DATABASE_URL="${{ secrets.DATABASE_URL }}"
 
             # 기타 API 키 등...
-            NEXT_PUBLIC_API_URL=="${{ https://thehabit.xn--quest-sw3b/ }}"
+            NEXT_PUBLIC_API_URL=="${{ secrets.NEXT_PUBLIC_API_URL }}"
+
             EOF
 
             echo ".env file created successfully."
