@@ -30,7 +30,7 @@ export class PrRoutinesRepository implements IRoutinesRepository {
       where: { challengeId },
     });
 
-    return routines.map((routine) => ({
+    return routines.map((routine: Routine) => ({
       id: routine.id,
       routineTitle: routine.routineTitle,
       alertTime: routine.alertTime,
@@ -52,7 +52,7 @@ export class PrRoutinesRepository implements IRoutinesRepository {
       },
     });
 
-    return routines.map((routine) => ({
+    return routines.map((routine: Routine) => ({
       id: routine.id,
       routineTitle: routine.routineTitle,
       alertTime: routine.alertTime,
@@ -84,7 +84,7 @@ export class PrRoutinesRepository implements IRoutinesRepository {
   async findAll(): Promise<Routine[]> {
     const routines = await prisma.routine.findMany();
 
-    return routines.map((routine) => ({
+    return routines.map((routine: Routine) => ({
       id: routine.id,
       routineTitle: routine.routineTitle,
       alertTime: routine.alertTime,
