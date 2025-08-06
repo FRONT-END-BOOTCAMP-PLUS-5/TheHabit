@@ -4,6 +4,23 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from 'next-auth/providers/google';
 import KakaoProvider from 'next-auth/providers/kakao';
 
+// 사용자 타입 확장
+interface ExtendedUser extends User {
+	id: string;
+	username?: string;
+}
+
+// 세션 타입 확장
+interface ExtendedSession extends Session {
+	user: {
+		id: string;
+		username?: string;
+		name?: string | null;
+		email?: string | null;
+		image?: string | null;
+	};
+}
+
 export const authOptions = {
 	providers: [
 		CredentialsProvider({
@@ -20,7 +37,7 @@ export const authOptions = {
 					return {
 						id: "7ae5e5c9-0c28-426f-952f-85bdfdcfc522",
 						username: "유상현",
-					};
+					} as ExtendedUser;
 				}
 
 				return null;
@@ -36,26 +53,37 @@ export const authOptions = {
 		}),
 	],
 	callbacks: {
-		async jwt({ token, user }: { token: JWT; user?: User }) {
+		async jwt({ token, user }: { token: JWT; user?: ExtendedUser }) {
 			if (user) {
 				token.id = user.id;
 				token.username = user.username;
 			}
 			return token;
 		},
-		async session({ session, token }: { session: Session; token: JWT }) {
+		async session({ session, token }: { session: ExtendedSession; token: JWT }) {
 			if (session.user) {
 				session.user.id = token.id as string;
-				session.user.username = token.username;
+				session.user.username = token.username as string;
 			}
 			return session;
 		},
+		async redirect({ url, baseUrl }: { url: string; baseUrl: string }) {
+			// 로그인 후 리다이렉트
+			if (url.startsWith("/")) return `${baseUrl}${url}`;
+			// 외부 URL인 경우 홈으로 리다이렉트
+			else if (new URL(url).origin === baseUrl) return url;
+			return baseUrl;
+		},
 	},
 	pages: {
-		signIn: "/signup",
+		signIn: "/auth", // 로그인 페이지 경로
+		signUp: "/signup", // 회원가입 페이지 경로
+		error: "/auth", // 에러 페이지 경로
 	},
 	session: {
 		strategy: "jwt" as const,
+		maxAge: 60 * 60 * 24 * 30, // 30일 지속 주기
+		updateAge: 60 * 60 * 24, // 24시간 업데이트 주기
 	},
 	secret: process.env.NEXTAUTH_SECRET,
 };
