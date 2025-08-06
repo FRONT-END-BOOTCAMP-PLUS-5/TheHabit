@@ -27,7 +27,7 @@ export class PrRoutineCompletionsRepository implements RoutineCompletionsReposit
       where: { routineId }
     });
 
-    return completions.map(completion => ({
+    return completions.map((completion: RoutineCompletion) => ({
       id: completion.id,
       userId: completion.userId,
       routineId: completion.routineId,
@@ -41,7 +41,7 @@ export class PrRoutineCompletionsRepository implements RoutineCompletionsReposit
       where: { userId }
     });
 
-    return completions.map(completion => ({
+    return completions.map((completion: RoutineCompletion) => ({
       id: completion.id,
       userId: completion.userId,
       routineId: completion.routineId,
@@ -74,7 +74,7 @@ export class PrRoutineCompletionsRepository implements RoutineCompletionsReposit
       }
     });
 
-    return completions.map(completion => ({
+    return completions.map((completion: RoutineCompletion) => ({
       id: completion.id,
       userId: completion.userId,
       routineId: completion.routineId,
