@@ -11,10 +11,10 @@ async function testCreate() {
   const testChallenge = new Challenge(
     0, // id는 데이터베이스에서 자동 생성
     "조현돈 챌린지!!!!",
-    new Date('2024-12-01'),
-    new Date('2024-12-31'),
-    new Date('2024-12-01T09:00:00'),
-    new Date('2024-12-01T10:00:00'),
+    new Date("2024-12-01"),
+    new Date("2024-12-31"),
+    new Date("2024-12-01T09:00:00"),
+    new Date("2024-12-01T10:00:00"),
     "#FF5733",
     "88b3e620-52d9-4a5c-bb2b-1dfc9a2d1a10",
     2
@@ -37,13 +37,14 @@ async function testCreate() {
     }
 
     // 생성된 챌린지를 ID로 조회해서 확인
-    const foundChallenge = await challengeRepository.findById(createdChallenge.id);
+    const foundChallenge = await challengeRepository.findById(
+      createdChallenge.id
+    );
     if (foundChallenge) {
       console.log("✅ 생성된 챌린지 조회 성공:", foundChallenge);
     } else {
       console.log("❌ 생성된 챌린지 조회 실패!");
     }
-
   } catch (error) {
     console.error("CREATE 테스트 중 오류 발생:", error);
   }
@@ -56,7 +57,9 @@ async function testFindById() {
     console.log("\n=== FIND BY ID 테스트 시작 ===");
 
     // 존재하는 ID로 조회
-    const foundChallenge = await challengeRepository.findById(createdChallengeId);
+    const foundChallenge = await challengeRepository.findById(
+      createdChallengeId
+    );
     if (foundChallenge) {
       console.log("✅ 존재하는 ID 조회 성공:", foundChallenge);
     } else {
@@ -70,7 +73,6 @@ async function testFindById() {
     } else {
       console.log("❌ 존재하지 않는 ID 조회 실패!");
     }
-
   } catch (error) {
     console.error("FIND BY ID 테스트 중 오류 발생:", error);
   }
@@ -93,7 +95,6 @@ async function testFindByUserId() {
     } else {
       console.log("❌ FIND BY USER ID 테스트 실패!");
     }
-
   } catch (error) {
     console.error("FIND BY USER ID 테스트 중 오류 발생:", error);
   }
@@ -106,9 +107,14 @@ async function testFindByCategoryId() {
     console.log("\n=== FIND BY CATEGORY ID 테스트 시작 ===");
 
     const categoryId = 2;
-    const categoryChallenges = await challengeRepository.findByCategoryId(categoryId);
+    const categoryChallenges = await challengeRepository.findByCategoryId(
+      categoryId
+    );
 
-    console.log(`카테고리 ${categoryId}의 챌린지 개수:`, categoryChallenges.length);
+    console.log(
+      `카테고리 ${categoryId}의 챌린지 개수:`,
+      categoryChallenges.length
+    );
     console.log("카테고리의 챌린지 목록:", categoryChallenges);
 
     if (categoryChallenges.length > 0) {
@@ -116,7 +122,6 @@ async function testFindByCategoryId() {
     } else {
       console.log("❌ FIND BY CATEGORY ID 테스트 실패!");
     }
-
   } catch (error) {
     console.error("FIND BY CATEGORY ID 테스트 중 오류 발생:", error);
   }
@@ -131,21 +136,27 @@ async function testUpdate() {
     // 업데이트할 데이터
     const updateData = {
       name: "업데이트된 조현돈 챌린지!!!!",
-      color: "#00FF00"
+      color: "#00FF00",
     };
 
     console.log("업데이트할 데이터:", updateData);
 
     // 챌린지 업데이트
-    const updatedChallenge = await challengeRepository.update(createdChallengeId, updateData);
+    const updatedChallenge = await challengeRepository.update(
+      createdChallengeId,
+      updateData
+    );
 
-    if (updatedChallenge && updatedChallenge.name === updateData.name && updatedChallenge.color === updateData.color) {
+    if (
+      updatedChallenge &&
+      updatedChallenge.name === updateData.name &&
+      updatedChallenge.color === updateData.color
+    ) {
       console.log("✅ UPDATE 테스트 성공!");
       console.log("업데이트된 챌린지:", updatedChallenge);
     } else {
       console.log("❌ UPDATE 테스트 실패!");
     }
-
   } catch (error) {
     console.error("UPDATE 테스트 중 오류 발생:", error);
   }

@@ -4,7 +4,7 @@ import { FeedBackEntity } from "@/backend/feedbacks/domains/entities/FeedBackEnt
 export class GetRoutineReviewListUsecase {
   constructor(public readonly PrFeedBackRepository: PrFeedBackRepository) {}
 
-  async AddFeedBack(feedBack: FeedBackEntity) {
+  async execute(feedBack: FeedBackEntity) {
     return this.PrFeedBackRepository.AddFeedBack(feedBack);
   }
 }
