@@ -120,5 +120,3 @@ jobs:
             pm2 start bun --name "The-Habit" -- run start -- --port 4444
             pm2 save
             echo "빌드 성공 및 배포 완료!"
-
-# 승민님한테 env 받아서 설정 하나 더 해야함.
