@@ -2,7 +2,7 @@
 export interface ChallengeDto {
   readonly id: number;
   readonly name: string;
-  readonly startDate: string; // Date를 ISO 문자열로 변환
+  readonly startDate: string; // Date를 ISO 문자열로 변환 (createdAt)
   readonly endDate: string;   // Date를 ISO 문자열로 변환
   readonly startTime: string | null; // Date를 ISO 문자열로 변환
   readonly endTime: string | null;   // Date를 ISO 문자열로 변환
