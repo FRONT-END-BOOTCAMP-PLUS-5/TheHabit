@@ -1,5 +1,5 @@
 import React from "react";
 
-export default function ProfileImage() {
+export const ProfileImage = () => {
   return <div>ProfileImage</div>;
 }

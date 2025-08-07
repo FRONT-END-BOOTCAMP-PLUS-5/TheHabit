@@ -1,12 +1,11 @@
-import { PrismaClient } from "@prisma/client";
+import prisma from "@/public/utils/prismaClient";
 import { RoutineCompletionsRepository } from "../../domains/repositories/IRoutineCompletionsRepository";
 import { RoutineCompletion } from "../../domains/entities/routine-completion/routineCompletion";
 
 export class PrRoutineCompletionsRepository implements RoutineCompletionsRepository {
-  constructor(private readonly prisma: PrismaClient) {}
 
   async create(routineCompletion: Omit<RoutineCompletion, "id" | "createdAt">): Promise<RoutineCompletion> {
-    const createdCompletion = await this.prisma.routineCompletion.create({
+    const createdCompletion = await prisma.routineCompletion.create({
       data: {
         userId: routineCompletion.userId,
         routineId: routineCompletion.routineId,
@@ -24,11 +23,11 @@ export class PrRoutineCompletionsRepository implements RoutineCompletionsReposit
   }
 
   async findByRoutineId(routineId: number): Promise<RoutineCompletion[]> {
-    const completions = await this.prisma.routineCompletion.findMany({
+    const completions = await prisma.routineCompletion.findMany({
       where: { routineId }
     });
 
-    return completions.map(completion => ({
+    return completions.map((completion: RoutineCompletion) => ({
       id: completion.id,
       userId: completion.userId,
       routineId: completion.routineId,
@@ -38,11 +37,11 @@ export class PrRoutineCompletionsRepository implements RoutineCompletionsReposit
   }
 
   async findByUserId(userId: string): Promise<RoutineCompletion[]> {
-    const completions = await this.prisma.routineCompletion.findMany({
+    const completions = await prisma.routineCompletion.findMany({
       where: { userId }
     });
 
-    return completions.map(completion => ({
+    return completions.map((completion: RoutineCompletion) => ({
       id: completion.id,
       userId: completion.userId,
       routineId: completion.routineId,
@@ -52,7 +51,7 @@ export class PrRoutineCompletionsRepository implements RoutineCompletionsReposit
   }
 
   async findById(completionId: number): Promise<RoutineCompletion | null> {
-    const completion = await this.prisma.routineCompletion.findUnique({
+    const completion = await prisma.routineCompletion.findUnique({
       where: { id: completionId }
     });
 
@@ -68,14 +67,14 @@ export class PrRoutineCompletionsRepository implements RoutineCompletionsReposit
   }
 
   async findByUserIdAndRoutineId(userId: string, routineId: number): Promise<RoutineCompletion[]> {
-    const completions = await this.prisma.routineCompletion.findMany({
+    const completions = await prisma.routineCompletion.findMany({
       where: { 
         userId,
         routineId
       }
     });
 
-    return completions.map(completion => ({
+    return completions.map((completion: RoutineCompletion) => ({
       id: completion.id,
       userId: completion.userId,
       routineId: completion.routineId,
@@ -85,7 +84,7 @@ export class PrRoutineCompletionsRepository implements RoutineCompletionsReposit
   }
 
   async update(completionId: number, routineCompletion: Partial<RoutineCompletion>): Promise<RoutineCompletion> {
-    const updatedCompletion = await this.prisma.routineCompletion.update({
+    const updatedCompletion = await prisma.routineCompletion.update({
       where: { id: completionId },
       data: {
         ...(routineCompletion.proofImgUrl !== undefined && { proofImgUrl: routineCompletion.proofImgUrl })
@@ -103,7 +102,7 @@ export class PrRoutineCompletionsRepository implements RoutineCompletionsReposit
 
   async delete(completionId: number): Promise<boolean> {
     try {
-      await this.prisma.routineCompletion.delete({
+      await prisma.routineCompletion.delete({
         where: { id: completionId }
       });
       return true;
