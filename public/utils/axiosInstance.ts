@@ -1,4 +1,3 @@
-"use server"
 import axios from "axios";
 
 export const axiosInstance = axios.create({

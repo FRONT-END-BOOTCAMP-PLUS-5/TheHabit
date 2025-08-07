@@ -1,7 +1,15 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { axiosInstance } from "@/libs/axios/axiosInstance";
+import { useState } from "react";
+import {
+  useGetAllChallenges,
+  useGetChallengeById,
+  useGetChallengesByCategory,
+  useCreateChallenge,
+  useUpdateChallenge,
+  useDeleteChallenge,
+} from "@/libs/hooks/challenges-hooks";
+import { AddChallengeRequestDto } from "@/backend/challenges/applications/dtos/AddChallengeDto";
 
 interface ChallengeDto {
   id: number;
@@ -26,26 +34,12 @@ interface CreateChallengeForm {
 }
 
 export default function ChallengesPage() {
-  const [challenges, setChallenges] = useState<ChallengeDto[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [createLoading, setCreateLoading] = useState(false);
-  const [createError, setCreateError] = useState<string | null>(null);
-  const [createSuccess, setCreateSuccess] = useState<string | null>(null);
-
   // 카테고리별 조회 상태
-  const [categoryChallenges, setCategoryChallenges] = useState<ChallengeDto[]>(
-    []
-  );
-  const [categoryLoading, setCategoryLoading] = useState(false);
-  const [categoryError, setCategoryError] = useState<string | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<number>(1);
 
   // 특정 챌린지 조회 상태
   const [selectedChallenge, setSelectedChallenge] =
     useState<ChallengeDto | null>(null);
-  const [detailLoading, setDetailLoading] = useState(false);
-  const [detailError, setDetailError] = useState<string | null>(null);
   const [selectedChallengeId, setSelectedChallengeId] = useState<number>(1);
 
   // 수정 모드 상태
@@ -59,14 +53,6 @@ export default function ChallengesPage() {
     color: "#3B82F6",
     categoryId: 1,
   });
-  const [editLoading, setEditLoading] = useState(false);
-  const [editError, setEditError] = useState<string | null>(null);
-  const [editSuccess, setEditSuccess] = useState<string | null>(null);
-
-  // 삭제 상태
-  const [deleteLoading, setDeleteLoading] = useState(false);
-  const [deleteError, setDeleteError] = useState<string | null>(null);
-  const [deleteSuccess, setDeleteSuccess] = useState<string | null>(null);
 
   // 챌린지 생성 폼 상태
   const [formData, setFormData] = useState<CreateChallengeForm>({
@@ -81,262 +67,57 @@ export default function ChallengesPage() {
     categoryId: 1,
   });
 
-  const fetchChallenges = async () => {
-    setLoading(true);
-    setError(null);
+  // Tanstack Query 훅들 사용
+  const {
+    data: challenges = [],
+    isLoading: loading,
+    error: challengesError,
+    refetch: refetchChallenges,
+  } = useGetAllChallenges();
 
-    try {
-      const response = await axiosInstance.get("/api/challenges");
-      setChallenges(response.data);
-    } catch (err) {
-      if (err instanceof Error) {
-        setError(err.message);
-      } else if (typeof err === "object" && err !== null && "response" in err) {
-        const axiosError = err as {
-          response?: { status?: number; data?: { message?: string } };
-          message?: string;
-        };
-        setError(
-          `HTTP error! status: ${axiosError.response?.status} - ${
-            axiosError.response?.data?.message || axiosError.message
-          }`
-        );
-      } else {
-        setError("알 수 없는 오류가 발생했습니다.");
-      }
-    } finally {
-      setLoading(false);
-    }
-  };
+  const {
+    data: categoryChallengesData,
+    isLoading: categoryLoading,
+    error: categoryError,
+    refetch: refetchCategoryChallenges,
+  } = useGetChallengesByCategory(selectedCategory);
 
-  const fetchChallengesByCategory = async (categoryId: number) => {
-    setCategoryLoading(true);
-    setCategoryError(null);
+  const {
+    data: challengeDetailData,
+    isLoading: detailLoading,
+    error: detailError,
+    refetch: refetchChallengeDetail,
+  } = useGetChallengeById(selectedChallengeId, selectedChallengeId > 0);
 
-    try {
-      const response = await axiosInstance.get(
-        `/api/challenges/categories/${categoryId}`
-      );
+  const createChallengeMutation = useCreateChallenge();
+  const updateChallengeMutation = useUpdateChallenge();
+  const deleteChallengeMutation = useDeleteChallenge();
 
-      if (response.data.success) {
-        setCategoryChallenges(response.data.data || []);
-      } else {
-        setCategoryError(
-          response.data.error?.message || "카테고리별 조회에 실패했습니다."
-        );
-      }
-    } catch (err) {
-      if (err instanceof Error) {
-        setCategoryError(err.message);
-      } else if (typeof err === "object" && err !== null && "response" in err) {
-        const axiosError = err as {
-          response?: {
-            status?: number;
-            data?: { message?: string; error?: { message?: string } };
-          };
-          message?: string;
-        };
-        setCategoryError(
-          axiosError.response?.data?.error?.message ||
-            axiosError.response?.data?.message ||
-            axiosError.message ||
-            "카테고리별 조회에 실패했습니다."
-        );
-      } else {
-        setCategoryError("알 수 없는 오류가 발생했습니다.");
-      }
-    } finally {
-      setCategoryLoading(false);
-    }
-  };
+  // 카테고리별 챌린지 데이터 추출
+  const categoryChallenges = categoryChallengesData?.data || [];
 
-  const fetchChallengeById = async (id: number) => {
-    setDetailLoading(true);
-    setDetailError(null);
-    setSelectedChallenge(null);
+  // 특정 챌린지 데이터 추출
+  const challengeDetail = challengeDetailData?.data;
 
-    try {
-      const response = await axiosInstance.get(`/api/challenges/${id}`);
-
-      if (response.data.success) {
-        setSelectedChallenge(response.data.data);
-        // 수정 폼 데이터 설정
-        setEditFormData({
-          name: response.data.data.name,
-          created_at: response.data.data.created_at.split("T")[0],
-          end_at: response.data.data.end_at.split("T")[0],
-          startTime: response.data.data.startTime
-            ? new Date(response.data.data.startTime).toTimeString().slice(0, 5)
-            : "",
-          endTime: response.data.data.endTime
-            ? new Date(response.data.data.endTime).toTimeString().slice(0, 5)
-            : "",
-          color: response.data.data.color,
-          categoryId: response.data.data.categoryId,
-        });
-      } else {
-        setDetailError(
-          response.data.error?.message || "챌린지 조회에 실패했습니다."
-        );
-      }
-    } catch (err) {
-      if (err instanceof Error) {
-        setDetailError(err.message);
-      } else if (typeof err === "object" && err !== null && "response" in err) {
-        const axiosError = err as {
-          response?: {
-            status?: number;
-            data?: { message?: string; error?: { message?: string } };
-          };
-          message?: string;
-        };
-        setDetailError(
-          axiosError.response?.data?.error?.message ||
-            axiosError.response?.data?.message ||
-            axiosError.message ||
-            "챌린지 조회에 실패했습니다."
-        );
-      } else {
-        setDetailError("알 수 없는 오류가 발생했습니다.");
-      }
-    } finally {
-      setDetailLoading(false);
-    }
-  };
-
-  const updateChallenge = async (id: number) => {
-    setEditLoading(true);
-    setEditError(null);
-    setEditSuccess(null);
-
-    try {
-      const requestData = {
-        ...editFormData,
-        created_at: new Date(editFormData.created_at).toISOString(),
-        end_at: new Date(editFormData.end_at).toISOString(),
-        startTime: editFormData.startTime
-          ? new Date(`2000-01-01T${editFormData.startTime}`).toISOString()
-          : null,
-        endTime: editFormData.endTime
-          ? new Date(`2000-01-01T${editFormData.endTime}`).toISOString()
-          : null,
-      };
-
-      const response = await axiosInstance.put(
-        `/api/challenges/${id}`,
-        requestData
-      );
-
-      if (response.data.success) {
-        setEditSuccess("챌린지가 성공적으로 수정되었습니다!");
-        setIsEditMode(false);
-        // 목록 새로고침
-        fetchChallenges();
-        fetchChallengesByCategory(selectedCategory);
-        // 상세 정보 새로고침
-        fetchChallengeById(id);
-      } else {
-        setEditError(
-          response.data.error?.message || "챌린지 수정에 실패했습니다."
-        );
-      }
-    } catch (err) {
-      if (err instanceof Error) {
-        setEditError(err.message);
-      } else if (typeof err === "object" && err !== null && "response" in err) {
-        const axiosError = err as {
-          response?: {
-            status?: number;
-            data?: { message?: string; error?: { message?: string } };
-          };
-          message?: string;
-        };
-        setEditError(
-          axiosError.response?.data?.error?.message ||
-            axiosError.response?.data?.message ||
-            axiosError.message ||
-            "챌린지 수정에 실패했습니다."
-        );
-      } else {
-        setEditError("알 수 없는 오류가 발생했습니다.");
-      }
-    } finally {
-      setEditLoading(false);
-    }
-  };
-
-  const deleteChallenge = async (id: number) => {
-    if (!confirm("정말로 이 챌린지를 삭제하시겠습니까?")) {
-      return;
-    }
-
-    setDeleteLoading(true);
-    setDeleteError(null);
-    setDeleteSuccess(null);
-
-    try {
-      const response = await axiosInstance.delete(`/api/challenges/${id}`);
-
-      if (response.data.success) {
-        setDeleteSuccess("챌린지가 성공적으로 삭제되었습니다!");
-        setSelectedChallenge(null);
-        setIsEditMode(false);
-        // 목록 새로고침
-        fetchChallenges();
-        fetchChallengesByCategory(selectedCategory);
-      } else {
-        setDeleteError(
-          response.data.error?.message || "챌린지 삭제에 실패했습니다."
-        );
-      }
-    } catch (err) {
-      if (err instanceof Error) {
-        setDeleteError(err.message);
-      } else if (typeof err === "object" && err !== null && "response" in err) {
-        const axiosError = err as {
-          response?: {
-            status?: number;
-            data?: { message?: string; error?: { message?: string } };
-          };
-          message?: string;
-        };
-        setDeleteError(
-          axiosError.response?.data?.error?.message ||
-            axiosError.response?.data?.message ||
-            axiosError.message ||
-            "챌린지 삭제에 실패했습니다."
-        );
-      } else {
-        setDeleteError("알 수 없는 오류가 발생했습니다.");
-      }
-    } finally {
-      setDeleteLoading(false);
-    }
-  };
-
+  // 챌린지 생성
   const createChallenge = async (e: React.FormEvent) => {
     e.preventDefault();
-    setCreateLoading(true);
-    setCreateError(null);
-    setCreateSuccess(null);
 
-    try {
-      const requestData = {
-        ...formData,
-        created_at: new Date(formData.created_at).toISOString(),
-        end_at: new Date(formData.end_at).toISOString(),
-        startTime: formData.startTime
-          ? new Date(`2000-01-01T${formData.startTime}`).toISOString()
-          : null,
-        endTime: formData.endTime
-          ? new Date(`2000-01-01T${formData.endTime}`).toISOString()
-          : null,
-      };
+    const requestData: AddChallengeRequestDto = {
+      id: 0, // 서버에서 생성
+      ...formData,
+      created_at: new Date(formData.created_at).toISOString(),
+      end_at: new Date(formData.end_at).toISOString(),
+      startTime: formData.startTime
+        ? new Date(`2000-01-01T${formData.startTime}`).toISOString()
+        : null,
+      endTime: formData.endTime
+        ? new Date(`2000-01-01T${formData.endTime}`).toISOString()
+        : null,
+    };
 
-      const response = await axiosInstance.post("/api/challenges", requestData);
-
-      if (response.data.success) {
-        setCreateSuccess("챌린지가 성공적으로 생성되었습니다!");
+    createChallengeMutation.mutate(requestData, {
+      onSuccess: () => {
         // 폼 초기화
         setFormData({
           name: "",
@@ -349,38 +130,58 @@ export default function ChallengesPage() {
           color: "#3B82F6",
           categoryId: 1,
         });
-        // 챌린지 목록 새로고침
-        fetchChallenges();
-        // 카테고리별 목록도 새로고침
-        fetchChallengesByCategory(selectedCategory);
-      } else {
-        setCreateError(
-          response.data.error?.message || "챌린지 생성에 실패했습니다."
-        );
+      },
+    });
+  };
+
+  // 챌린지 수정
+  const updateChallenge = async (id: number) => {
+    const requestData = {
+      ...editFormData,
+      created_at: new Date(editFormData.created_at).toISOString(),
+      end_at: new Date(editFormData.end_at).toISOString(),
+      startTime: editFormData.startTime
+        ? new Date(`2000-01-01T${editFormData.startTime}`).toISOString()
+        : null,
+      endTime: editFormData.endTime
+        ? new Date(`2000-01-01T${editFormData.endTime}`).toISOString()
+        : null,
+    };
+
+    updateChallengeMutation.mutate(
+      { id, data: requestData },
+      {
+        onSuccess: () => {
+          setIsEditMode(false);
+        },
       }
-    } catch (err) {
-      if (err instanceof Error) {
-        setCreateError(err.message);
-      } else if (typeof err === "object" && err !== null && "response" in err) {
-        const axiosError = err as {
-          response?: {
-            status?: number;
-            data?: { message?: string; error?: { message?: string } };
-          };
-          message?: string;
-        };
-        setCreateError(
-          axiosError.response?.data?.error?.message ||
-            axiosError.response?.data?.message ||
-            axiosError.message ||
-            "챌린지 생성에 실패했습니다."
-        );
-      } else {
-        setCreateError("알 수 없는 오류가 발생했습니다.");
-      }
-    } finally {
-      setCreateLoading(false);
+    );
+  };
+
+  // 챌린지 삭제
+  const deleteChallenge = async (id: number) => {
+    if (!confirm("정말로 이 챌린지를 삭제하시겠습니까?")) {
+      return;
     }
+
+    deleteChallengeMutation.mutate(id, {
+      onSuccess: () => {
+        setSelectedChallenge(null);
+        setIsEditMode(false);
+      },
+    });
+  };
+
+  // 특정 챌린지 조회
+  const fetchChallengeById = async (id: number) => {
+    setSelectedChallengeId(id);
+    // useGetChallengeById 훅이 자동으로 실행됩니다
+  };
+
+  // 카테고리 변경
+  const handleCategoryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const categoryId = parseInt(e.target.value, 10);
+    setSelectedCategory(categoryId);
   };
 
   const handleInputChange = (
@@ -403,21 +204,35 @@ export default function ChallengesPage() {
     }));
   };
 
-  const handleCategoryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const categoryId = parseInt(e.target.value, 10);
-    setSelectedCategory(categoryId);
-    fetchChallengesByCategory(categoryId);
-  };
-
   const handleChallengeIdChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const id = parseInt(e.target.value, 10);
     setSelectedChallengeId(id);
   };
 
-  useEffect(() => {
-    fetchChallenges();
-    fetchChallengesByCategory(selectedCategory);
-  }, []);
+  // 챌린지 상세 정보가 변경될 때 수정 폼 데이터 업데이트
+  const handleChallengeDetailChange = () => {
+    if (challengeDetail) {
+      setSelectedChallenge(challengeDetail);
+      setEditFormData({
+        name: challengeDetail.name,
+        created_at: challengeDetail.created_at.split("T")[0],
+        end_at: challengeDetail.end_at.split("T")[0],
+        startTime: challengeDetail.startTime
+          ? new Date(challengeDetail.startTime).toTimeString().slice(0, 5)
+          : "",
+        endTime: challengeDetail.endTime
+          ? new Date(challengeDetail.endTime).toTimeString().slice(0, 5)
+          : "",
+        color: challengeDetail.color,
+        categoryId: challengeDetail.categoryId,
+      });
+    }
+  };
+
+  // challengeDetail이 변경될 때마다 실행
+  if (challengeDetail && selectedChallenge?.id !== challengeDetail.id) {
+    handleChallengeDetailChange();
+  }
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString("ko-KR");
@@ -477,17 +292,13 @@ export default function ChallengesPage() {
       {/* 챌린지 액션 버튼 */}
       <div className="mt-4 flex gap-2">
         <button
-          onClick={() => {
-            setSelectedChallengeId(challenge.id);
-            fetchChallengeById(challenge.id);
-          }}
+          onClick={() => fetchChallengeById(challenge.id)}
           className="bg-blue-500 hover:bg-blue-700 text-white text-xs px-2 py-1 rounded"
         >
           상세보기
         </button>
         <button
           onClick={() => {
-            setSelectedChallengeId(challenge.id);
             fetchChallengeById(challenge.id);
             setIsEditMode(true);
           }}
@@ -497,10 +308,10 @@ export default function ChallengesPage() {
         </button>
         <button
           onClick={() => deleteChallenge(challenge.id)}
-          disabled={deleteLoading}
+          disabled={deleteChallengeMutation.isPending}
           className="bg-red-500 hover:bg-red-700 text-white text-xs px-2 py-1 rounded disabled:opacity-50"
         >
-          {deleteLoading ? "삭제중..." : "삭제"}
+          {deleteChallengeMutation.isPending ? "삭제중..." : "삭제"}
         </button>
       </div>
     </div>
@@ -617,30 +428,32 @@ export default function ChallengesPage() {
           </div>
 
           {/* 성공/에러 메시지 */}
-          {createSuccess && (
+          {createChallengeMutation.isSuccess && (
             <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded">
-              {createSuccess}
+              챌린지가 성공적으로 생성되었습니다!
             </div>
           )}
 
-          {createError && (
+          {createChallengeMutation.isError && (
             <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
-              <strong>오류:</strong> {createError}
+              <strong>오류:</strong>{" "}
+              {createChallengeMutation.error?.message ||
+                "챌린지 생성에 실패했습니다."}
             </div>
           )}
 
           <div className="flex gap-4">
             <button
               type="submit"
-              disabled={createLoading}
+              disabled={createChallengeMutation.isPending}
               className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded disabled:opacity-50"
             >
-              {createLoading ? "생성 중..." : "챌린지 생성"}
+              {createChallengeMutation.isPending ? "생성 중..." : "챌린지 생성"}
             </button>
 
             <button
               type="button"
-              onClick={fetchChallenges}
+              onClick={() => refetchChallenges()}
               disabled={loading}
               className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded disabled:opacity-50"
             >
@@ -677,10 +490,10 @@ export default function ChallengesPage() {
         </div>
 
         {/* 상세 조회 결과 */}
-        {selectedChallenge && !isEditMode && (
+        {challengeDetail && !isEditMode && (
           <div className="border rounded-lg p-4 bg-gray-50">
             <h3 className="font-semibold text-lg mb-4">챌린지 상세 정보</h3>
-            {renderChallengeCard(selectedChallenge)}
+            {renderChallengeCard(challengeDetail)}
 
             <div className="mt-4 flex gap-2">
               <button
@@ -694,7 +507,7 @@ export default function ChallengesPage() {
         )}
 
         {/* 수정 모드 */}
-        {selectedChallenge && isEditMode && (
+        {challengeDetail && isEditMode && (
           <div className="border rounded-lg p-4 bg-yellow-50">
             <h3 className="font-semibold text-lg mb-4">챌린지 수정</h3>
 
@@ -800,26 +613,30 @@ export default function ChallengesPage() {
               </div>
 
               {/* 수정 성공/에러 메시지 */}
-              {editSuccess && (
+              {updateChallengeMutation.isSuccess && (
                 <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded">
-                  {editSuccess}
+                  챌린지가 성공적으로 수정되었습니다!
                 </div>
               )}
 
-              {editError && (
+              {updateChallengeMutation.isError && (
                 <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
-                  <strong>오류:</strong> {editError}
+                  <strong>오류:</strong>{" "}
+                  {updateChallengeMutation.error?.message ||
+                    "챌린지 수정에 실패했습니다."}
                 </div>
               )}
 
               <div className="flex gap-4">
                 <button
                   type="button"
-                  onClick={() => updateChallenge(selectedChallenge.id)}
-                  disabled={editLoading}
+                  onClick={() => updateChallenge(challengeDetail.id)}
+                  disabled={updateChallengeMutation.isPending}
                   className="bg-green-500 hover:bg-green-700 text-white px-4 py-2 rounded disabled:opacity-50"
                 >
-                  {editLoading ? "수정중..." : "수정 완료"}
+                  {updateChallengeMutation.isPending
+                    ? "수정중..."
+                    : "수정 완료"}
                 </button>
                 <button
                   type="button"
@@ -836,20 +653,23 @@ export default function ChallengesPage() {
         {/* 에러 메시지 */}
         {detailError && (
           <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
-            <strong>오류:</strong> {detailError}
+            <strong>오류:</strong>{" "}
+            {detailError.message || "챌린지 조회에 실패했습니다."}
           </div>
         )}
 
         {/* 삭제 성공/에러 메시지 */}
-        {deleteSuccess && (
+        {deleteChallengeMutation.isSuccess && (
           <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded">
-            {deleteSuccess}
+            챌린지가 성공적으로 삭제되었습니다!
           </div>
         )}
 
-        {deleteError && (
+        {deleteChallengeMutation.isError && (
           <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
-            <strong>오류:</strong> {deleteError}
+            <strong>오류:</strong>{" "}
+            {deleteChallengeMutation.error?.message ||
+              "챌린지 삭제에 실패했습니다."}
           </div>
         )}
       </div>
@@ -877,7 +697,8 @@ export default function ChallengesPage() {
         {/* 카테고리별 에러 메시지 */}
         {categoryError && (
           <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-            <strong>오류:</strong> {categoryError}
+            <strong>오류:</strong>{" "}
+            {categoryError.message || "카테고리별 조회에 실패했습니다."}
           </div>
         )}
 
@@ -915,9 +736,10 @@ export default function ChallengesPage() {
         <h2 className="text-xl font-semibold mb-4">전체 챌린지 목록</h2>
 
         {/* 에러 메시지 */}
-        {error && (
+        {challengesError && (
           <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-            <strong>오류:</strong> {error}
+            <strong>오류:</strong>{" "}
+            {challengesError.message || "챌린지 목록 조회에 실패했습니다."}
           </div>
         )}
 
@@ -930,7 +752,7 @@ export default function ChallengesPage() {
         )}
 
         {/* 챌린지 목록 */}
-        {!loading && !error && (
+        {!loading && !challengesError && (
           <div>
             <p className="text-gray-600 mb-4">
               총 {challenges.length}개의 챌린지가 있습니다.
