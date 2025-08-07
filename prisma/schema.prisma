@@ -38,8 +38,8 @@ model ChallengeCategory {
 model Challenge {
   id        Int       @id @default(autoincrement())
   name      String
-  startDate DateTime  @map("start_date")
-  endDate   DateTime  @map("end_date")
+  createdAt DateTime  @map("created_at")
+  endAt     DateTime  @map("end_at")
   startTime DateTime? @map("start_time")
   endTime   DateTime? @map("end_time")
   color     String
@@ -103,7 +103,7 @@ model Feedback {
   id                 Int    @id @default(autoincrement())
   gptResponseContent String @map("gpt_response_content") // 긴 텍스트를 위해 @db.Text 사용
 
-   challengeId Int       @map("challenge_id")
+  challengeId Int       @map("challenge_id")
   challenge   Challenge @relation(fields: [challengeId], references: [id], onDelete: Cascade)
 
   @@map("challenge_feedbacks")
