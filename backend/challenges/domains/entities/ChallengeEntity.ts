@@ -9,5 +9,5 @@ export class Challenge {
     public readonly color: string,
     public readonly userId: string,
     public readonly categoryId: number
-  ) { }
+  ) {}
 }
