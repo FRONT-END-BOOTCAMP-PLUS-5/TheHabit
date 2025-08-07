@@ -1,5 +1,5 @@
 import React from "react";
-import { TabNavigation } from "@/app/_components/TabNavigation/TabNavigation";
+import { TabNavigation } from "@/app/_components/tab-navigations/TabNavigation";
 
 const FeedbackLayout = ({ children }: { children: React.ReactNode }) => {
   return (
