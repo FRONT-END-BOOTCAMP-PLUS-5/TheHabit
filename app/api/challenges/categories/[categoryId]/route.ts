@@ -2,7 +2,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { PrChallengeRepository } from "@/backend/challenges/infrastructures/repositories/PrChallengeRepository";
 import { GetChallengesByCategoryUsecase } from "@/backend/challenges/applications/usecases/GetChallengesByCategoryUsecase";
-import { ChallengeDataMapper } from "@/backend/challenges/infrastructures/mappers/ChallengeDataMapper";
+import { ChallengeDtoMapper } from "@/backend/challenges/applications/dtos/ChallengeDto";
 import { ChallengeDto } from "@/backend/challenges/applications/dtos/ChallengeDto";
 
 const createGetChallengesByCategoryUsecase = () => {
@@ -53,7 +53,7 @@ export async function GET(
 
     return NextResponse.json({
       success: true,
-      data: ChallengeDataMapper.toDtoArray(challenges),
+      data: ChallengeDtoMapper.fromEntities(challenges),
       message: `카테고리 ${categoryId}의 챌린지를 성공적으로 조회했습니다.`,
       count: challenges.length
     });

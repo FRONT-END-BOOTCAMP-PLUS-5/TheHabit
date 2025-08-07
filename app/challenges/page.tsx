@@ -14,8 +14,8 @@ import { AddChallengeRequestDto } from "@/backend/challenges/applications/dtos/A
 interface ChallengeDto {
   id: number;
   name: string;
-  created_at: string; // startDate → created_at
-  end_at: string; // endDate → end_at
+  createdAt: string;
+  endAt: string;
   startTime: string | null;
   endTime: string | null;
   color: string;
@@ -25,8 +25,8 @@ interface ChallengeDto {
 
 interface CreateChallengeForm {
   name: string;
-  created_at: string;
-  end_at: string;
+  createdAt: string;
+  endAt: string;
   startTime: string;
   endTime: string;
   color: string;
@@ -46,8 +46,8 @@ export default function ChallengesPage() {
   const [isEditMode, setIsEditMode] = useState(false);
   const [editFormData, setEditFormData] = useState<CreateChallengeForm>({
     name: "",
-    created_at: "",
-    end_at: "",
+    createdAt: "",
+    endAt: "",
     startTime: "",
     endTime: "",
     color: "#3B82F6",
@@ -57,8 +57,8 @@ export default function ChallengesPage() {
   // 챌린지 생성 폼 상태
   const [formData, setFormData] = useState<CreateChallengeForm>({
     name: "",
-    created_at: new Date().toISOString().split("T")[0],
-    end_at: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
+    createdAt: new Date().toISOString().split("T")[0],
+    endAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
       .toISOString()
       .split("T")[0], // 30일 후
     startTime: "06:00",
@@ -106,8 +106,8 @@ export default function ChallengesPage() {
     const requestData: AddChallengeRequestDto = {
       id: 0, // 서버에서 생성
       ...formData,
-      created_at: new Date(formData.created_at).toISOString(),
-      end_at: new Date(formData.end_at).toISOString(),
+      createdAt: new Date(formData.createdAt).toISOString(),
+      endAt: new Date(formData.endAt).toISOString(),
       startTime: formData.startTime
         ? new Date(`2000-01-01T${formData.startTime}`).toISOString()
         : null,
@@ -121,8 +121,8 @@ export default function ChallengesPage() {
         // 폼 초기화
         setFormData({
           name: "",
-          created_at: new Date().toISOString().split("T")[0],
-          end_at: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
+          createdAt: new Date().toISOString().split("T")[0],
+          endAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
             .toISOString()
             .split("T")[0],
           startTime: "06:00",
@@ -138,8 +138,8 @@ export default function ChallengesPage() {
   const updateChallenge = async (id: number) => {
     const requestData = {
       ...editFormData,
-      created_at: new Date(editFormData.created_at).toISOString(),
-      end_at: new Date(editFormData.end_at).toISOString(),
+      createdAt: new Date(editFormData.createdAt).toISOString(),
+      endAt: new Date(editFormData.endAt).toISOString(),
       startTime: editFormData.startTime
         ? new Date(`2000-01-01T${editFormData.startTime}`).toISOString()
         : null,
@@ -215,8 +215,8 @@ export default function ChallengesPage() {
       setSelectedChallenge(challengeDetail);
       setEditFormData({
         name: challengeDetail.name,
-        created_at: challengeDetail.created_at.split("T")[0],
-        end_at: challengeDetail.end_at.split("T")[0],
+        createdAt: challengeDetail.createdAt.split("T")[0],
+        endAt: challengeDetail.endAt.split("T")[0],
         startTime: challengeDetail.startTime
           ? new Date(challengeDetail.startTime).toTimeString().slice(0, 5)
           : "",
@@ -260,7 +260,7 @@ export default function ChallengesPage() {
       <div className="space-y-2 text-sm text-gray-600">
         <div>
           <span className="font-medium">기간:</span>{" "}
-          {formatDate(challenge.created_at)} ~ {formatDate(challenge.end_at)}
+          {formatDate(challenge.createdAt)} ~ {formatDate(challenge.endAt)}
         </div>
 
         <div>
@@ -361,8 +361,8 @@ export default function ChallengesPage() {
               </label>
               <input
                 type="date"
-                name="created_at"
-                value={formData.created_at}
+                name="createdAt"
+                value={formData.createdAt}
                 onChange={handleInputChange}
                 required
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -375,8 +375,8 @@ export default function ChallengesPage() {
               </label>
               <input
                 type="date"
-                name="end_at"
-                value={formData.end_at}
+                name="endAt"
+                value={formData.endAt}
                 onChange={handleInputChange}
                 required
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -546,8 +546,8 @@ export default function ChallengesPage() {
                   </label>
                   <input
                     type="date"
-                    name="created_at"
-                    value={editFormData.created_at}
+                    name="createdAt"
+                    value={editFormData.createdAt}
                     onChange={handleEditInputChange}
                     required
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -560,8 +560,8 @@ export default function ChallengesPage() {
                   </label>
                   <input
                     type="date"
-                    name="end_at"
-                    value={editFormData.end_at}
+                    name="endAt"
+                    value={editFormData.endAt}
                     onChange={handleEditInputChange}
                     required
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
