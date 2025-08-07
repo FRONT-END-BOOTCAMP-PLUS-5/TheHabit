@@ -5,150 +5,150 @@ import prisma from "@/public/utils/prismaClient";
 let createdChallengeId: number;
 
 async function testCreate() {
-  const challengeRepository = new PrChallengeRepository();
+    const challengeRepository = new PrChallengeRepository();
 
-  // 테스트용 챌린지 데이터 생성
-  const testChallenge = new Challenge(
-    0, // id는 데이터베이스에서 자동 생성
-    "조현돈 챌린지!!!!",
-    new Date('2024-12-01'),
-    new Date('2024-12-31'),
-    new Date('2024-12-01T09:00:00'),
-    new Date('2024-12-01T10:00:00'),
-    "#FF5733",
-    "88b3e620-52d9-4a5c-bb2b-1dfc9a2d1a10",
-    2
-  );
+    // 테스트용 챌린지 데이터 생성
+    const testChallenge = new Challenge(
+        0, // id는 데이터베이스에서 자동 생성
+        "조현돈 챌린지!!!!",
+        new Date('2024-12-01'),
+        new Date('2024-12-31'),
+        new Date('2024-12-01T09:00:00'),
+        new Date('2024-12-01T10:00:00'),
+        "#FF5733",
+        "88b3e620-52d9-4a5c-bb2b-1dfc9a2d1a10",
+        2
+    );
 
-  try {
-    console.log("=== CREATE 테스트 시작 ===");
-    console.log("생성할 챌린지:", testChallenge);
+    try {
+        console.log("=== CREATE 테스트 시작 ===");
+        console.log("생성할 챌린지:", testChallenge);
 
-    // 챌린지 생성
-    const createdChallenge = await challengeRepository.create(testChallenge);
-    createdChallengeId = createdChallenge.id; // 다른 테스트에서 사용하기 위해 저장
-    console.log("생성된 챌린지:", createdChallenge);
+        // 챌린지 생성
+        const createdChallenge = await challengeRepository.create(testChallenge);
+        createdChallengeId = createdChallenge.id; // 다른 테스트에서 사용하기 위해 저장
+        console.log("생성된 챌린지:", createdChallenge);
 
-    // 생성된 챌린지가 올바른지 확인
-    if (createdChallenge.id && createdChallenge.name === testChallenge.name) {
-      console.log("✅ CREATE 테스트 성공!");
-    } else {
-      console.log("❌ CREATE 테스트 실패!");
+        // 생성된 챌린지가 올바른지 확인
+        if (createdChallenge.id && createdChallenge.name === testChallenge.name) {
+            console.log("✅ CREATE 테스트 성공!");
+        } else {
+            console.log("❌ CREATE 테스트 실패!");
+        }
+
+        // 생성된 챌린지를 ID로 조회해서 확인
+        const foundChallenge = await challengeRepository.findById(createdChallenge.id);
+        if (foundChallenge) {
+            console.log("✅ 생성된 챌린지 조회 성공:", foundChallenge);
+        } else {
+            console.log("❌ 생성된 챌린지 조회 실패!");
+        }
+
+    } catch (error) {
+        console.error("CREATE 테스트 중 오류 발생:", error);
     }
-
-    // 생성된 챌린지를 ID로 조회해서 확인
-    const foundChallenge = await challengeRepository.findById(createdChallenge.id);
-    if (foundChallenge) {
-      console.log("✅ 생성된 챌린지 조회 성공:", foundChallenge);
-    } else {
-      console.log("❌ 생성된 챌린지 조회 실패!");
-    }
-
-  } catch (error) {
-    console.error("CREATE 테스트 중 오류 발생:", error);
-  }
 }
 
 async function testFindById() {
-  const challengeRepository = new PrChallengeRepository();
+    const challengeRepository = new PrChallengeRepository();
 
-  try {
-    console.log("\n=== FIND BY ID 테스트 시작 ===");
+    try {
+        console.log("\n=== FIND BY ID 테스트 시작 ===");
 
-    // 존재하는 ID로 조회
-    const foundChallenge = await challengeRepository.findById(createdChallengeId);
-    if (foundChallenge) {
-      console.log("✅ 존재하는 ID 조회 성공:", foundChallenge);
-    } else {
-      console.log("❌ 존재하는 ID 조회 실패!");
+        // 존재하는 ID로 조회
+        const foundChallenge = await challengeRepository.findById(createdChallengeId);
+        if (foundChallenge) {
+            console.log("✅ 존재하는 ID 조회 성공:", foundChallenge);
+        } else {
+            console.log("❌ 존재하는 ID 조회 실패!");
+        }
+
+        // 존재하지 않는 ID로 조회
+        const notFoundChallenge = await challengeRepository.findById(99999);
+        if (!notFoundChallenge) {
+            console.log("✅ 존재하지 않는 ID 조회 성공 (null 반환)");
+        } else {
+            console.log("❌ 존재하지 않는 ID 조회 실패!");
+        }
+
+    } catch (error) {
+        console.error("FIND BY ID 테스트 중 오류 발생:", error);
     }
-
-    // 존재하지 않는 ID로 조회
-    const notFoundChallenge = await challengeRepository.findById(99999);
-    if (!notFoundChallenge) {
-      console.log("✅ 존재하지 않는 ID 조회 성공 (null 반환)");
-    } else {
-      console.log("❌ 존재하지 않는 ID 조회 실패!");
-    }
-
-  } catch (error) {
-    console.error("FIND BY ID 테스트 중 오류 발생:", error);
-  }
 }
 
 async function testFindByUserId() {
-  const challengeRepository = new PrChallengeRepository();
+    const challengeRepository = new PrChallengeRepository();
 
-  try {
-    console.log("\n=== FIND BY USER ID 테스트 시작 ===");
+    try {
+        console.log("\n=== FIND BY USER ID 테스트 시작 ===");
 
-    const userId = "88b3e620-52d9-4a5c-bb2b-1dfc9a2d1a10";
-    const userChallenges = await challengeRepository.findByUserId(userId);
+        const userId = "88b3e620-52d9-4a5c-bb2b-1dfc9a2d1a10";
+        const userChallenges = await challengeRepository.findByUserId(userId);
 
-    console.log(`사용자 ${userId}의 챌린지 개수:`, userChallenges.length);
-    console.log("사용자의 챌린지 목록:", userChallenges);
+        console.log(`사용자 ${userId}의 챌린지 개수:`, userChallenges.length);
+        console.log("사용자의 챌린지 목록:", userChallenges);
 
-    if (userChallenges.length > 0) {
-      console.log("✅ FIND BY USER ID 테스트 성공!");
-    } else {
-      console.log("❌ FIND BY USER ID 테스트 실패!");
+        if (userChallenges.length > 0) {
+            console.log("✅ FIND BY USER ID 테스트 성공!");
+        } else {
+            console.log("❌ FIND BY USER ID 테스트 실패!");
+        }
+
+    } catch (error) {
+        console.error("FIND BY USER ID 테스트 중 오류 발생:", error);
     }
-
-  } catch (error) {
-    console.error("FIND BY USER ID 테스트 중 오류 발생:", error);
-  }
 }
 
 async function testFindByCategoryId() {
-  const challengeRepository = new PrChallengeRepository();
+    const challengeRepository = new PrChallengeRepository();
 
-  try {
-    console.log("\n=== FIND BY CATEGORY ID 테스트 시작 ===");
+    try {
+        console.log("\n=== FIND BY CATEGORY ID 테스트 시작 ===");
 
-    const categoryId = 2;
-    const categoryChallenges = await challengeRepository.findByCategoryId(categoryId);
+        const categoryId = 2;
+        const categoryChallenges = await challengeRepository.findByCategoryId(categoryId);
 
-    console.log(`카테고리 ${categoryId}의 챌린지 개수:`, categoryChallenges.length);
-    console.log("카테고리의 챌린지 목록:", categoryChallenges);
+        console.log(`카테고리 ${categoryId}의 챌린지 개수:`, categoryChallenges.length);
+        console.log("카테고리의 챌린지 목록:", categoryChallenges);
 
-    if (categoryChallenges.length > 0) {
-      console.log("✅ FIND BY CATEGORY ID 테스트 성공!");
-    } else {
-      console.log("❌ FIND BY CATEGORY ID 테스트 실패!");
+        if (categoryChallenges.length > 0) {
+            console.log("✅ FIND BY CATEGORY ID 테스트 성공!");
+        } else {
+            console.log("❌ FIND BY CATEGORY ID 테스트 실패!");
+        }
+
+    } catch (error) {
+        console.error("FIND BY CATEGORY ID 테스트 중 오류 발생:", error);
     }
-
-  } catch (error) {
-    console.error("FIND BY CATEGORY ID 테스트 중 오류 발생:", error);
-  }
 }
 
 async function testUpdate() {
-  const challengeRepository = new PrChallengeRepository();
+    const challengeRepository = new PrChallengeRepository();
 
-  try {
-    console.log("\n=== UPDATE 테스트 시작 ===");
+    try {
+        console.log("\n=== UPDATE 테스트 시작 ===");
 
-    // 업데이트할 데이터
-    const updateData = {
-      name: "업데이트된 조현돈 챌린지!!!!",
-      color: "#00FF00"
-    };
+        // 업데이트할 데이터
+        const updateData = {
+            name: "업데이트된 조현돈 챌린지!!!!",
+            color: "#00FF00"
+        };
 
-    console.log("업데이트할 데이터:", updateData);
+        console.log("업데이트할 데이터:", updateData);
 
-    // 챌린지 업데이트
-    const updatedChallenge = await challengeRepository.update(createdChallengeId, updateData);
+        // 챌린지 업데이트
+        const updatedChallenge = await challengeRepository.update(createdChallengeId, updateData);
 
-    if (updatedChallenge && updatedChallenge.name === updateData.name && updatedChallenge.color === updateData.color) {
-      console.log("✅ UPDATE 테스트 성공!");
-      console.log("업데이트된 챌린지:", updatedChallenge);
-    } else {
-      console.log("❌ UPDATE 테스트 실패!");
+        if (updatedChallenge && updatedChallenge.name === updateData.name && updatedChallenge.color === updateData.color) {
+            console.log("✅ UPDATE 테스트 성공!");
+            console.log("업데이트된 챌린지:", updatedChallenge);
+        } else {
+            console.log("❌ UPDATE 테스트 실패!");
+        }
+
+    } catch (error) {
+        console.error("UPDATE 테스트 중 오류 발생:", error);
     }
-
-  } catch (error) {
-    console.error("UPDATE 테스트 중 오류 발생:", error);
-  }
 }
 
 /*
@@ -236,45 +236,45 @@ async function testDeleteByUserId() {
 */
 
 async function testFindAll() {
-  const challengeRepository = new PrChallengeRepository();
-  const challenges = await challengeRepository.findAll();
-  console.log("\n=== FINDALL 테스트 ===");
-  console.log("전체 챌린지 개수:", challenges.length);
-  console.log("전체 챌린지 목록:", challenges);
+    const challengeRepository = new PrChallengeRepository();
+    const challenges = await challengeRepository.findAll();
+    console.log("\n=== FINDALL 테스트 ===");
+    console.log("전체 챌린지 개수:", challenges.length);
+    console.log("전체 챌린지 목록:", challenges);
 }
 
 async function main() {
-  console.log("=== PrChallengeRepository 테스트 시작 ===");
+    console.log("=== PrChallengeRepository 테스트 시작 ===");
 
-  // CREATE 테스트
-  await testCreate();
+    // CREATE 테스트
+    await testCreate();
 
-  // FIND BY ID 테스트
-  await testFindById();
+    // FIND BY ID 테스트
+    await testFindById();
 
-  // FIND BY USER ID 테스트
-  await testFindByUserId();
+    // FIND BY USER ID 테스트
+    await testFindByUserId();
 
-  // FIND BY CATEGORY ID 테스트
-  await testFindByCategoryId();
+    // FIND BY CATEGORY ID 테스트
+    await testFindByCategoryId();
 
-  // UPDATE 테스트
-  await testUpdate();
+    // UPDATE 테스트
+    await testUpdate();
 
-  // DELETE 테스트
-  // await testDelete();
+    // DELETE 테스트
+    // await testDelete();
 
-  // DELETE BY USER ID 테스트
-  // await testDeleteByUserId();
+    // DELETE BY USER ID 테스트
+    // await testDeleteByUserId();
 
-  // FINDALL 테스트
-  await testFindAll();
+    // FINDALL 테스트
+    await testFindAll();
 }
 
 main()
-  .catch((e) => {
-    console.error("테스트 실행 중 오류:", e);
-  })
-  .finally(async () => {
-    await prisma.$disconnect();
-  });
+    .catch((e) => {
+        console.error("테스트 실행 중 오류:", e);
+    })
+    .finally(async () => {
+        await prisma.$disconnect();
+    });

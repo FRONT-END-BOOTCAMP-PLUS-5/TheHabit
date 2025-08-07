@@ -41,6 +41,10 @@ export interface DeleteRoutineResponseDto {
   message: string;
 }
 
+export interface GetRoutineByIdRequestDto {
+  routineId: number;
+}
+
 // 메인페이지 READ용 루틴 DTO (Application Service에서 사용)
 export interface DashboardRoutineDto {
   id: number;

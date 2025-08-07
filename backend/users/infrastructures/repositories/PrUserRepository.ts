@@ -3,7 +3,6 @@ import { User } from "@/backend/users/domains/entities/UserEntity";
 import prisma from "@/public/utils/prismaClient";
 
 export class PrUserRepository implements IUserRepository {
-
   async create(user: User): Promise<User | undefined> {
     try {
       // prisma 쿼리문 사용법
@@ -22,6 +21,7 @@ export class PrUserRepository implements IUserRepository {
         createdUser.username,
         createdUser.nickname,
         createdUser.profileImg
+
       );
     } catch (e) {
       if (e instanceof Error) throw new Error(e.message)
@@ -29,6 +29,7 @@ export class PrUserRepository implements IUserRepository {
   }
 
   async findAll(nickname: string = ''): Promise<User[] | undefined> {
+
     try {
       const users = await prisma.$queryRaw`
         SELECT id,
@@ -45,6 +46,7 @@ export class PrUserRepository implements IUserRepository {
         user.username,
         user.nickname,
         user.profileImg || ''
+
       ));
     } catch (e) {
       if (e instanceof Error) throw new Error(e.message)
@@ -64,6 +66,7 @@ export class PrUserRepository implements IUserRepository {
         AND id = ${id}
         ;`
 
+
       if (!user) return null;
 
       return new User(
@@ -71,6 +74,7 @@ export class PrUserRepository implements IUserRepository {
         user.username,
         user.nickname,
         user.profileImg
+
       );
     } catch (e) {
       if (e instanceof Error) throw new Error(e.message)
@@ -81,6 +85,7 @@ export class PrUserRepository implements IUserRepository {
 
 
   async update(id: string, nickname: string): Promise<boolean | undefined> {
+
     try {
       const updatedUser = await prisma.$queryRaw`
         UPDATE
@@ -90,6 +95,7 @@ export class PrUserRepository implements IUserRepository {
         WHERE 1=1
         AND id = ${id};
         ;`
+
 
       return updatedUser ? true : false;
     } catch (e) {
@@ -109,6 +115,7 @@ export class PrUserRepository implements IUserRepository {
       return deletedUser ? true : false;
     } catch (e) {
       if (e instanceof Error) throw new Error(e.message)
+
     }
 
   }

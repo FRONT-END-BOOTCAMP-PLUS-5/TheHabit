@@ -1,6 +1,6 @@
 import { RoutineCompletion } from "../entities/routine-completion/routineCompletion";
 
-export interface RoutineCompletionsRepository {
+export interface IRoutineCompletionsRepository {
   // 루틴 완료 생성
   create(
     routineCompletion: Omit<RoutineCompletion, "id" | "createdAt">

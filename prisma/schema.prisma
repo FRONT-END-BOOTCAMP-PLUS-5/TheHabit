@@ -42,6 +42,7 @@ model Challenge {
   endTime    DateTime?         @map("end_time")
   color      String
   userId     String            @map("user_id")
+
   categoryId Int               @map("category_id")
   feedbacks  Feedback[]
   category   ChallengeCategory @relation(fields: [categoryId], references: [id])
@@ -93,6 +94,7 @@ model Feedback {
   gptResponseContent String    @map("gpt_response_content")
   challengeId        Int       @map("challenge_id")
   challenge          Challenge @relation(fields: [challengeId], references: [id], onDelete: Cascade)
+
 
   @@map("challenge_feedbacks")
 }
