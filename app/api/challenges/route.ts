@@ -8,13 +8,14 @@ import { AddChallengeUseCase } from "@/backend/challenges/applications/usecases/
 import { AddChallengeRequestDto } from "@/backend/challenges/applications/dtos/AddChallengeDto";
 import { ChallengeDto } from "@/backend/challenges/applications/dtos/ChallengeDto";
 
+const repository = new PrChallengeRepository()
+
 const createGetAllChallengesUsecase = () => {
-  const repository = new PrChallengeRepository()
+
   return new GetAllChallengesUsecase(repository);
 }
 
 const createAddChallengeUsecase = () => {
-  const repository = new PrChallengeRepository()
   return new AddChallengeUseCase(repository);
 }
 
