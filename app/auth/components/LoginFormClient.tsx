@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
 import { useForm } from "react-hook-form";
 import Image from "next/image";
+import Input from "antd/es/input/Input";
 import Input from "../../_components/Input/Input";
 import Notification from "./Notification";
 
@@ -67,7 +68,7 @@ export default function LoginFormClient() {
 
         {/* 에러 알림 */}
         {error && <Notification type="error" message={error} />}
-        
+
         {/* 아이디 & 비밀번호 입력 */}
         <form
           onSubmit={handleSubmit(onSubmit)}
@@ -76,7 +77,7 @@ export default function LoginFormClient() {
           {/* 아이디 */}
           <fieldset className="mb-4">
             <legend className="sr-only">아이디 입력</legend>
-            <Input 
+            <Input
               type="text"
               label="이메일"
               labelHtmlFor="username"
@@ -90,14 +91,16 @@ export default function LoginFormClient() {
               })}
             />
             {errors.username && (
-              <p className="text-red-500 text-xs mt-1">{errors.username.message}</p>
+              <p className="text-red-500 text-xs mt-1">
+                {errors.username.message}
+              </p>
             )}
           </fieldset>
-          
+
           {/* 비밀번호 */}
           <fieldset className="mb-6">
             <legend className="sr-only">비밀번호 입력</legend>
-            <Input 
+            <Input
               type="password"
               label="비밀번호"
               labelHtmlFor="password"
@@ -111,10 +114,12 @@ export default function LoginFormClient() {
               })}
             />
             {errors.password && (
-              <p className="text-red-500 text-xs mt-1">{errors.password.message}</p>
+              <p className="text-red-500 text-xs mt-1">
+                {errors.password.message}
+              </p>
             )}
           </fieldset>
-          
+
           {/* 로그인 버튼 */}
           <section className="flex items-center justify-between">
             <button
@@ -153,11 +158,11 @@ export default function LoginFormClient() {
               )}
             </button>
           </section>
-          
+
           <section className="flex justify-center w-full text-sm text-black text-center mt-4">
             SNS 계정으로 로그인하기
           </section>
-          
+
           {/* SNS 로그인 버튼 */}
           <section className="flex justify-evenly m-8">
             <button
@@ -197,7 +202,7 @@ export default function LoginFormClient() {
               />
             </button>
           </section>
-          
+
           <footer className="flex justify-center w-full text-sm text-black text-center mt-4">
             아직 회원이 아니신가요?
             <Link href="/signup" className="text-blue-500 ml-3">
@@ -208,4 +213,4 @@ export default function LoginFormClient() {
       </section>
     </main>
   );
-} 
+}
