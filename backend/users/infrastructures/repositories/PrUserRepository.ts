@@ -5,24 +5,21 @@ import prisma from "@/public/utils/prismaClient";
 export class PrUserRepository implements IUserRepository {
   async create(user: User): Promise<User | undefined> {
     try{
-      // prisma 쿼리문 사용법
-      // insert, update, select 등 밑에 해놓음 예제
-      const createdUser:User = await prisma.$queryRaw`
-            INSERT INTO users (email, nickname, password, username, profile_img)
-            VALUES (
-                ${user.email}, 
-                ${user.nickname},
-                ${user.password}, 
-                ${user.username},
-                ${user.profileImg},
-                )
-            RETURNING id, email, nickname, username, profile_img as "profileImg";`
-
+      const createdUser = await prisma.user.create({
+        data: {
+          email: user.email || '',
+          nickname: user.nickname,
+          password: user.password || '',
+          username: user.username,
+          profileImg: user.profileImg,
+        }
+      })
       return new User(
           createdUser.username,
           createdUser.nickname,
           createdUser.profileImg,
           createdUser.id,
+          createdUser.password
       );
     }catch(e){
       if(e instanceof  Error) throw new Error(e.message)
@@ -31,17 +28,14 @@ export class PrUserRepository implements IUserRepository {
 
   async findAll(nickname: string = ''): Promise<User[] | undefined> {
     try{
-      const users:User[] = await prisma.$queryRaw`
-        SELECT id,
-           username,
-           nickname,
-           profile_img as "profileImg"
-        FROM users
-        WHERE 1=1
-        AND nickname like '%${nickname}%'
-        ;`
-
-      return users.map((user: User) => new User(
+      const users = await prisma.user.findMany({
+        where:{
+          nickname: {
+            contains: nickname
+          }
+        }
+      });
+      return users.map((user) => new User(
           user.username,
           user.nickname,
           user.profileImg || '',
@@ -55,15 +49,9 @@ export class PrUserRepository implements IUserRepository {
 
   async findById(id: string): Promise<User | null | undefined> {
     try{
-      const user: User = await prisma.$queryRaw`
-        SELECT id,
-               username,
-               nickname,
-               profile_img as "profileImg"
-        FROM users
-        WHERE 1=1
-        AND id = ${id}
-        ;`
+      const user = await prisma.user.findUnique({
+        where: { id }
+      });
 
       if (!user) return null;
 
@@ -83,14 +71,10 @@ export class PrUserRepository implements IUserRepository {
 
   async update(id: string, nickname: string): Promise<boolean | undefined> {
     try{
-      const updatedUser = await prisma.$queryRaw`
-        UPDATE
-            users
-        SET
-            nickname = ${nickname}
-        WHERE 1=1
-        AND id = ${id};
-        ;`
+      const updatedUser = await prisma.user.update({
+        where: { id },
+        data: { nickname },
+      });
 
       return updatedUser ? true : false;
     }catch(e){
@@ -101,13 +85,11 @@ export class PrUserRepository implements IUserRepository {
 
   async delete(id: string): Promise<boolean | undefined> {
     try{
-      const deletedUser = await prisma.$queryRaw`
-        DELETE
-        FROM users
-        WHERE id = ${id};
-        ;`
+     await prisma.user.delete({
+        where: { id }
+      });
 
-      return deletedUser ? true : false;
+      return true;
     }catch(e){
       if(e instanceof  Error) throw new Error(e.message)
     }
