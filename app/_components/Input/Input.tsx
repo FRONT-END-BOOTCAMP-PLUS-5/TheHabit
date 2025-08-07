@@ -34,7 +34,7 @@ const CustomInput: React.FC<CustomInputProps> = ({
       )}
       {type === "password" ? (
         <Input.Password
-          placeholder={placeholder || " "}
+          placeholder={placeholder  " "}
           iconRender={(visible) =>
             visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />
           }
@@ -46,7 +46,7 @@ const CustomInput: React.FC<CustomInputProps> = ({
       ) : (
         <Input
           type={type}
-          placeholder={placeholder || " "}
+          placeholder={placeholder  " "}
           maxLength={maxLength}
           id={labelHtmlFor}
           className={className}
