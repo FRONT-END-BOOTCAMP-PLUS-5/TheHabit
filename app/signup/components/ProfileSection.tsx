@@ -2,7 +2,7 @@
 
 import { UseFormRegisterReturn, FieldError } from "react-hook-form";
 import Input from "../../_components/Input/Input";
-import Button from "../../_components/Button/Button";
+import { Button } from "../../_components/Button/Button";
 
 interface ProfileSectionProps {
   nickNameRegister: UseFormRegisterReturn;

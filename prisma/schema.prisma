@@ -34,14 +34,18 @@ model ChallengeCategory {
 }
 
 model Challenge {
-  id         Int               @id @default(autoincrement())
-  name       String
-  createdAt  DateTime          @map("created_at")
-  endAt      DateTime          @map("end_at")
-  startTime  DateTime?         @map("start_time")
-  endTime    DateTime?         @map("end_time")
-  color      String
-  userId     String            @map("user_id")
+
+  id        Int       @id @default(autoincrement())
+  name      String
+  createdAt DateTime  @map("created_at")
+  endAt     DateTime  @map("end_at")
+  startTime DateTime? @map("start_time")
+  endTime   DateTime? @map("end_time")
+  color     String
+
+  userId String @map("user_id")
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
   categoryId Int               @map("category_id")
   feedbacks  Feedback[]
   category   ChallengeCategory @relation(fields: [categoryId], references: [id])
@@ -89,10 +93,12 @@ model Review {
 }
 
 model Feedback {
+
   id                 Int       @id @default(autoincrement())
   gptResponseContent String    @map("gpt_response_content")
   challengeId        Int       @map("challenge_id")
   challenge          Challenge @relation(fields: [challengeId], references: [id], onDelete: Cascade)
+
 
   @@map("challenge_feedbacks")
 }
