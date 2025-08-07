@@ -1,6 +1,7 @@
 import { IChallengeRepository } from "../../domains/repositories/IChallengeRepository";
 import { Challenge } from "../../domains/entities/ChallengeEntity";
 import prisma from "@/public/utils/prismaClient";
+import { ChallengeDataMapper } from "../mappers/ChallengeDataMapper";
 
 export class PrChallengeRepository implements IChallengeRepository {
 
@@ -8,8 +9,8 @@ export class PrChallengeRepository implements IChallengeRepository {
     const createdChallenge = await prisma.challenge.create({
       data: {
         name: challenge.name,
-        createdAt: challenge.created_at,
-        endAt: challenge.end_at,
+        createdAt: challenge.created_at,  // camelCase로 변환
+        endAt: challenge.end_at,          // camelCase로 변환
         startTime: challenge.startTime,
         endTime: challenge.endTime,
         color: challenge.color,
@@ -18,33 +19,12 @@ export class PrChallengeRepository implements IChallengeRepository {
       }
     });
 
-    return new Challenge(
-      createdChallenge.id,
-      createdChallenge.name,
-      createdChallenge.createdAt,
-      createdChallenge.endAt,
-      createdChallenge.startTime,
-      createdChallenge.endTime,
-      createdChallenge.color,
-      createdChallenge.userId,
-      createdChallenge.categoryId
-    );
+    return ChallengeDataMapper.fromPrismaResult(createdChallenge);
   }
 
   async findAll(): Promise<Challenge[]> {
     const challenges = await prisma.challenge.findMany();
-
-    return challenges.map((challenge) => new Challenge(
-      challenge.id,
-      challenge.name,
-      challenge.createdAt,
-      challenge.endAt,
-      challenge.startTime,
-      challenge.endTime,
-      challenge.color,
-      challenge.userId,
-      challenge.categoryId
-    ));
+    return ChallengeDataMapper.fromPrismaResultArray(challenges);
   }
 
   async findById(id: number): Promise<Challenge | null> {

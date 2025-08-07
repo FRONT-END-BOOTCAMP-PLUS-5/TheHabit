@@ -2,10 +2,10 @@
 export interface ChallengeDto {
   readonly id: number;
   readonly name: string;
-  readonly startDate: string; // Date를 ISO 문자열로 변환 (createdAt)
-  readonly endDate: string;   // Date를 ISO 문자열로 변환
-  readonly startTime: string | null; // Date를 ISO 문자열로 변환
-  readonly endTime: string | null;   // Date를 ISO 문자열로 변환
+  readonly created_at: string; // startDate → created_at
+  readonly end_at: string;     // endDate → end_at
+  readonly startTime: string | null;
+  readonly endTime: string | null;
   readonly color: string;
   readonly userId: string;
   readonly categoryId: number;
@@ -13,12 +13,11 @@ export interface ChallengeDto {
 
 // ChallengeEntity에서 DTO로 변환하는 유틸리티 함수들
 export class ChallengeDtoMapper {
-  // ChallengeEntity에서 DTO로 변환하는 함수
   static fromEntity(challenge: {
     id: number;
     name: string;
-    startDate: Date;
-    endDate: Date;
+    created_at: Date;  // startDate → created_at
+    end_at: Date;      // endDate → end_at
     startTime: Date | null;
     endTime: Date | null;
     color: string;
@@ -28,8 +27,8 @@ export class ChallengeDtoMapper {
     return {
       id: challenge.id,
       name: challenge.name,
-      startDate: challenge.startDate.toISOString(),
-      endDate: challenge.endDate.toISOString(),
+      created_at: challenge.created_at.toISOString(),
+      end_at: challenge.end_at.toISOString(),
       startTime: challenge.startTime ? challenge.startTime.toISOString() : null,
       endTime: challenge.endTime ? challenge.endTime.toISOString() : null,
       color: challenge.color,
@@ -38,12 +37,11 @@ export class ChallengeDtoMapper {
     };
   }
 
-  // 여러 ChallengeEntity를 DTO 배열로 변환하는 함수
   static fromEntities(challenges: {
     id: number;
     name: string;
-    startDate: Date;
-    endDate: Date;
+    created_at: Date;  // startDate → created_at
+    end_at: Date;      // endDate → end_at
     startTime: Date | null;
     endTime: Date | null;
     color: string;
