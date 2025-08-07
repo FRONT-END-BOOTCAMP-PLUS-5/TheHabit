@@ -5,8 +5,8 @@ import { Button as AntdButton } from "antd";
 
 interface IButton {
   children: React.ReactNode;
-  type: "default" | "primary" | "link" | "text" | "dashed";
-  color:
+  type?: "default" | "primary" | "link" | "text" | "dashed";
+  color?:
     | "default"
     | "primary"
     | "danger"
@@ -23,12 +23,30 @@ interface IButton {
     | "geekblue"
     | "lime"
     | "gold";
-  onClick: () => void;
+  onClick?: () => void;
+  className?: string;
+  htmlType?: "button" | "submit" | "reset";
+  style?: React.CSSProperties;
 }
 
-export default function Button({ children, type, color, onClick }: IButton) {
+export default function Button({
+  children,
+  type,
+  color,
+  onClick,
+  className,
+  htmlType,
+  style,
+}: IButton) {
   return (
-    <AntdButton type={type} color={color} onClick={onClick}>
+    <AntdButton
+      type={type}
+      color={color}
+      onClick={onClick}
+      className={className}
+      htmlType={htmlType}
+      style={style}
+    >
       {children}
     </AntdButton>
   );
