@@ -63,6 +63,7 @@ export const authOptions = {
     signUp: "/signup", // 회원가입 페이지 경로
     error: "/auth", // 에러 페이지 경로
   },
+
   session: {
     strategy: "jwt" as const,
     maxAge: 60 * 60 * 24 * 30, // 30일 지속 주기

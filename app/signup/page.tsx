@@ -1,13 +1,12 @@
-import { Suspense } from "react";
-import SignUpFormClient from "./components/SignUpFormClient";
+import { SignUpForm } from "@/app/signup/components/SignupForm";
+import { SignUpTitle } from "@/app/signup/components/SignUpTitle";
 
 export default function SignUpPage() {
   return (
-    <main className="flex flex-col items-center justify-center h-screen bg-gray-50">
-      <section className="w-full max-w-md justify-center">
-        <Suspense fallback={<div>로딩 중...</div>}>
-          <SignUpFormClient />
-        </Suspense>
+    <main className="flex flex-col w-full h-full bg-gray-50">
+      <section className="w-full h-full justify-center relative">
+        <SignUpTitle />
+        <SignUpForm />
       </section>
     </main>
   );

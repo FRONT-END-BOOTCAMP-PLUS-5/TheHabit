@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
 import { Input } from "antd";
-import { EyeInvisibleOutlined, EyeTwoTone } from '@ant-design/icons';
+import { EyeInvisibleOutlined, EyeTwoTone } from "@ant-design/icons";
 
 interface CustomInputProps {
   placeholder?: string;
@@ -10,30 +10,29 @@ interface CustomInputProps {
   maxLength?: number;
   className?: string;
   style?: React.CSSProperties;
-  type?: 'text' | 'password' | 'email' | 'number';
+  type?: "text" | "password" | "email" | "number";
+  labelStyle?: string;
 }
 
-const CustomInput: React.FC<CustomInputProps> = ({ 
-  placeholder, 
-  label, 
+const CustomInput: React.FC<CustomInputProps> = ({
+  placeholder,
+  label,
   labelHtmlFor,
   maxLength,
   className,
   style,
-  type = 'text',
-  ...rest 
+  labelStyle,
+  type = "text",
+  ...rest
 }) => {
   return (
-    <div>
+    <div className="flex flex-col gap-2">
       {label && (
-        <label
-          className="block text-gray-700 text-sm font-bold mb-2"
-          htmlFor={labelHtmlFor}
-        >
+        <label className={labelStyle} htmlFor={labelHtmlFor}>
           {label}
         </label>
       )}
-      {type === 'password' ? (
+      {type === "password" ? (
         <Input.Password
           placeholder={placeholder || " "}
           iconRender={(visible) =>
@@ -45,9 +44,9 @@ const CustomInput: React.FC<CustomInputProps> = ({
           {...rest}
         />
       ) : (
-        <Input 
+        <Input
           type={type}
-          placeholder={placeholder || " "} 
+          placeholder={placeholder || " "}
           maxLength={maxLength}
           id={labelHtmlFor}
           className={className}
@@ -61,9 +60,7 @@ const CustomInput: React.FC<CustomInputProps> = ({
 
 export default CustomInput;
 
-
-// app에서 불러오기 
+// app에서 불러오기
 // 상단에 import Input from "./_components/Input/Input";
 // 일반 텍스트: <Input label="닉네임" labelHtmlFor="nickName" placeholder="ex) 홍길동" {...register("nickName")} />
-// 비밀번호: <Input type="password" label="비밀번호" labelHtmlFor="password" placeholder="비밀번호를 입력하세요" {...register("password")} />  
-
+// 비밀번호: <Input type="password" label="비밀번호" labelHtmlFor="password" placeholder="비밀번호를 입력하세요" {...register("password")} />
