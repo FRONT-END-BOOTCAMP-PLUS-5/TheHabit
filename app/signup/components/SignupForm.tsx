@@ -1,10 +1,10 @@
 "use client";
 
-import ProfileSection from "@/app/signup/components/ProfileSection";
+import { ProfileSection } from "@/app/signup/components/ProfileSection";
 import { SignupItem } from "@/public/consts/signupItem";
 import Input from "@/app/_components/Input/Input";
 import { Controller, FormProvider, useForm } from "react-hook-form";
-import Button from "@/app/_components/Button/Button";
+import { Button } from "@/app/_components/Button/Button";
 import "@ant-design/v5-patch-for-react-19";
 import { CheckBox } from "@/app/signup/components/CheckBox";
 
@@ -42,7 +42,7 @@ export const SignUpForm = () => {
   return (
     <FormProvider {...methods}>
       <form
-        className="flex flex-col  bg-gray-50 gap-10 absolute top-1/6 left-1/2 -translate-x-1/2 w-11/12"
+        className="flex flex-col gap-10 absolute top-1/6 left-1/2 -translate-x-1/2 w-11/12"
         onSubmit={handleSubmit(onSubmit)}
       >
         <ProfileSection />

@@ -29,7 +29,7 @@ interface IButton {
   style?: React.CSSProperties;
 }
 
-export default function Button({
+export const Button = ({
   children,
   type,
   color,
@@ -37,7 +37,7 @@ export default function Button({
   className,
   htmlType,
   style,
-}: IButton) {
+}: IButton) => {
   return (
     <AntdButton
       type={type}
@@ -50,4 +50,4 @@ export default function Button({
       {children}
     </AntdButton>
   );
-}
+};

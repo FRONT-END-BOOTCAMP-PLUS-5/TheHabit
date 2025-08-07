@@ -1,5 +1,4 @@
-
-"use client"
+"use client";
 
 import { CheckBoxItem } from "@/public/consts/checkBoxItem";
 import { Checkbox } from "antd";

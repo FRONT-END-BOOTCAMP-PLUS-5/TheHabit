@@ -34,7 +34,7 @@ const CustomInput: React.FC<CustomInputProps> = ({
       )}
       {type === "password" ? (
         <Input.Password
-          placeholder={placeholder  " "}
+          placeholder={placeholder}
           iconRender={(visible) =>
             visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />
           }
@@ -46,7 +46,7 @@ const CustomInput: React.FC<CustomInputProps> = ({
       ) : (
         <Input
           type={type}
-          placeholder={placeholder  " "}
+          placeholder={placeholder}
           maxLength={maxLength}
           id={labelHtmlFor}
           className={className}
@@ -59,8 +59,3 @@ const CustomInput: React.FC<CustomInputProps> = ({
 };
 
 export default CustomInput;
-
-// app에서 불러오기
-// 상단에 import Input from "./_components/Input/Input";
-// 일반 텍스트: <Input label="닉네임" labelHtmlFor="nickName" placeholder="ex) 홍길동" {...register("nickName")} />
-// 비밀번호: <Input type="password" label="비밀번호" labelHtmlFor="password" placeholder="비밀번호를 입력하세요" {...register("password")} />

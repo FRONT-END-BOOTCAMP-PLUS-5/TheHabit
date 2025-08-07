@@ -3,11 +3,11 @@
 import Image from "next/image";
 import Input from "@/app/_components/Input/Input";
 import { Controller, useFormContext } from "react-hook-form";
-import ProfileImage from "@/app/_components/ProfileImage/ProfileImage";
+import { ProfileImage } from "@/app/_components/ProfileImage/ProfileImage";
 import { useUploadProfile } from "@/app/signup/hooks/useUploadProfile";
 import { useEffect } from "react";
 
-export default function ProfileSection() {
+export const ProfileSection = () => {
   const {
     control,
     formState: { errors },
@@ -82,4 +82,4 @@ export default function ProfileSection() {
       />
     </section>
   );
-}
+};
