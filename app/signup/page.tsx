@@ -8,6 +8,7 @@ export default function SignUpPage() {
         <Suspense fallback={<div>로딩 중...</div>}>
           <SignUpFormClient />
         </Suspense>
+
       </section>
     </main>
   );

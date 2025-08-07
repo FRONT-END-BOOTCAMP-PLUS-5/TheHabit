@@ -1,4 +1,4 @@
-import { RoutineCompletionsRepository } from "../../domains/repositories/IRoutineCompletionsRepository";
+import { IRoutineCompletionsRepository } from "../../domains/repositories/IRoutineCompletionsRepository";
 import {
   CreateRoutineCompletionRequestDto,
   CreateRoutineCompletionResponseDto,
@@ -6,7 +6,7 @@ import {
 
 export class CreateRoutineCompletionUseCase {
   constructor(
-    private readonly routineCompletionsRepository: RoutineCompletionsRepository
+    private readonly routineCompletionsRepository: IRoutineCompletionsRepository
   ) {}
 
   async execute(
