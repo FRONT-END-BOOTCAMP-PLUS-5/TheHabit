@@ -3,17 +3,7 @@
 import { axiosInstance } from "@/public/utils/axiosInstance";
 
 const FeedbackPage = () => {
-  const handleClick = async () => {
-    try {
-      const instance = await axiosInstance.post("/api/feedback", {
-        gptResponseContent: "승민님 바보야",
-        challengeId: 24,
-      });
-      console.log(instance.data);
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  const handleClick = async () => {};
 
   return (
     <div className="w-full h-full">
