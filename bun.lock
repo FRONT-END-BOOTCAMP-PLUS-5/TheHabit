@@ -9563,6 +9563,16 @@
       },
       "sha512-oJFu94HQb+KVduSUQL7wnpmqnfmLsOA/nAh6b6EH0wCEoK0/mPeXU6c3wKDV83MkOuHPRHtSXKKU99IBazS/2w=="
     ],
+    "@types/minimatch/minimatch": [
+      "minimatch@9.0.5",
+      "",
+      {
+        "dependencies": {
+          "brace-expansion": "^2.0.1"
+        }
+      },
+      "sha512-G6T0ZX48xgozx7587koeX9Ys2NYy6Gmv//P89sEte9V9whIapMNF4idKxnW2QtCcLiTWlb/wfCabAtAFWhhBow=="
+    ],
     "@types/next-pwa/next": [
       "next@13.5.11",
       "",
@@ -10045,6 +10055,16 @@
         }
       },
       "sha512-VyyPYFlOMNylG45GoAe0xDoLwWuowvf92F9kySqzYh8vmYm7D2u4iUJKa1tOUpS70Ku13ASrOkS4ScXFsTaCNQ=="
+    ],
+    "@types/minimatch/minimatch/brace-expansion": [
+      "brace-expansion@2.0.2",
+      "",
+      {
+        "dependencies": {
+          "balanced-match": "^1.0.0"
+        }
+      },
+      "sha512-Jt0vHyM+jmUBqojB7E1NIYadt0vI0Qxjxd2TErW94wDz+E2LAm5vKMXXwg6ZZBTHPuUlDgQHKXvjGBdfcF1ZDQ=="
     ],
     "@types/next-pwa/next/@next/env": [
       "@next/env@13.5.11",

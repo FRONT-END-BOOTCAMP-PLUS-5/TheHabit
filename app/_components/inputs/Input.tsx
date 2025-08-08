@@ -14,7 +14,7 @@ interface CustomInputProps {
   labelStyle?: string;
 }
 
-const CustomInput: React.FC<CustomInputProps> = ({
+export const CustomInput: React.FC<CustomInputProps> = ({
   placeholder,
   label,
   labelHtmlFor,
