@@ -32,17 +32,20 @@ export class PrChallengeRepository implements IChallengeRepository {
 
   async findAll(): Promise<Challenge[]> {
     const challenges = await prisma.challenge.findMany();
-    return challenges.map((challenge) => new Challenge(
-      challenge.id,
-      challenge.name,
-      challenge.createdAt,
-      challenge.endAt,
-      challenge.startTime,
-      challenge.endTime,
-      challenge.color,
-      challenge.userId,
-      challenge.categoryId
-    ));
+    return challenges.map(
+      (challenge) =>
+        new Challenge(
+          challenge.id,
+          challenge.name,
+          challenge.createdAt,
+          challenge.endAt,
+          challenge.startTime,
+          challenge.endTime,
+          challenge.color,
+          challenge.userId,
+          challenge.categoryId
+        )
+    );
   }
 
   async findById(id: number): Promise<Challenge | null> {
@@ -123,17 +126,11 @@ export class PrChallengeRepository implements IChallengeRepository {
     } = {};
 
     if (challenge.name !== undefined) updateData.name = challenge.name;
-<<<<<<< HEAD
-    if (challenge.created_at !== undefined)
-      updateData.createdAt = challenge.created_at;
-    if (challenge.end_at !== undefined) updateData.endAt = challenge.end_at;
+    if (challenge.createdAt !== undefined)
+      updateData.createdAt = challenge.createdAt;
+    if (challenge.endAt !== undefined) updateData.endAt = challenge.endAt;
     if (challenge.startTime !== undefined)
       updateData.startTime = challenge.startTime;
-=======
-    if (challenge.createdAt !== undefined) updateData.createdAt = challenge.createdAt;
-    if (challenge.endAt !== undefined) updateData.endAt = challenge.endAt;
-    if (challenge.startTime !== undefined) updateData.startTime = challenge.startTime;
->>>>>>> c283f8530d9d2b5d35b5172ec1fab18ff1adc3ec
     if (challenge.endTime !== undefined) updateData.endTime = challenge.endTime;
     if (challenge.color !== undefined) updateData.color = challenge.color;
     if (challenge.userId !== undefined) updateData.userId = challenge.userId;
