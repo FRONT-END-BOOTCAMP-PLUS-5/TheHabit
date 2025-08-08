@@ -1,13 +1,13 @@
 import Image from "next/image";
 import React from "react";
 
-export default function ProfileImage({
+export const ProfileImage = ({
   imageSrc,
   className,
 }: {
   imageSrc?: string | null;
   className?: string;
-}) {
+}) => {
   return (
     <>
       {imageSrc && (
@@ -21,4 +21,4 @@ export default function ProfileImage({
       )}
     </>
   );
-}
+};

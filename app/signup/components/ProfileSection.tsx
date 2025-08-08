@@ -7,7 +7,7 @@ import ProfileImage from "@/app/_components/profile-images/ProfileImage";
 import { useUploadProfile } from "@/app/signup/hooks/useUploadProfile";
 import { useEffect } from "react";
 
-export default function ProfileSection() {
+export const ProfileSection = () => {
   const {
     control,
     formState: { errors },
@@ -82,4 +82,4 @@ export default function ProfileSection() {
       />
     </section>
   );
-}
+};

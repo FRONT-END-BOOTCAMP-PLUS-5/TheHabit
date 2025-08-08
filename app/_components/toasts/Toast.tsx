@@ -1,20 +1,26 @@
 "use client";
-import React from 'react';
-import { toast, ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import React from "react";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 // Toast 타입 정의
-export type ToastType = 'success' | 'error' | 'info' | 'warning' | 'default';
+export type ToastType = "success" | "error" | "info" | "warning" | "default";
 
 // Toast 옵션 인터페이스
 export interface ToastOptions {
-  position?: 'top-right' | 'top-center' | 'top-left' | 'bottom-right' | 'bottom-center' | 'bottom-left';
+  position?:
+    | "top-right"
+    | "top-center"
+    | "top-left"
+    | "bottom-right"
+    | "bottom-center"
+    | "bottom-left";
   autoClose?: number | false;
   hideProgressBar?: boolean;
   closeOnClick?: boolean;
   pauseOnHover?: boolean;
   draggable?: boolean;
-  theme?: 'light' | 'dark' | 'colored';
+  theme?: "light" | "dark" | "colored";
 }
 
 // 기본 Toast 옵션
@@ -33,19 +39,19 @@ export const Toast = {
   success: (message: string, options?: ToastOptions) => {
     toast.success(message, { ...defaultOptions, ...options });
   },
-  
+
   error: (message: string, options?: ToastOptions) => {
     toast.error(message, { ...defaultOptions, ...options });
   },
-  
+
   info: (message: string, options?: ToastOptions) => {
     toast.info(message, { ...defaultOptions, ...options });
   },
-  
+
   warning: (message: string, options?: ToastOptions) => {
     toast.warning(message, { ...defaultOptions, ...options });
   },
-  
+
   default: (message: string, options?: ToastOptions) => {
     toast(message, { ...defaultOptions, ...options });
   },
@@ -77,24 +83,24 @@ interface CustomToastProps {
   children?: React.ReactNode;
 }
 
-export const CustomToast: React.FC<CustomToastProps> = ({ 
-  type, 
-  message, 
+export const CustomToast: React.FC<CustomToastProps> = ({
+  type,
+  message,
   options,
-  children 
+  children,
 }) => {
   const handleClick = () => {
     switch (type) {
-      case 'success':
+      case "success":
         Toast.success(message, options);
         break;
-      case 'error':
+      case "error":
         Toast.error(message, options);
         break;
-      case 'info':
+      case "info":
         Toast.info(message, options);
         break;
-      case 'warning':
+      case "warning":
         Toast.warning(message, options);
         break;
       default:
@@ -103,11 +109,7 @@ export const CustomToast: React.FC<CustomToastProps> = ({
     }
   };
 
-  return (
-    <div onClick={handleClick}>
-      {children}
-    </div>
-  );
+  return <div onClick={handleClick}>{children}</div>;
 };
 
 export default Toast;

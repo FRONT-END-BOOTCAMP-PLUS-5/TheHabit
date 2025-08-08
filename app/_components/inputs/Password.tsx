@@ -1,7 +1,7 @@
-"use client"
-import React from 'react';
-import { EyeInvisibleOutlined, EyeTwoTone } from '@ant-design/icons';
-import { Input } from 'antd';
+"use client";
+import React from "react";
+import { EyeInvisibleOutlined, EyeTwoTone } from "@ant-design/icons";
+import { Input } from "antd";
 
 interface CustomPasswordProps {
   placeholder?: string;
