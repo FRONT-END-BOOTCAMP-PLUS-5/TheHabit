@@ -1,5 +1,5 @@
-import { IChallengeRepository } from '../../domains/repositories/IChallengeRepository';
-import { Challenge } from '../../domains/entities/ChallengeEntity';
+import { IChallengeRepository } from '@/backend/challenges/domains/repositories/IChallengeRepository';
+import { Challenge } from '@/backend/challenges/domains/entities/ChallengeEntity';
 
 // 사용자별 챌린지 조회 유스케이스
 export class GetChallengesByUserUsecase {

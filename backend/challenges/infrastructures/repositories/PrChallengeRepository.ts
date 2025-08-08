@@ -1,5 +1,5 @@
-import { IChallengeRepository } from "../../domains/repositories/IChallengeRepository";
-import { Challenge } from "../../domains/entities/ChallengeEntity";
+import { IChallengeRepository } from "@/backend/challenges/domains/repositories/IChallengeRepository";
+import { Challenge } from "@/backend/challenges/domains/entities/ChallengeEntity";
 import prisma from "@/public/utils/prismaClient";
 
 export class PrChallengeRepository implements IChallengeRepository {
