@@ -1,7 +1,5 @@
 "use client";
 
-import { axiosInstance } from "@/public/utils/axiosInstance";
-
 const FeedbackPage = () => {
   const handleClick = async () => {};
 
