@@ -1,8 +1,4 @@
-<<<<<<< HEAD
-import { Challenge } from "../entities/ChallengeEntity";
-=======
-import { Challenge } from '@/backend/challenges/domains/entities/ChallengeEntity';
->>>>>>> c283f8530d9d2b5d35b5172ec1fab18ff1adc3ec
+import { Challenge } from "@/backend/challenges/domains/entities/ChallengeEntity";
 
 export interface IChallengeRepository {
   // Create

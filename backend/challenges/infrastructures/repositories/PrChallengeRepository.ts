@@ -7,13 +7,8 @@ export class PrChallengeRepository implements IChallengeRepository {
     const createdChallenge = await prisma.challenge.create({
       data: {
         name: challenge.name,
-<<<<<<< HEAD
-        createdAt: challenge.created_at, // camelCase로 변환
-        endAt: challenge.end_at, // camelCase로 변환
-=======
         createdAt: challenge.createdAt,
         endAt: challenge.endAt,
->>>>>>> c283f8530d9d2b5d35b5172ec1fab18ff1adc3ec
         startTime: challenge.startTime,
         endTime: challenge.endTime,
         color: challenge.color,
