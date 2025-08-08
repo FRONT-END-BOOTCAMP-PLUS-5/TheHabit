@@ -1,5 +1,5 @@
 import { IChallengeRepository } from '@/backend/challenges/domains/repositories/IChallengeRepository';
-import { Challenge } from '@/backend/challenges/domains/entities/ChallengeEntity';
+import { Challenge } from '@/backend/challenges/domains/entities/Challenge';
 import { AddChallengeRequestDto } from '@/backend/challenges/applications/dtos/AddChallengeDto';
 
 // 챌린지 등록 유스케이스 

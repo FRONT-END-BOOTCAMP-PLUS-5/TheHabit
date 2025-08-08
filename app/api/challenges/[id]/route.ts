@@ -9,7 +9,7 @@ import { DeleteChallengeUsecase } from "@/backend/challenges/applications/usecas
 import { ChallengeDtoMapper } from "@/backend/challenges/applications/dtos/ChallengeDto";
 import { ChallengeDto } from "@/backend/challenges/applications/dtos/ChallengeDto";
 import { AddChallengeRequestDto } from "@/backend/challenges/applications/dtos/AddChallengeDto";
-import { Challenge } from "@/backend/challenges/domains/entities/ChallengeEntity";
+import { Challenge } from "@/backend/challenges/domains/entities/Challenge";
 
 const createGetChallengeByIdUsecase = () => {
   const repository = new PrChallengeRepository()
