@@ -1,15 +1,14 @@
-import { IChallengeRepository } from "../../domains/repositories/IChallengeRepository";
-import { Challenge } from "../../domains/entities/ChallengeEntity";
+import { IChallengeRepository } from "@/backend/challenges/domains/repositories/IChallengeRepository";
+import { Challenge } from "@/backend/challenges/domains/entities/ChallengeEntity";
 import prisma from "@/public/utils/prismaClient";
-import { ChallengeDataMapper } from "../mappers/ChallengeDataMapper";
 
 export class PrChallengeRepository implements IChallengeRepository {
   async create(challenge: Challenge): Promise<Challenge> {
     const createdChallenge = await prisma.challenge.create({
       data: {
         name: challenge.name,
-        createdAt: challenge.created_at, // camelCase로 변환
-        endAt: challenge.end_at, // camelCase로 변환
+        createdAt: challenge.createdAt,
+        endAt: challenge.endAt,
         startTime: challenge.startTime,
         endTime: challenge.endTime,
         color: challenge.color,
@@ -18,12 +17,32 @@ export class PrChallengeRepository implements IChallengeRepository {
       },
     });
 
-    return ChallengeDataMapper.fromPrismaResult(createdChallenge);
+    return new Challenge(
+      createdChallenge.id,
+      createdChallenge.name,
+      createdChallenge.createdAt,
+      createdChallenge.endAt,
+      createdChallenge.startTime,
+      createdChallenge.endTime,
+      createdChallenge.color,
+      createdChallenge.userId,
+      createdChallenge.categoryId
+    );
   }
 
   async findAll(): Promise<Challenge[]> {
     const challenges = await prisma.challenge.findMany();
-    return ChallengeDataMapper.fromPrismaResultArray(challenges);
+    return challenges.map((challenge) => new Challenge(
+      challenge.id,
+      challenge.name,
+      challenge.createdAt,
+      challenge.endAt,
+      challenge.startTime,
+      challenge.endTime,
+      challenge.color,
+      challenge.userId,
+      challenge.categoryId
+    ));
   }
 
   async findById(id: number): Promise<Challenge | null> {
@@ -104,11 +123,9 @@ export class PrChallengeRepository implements IChallengeRepository {
     } = {};
 
     if (challenge.name !== undefined) updateData.name = challenge.name;
-    if (challenge.created_at !== undefined)
-      updateData.createdAt = challenge.created_at;
-    if (challenge.end_at !== undefined) updateData.endAt = challenge.end_at;
-    if (challenge.startTime !== undefined)
-      updateData.startTime = challenge.startTime;
+    if (challenge.createdAt !== undefined) updateData.createdAt = challenge.createdAt;
+    if (challenge.endAt !== undefined) updateData.endAt = challenge.endAt;
+    if (challenge.startTime !== undefined) updateData.startTime = challenge.startTime;
     if (challenge.endTime !== undefined) updateData.endTime = challenge.endTime;
     if (challenge.color !== undefined) updateData.color = challenge.color;
     if (challenge.userId !== undefined) updateData.userId = challenge.userId;

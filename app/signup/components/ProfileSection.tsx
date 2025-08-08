@@ -1,9 +1,9 @@
 "use client";
 
 import Image from "next/image";
-import Input from "@/app/_components/Input/Input";
+import Input from "@/app/_components/inputs/Input";
 import { Controller, useFormContext } from "react-hook-form";
-import { ProfileImage } from "@/app/_components/ProfileImage/ProfileImage";
+import ProfileImage from "@/app/_components/profile-images/ProfileImage";
 import { useUploadProfile } from "@/app/signup/hooks/useUploadProfile";
 import { useEffect } from "react";
 

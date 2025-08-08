@@ -2,8 +2,8 @@
 export interface ChallengeDto {
   readonly id: number;
   readonly name: string;
-  readonly created_at: string; // startDate → created_at
-  readonly end_at: string;     // endDate → end_at
+  readonly createdAt: string;
+  readonly endAt: string;
   readonly startTime: string | null;
   readonly endTime: string | null;
   readonly color: string;
@@ -16,8 +16,8 @@ export class ChallengeDtoMapper {
   static fromEntity(challenge: {
     id: number;
     name: string;
-    created_at: Date;  // startDate → created_at
-    end_at: Date;      // endDate → end_at
+    createdAt: Date;
+    endAt: Date;
     startTime: Date | null;
     endTime: Date | null;
     color: string;
@@ -27,8 +27,8 @@ export class ChallengeDtoMapper {
     return {
       id: challenge.id,
       name: challenge.name,
-      created_at: challenge.created_at.toISOString(),
-      end_at: challenge.end_at.toISOString(),
+      createdAt: challenge.createdAt.toISOString(),
+      endAt: challenge.endAt.toISOString(),
       startTime: challenge.startTime ? challenge.startTime.toISOString() : null,
       endTime: challenge.endTime ? challenge.endTime.toISOString() : null,
       color: challenge.color,
@@ -40,8 +40,8 @@ export class ChallengeDtoMapper {
   static fromEntities(challenges: {
     id: number;
     name: string;
-    created_at: Date;  // startDate → created_at
-    end_at: Date;      // endDate → end_at
+    createdAt: Date;
+    endAt: Date;
     startTime: Date | null;
     endTime: Date | null;
     color: string;
