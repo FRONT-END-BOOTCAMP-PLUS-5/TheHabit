@@ -1,5 +1,5 @@
 import { PrRoutinesRepository } from "@/backend/routines/infrastructures/repositories/PrRoutinesRepository";
-import { Routine } from "@/backend/routines/domains/entities/routine/routine";
+import { Routine } from "@/backend/routines/domains/entities/routine";
 import prisma from "@/public/utils/prismaClient";
 
 let createdRoutineId: number;
@@ -8,7 +8,7 @@ let testChallengeId: number;
 async function setupTestData() {
   try {
     console.log("=== 테스트 데이터 설정 ===");
-    
+
     // 먼저 테스트용 사용자 생성
     const testUser = await prisma.user.upsert({
       where: { email: "test-routine@example.com" },
@@ -17,8 +17,8 @@ async function setupTestData() {
         username: "testuser",
         password: "testpass",
         nickname: "testuser",
-        email: "test-routine@example.com"
-      }
+        email: "test-routine@example.com",
+      },
     });
 
     // 테스트용 카테고리 생성
@@ -27,28 +27,27 @@ async function setupTestData() {
       update: {},
       create: {
         id: 1,
-        categoryName: "테스트 카테고리"
-      }
+        categoryName: "테스트 카테고리",
+      },
     });
 
     // 테스트용 챌린지 생성
     const testChallenge = await prisma.challenge.create({
       data: {
         name: "테스트 챌린지",
-        startDate: new Date('2024-12-01'),
-        endDate: new Date('2024-12-31'),
-        startTime: new Date('2024-12-01T09:00:00'),
-        endTime: new Date('2024-12-01T10:00:00'),
+        startDate: new Date("2024-12-01"),
+        endDate: new Date("2024-12-31"),
+        startTime: new Date("2024-12-01T09:00:00"),
+        endTime: new Date("2024-12-01T10:00:00"),
         color: "#FF5733",
         userId: testUser.id,
-        categoryId: testCategory.id
-      }
+        categoryId: testCategory.id,
+      },
     });
 
     testChallengeId = testChallenge.id;
     console.log("✅ 테스트 데이터 설정 완료");
     console.log("테스트 챌린지 ID:", testChallengeId);
-    
   } catch (error) {
     console.error("테스트 데이터 설정 중 오류:", error);
   }
@@ -57,20 +56,20 @@ async function setupTestData() {
 async function cleanupTestData() {
   try {
     console.log("=== 테스트 데이터 정리 ===");
-    
+
     // 테스트 루틴 삭제 (외래키로 인해 먼저 삭제)
     await prisma.routine.deleteMany({
-      where: { challengeId: testChallengeId }
+      where: { challengeId: testChallengeId },
     });
 
     // 테스트 챌린지 삭제
     await prisma.challenge.deleteMany({
-      where: { id: testChallengeId }
+      where: { id: testChallengeId },
     });
 
     // 테스트 사용자 삭제
     await prisma.user.deleteMany({
-      where: { email: "test-routine@example.com" }
+      where: { email: "test-routine@example.com" },
     });
 
     console.log("✅ 테스트 데이터 정리 완료");

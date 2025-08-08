@@ -10,6 +10,7 @@ import {
   useDeleteChallenge,
 } from "@/libs/hooks/challenges-hooks";
 import { AddChallengeRequestDto } from "@/backend/challenges/applications/dtos/AddChallengeDto";
+import { RoutineAccordionContent } from "@/app/_components/routine-accordion/RoutineAccordionContent";
 
 interface ChallengeDto {
   id: number;
@@ -53,6 +54,9 @@ export default function ChallengesPage() {
     color: "#3B82F6",
     categoryId: 1,
   });
+
+  // 아코디언 상태 (팀원 B가 실제 아코디언을 구현하면 이 부분 사용)
+  const [expandedChallengeId, setExpandedChallengeId] = useState<number | null>(null);
 
   // 챌린지 생성 폼 상태
   const [formData, setFormData] = useState<CreateChallengeForm>({
@@ -246,6 +250,11 @@ export default function ChallengesPage() {
     });
   };
 
+  // 아코디언 토글 (팀원 B가 실제 아코디언을 구현하면 사용)
+  const toggleAccordion = (challengeId: number) => {
+    setExpandedChallengeId(expandedChallengeId === challengeId ? null : challengeId);
+  };
+
   const renderChallengeCard = (challenge: ChallengeDto) => (
     <div
       key={challenge.id}
@@ -253,8 +262,7 @@ export default function ChallengesPage() {
       style={{
         borderLeftColor: challenge.color,
         borderLeftWidth: "4px",
-      }}
-    >
+      }}>
       <h3 className="font-semibold text-lg mb-2">{challenge.name}</h3>
 
       <div className="space-y-2 text-sm text-gray-600">
@@ -272,8 +280,7 @@ export default function ChallengesPage() {
           <span className="font-medium">색상:</span>
           <span
             className="inline-block w-4 h-4 rounded ml-2"
-            style={{ backgroundColor: challenge.color }}
-          ></span>
+            style={{ backgroundColor: challenge.color }}></span>
         </div>
 
         <div>
@@ -292,9 +299,16 @@ export default function ChallengesPage() {
       {/* 챌린지 액션 버튼 */}
       <div className="mt-4 flex gap-2">
         <button
-          onClick={() => fetchChallengeById(challenge.id)}
-          className="bg-blue-500 hover:bg-blue-700 text-white text-xs px-2 py-1 rounded"
-        >
+          onClick={() => toggleAccordion(challenge.id)}
+          className="bg-green-500 hover:bg-green-700 text-white text-xs px-2 py-1 rounded">
+          {expandedChallengeId === challenge.id ? "루틴 숨기기" : "루틴 보기"}
+        </button>
+        <button
+          onClick={() => {
+            setSelectedChallengeId(challenge.id);
+            fetchChallengeById(challenge.id);
+          }}
+          className="bg-blue-500 hover:bg-blue-700 text-white text-xs px-2 py-1 rounded">
           상세보기
         </button>
         <button
@@ -302,18 +316,24 @@ export default function ChallengesPage() {
             fetchChallengeById(challenge.id);
             setIsEditMode(true);
           }}
-          className="bg-yellow-500 hover:bg-yellow-700 text-white text-xs px-2 py-1 rounded"
-        >
+          className="bg-yellow-500 hover:bg-yellow-700 text-white text-xs px-2 py-1 rounded">
           수정
         </button>
         <button
           onClick={() => deleteChallenge(challenge.id)}
           disabled={deleteChallengeMutation.isPending}
-          className="bg-red-500 hover:bg-red-700 text-white text-xs px-2 py-1 rounded disabled:opacity-50"
-        >
+          className="bg-red-500 hover:bg-red-700 text-white text-xs px-2 py-1 rounded disabled:opacity-50">
           {deleteChallengeMutation.isPending ? "삭제중..." : "삭제"}
         </button>
       </div>
+
+      {/* 아코디언 컨텐츠 - 펼쳐진 상태일 때만 표시 */}
+      {expandedChallengeId === challenge.id && (
+        <RoutineAccordionContent
+          challengeId={challenge.id}
+          challengeName={challenge.name}
+        />
+      )}
     </div>
   );
 
@@ -417,8 +437,7 @@ export default function ChallengesPage() {
                 name="categoryId"
                 value={formData.categoryId}
                 onChange={handleInputChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              >
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
                 <option value={1}>운동</option>
                 <option value={2}>학습</option>
                 <option value={3}>독서</option>
@@ -446,8 +465,7 @@ export default function ChallengesPage() {
             <button
               type="submit"
               disabled={createChallengeMutation.isPending}
-              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded disabled:opacity-50"
-            >
+              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded disabled:opacity-50">
               {createChallengeMutation.isPending ? "생성 중..." : "챌린지 생성"}
             </button>
 
@@ -455,8 +473,7 @@ export default function ChallengesPage() {
               type="button"
               onClick={() => refetchChallenges()}
               disabled={loading}
-              className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded disabled:opacity-50"
-            >
+              className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded disabled:opacity-50">
               {loading ? "로딩 중..." : "목록 새로고침"}
             </button>
           </div>
@@ -482,8 +499,7 @@ export default function ChallengesPage() {
             <button
               onClick={() => fetchChallengeById(selectedChallengeId)}
               disabled={detailLoading}
-              className="bg-blue-500 hover:bg-blue-700 text-white px-4 py-2 rounded disabled:opacity-50"
-            >
+              className="bg-blue-500 hover:bg-blue-700 text-white px-4 py-2 rounded disabled:opacity-50">
               {detailLoading ? "조회중..." : "조회"}
             </button>
           </div>
@@ -498,8 +514,7 @@ export default function ChallengesPage() {
             <div className="mt-4 flex gap-2">
               <button
                 onClick={() => setIsEditMode(true)}
-                className="bg-yellow-500 hover:bg-yellow-700 text-white px-4 py-2 rounded"
-              >
+                className="bg-yellow-500 hover:bg-yellow-700 text-white px-4 py-2 rounded">
                 수정 모드
               </button>
             </div>
@@ -602,8 +617,7 @@ export default function ChallengesPage() {
                     name="categoryId"
                     value={editFormData.categoryId}
                     onChange={handleEditInputChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  >
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
                     <option value={1}>운동</option>
                     <option value={2}>학습</option>
                     <option value={3}>독서</option>
@@ -632,8 +646,7 @@ export default function ChallengesPage() {
                   type="button"
                   onClick={() => updateChallenge(challengeDetail.id)}
                   disabled={updateChallengeMutation.isPending}
-                  className="bg-green-500 hover:bg-green-700 text-white px-4 py-2 rounded disabled:opacity-50"
-                >
+                  className="bg-green-500 hover:bg-green-700 text-white px-4 py-2 rounded disabled:opacity-50">
                   {updateChallengeMutation.isPending
                     ? "수정중..."
                     : "수정 완료"}
@@ -641,8 +654,7 @@ export default function ChallengesPage() {
                 <button
                   type="button"
                   onClick={() => setIsEditMode(false)}
-                  className="bg-gray-500 hover:bg-gray-700 text-white px-4 py-2 rounded"
-                >
+                  className="bg-gray-500 hover:bg-gray-700 text-white px-4 py-2 rounded">
                   취소
                 </button>
               </div>
@@ -685,8 +697,7 @@ export default function ChallengesPage() {
           <select
             value={selectedCategory}
             onChange={handleCategoryChange}
-            className="w-full md:w-48 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-          >
+            className="w-full md:w-48 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
             <option value={1}>운동</option>
             <option value={2}>학습</option>
             <option value={3}>독서</option>
@@ -782,6 +793,7 @@ export default function ChallengesPage() {
           </details>
         )}
       </div>
+
     </div>
   );
 }
