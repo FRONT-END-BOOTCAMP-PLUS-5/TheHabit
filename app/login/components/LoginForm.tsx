@@ -1,13 +1,13 @@
 "use client";
 
 import React from "react";
-import Input from "@/app/_components/Input/Input";
-import Button from "@/app/_components/Button/Button";
+import Input from "@/app/_components/inputs/Input";
+import { Button } from "@/app/_components/buttons/Button";
 import { LoginItem } from "@/public/consts/loginItem";
 import { useForm, Controller } from "react-hook-form";
 import "@ant-design/v5-patch-for-react-19";
 import Link from "next/link";
-import { SocialLogin } from "./SocialLogin";
+import { SocialLogin } from "@/app/login/components/SocialLogin";
 
 interface ILoginForm {
   email: string;

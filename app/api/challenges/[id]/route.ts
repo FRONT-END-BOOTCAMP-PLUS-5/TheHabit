@@ -6,7 +6,7 @@ import { PrChallengeRepository } from "@/backend/challenges/infrastructures/repo
 import { GetChallengeByIdUsecase } from "@/backend/challenges/applications/usecases/GetChallengeByIdUsecase";
 import { UpdateChallengeUsecase } from "@/backend/challenges/applications/usecases/UpdateChallengeUsecase";
 import { DeleteChallengeUsecase } from "@/backend/challenges/applications/usecases/DeleteChallengeUsecase";
-import { ChallengeDataMapper } from "@/backend/challenges/infrastructures/mappers/ChallengeDataMapper";
+import { ChallengeDtoMapper } from "@/backend/challenges/applications/dtos/ChallengeDto";
 import { ChallengeDto } from "@/backend/challenges/applications/dtos/ChallengeDto";
 import { AddChallengeRequestDto } from "@/backend/challenges/applications/dtos/AddChallengeDto";
 import { Challenge } from "@/backend/challenges/domains/entities/ChallengeEntity";
@@ -66,7 +66,7 @@ export async function GET(
 
     return NextResponse.json({
       success: true,
-      data: ChallengeDataMapper.toDto(challenge),
+      data: ChallengeDtoMapper.fromEntity(challenge),
       message: "챌린지를 성공적으로 조회했습니다."
     });
 
@@ -117,8 +117,8 @@ export async function PUT(
     const updatedChallenge = new Challenge(
       challengeId,
       requestData.name || existingChallenge.name,
-      requestData.created_at ? new Date(requestData.created_at) : existingChallenge.created_at,
-      requestData.end_at ? new Date(requestData.end_at) : existingChallenge.end_at,
+      requestData.createdAt ? new Date(requestData.createdAt) : existingChallenge.createdAt,
+      requestData.endAt ? new Date(requestData.endAt) : existingChallenge.endAt,
       requestData.startTime ? new Date(requestData.startTime) : existingChallenge.startTime,
       requestData.endTime ? new Date(requestData.endTime) : existingChallenge.endTime,
       requestData.color || existingChallenge.color,
@@ -131,7 +131,7 @@ export async function PUT(
 
     return NextResponse.json({
       success: true,
-      data: ChallengeDataMapper.toDto(challenge),
+      data: ChallengeDtoMapper.fromEntity(challenge),
       message: "챌린지가 성공적으로 수정되었습니다."
     });
 

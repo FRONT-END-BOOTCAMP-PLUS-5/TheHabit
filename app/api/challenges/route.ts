@@ -3,7 +3,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { PrChallengeRepository } from "@/backend/challenges/infrastructures/repositories/PrChallengeRepository";
 import { GetAllChallengesUsecase } from "@/backend/challenges/applications/usecases/GetAllChallengesUsecase";
-import { ChallengeDataMapper } from "@/backend/challenges/infrastructures/mappers/ChallengeDataMapper";
+import { ChallengeDtoMapper } from "@/backend/challenges/applications/dtos/ChallengeDto";
 import { AddChallengeUseCase } from "@/backend/challenges/applications/usecases/AddChallengeUsecase";
 import { AddChallengeRequestDto } from "@/backend/challenges/applications/dtos/AddChallengeDto";
 import { ChallengeDto } from "@/backend/challenges/applications/dtos/ChallengeDto";
@@ -24,7 +24,7 @@ export async function GET(): Promise<NextResponse<ChallengeDto[] | null>> {
   const usecase = createGetAllChallengesUsecase();
   const challenges = await usecase.execute();
 
-  return NextResponse.json(ChallengeDataMapper.toDtoArray(challenges));
+  return NextResponse.json(ChallengeDtoMapper.fromEntities(challenges));
 }
 
 // 챌린지 생성 API Post
@@ -47,7 +47,7 @@ export async function POST(requestBody: NextRequest): Promise<NextResponse> {
 
     return NextResponse.json({
       success: true,
-      data: ChallengeDataMapper.toDto(challenge),
+      data: ChallengeDtoMapper.fromEntity(challenge),
       message: "챌린지가 성공적으로 생성되었습니다."
     }, { status: 201 });
 
