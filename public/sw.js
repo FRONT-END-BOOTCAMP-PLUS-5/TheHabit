@@ -11,7 +11,7 @@ if (!self.define) {
         } else ((e = a), importScripts(a), s());
       }).then(() => {
         let e = s[a];
-        if (!e) throw new Error(`Module ${a} didn’t register its module`);
+        if (!e) throw new Error(`Module ${a} didn't register its module`);
         return e;
       })
   );

@@ -1,5 +1,5 @@
 import { PrRoutinesRepository } from '@/backend/routines/infrastructures/repositories/PrRoutinesRepository';
-import { Routine } from '@/backend/routines/domains/entities/routine/routine';
+import { Routine } from '@/backend/routines/domains/entities/routine';
 import prisma from '@/public/utils/prismaClient';
 
 let createdRoutineId: number;

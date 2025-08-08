@@ -1,6 +1,6 @@
 import prisma from '@/public/utils/prismaClient';
 import { IRoutinesRepository } from '../../domains/repositories/IRoutinesRepository';
-import { Routine } from '../../domains/entities/routine/routine';
+import { Routine } from '../../domains/entities/routine';
 
 export class PrRoutinesRepository implements IRoutinesRepository {
   async create(routine: Omit<Routine, 'id' | 'createdAt'>): Promise<Routine> {

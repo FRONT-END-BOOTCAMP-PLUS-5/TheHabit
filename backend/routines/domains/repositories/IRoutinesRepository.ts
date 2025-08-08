@@ -1,4 +1,4 @@
-import { Routine } from '../entities/routine/routine';
+import { Routine } from '../entities/routine';
 export interface IRoutinesRepository {
   // 루틴 생성
   create(routine: Omit<Routine, 'id' | 'createdAt'>): Promise<Routine>;

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { CreateRoutineUseCase } from '../../../backend/routines/applications/usecases/CreateRoutineUseCase';
+import { CreateRoutineUseCase } from '../../../backend/routines/applications/usecases/AddRoutineUseCase';
 import { GetRoutinesUseCase } from '../../../backend/routines/applications/usecases/GetRoutinesUseCase';
 import { PrRoutinesRepository } from '../../../backend/routines/infrastructures/repositories/PrRoutinesRepository';
 
