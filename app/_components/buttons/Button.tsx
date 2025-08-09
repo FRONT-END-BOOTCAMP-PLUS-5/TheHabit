@@ -28,6 +28,7 @@ interface IButton {
   className?: string;
   htmlType?: "button" | "submit" | "reset";
   style?: React.CSSProperties;
+  disabled?: boolean
 }
 
 export const Button = ({
@@ -38,6 +39,7 @@ export const Button = ({
   className,
   htmlType,
   style,
+  disabled = false
 }: IButton) => {
   return (
     <AntdButton
@@ -47,6 +49,7 @@ export const Button = ({
       className={className}
       htmlType={htmlType}
       style={style}
+      disabled={disabled}
     >
       {children}
     </AntdButton>

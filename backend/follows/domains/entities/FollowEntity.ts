@@ -10,6 +10,7 @@ export class Follower {
               username: string
               nickname: string
               profileImg: string | null
+              isFollowing?: boolean
           }
       }[],
       public readonly password?: string,
@@ -28,10 +29,11 @@ export class Following {
     public readonly profileImg: string | null,
     public readonly following: {
         toUser: {
-            id: string;
-            nickname: string;
-            username: string;
-            profileImg: string | null;
+            id: string
+            nickname: string
+            username: string
+            profileImg: string | null
+            isFollowing?: boolean
         };
     }[],
     public readonly password?: string,
@@ -42,6 +44,11 @@ export class Following {
 }
 
 
-
+export class FollowerFollowing {
+    constructor(
+        public readonly fromUserId: string,
+        public readonly toUserId: string
+    ) { }
+}
 
 

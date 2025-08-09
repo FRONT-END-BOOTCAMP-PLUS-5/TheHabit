@@ -24,7 +24,7 @@ const UserProfilePage= async () => {
                         {/*nickname으로 이동할꺼 같음*/}
                         <Link href={{
                             pathname: "/user/follow",
-                            query: {nickname: "원영씨...", t: "follower"}
+                            query: {nickname: NICK_NAME, t: "follower"}
                         }}>
                             <div className="cursor-pointer">
                                 <span className="font-bold">99</span>
@@ -34,7 +34,7 @@ const UserProfilePage= async () => {
                         </Link>
                         <Link href={{
                             pathname: "/user/follow",
-                            query: {nickname: "원영씨...", t: "following"}
+                            query: {nickname: NICK_NAME, t: "following"}
                         }}>
                             <div className="cursor-pointer">
                                 <span className="font-bold">99</span>

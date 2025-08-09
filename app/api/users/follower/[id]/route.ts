@@ -8,10 +8,6 @@ const createGetFollowerByToUserIdUsecase = () => {
     return new GetFollowerByToUserIdUsecase(repository);
 }
 
-interface Follower{
-    toUserId: string,
-    keyword?: string
-}
 
 export async function GET(request: NextRequest): Promise<NextResponse | undefined> {
     try{

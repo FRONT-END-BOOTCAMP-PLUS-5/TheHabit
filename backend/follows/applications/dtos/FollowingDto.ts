@@ -10,6 +10,7 @@ export class FollowingDto {
                 nickname: string;
                 username: string;
                 profileImg: string | null;
+                isFollowing?: boolean;
             };
         }[],
         public readonly password?: string,

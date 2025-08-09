@@ -6,10 +6,11 @@ export class FollowerDto {
         public readonly profileImg: string | null,
         public readonly followers: {
             fromUser: {
-                id: string
-                username: string
-                nickname: string
-                profileImg: string | null
+                id: string;
+                username: string;
+                nickname: string;
+                profileImg: string | null;
+                isFollowing?: boolean;
             }
         }[],
         public readonly password?: string,

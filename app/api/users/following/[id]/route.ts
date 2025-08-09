@@ -1,63 +1,98 @@
-// GET /api/challenges - 전체 챌린지 목록 조회
-// POST /api/challenges - 챌린지 등록
 import { NextRequest, NextResponse } from "next/server";
-import { PrChallengeRepository } from "@/backend/challenges/infrastructures/repositories/PrChallengeRepository";
-import { GetAllChallengesUsecase } from "@/backend/challenges/applications/usecases/GetAllChallengesUsecase";
-import { ChallengeDtoMapper } from "@/backend/challenges/applications/dtos/ChallengeDto";
-import { AddChallengeUseCase } from "@/backend/challenges/applications/usecases/AddChallengeUsecase";
-import { AddChallengeRequestDto } from "@/backend/challenges/applications/dtos/AddChallengeDto";
-import { ChallengeDto } from "@/backend/challenges/applications/dtos/ChallengeDto";
+import { PrFollowRepository } from "@/backend/follows/infrastructures/repositories/PrFollowRepository";
+import { GetFollowingByToUserIdUsecase } from "@/backend/follows/applications/usecases/GetFollowingByFromUserIdUsecase";
+import {AddFollowingUsecase} from "@/backend/follows/applications/usecases/AddFollowingUsecase";
+import {DeleteUnfollowUsecase} from "@/backend/follows/applications/usecases/DeleteUnfollowUsecase";
 
-const repository = new PrChallengeRepository()
+const repository = new PrFollowRepository();
 
-const createGetAllChallengesUsecase = () => {
-
-    return new GetAllChallengesUsecase(repository);
+const createGetFollowingByFromUserIdUsecase = () => {
+    return new GetFollowingByToUserIdUsecase(repository);
 }
 
-const createAddChallengeUsecase = () => {
-    return new AddChallengeUseCase(repository);
+const createAddFollowingUsecase = () => {
+    return new AddFollowingUsecase(repository);
 }
 
-// 실제로 서비스에서 사용되는 API는 아닙니다. -승민
-export async function GET(): Promise<NextResponse<ChallengeDto[] | null>> {
-    const usecase = createGetAllChallengesUsecase();
-    const challenges = await usecase.execute();
-
-    return NextResponse.json(ChallengeDtoMapper.fromEntities(challenges));
+const createDeleteUnfollowUsecase = () => {
+    return new DeleteUnfollowUsecase(repository);
 }
 
-// 챌린지 생성 API Post
-export async function POST(requestBody: NextRequest): Promise<NextResponse> {
-    const usecase = createAddChallengeUsecase();
-    console.log(requestBody);
-    try {
-        // 요청 바디를 콘솔에 출력
-        console.log("=== POST /api/challenges 요청 시작 ===");
-        console.log("요청 URL:", requestBody.url);
-        console.log("요청 메서드:", requestBody.method);
-        console.log("요청 헤더:", Object.fromEntries(requestBody.headers.entries()));
 
-        const requestChallenge: AddChallengeRequestDto = await requestBody.json();
-        console.log("요청 바디 (JSON):", JSON.stringify(requestChallenge, null, 2));
-        console.log("=== POST /api/challenges 요청 끝 ===");
+export async function GET(request: NextRequest): Promise<NextResponse | undefined> {
+    try{
+        const fromUserId = request.nextUrl.searchParams.get('fromUserId');
+        const keyword = request.nextUrl.searchParams.get('keyword');
 
-        const challenge = await usecase.execute(requestChallenge);
-        console.log("생성된 챌린지:", challenge);
+        if(!fromUserId) throw new Error("사용자 아이디가 존재하지 않습니다!");
+
+        const usecase = createGetFollowingByFromUserIdUsecase();
+        const followers = await usecase.execute(fromUserId, keyword || '');
 
         return NextResponse.json({
             success: true,
-            data: ChallengeDtoMapper.fromEntity(challenge),
-            message: "챌린지가 성공적으로 생성되었습니다."
+            data: followers,
+            message: "success"
         }, { status: 201 });
-
-    } catch (error) {
-        console.error("챌린지 생성 중 오류 발생:", error);
-        return NextResponse.json({
+    }catch(err){
+        if(err instanceof Error) return NextResponse.json({
             success: false,
             error: {
-                code: "CREATION_FAILED",
-                message: "챌린지 생성에 실패했습니다."
+                code: err.message || "GET_FAILED",
+                message: "fail"
+            }
+        }, { status: 500 });
+    }
+}
+
+export async function POST(request: NextRequest): Promise<NextResponse | undefined> {
+    try{
+        const { fromUserId, toUserId } = await request.json();
+
+        if(!fromUserId) throw new Error("사용자 아이디가 존재하지 않습니다!");
+        if(!toUserId) throw new Error("팔로잉 할려는 유저의 아이디가 존재하지 않습니다!");
+
+        const usecase = createAddFollowingUsecase();
+        const addfollowing = await usecase.execute(fromUserId, toUserId);
+
+        return NextResponse.json({
+            success: true,
+            data: addfollowing,
+            message: "follow"
+        }, { status: 201 });
+    }catch(err){
+        if(err instanceof Error) return NextResponse.json({
+            success: false,
+            error: {
+                code: err.message || "팔로잉 실패",
+                message: "fail"
+            }
+        }, { status: 500 });
+    }
+}
+
+export async function DELETE(request: NextRequest): Promise<NextResponse | undefined> {
+    try{
+        const { fromUserId, toUserId } = await request.json();
+
+
+        if(!fromUserId) throw new Error("사용자 아이디가 존재하지 않습니다!");
+        if(!toUserId) throw new Error("언팔로우 할려는 유저의 아이디가 존재하지 않습니다!");
+
+        const usecase = createDeleteUnfollowUsecase();
+        const unfollow = await usecase.execute(fromUserId,toUserId);
+
+        return NextResponse.json({
+            success: true,
+            data: unfollow,
+            message: "unfollow"
+        }, { status: 201 });
+    }catch(err){
+        if(err instanceof Error) return NextResponse.json({
+            success: false,
+            error: {
+                code: err.message || "GET_FAILED",
+                message: "fail"
             }
         }, { status: 500 });
     }

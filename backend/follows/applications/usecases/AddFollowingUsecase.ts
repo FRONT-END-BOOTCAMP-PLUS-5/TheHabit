@@ -5,9 +5,9 @@ export class AddFollowingUsecase {
 
     async execute(fromUserId:string, toUserId: string): Promise<boolean | undefined> {
         try{
-            const following = await this.followRepo.create(fromUserId, toUserId);
-
-            return following;
+            const addFollowing = await this.followRepo.create(fromUserId, toUserId);
+            console.log(addFollowing, "addFollowaddFollowaddFollowaddFollowaddFollowaddFollowaddFollow")
+            return addFollowing;
         }catch(error){
             throw new Error('팔로잉 추가 실패');
         }

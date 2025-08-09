@@ -24,7 +24,10 @@ interface ApiResponse<T> {
  * */
 export const addFollowing = async (fromUserId: string, toUserId: string): Promise<ApiResponse<boolean>> => {
     try {
-        const response = await axiosInstance.post<ApiResponse<boolean>>(`/api/following/${fromUserId}`);
+        const response = await axiosInstance.post<ApiResponse<boolean>>(`/api/users/following/${fromUserId}`,{
+            fromUserId,
+            toUserId
+        });
         return response.data;
     } catch (error) {
         throw error;
@@ -36,7 +39,7 @@ export const addFollowing = async (fromUserId: string, toUserId: string): Promis
  * @param id: string
  * @param toUserId: string
  * @param keyword: string
- * @return Promise<FollowerDto[]>
+ * @return ApiResponse<FollowerDto>
  * */
 export const getFollowerByToUserId = async (toUserId: string, keyword: string): Promise<ApiResponse<FollowerDto>> => {
     try {
@@ -58,16 +61,17 @@ export const getFollowerByToUserId = async (toUserId: string, keyword: string): 
  * 해당 함수는 following 가져오기
  * @param fromUserId: string
  * @param keyword: string
- * @return Promise<FollowingDto[]>
+ * @return ApiResponse<FollowingDto>
  * */
-export const getFollowingByToUserId = async (fromUserId: string, keyword: string): Promise<FollowingDto> => {
+export const getFollowingByToUserId = async (fromUserId: string, keyword: string): Promise<ApiResponse<FollowingDto>> => {
     try {
-        const response = await axiosInstance.get<FollowingDto>(`/api/follower/${fromUserId}`, {
+        const response = await axiosInstance.get<ApiResponse<FollowingDto>>(`/api/users/following/${fromUserId}`, {
             params: {
                 fromUserId,
                 keyword
             }
         });
+
         return response.data;
     } catch (error) {
         throw error;
@@ -83,8 +87,8 @@ export const getFollowingByToUserId = async (fromUserId: string, keyword: string
  * */
 export const deleteUnfollow = async (fromUserId: string, toUserId: string): Promise<ApiResponse<void>> => {
     try {
-        const response = await axiosInstance.delete<ApiResponse<void>>(`/api/following/${fromUserId}`, {
-            params: {
+        const response = await axiosInstance.delete<ApiResponse<void>>(`/api/users/following/${fromUserId}`, {
+            data: {
                 fromUserId,
                 toUserId
             }
