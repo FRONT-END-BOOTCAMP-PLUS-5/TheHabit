@@ -1,6 +1,11 @@
-import { Logo } from "../../../_components/Logo/logo";
-import Button from "../../../_components/Button/Button";
+import { Logo } from "../../../_components/logos/logo";
+import { Button } from "../../../_components/buttons/Button";
 import Link from "next/link";
+
+const SELECTED = "border-b-4 border-black";
+// 나중에 전역관리로 할꺼 같으니까 우선은 final화 시킴 follow 페이지에도 사용할꺼임
+const NICK_NAME = "이게 도파민이지...";
+const ID = "88b3e620-52d9-4a5c-bb2b-1dfc9a2d1a10";
 
 const UserProfilePage= async () => {
     return (
@@ -39,13 +44,13 @@ const UserProfilePage= async () => {
                         </Link>
                     </div>
                     <div id="button_wrapper" className="flex justify-center gap-10 mt-10 px-5">
-                        <Button type="default" color="default">
+                        <Button type="default" color="default" className="w-[200px]">
                             {/*임시 챌린지 이동 나중에 이동하는 param값 줘야함*/}
                             <Link href="/challenges">
                                 챌린지 보기
                             </Link>
                         </Button>
-                        <Button type="default" color="default">
+                        <Button type="default" color="default" className="w-[200px]">
                             프로필 편집
                         </Button>
                     </div>
