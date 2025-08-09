@@ -59,6 +59,7 @@ const FollowPage = () => {
                     setInputText(evt.target.value);
                     handleSearch(evt.target.value);
                 }} value={getInputText} />
+                <p className="mt-10 font-semibold">{type === "follower" ? "나를 팔로워한 사람들" : "내가 팔로잉한 사람들"}</p>
             </section>
             <section id="content">
                 <ContentComponent data={getFollows}/>
