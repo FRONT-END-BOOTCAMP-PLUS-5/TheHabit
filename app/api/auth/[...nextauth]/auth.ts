@@ -9,21 +9,31 @@ export const authOptions = {
     CredentialsProvider({
       name: "Credentials",
       credentials: {
-        username: { label: "Username", type: "text" },
+        email: { label: "email", type: "email" },
         password: { label: "Password", type: "password" },
       },
+      // 로컬 로그인
       async authorize(credentials) {
-        const { username, password } = credentials ?? {};
+        const { email, password } = credentials ?? {};
 
-        // 실제 DB 또는 API를 통한 사용자 인증 로직
-        if (username === "ysh" && password === "0000") {
-          return {
-            id: "7ae5e5c9-0c28-426f-952f-85bdfdcfc522",
-            username: "유상현",
-          };
-        }
-
-        return null;
+        // if (!email || !password) return null;
+        // {
+        //   return {
+        //     id: "",
+        //     email: "",
+        //     name: "",
+        //     image: "",
+        //   };
+        // }
+        if (email === "test@example.com" && password === "Password123!") {
+            return {
+              id: "1",
+              email: "test@example.com",
+              name: "테스트유저",
+              image: "https://via.placeholder.com/150",
+            };
+          }
+          return null;
       },
     }),
     GoogleProvider({
@@ -39,14 +49,14 @@ export const authOptions = {
     async jwt({ token, user }: { token: JWT; user?: User }) {
       if (user) {
         token.id = user.id;
-        token.username = user.username;
+        token.email = user.email;
       }
       return token;
     },
     async session({ session, token }: { session: Session; token: JWT }) {
       if (session.user) {
         session.user.id = token.id as string;
-        session.user.username = token.username as string;
+        session.user.email = token.email as string;
       }
       return session;
     },
@@ -59,9 +69,9 @@ export const authOptions = {
     },
   },
   pages: {
-    signIn: "/auth", // 로그인 페이지 경로
+    signIn: "/login", // 로그인 페이지 경로
     signUp: "/signup", // 회원가입 페이지 경로
-    error: "/auth", // 에러 페이지 경로
+    error: "/login", // 에러 페이지 경로
   },
 
   session: {
