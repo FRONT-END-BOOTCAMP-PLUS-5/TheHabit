@@ -22,7 +22,7 @@ const DayCard: React.FC<DayCardProps> = ({
       onClick={onClick}
       className={`
         flex flex-col items-center justify-center text-center
-        px-7 py-3 rounded-lg flex-shrink-0
+        px-6 py-3 rounded-lg flex-shrink-0
         cursor-pointer transition-all duration-200
         ${
           isSelected
