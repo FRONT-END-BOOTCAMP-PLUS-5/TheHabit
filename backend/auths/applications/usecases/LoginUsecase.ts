@@ -1,5 +1,5 @@
-import { LoginRequestDto } from "../dtos/LoginRequestDto";
-import { LoginResponseDto } from "../dtos/LoginResponseDto";
+import { LoginRequestDto } from "@/backend/auths/applications/dtos/LoginRequestDto";
+import { LoginResponseDto } from "@/backend/auths/applications/dtos/LoginResponseDto";
 import { ILoginRepository } from "@/backend/auths/domains/repositories/ILoginRepository";
 import { PrLoginRepository } from "@/backend/auths/domains/repositories/PrLoginRepository";
 import { IUserRepository } from "@/backend/users/domains/repositories/IUserRepository";
