@@ -1,11 +1,11 @@
-import WeeklySlide from "@/app/_components/weekly-slides/WeeklySlide";
 import UserProfileSection from "../_components/user-profile-section/UserProfileSection";
+import ChallengeListSection from "./_components/ChallengeListSection";
 
 const MainPage: React.FC = () => {
   return (
-    <main>
+    <main className="px-2 py-2">
       <UserProfileSection />
-      <WeeklySlide />
+      <ChallengeListSection />
     </main>
   );
 };

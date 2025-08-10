@@ -11,7 +11,11 @@ interface DayCard {
   isSelected: boolean;
 }
 
-const WeeklySlide: React.FC = () => {
+interface WeeklySlideProps {
+  onDateSelect?: (date: Date) => void;
+}
+
+const WeeklySlide: React.FC<WeeklySlideProps> = ({ onDateSelect }) => {
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [weekDays, setWeekDays] = useState<DayCard[]>([]);
 
@@ -58,6 +62,15 @@ const WeeklySlide: React.FC = () => {
       isSelected: i === index,
     }));
     setWeekDays(newWeekDays);
+
+    // 선택된 날짜를 부모 컴포넌트로 전달
+    if (onDateSelect) {
+      const startOfWeek = new Date(selectedDate);
+      startOfWeek.setDate(selectedDate.getDate() - selectedDate.getDay());
+      const clickedDate = new Date(startOfWeek);
+      clickedDate.setDate(startOfWeek.getDate() + index);
+      onDateSelect(clickedDate);
+    }
   };
 
   return (

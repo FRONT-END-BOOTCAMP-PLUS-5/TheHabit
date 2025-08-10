@@ -9,7 +9,7 @@
   --safe-area-inset-left: env(safe-area-inset-left);
   --safe-area-inset-right: env(safe-area-inset-right);
   --primary: #93d50b;
-  --primary-grey: #e0e0e0;
+  --primary-grey: #d9d9d9;
 }
 
 @theme inline {
