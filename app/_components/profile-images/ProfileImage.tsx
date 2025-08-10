@@ -11,13 +11,16 @@ export const ProfileImage = ({
   return (
     <>
       {imageSrc && (
-        <Image
-          src={imageSrc}
-          alt="프로필"
-          width={80}
-          height={80}
-          className={`rounded-full ${className}`}
-        />
+        <div className="w-20 h-20 rounded-full overflow-hidden border-primary border-2">
+          <Image
+            src={imageSrc}
+            alt="프로필"
+            layout="responsive"
+            width={120}
+            height={120}
+            className={"w-full h-full object-cover"}
+          />
+        </div>
       )}
     </>
   );
