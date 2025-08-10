@@ -51,7 +51,9 @@ const UserProfilePage= async () => {
                             </Link>
                         </Button>
                         <Button type="default" color="default" className="w-[200px]">
-                            프로필 편집
+                            <Link href={`/user/profile/edit/${NICK_NAME}`}>
+                                프로필 편집
+                            </Link>
                         </Button>
                     </div>
                     <div id="routine_wrapper" className="flex flex-col py-8 gap-1">

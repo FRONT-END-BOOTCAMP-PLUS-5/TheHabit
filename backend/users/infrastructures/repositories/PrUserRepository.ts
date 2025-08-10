@@ -68,15 +68,28 @@ export class PrUserRepository implements IUserRepository {
   }
 
 
-
-  async update(id: string, nickname: string): Promise<boolean | undefined> {
+  async updateUserName(id: string, username: string): Promise<User | undefined> {
     try{
-      const updatedUser = await prisma.user.update({
+      const updatedUserName = await prisma.user.update({
+        where: { id },
+        data: { username },
+      });
+
+      return updatedUserName;
+    }catch(e){
+      if(e instanceof  Error) throw new Error(e.message)
+    }
+
+  }
+
+  async updateUserNickname(id: string, nickname: string): Promise<User | undefined> {
+    try{
+      const updatedUserNickname = await prisma.user.update({
         where: { id },
         data: { nickname },
       });
 
-      return updatedUser ? true : false;
+      return updatedUserNickname;
     }catch(e){
       if(e instanceof  Error) throw new Error(e.message)
     }
