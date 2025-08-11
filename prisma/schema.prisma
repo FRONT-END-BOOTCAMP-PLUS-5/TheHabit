@@ -8,14 +8,15 @@ datasource db {
 }
 
 model User {
-  id         String   @id @default(uuid())
-  username   String
-  password   String
-  nickname   String   @unique
-  profileImg String?  @map("profile_img")
-  email      String   @unique
-  createdAt  DateTime @default(now()) @map("created_at")
-  updatedAt  DateTime @updatedAt @map("updated_at")
+  id             String   @id @default(uuid())
+  username       String
+  password       String
+  nickname       String   @unique
+  profileImg     String?  @map("profile_img")
+  profileImgPath String?  @map("profile_img_path")
+  email          String   @unique
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @updatedAt @map("updated_at")
 
   challenges   Challenge[]
   completions  RoutineCompletion[]

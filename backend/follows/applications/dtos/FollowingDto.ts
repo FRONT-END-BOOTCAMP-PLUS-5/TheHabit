@@ -3,6 +3,7 @@ export interface FollowingDto{
     readonly nickname: string,
     readonly username: string,
     readonly profileImg: string | null,
+    readonly profileImgPath: string | null,
     readonly following: {
         toUser: {
             id: string;

@@ -1,8 +1,19 @@
+import prisma from "@/public/utils/prismaClient";
 import { IUserRepository } from "@/backend/users/domains/repositories/IUserRepository";
 import { User } from "@/backend/users/domains/entities/UserEntity";
-import prisma from "@/public/utils/prismaClient";
+import {DeleteObjectCommand, PutObjectCommand, S3Client} from "@aws-sdk/client-s3";
+import {v4 as uuidv4} from "uuid";
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 
 export class PrUserRepository implements IUserRepository {
+  private s3 = new S3Client({
+    region: process.env.AWS_REGION,
+    credentials: {
+      accessKeyId: process.env.AWS_ACCESS_KEY_ID as string,
+      secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY as string,
+    },
+  });
+
   async create(user: User): Promise<User | undefined> {
     try{
       const createdUser = await prisma.user.create({
@@ -21,6 +32,38 @@ export class PrUserRepository implements IUserRepository {
           createdUser.id,
           createdUser.password
       );
+    }catch(e){
+      if(e instanceof  Error) throw new Error(e.message)
+    }
+  }
+
+  /**
+   * 해당 메소드는 s3에 이미지 생성
+   * @param fromUserId: string
+   * @param toUserId: string
+   * @return string
+   * */
+  async createProfileImg(file: File): Promise<string[] | undefined> {
+    try{
+      const { name, type } = file
+
+      const userProfile = `user-profiles/`
+      const key = `${uuidv4()}-${name}`;
+      const totalPath = userProfile+key
+
+      const command = new PutObjectCommand({
+        Bucket: process.env.AMPLIFY_BUCKET as string,
+        Key: totalPath,
+        ContentType: type,
+      });
+
+      this.s3.send(command);
+
+      const signedUrl:string = await getSignedUrl(this.s3, command);
+
+
+      return [signedUrl, key];
+
     }catch(e){
       if(e instanceof  Error) throw new Error(e.message)
     }
@@ -96,6 +139,33 @@ export class PrUserRepository implements IUserRepository {
 
   }
 
+  /**
+   * 해당 메소드는 s3 이미지 업데이트
+   * @param fromUserId: string
+   * @param toUserId: string
+   * @return boolean
+   * */
+  async updateProfileImg(id: string, userProfilePath: string, file:File, type: 'create' | 'update'): Promise<User | undefined> {
+    try{
+      if(type === "update") await this.deleteProfileImg(userProfilePath)
+
+      const signedUrl = await this.createProfileImg(file)
+      const img = signedUrl?.length && signedUrl[0] || '';
+      const path = signedUrl?.length && signedUrl[1] || '';
+
+      const updatedUserName = await prisma.user.update({
+        where: { id },
+        data: { profileImg: img, profileImgPath: path },
+      });
+
+      return updatedUserName;
+    }catch(e){
+      if(e instanceof  Error) throw new Error(e.message)
+    }
+
+  }
+
+
   async delete(id: string): Promise<boolean | undefined> {
     try{
      await prisma.user.delete({
@@ -108,5 +178,34 @@ export class PrUserRepository implements IUserRepository {
     }
 
   }
+
+  /**
+   * 해당 메소드는 s3 기존 이미지 삭제
+   * @param fromUserId: string
+   * @param toUserId: string
+   * @return boolean
+   * */
+  async deleteProfileImg(userProfileImgPath: string): Promise<boolean | undefined> {
+    try{
+      const userProfile = `user-profiles/${userProfileImgPath}`
+      const deleteCommand = new DeleteObjectCommand({
+        Bucket: process.env.AMPLIFY_BUCKET as string,
+        Key: userProfile,
+      });
+
+      this.s3.send(deleteCommand);
+
+      return true;
+    }catch(e){
+      if(e instanceof  Error) throw new Error(e.message)
+    }
+
+  }
+
+
+
+
+
+
 
 }

@@ -51,6 +51,25 @@ export const updateUserNickname = async (id: string, nickname: string): Promise<
 };
 
 /**
+ * 해당 함수는 user profile update 하기
+ * @param id: string
+ * @param nickname: string
+ * @return Promise<ApiResponse<User>>
+ * */
+export const updateUserProfile = async (id: string, formData: FormData): Promise<ApiResponse<UserDto>> => {
+    try {
+        const response = await axiosInstance.post<ApiResponse<UserDto>>(`/api/users/edit/profile/${id}`,formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            },
+        } );
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};
+
+/**
  * 해당 함수는 user 회원탈퇴 하기
  * @param id: string
  * @return Promise<ApiResponse<void>>
@@ -72,5 +91,6 @@ export const deleteUserRegister = async (id: string): Promise<ApiResponse<void>>
 export const usersApi = {
     updateNickname: updateUserNickname,
     updateUsername: updateUserName,
+    updateUserProfile,
     deleteRegister: deleteUserRegister
 };

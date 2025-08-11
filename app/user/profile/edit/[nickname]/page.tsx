@@ -1,5 +1,5 @@
 "use client";
-import {useEffect} from "react";
+import React, {useEffect, useState} from "react";
 import { Logo } from "@/app/_components/logos/logo";
 import { Button } from "@/app/_components/buttons/Button";
 import {useUploadProfile} from "@/libs/hooks/signup/useUploadProfile";
@@ -7,30 +7,51 @@ import {ProfileImage} from "@/app/_components/profile-images/ProfileImage";
 import Image from "next/image";
 import {NameComponent} from "@/app/user/profile/edit/components/Name";
 import {NicknameComponent} from "@/app/user/profile/edit/components/Nickname";
-import {usersApi} from "@/libs/api/users.api";
+import {updateUserProfile, usersApi} from "@/libs/api/users.api";
 import {useRouter} from "next/navigation";
+import {BackComponent} from "@/app/user/profile/edit/components/Back";
 
 // 나중에 전역관리로 할꺼 같으니까 우선은 final화 시킴 follow 페이지에도 사용할꺼임
-const NICK_NAME = "이게 도파민이지...";
-const ID = "88b3e620-52d9-4a5c-bb2b-1dfc9a2d1a10";
+const NICK_NAME = "노석준11";
+const ID = "a70ecc14-fb02-41ce-8f1d-750a69f5558d";
+const PROFILE_IMG_PATH = "c2945ee9-59b4-4aef-92c9-a4898536d36a-profile.png";
 
 const UserProfileEditPage= () => {
-    const router = useRouter()
+    const router = useRouter();
+    const [profilePreview, setProfilePreview] = useState<string | null>(null);
+    const [profileFile, setProfileFile] = useState<File | null>(null);
+
     const {
-        profilePreview,
         handleImageClick,
-        handleFileChange,
         fileInputRef,
-        profileFile,
     } = useUploadProfile();
 
     const { deleteRegister } = usersApi;
-    console.log(profileFile, "preview")
 
     const handleDeleteUserRegister = async () => {
         //나중에 confirm창으로 추가 validation 해야함!
         const response = await deleteRegister('c9b19711-c2f8-44e0-8f41-087d76d8b63e');
         if(response.data) router.push("/login")
+    }
+
+    const handleFileChange = async (evt: React.ChangeEvent<HTMLInputElement>) => {
+        const file = evt.target.files?.[0];
+        if (file) {
+            const imageUrl = URL.createObjectURL(file);
+            // 나중에 유저 프로필 받아와서 있으면은 update, 없으면은 created 분기로 처리해야함 로그인 언제됨~?
+            const type = PROFILE_IMG_PATH ? 'update' : 'create'
+
+            const formData = new FormData();
+            formData.append("id", ID);
+            formData.append("profile_img_path", PROFILE_IMG_PATH);
+            formData.append("file", file);
+            formData.append("type", type);
+
+            const response = await updateUserProfile(ID, formData);
+            console.log(response, "file")
+            // setProfilePreview(imageUrl);
+            // setProfileFile(file);
+        }
     }
 
     useEffect(() => {
@@ -39,7 +60,10 @@ const UserProfileEditPage= () => {
 
     return (
         <main>
-            <Logo />
+            <section id="logo_wrapper" className="positive pt-[10px]">
+                <Logo />
+                <BackComponent />
+            </section>
             <section id="top" className="flex mt-10 justify-center items-center px-5">
                 <section id="top_wrapper" className="flex flex-col  w-[100%]">
                     <div id="user_wrapper" className="flex text-center items-end justify-between px-5 pt-[110px]">
