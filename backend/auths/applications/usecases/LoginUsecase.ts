@@ -1,14 +1,10 @@
 import { LoginRequestDto } from "@/backend/auths/applications/dtos/LoginRequestDto";
 import { LoginResponseDto } from "@/backend/auths/applications/dtos/LoginResponseDto";
-import { ILoginRepository } from "@/backend/auths/domains/repositories/ILoginRepository";
-import { PrLoginRepository } from "@/backend/auths/domains/repositories/PrLoginRepository";
 import { IUserRepository } from "@/backend/users/domains/repositories/IUserRepository";
+// import bcrypt from "bcryptjs";
 
 export class LoginUsecase {
-    private readonly loginRepository: ILoginRepository;
-
     constructor(private readonly userRepository: IUserRepository) {
-        this.loginRepository = new PrLoginRepository(userRepository);
     }
 
     async execute(loginRequest: LoginRequestDto): Promise<LoginResponseDto> {
@@ -34,7 +30,7 @@ export class LoginUsecase {
             }
 
             // 3. 사용자 조회 (이메일로 찾기)
-            const user = await this.loginRepository.findUserByEmail(loginRequest.email);
+            const user = await this.userRepository.findByEmail(loginRequest.email);
             if (!user) {
                 return {
                     success: false,
@@ -43,17 +39,26 @@ export class LoginUsecase {
             }
 
             // 4. 비밀번호 검증(비밀번호가 일치하는지)
-            const isPasswordValid = await this.loginRepository.validatePassword(
-                loginRequest.password,
-                user.password || ""
-            );
+            // const isPasswordValid = await bcrypt.compare(
+            //     loginRequest.password,
+            //     user.password || ""
+            // );
+
+            // if (!isPasswordValid) {
+            //     return {
+            //         success: false,
+            //         message: "비밀번호가 일치하지 않습니다."
+            //     };
+            // }
+            const isPasswordValid = loginRequest.password === user.password;
 
             if (!isPasswordValid) {
-                return {
-                    success: false,
-                    message: "비밀번호가 일치하지 않습니다."
+            return {
+                success: false,
+                message: "비밀번호가 일치하지 않습니다."
                 };
             }
+
 
             // 5. 성공 응답
             return {
@@ -62,8 +67,6 @@ export class LoginUsecase {
                 user: {
                     id: user.id || "",
                     email: user.email || "",
-                    // name: user.nickname,
-                    // profileImage: user.profileImg || undefined
                 }
             };
 

@@ -1,3 +1,6 @@
+import { LoginUsecase } from "@/backend/auths/applications/usecases/LoginUsecase";
+import { PrUserRepository } from "@/backend/users/infrastructures/repositories/PrUserRepository";
+import { LoginRequestDto } from "@/backend/auths/applications/dtos/LoginRequestDto";
 import { Session, User } from "next-auth";
 import { JWT } from "next-auth/jwt";
 import CredentialsProvider from "next-auth/providers/credentials";
@@ -16,23 +19,20 @@ export const authOptions = {
       async authorize(credentials) {
         const { email, password } = credentials ?? {};
 
-        // if (!email || !password) return null;
-        // {
-        //   return {
-        //     id: "",
-        //     email: "",
-        //     name: "",
-        //     image: "",
-        //   };
-        // }
-        if (email === "test@example.com" && password === "Password123!") {
-            return {
-              id: "1",
-              email: "test@example.com",
-              name: "테스트유저",
-              image: "https://via.placeholder.com/150",
-            };
-          }
+
+        const loginUsecase = new LoginUsecase(new PrUserRepository());
+        const loginRequestdto = new LoginRequestDto(email, password);
+        const result = await loginUsecase.execute(loginRequestdto);
+
+        if (!email || !password) { 
+
+        }
+        if(result.user){
+          return {
+            id: result.user.id,
+            email: result.user.email,
+          };
+        }
           return null;
       },
     }),

@@ -47,6 +47,25 @@ export class PrUserRepository implements IUserRepository {
 
   }
 
+  async findByEmail(email: string): Promise<User | null | undefined> {
+    try{
+      const user = await prisma.user.findUnique({
+        where: { email }
+      });
+      if (!user) return null;
+
+      return new User(
+          user.username,
+          user.nickname,
+          user.profileImg,
+          user.id,
+      );
+    }catch(e){
+      if(e instanceof  Error) throw new Error(e.message)
+    }
+  }
+
+
   async findById(id: string): Promise<User | null | undefined> {
     try{
       const user = await prisma.user.findUnique({
