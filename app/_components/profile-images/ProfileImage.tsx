@@ -4,14 +4,18 @@ import React from "react";
 export const ProfileImage = ({
   imageSrc,
   className,
+  wrapperWidth=20,
+  wrapperHeight=20,
 }: {
   imageSrc?: string | null;
   className?: string;
+  wrapperWidth?: number;
+  wrapperHeight?: number;
 }) => {
   return (
     <>
       {imageSrc && (
-        <div className="w-20 h-20 rounded-full overflow-hidden border-primary border-2">
+        <div className={`w-${wrapperWidth} h-${wrapperHeight} rounded-full overflow-hidden border-primary border-2`}>
           <Image
             src={imageSrc}
             alt="프로필"

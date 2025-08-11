@@ -14,12 +14,11 @@ import {BackComponent} from "@/app/user/profile/edit/components/Back";
 // 나중에 전역관리로 할꺼 같으니까 우선은 final화 시킴 follow 페이지에도 사용할꺼임
 const NICK_NAME = "노석준11";
 const ID = "a70ecc14-fb02-41ce-8f1d-750a69f5558d";
-const PROFILE_IMG_PATH = "c2945ee9-59b4-4aef-92c9-a4898536d36a-profile.png";
+const PROFILE_IMG_PATH = '';
 
 const UserProfileEditPage= () => {
     const router = useRouter();
-    const [profilePreview, setProfilePreview] = useState<string | null>(null);
-    const [profileFile, setProfileFile] = useState<File | null>(null);
+    const [profilePreview, setProfilePreview] = useState<string | null>('');
 
     const {
         handleImageClick,
@@ -37,7 +36,6 @@ const UserProfileEditPage= () => {
     const handleFileChange = async (evt: React.ChangeEvent<HTMLInputElement>) => {
         const file = evt.target.files?.[0];
         if (file) {
-            const imageUrl = URL.createObjectURL(file);
             // 나중에 유저 프로필 받아와서 있으면은 update, 없으면은 created 분기로 처리해야함 로그인 언제됨~?
             const type = PROFILE_IMG_PATH ? 'update' : 'create'
 
@@ -48,9 +46,8 @@ const UserProfileEditPage= () => {
             formData.append("type", type);
 
             const response = await updateUserProfile(ID, formData);
-            console.log(response, "file")
-            // setProfilePreview(imageUrl);
-            // setProfileFile(file);
+            const img = response.data?.profileImg as string;
+            setProfilePreview(img);
         }
     }
 
@@ -61,7 +58,6 @@ const UserProfileEditPage= () => {
     return (
         <main>
             <section id="logo_wrapper" className="positive pt-[10px]">
-                <Logo />
                 <BackComponent />
             </section>
             <section id="top" className="flex mt-10 justify-center items-center px-5">
@@ -71,6 +67,8 @@ const UserProfileEditPage= () => {
                             <ProfileImage
                                 imageSrc={profilePreview || null}
                                 className="w-full h-full object-cover"
+                                wrapperWidth={30}
+                                wrapperHeight={30}
                             />
                             <Image
                                 src="/icons/camera.svg"

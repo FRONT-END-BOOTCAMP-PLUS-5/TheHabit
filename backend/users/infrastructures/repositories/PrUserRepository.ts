@@ -4,6 +4,7 @@ import { User } from "@/backend/users/domains/entities/UserEntity";
 import {DeleteObjectCommand, PutObjectCommand, S3Client} from "@aws-sdk/client-s3";
 import {v4 as uuidv4} from "uuid";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
+import { Prisma } from "@prisma/client";
 
 export class PrUserRepository implements IUserRepository {
   private s3 = new S3Client({
@@ -47,19 +48,21 @@ export class PrUserRepository implements IUserRepository {
     try{
       const { name, type } = file
 
-      const userProfile = `user-profiles/`
       const key = `${uuidv4()}-${name}`;
-      const totalPath = userProfile+key
+
+      const arrayBuffer = await file.arrayBuffer();
+      const buffer = Buffer.from(arrayBuffer);
 
       const command = new PutObjectCommand({
         Bucket: process.env.AMPLIFY_BUCKET as string,
-        Key: totalPath,
+        Key: key,
         ContentType: type,
+        Body: buffer
       });
 
       this.s3.send(command);
 
-      const signedUrl:string = await getSignedUrl(this.s3, command);
+      const signedUrl:string = `https://${process.env.AMPLIFY_BUCKET}.s3.${process.env.AWS_REGION}.amazonaws.com/${key}`;;
 
 
       return [signedUrl, key];
@@ -125,7 +128,7 @@ export class PrUserRepository implements IUserRepository {
 
   }
 
-  async updateUserNickname(id: string, nickname: string): Promise<User | undefined> {
+  async updateUserNickname(id: string, nickname: string): Promise<User | {message: string}| undefined> {
     try{
       const updatedUserNickname = await prisma.user.update({
         where: { id },
@@ -134,7 +137,15 @@ export class PrUserRepository implements IUserRepository {
 
       return updatedUserNickname;
     }catch(e){
-      if(e instanceof  Error) throw new Error(e.message)
+      if (e instanceof Prisma.PrismaClientKnownRequestError) {
+        if (e.code === 'P2002') {
+          return { message: "해당 닉네임은 이미 사용 중입니다." };
+        }
+      }
+
+      if(e instanceof  Error) {
+        throw new Error(e.message)
+      }
     }
 
   }
@@ -187,7 +198,7 @@ export class PrUserRepository implements IUserRepository {
    * */
   async deleteProfileImg(userProfileImgPath: string): Promise<boolean | undefined> {
     try{
-      const userProfile = `user-profiles/${userProfileImgPath}`
+      const userProfile = `${userProfileImgPath}`
       const deleteCommand = new DeleteObjectCommand({
         Bucket: process.env.AMPLIFY_BUCKET as string,
         Key: userProfile,

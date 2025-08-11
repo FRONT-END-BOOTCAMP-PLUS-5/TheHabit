@@ -10,7 +10,7 @@ export interface IUserRepository {
   findAll(): Promise<User[] | undefined>;
 
   // Update
-  updateUserNickname(id: string, nickname: string): Promise<User | undefined>;
+  updateUserNickname(id: string, nickname: string): Promise<User | {message: string} | undefined>;
   updateUserName(id: string, username: string): Promise<User | undefined>;
   updateProfileImg(id: string, userProfilePath: string, file:File, type:'create' | 'update'): Promise<User | undefined>;
 

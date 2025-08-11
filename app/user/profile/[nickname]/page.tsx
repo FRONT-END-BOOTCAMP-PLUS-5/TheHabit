@@ -10,7 +10,6 @@ const ID = "88b3e620-52d9-4a5c-bb2b-1dfc9a2d1a10";
 const UserProfilePage= async () => {
     return (
         <main>
-            <Logo />
             <section id="top" className="flex mt-10 justify-center items-center px-5">
                 <section id="top_wrapper" className="flex flex-col  w-[100%]">
                     <div id="user_wrapper" className="flex text-center items-end justify-between px-5">
