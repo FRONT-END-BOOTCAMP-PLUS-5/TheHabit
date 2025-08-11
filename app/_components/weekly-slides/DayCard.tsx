@@ -27,14 +27,14 @@ const DayCard: React.FC<DayCardProps> = ({
         ${
           isSelected
             ? "bg-white border-b-3 border-primary shadow-md"
-            : "bg-white border-b-3 border-primary-grey"
+            : "bg-white border-b-3 border-secondary"
         }
       `}
     >
       <span
         className={`
         text-sm mb-1
-        ${isSelected ? "text-primary" : "text-primary-grey"}
+        ${isSelected ? "text-primary" : "text-secondary"}
       `}
       >
         {day}
@@ -43,7 +43,7 @@ const DayCard: React.FC<DayCardProps> = ({
       <span
         className={`
         text-3xl font-bold text-center
-        ${isSelected ? "text-primary" : "text-primary-grey"}
+        ${isSelected ? "text-primary" : "text-secondary"}
       `}
       >
         {date}
@@ -53,7 +53,7 @@ const DayCard: React.FC<DayCardProps> = ({
         <span
           className={`
           text-xs font-bold mt-1
-          ${isSelected ? "text-primary" : "text-primary-grey"}
+          ${isSelected ? "text-primary" : "text-secondary"}
         `}
         >
           {month}
@@ -63,7 +63,7 @@ const DayCard: React.FC<DayCardProps> = ({
       {isToday && (
         <span
           className={`text-xs font-bold mt-1 ${
-            isSelected ? "text-primary" : "text-primary-grey"
+            isSelected ? "text-primary" : "text-secondary"
           }`}
         >
           오늘
