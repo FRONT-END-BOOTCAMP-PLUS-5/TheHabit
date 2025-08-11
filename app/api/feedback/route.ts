@@ -1,13 +1,20 @@
-import { GetRoutineReviewListUsecase } from "@/backend/feedbacks/applications/usecases/GetRoutineReviewListUsecase";
+import { AddFeedBackUsecase } from "@/backend/feedbacks/applications/usecases/AddFeedBackUsecase";
 import { PrFeedBackRepository } from "@/backend/feedbacks/infrastructures/repositories/PrFeedBackRepository";
 import { NextRequest, NextResponse } from "next/server";
 
 export const POST = async (request: NextRequest) => {
   const body = await request.json();
 
+  if (!body.gptResponseContent || !body.challengeId) {
+    return NextResponse.json(
+      { error: "gptResponseContent 또는 challengeId가 없습니다." },
+      { status: 400 }
+    );
+  }
+
   try {
     const feedbackRepo = new PrFeedBackRepository();
-    const feedBackUseCase = new GetRoutineReviewListUsecase(feedbackRepo);
+    const feedBackUseCase = new AddFeedBackUsecase(feedbackRepo);
     const result = await feedBackUseCase.execute(body);
 
     if (!result) {

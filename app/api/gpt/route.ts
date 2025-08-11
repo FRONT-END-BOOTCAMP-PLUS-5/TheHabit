@@ -1,19 +1,49 @@
+import { AddGPTResponseUsecase } from "@/backend/gpt/applications/usecases/AddGPTResponseUsecase";
+import { GPTRepository } from "@/backend/gpt/infrastructures/repositories/GPTRepository";
 import { NextRequest, NextResponse } from "next/server";
-import OpenAI from "openai";
 
-export const POST = async ({ request }: { request: NextRequest }) => {
-  const body = await request.json();
+interface GPTRequestBody {
+  gptResponseContent: string;
+}
 
-  const openai = new OpenAI({
-    apiKey: process.env.NEXT_PUBLIC_OPENAI_API_KEY,
-  });
+export const POST = async (request: NextRequest): Promise<NextResponse> => {
+  try {
+    const body: GPTRequestBody = await request.json();
 
-  const response = await openai.responses.create({
-    model: "gpt-5",
-    instructions:
-      "너는 습관 피드백을 전문적으로 주는 사람이야. 사용자가 입력한 습관 피드백을 분석하고, 사용자에게 적절한 피드백을 줘. 피드백은 한글로 줘",
-    input: body.input,
-  });
+    if (
+      !body ||
+      !body.gptResponseContent ||
+      typeof body.gptResponseContent !== "string"
+    ) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: "gptRequestContent 필드가 필요합니다.",
+        },
+        { status: 400 }
+      );
+    }
 
-  return NextResponse.json({ response: response.output });
+    const gptRepository = new GPTRepository();
+    const addGPTResponseUsecase = new AddGPTResponseUsecase(gptRepository);
+
+    const result = await addGPTResponseUsecase.execute({
+      gptResponseContent: body.gptResponseContent,
+    });
+
+    return NextResponse.json({
+      success: true,
+      response: result,
+      message: "피드백이 성공적으로 생성되었습니다.",
+    });
+  } catch (error) {
+    return NextResponse.json(
+      {
+        success: false,
+        error:
+          error instanceof Error ? error.message : "서버 오류가 발생했습니다.",
+      },
+      { status: 500 }
+    );
+  }
 };

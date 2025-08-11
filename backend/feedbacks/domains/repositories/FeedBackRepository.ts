@@ -2,5 +2,5 @@ import { FeedBackEntity } from "@/backend/feedbacks/domains/entities/FeedBackEnt
 
 export interface FeedBackRepository {
   //create
-  AddFeedBack(feedBack: FeedBackEntity): Promise<FeedBackEntity>;
+  create(feedBack: FeedBackEntity): Promise<FeedBackEntity>;
 }
