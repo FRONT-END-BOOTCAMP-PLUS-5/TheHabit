@@ -8,66 +8,60 @@ datasource db {
 }
 
 model User {
-  id         String   @id @default(uuid())
-  username   String
-  password   String
-  nickname   String   @unique
-  profileImg String?  @map("profile_img")
-  email      String   @unique
-  createdAt  DateTime @default(now()) @map("created_at")
-  updatedAt  DateTime @updatedAt @map("updated_at")
-
-  challenges   Challenge[]
-  completions  RoutineCompletion[]
-  following    Follow[]            @relation("Following")
-  followers    Follow[]            @relation("Followers")
-  achievements UserAchievement[]
+  id               String              @id @default(uuid())
+  username         String
+  password         String
+  nickname         String              @unique
+  profileImg       String?             @map("profile_img")
+  email            String              @unique
+  createdAt        DateTime            @default(now()) @map("created_at")
+  updatedAt        DateTime            @updatedAt @map("updated_at")
+  profile_img_path String?
+  challenges       Challenge[]
+  following        Follow[]            @relation("Following")
+  followers        Follow[]            @relation("Followers")
+  completions      RoutineCompletion[]
+  achievements     UserAchievement[]
 
   @@map("users")
 }
 
 model ChallengeCategory {
-  id           Int    @id @default(autoincrement())
-  categoryName String @map("category_name")
-
-  challenges Challenge[]
+  id           Int         @id @default(autoincrement())
+  categoryName String      @map("category_name")
+  challenges   Challenge[]
 
   @@map("challenge_categories")
 }
 
 model Challenge {
-  id        Int       @id @default(autoincrement())
-  name      String
-  createdAt DateTime  @map("created_at")
-  endAt     DateTime  @map("end_at")
-  startTime DateTime? @map("start_time")
-  endTime   DateTime? @map("end_time")
-  color     String
-
-  userId String @map("user_id")
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-
+  id         Int               @id @default(autoincrement())
+  name       String
+  createdAt  DateTime          @map("created_at")
+  endAt      DateTime          @map("end_at")
+  startTime  DateTime?         @map("start_time")
+  endTime    DateTime?         @map("end_time")
+  color      String
+  userId     String            @map("user_id")
   categoryId Int               @map("category_id")
+  feedbacks  Feedback[]
   category   ChallengeCategory @relation(fields: [categoryId], references: [id])
-
-  routines  Routine[]
-  feedbacks Feedback[]
+  user       User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  routines   Routine[]
 
   @@map("challenges")
 }
 
 model Routine {
-  id           Int       @id @default(autoincrement())
-  routineTitle String    @map("routine_title")
-  alertTime    DateTime? @map("alert_time")
+  id           Int                 @id @default(autoincrement())
+  routineTitle String              @map("routine_title")
+  alertTime    DateTime?           @map("alert_time")
   emoji        Int
-  createdAt    DateTime  @default(now()) @map("created_at")
-  updatedAt    DateTime  @updatedAt @map("updated_at")
-
-  challengeId Int       @map("challenge_id")
-  challenge   Challenge @relation(fields: [challengeId], references: [id], onDelete: Cascade)
-
-  completions RoutineCompletion[]
+  createdAt    DateTime            @default(now()) @map("created_at")
+  updatedAt    DateTime            @updatedAt @map("updated_at")
+  challengeId  Int                 @map("challenge_id")
+  challenge    Challenge           @relation(fields: [challengeId], references: [id], onDelete: Cascade)
+  completions  RoutineCompletion[]
 
   @@map("routines")
 }
@@ -76,23 +70,19 @@ model RoutineCompletion {
   id          Int      @id @default(autoincrement())
   createdAt   DateTime @default(now()) @map("created_at")
   proofImgUrl String?  @map("proof_img_url")
-
-  userId String @map("user_id")
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  routineId Int     @map("routine_id")
-  routine   Routine @relation(fields: [routineId], references: [id], onDelete: Cascade)
-
-  review Review?
+  userId      String   @map("user_id")
+  routineId   Int      @map("routine_id")
+  review      Review?
+  routine     Routine  @relation(fields: [routineId], references: [id], onDelete: Cascade)
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("routines_completions")
 }
 
 model Review {
-  id            Int      @id @default(autoincrement())
-  reviewContent String   @map("review_content")
-  createdAt     DateTime @default(now()) @map("created_at")
-
+  id                  Int               @id @default(autoincrement())
+  reviewContent       String            @map("review_content")
+  createdAt           DateTime          @default(now()) @map("created_at")
   routineCompletionId Int               @unique @map("routine_completion_id")
   routineCompletion   RoutineCompletion @relation(fields: [routineCompletionId], references: [id], onDelete: Cascade)
 
@@ -100,11 +90,10 @@ model Review {
 }
 
 model Feedback {
-  id                 Int    @id @default(autoincrement())
-  gptResponseContent String @map("gpt_response_content") // 긴 텍스트를 위해 @db.Text 사용
-
-  challengeId Int       @map("challenge_id")
-  challenge   Challenge @relation(fields: [challengeId], references: [id], onDelete: Cascade)
+  id                 Int       @id @default(autoincrement())
+  gptResponseContent String    @map("gpt_response_content")
+  challengeId        Int       @map("challenge_id")
+  challenge          Challenge @relation(fields: [challengeId], references: [id], onDelete: Cascade)
 
   @@map("challenge_feedbacks")
 }
@@ -112,29 +101,26 @@ model Feedback {
 model Follow {
   fromUserId String @map("from_user_id")
   toUserId   String @map("to_user_id")
-
-  fromUser User @relation("Following", fields: [fromUserId], references: [id], onDelete: Cascade)
-  toUser   User @relation("Followers", fields: [toUserId], references: [id], onDelete: Cascade)
+  fromUser   User   @relation("Following", fields: [fromUserId], references: [id], onDelete: Cascade)
+  toUser     User   @relation("Followers", fields: [toUserId], references: [id], onDelete: Cascade)
 
   @@id([fromUserId, toUserId])
   @@map("follows")
 }
 
 model Achievement {
-  id            Int    @id @default(autoincrement())
-  achiveContent String @map("achive_content")
-
+  id              Int               @id @default(autoincrement())
+  achiveContent   String            @map("achive_content")
   userAchievement UserAchievement[]
 
   @@map("achievements")
 }
 
 model UserAchievement {
-  userId String @map("user_id")
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-
+  userId        String      @map("user_id")
   achievementId Int         @map("achievement_id")
   achievement   Achievement @relation(fields: [achievementId], references: [id], onDelete: Cascade)
+  user          User        @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@id([userId, achievementId])
   @@map("user_achievements")
