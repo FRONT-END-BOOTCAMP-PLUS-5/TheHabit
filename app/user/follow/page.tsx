@@ -1,4 +1,4 @@
-'use client'
+"use client";
 import Input from "@/app/_components/inputs/Input";
 import {useState, useEffect, useCallback, useRef} from "react";
 import {  useSearchParams } from "next/navigation";

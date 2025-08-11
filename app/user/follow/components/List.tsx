@@ -1,4 +1,4 @@
-'use client'
+"use client";
 import {Button} from "@/app/_components/buttons/Button";
 import {followsApi} from "@/libs/api/follows.api";
 import {useState} from "react";
