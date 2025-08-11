@@ -214,6 +214,21 @@ select {
   }
 }
 
+/* 둥둥 떠다니는 애니메이션 */
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+.animate-float {
+  animation: float 2s ease-in-out infinite;
+}
+
 /* Radio Button 강제 스타일 적용 - 최고 우선순위 */
 .custom-radio-group.ant-radio-group .ant-radio-button-wrapper-checked {
   background-color: var(--primary) !important;
