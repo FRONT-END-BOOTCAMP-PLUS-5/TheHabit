@@ -9,7 +9,7 @@ interface IContent{
 
 export const ContentComponent = ({ data }:IContent) => {
     return (
-        <div id="follow_content" className="mt-5 mb-5 flex justify-around h-[700px] overflow-scroll">
+        <div id="follow_content" className="mt-5 mb-5 flex justify-around h-[450px] overflow-scroll">
             <ul className="w-full">
                 { data && ('followers' in data ?
                         data?.followers.map((follower) => {
