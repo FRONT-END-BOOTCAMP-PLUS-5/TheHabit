@@ -49,7 +49,7 @@ const ChallengesAccordion: React.FC<ChallengesAccordionProps> = ({
   }, [isOpen]);
 
   return (
-    <div className="px-1 py-1 w-full rounded-lg">
+    <div className="px-1 py-0.5 w-full rounded-lg">
       <div
         className={`w-full rounded-lg relative overflow-hidden ${completedColor}`}
       >
@@ -85,13 +85,13 @@ const ChallengesAccordion: React.FC<ChallengesAccordionProps> = ({
 
       {/* 아코디언 내용 영역 */}
       <div
-        className={`bg-white rounded-lg mt-2 overflow-hidden transition-all duration-300 ease-in-out border-2 ${completedColor}`}
+        className={`bg-white rounded-lg mt-1 overflow-hidden transition-all duration-300 ease-in-out border-2`}
         style={{
           height: isOpen ? `${contentHeight}px` : "0px",
           opacity: isOpen ? 1 : 0,
         }}
       >
-        <div ref={contentRef} className="p-4">
+        <div ref={contentRef} className="p-3">
           {/* 완료된 루틴 표시 */}
           <div className="flex items-center gap-3 mb-4">
             <div
@@ -109,7 +109,7 @@ const ChallengesAccordion: React.FC<ChallengesAccordionProps> = ({
 
           {/* 새로운 루틴 추가 버튼 */}
           <div className="flex justify-center">
-            <button className="bg-primary rounded-full flex items-center justify-center text-white text-sm py-2 px-4 cursor-pointer">
+            <button className="bg-primary rounded-full flex items-center justify-center text-white text-sm font-bold py-2 px-4 cursor-pointer">
               + 루틴 추가하기
             </button>
           </div>
