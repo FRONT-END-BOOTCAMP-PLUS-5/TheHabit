@@ -18,23 +18,38 @@ export const authOptions = {
       // 로컬 로그인
       async authorize(credentials) {
         const { email, password } = credentials ?? {};
-
-
-        const loginUsecase = new LoginUsecase(new PrUserRepository());
-        const loginRequestdto = new LoginRequestDto(email, password);
-        const result = await loginUsecase.execute(loginRequestdto);
+        
+        console.log("🔐 NextAuth authorize 시작");
+        console.log("📧 입력된 이메일:", email);
+        console.log("🔑 입력된 비밀번호:", password);
 
         if (!email || !password) {
+          console.log("❌ 이메일 또는 비밀번호 누락");
           return null;
         }
 
-        if (result.user) {
-          return {
-            id: result.user.id,
-            email: result.user.email,
-          };
+        try {
+          const loginUsecase = new LoginUsecase(new PrUserRepository());
+          const loginRequestdto: LoginRequestDto = { email, password };
+          console.log("🚀 LoginUsecase 실행 시작");
+          
+          const result = await loginUsecase.execute(loginRequestdto);
+          console.log("📊 LoginUsecase 결과:", result);
+
+          if (result.success && result.user) {
+            console.log("✅ 로그인 성공, 사용자 정보:", result.user);
+            return {
+              id: result.user.id,
+              email: result.user.email,
+            };
+          } else {
+            console.log("❌ 로그인 실패:", result.message);
+            return null;
+          }
+        } catch (error) {
+          console.error("💥 NextAuth authorize 오류:", error);
+          return null;
         }
-        return null;
       },
     }),
     GoogleProvider({
