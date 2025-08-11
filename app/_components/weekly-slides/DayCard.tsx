@@ -22,19 +22,19 @@ const DayCard: React.FC<DayCardProps> = ({
       onClick={onClick}
       className={`
         flex flex-col items-center justify-center text-center
-        px-6 py-3 rounded-lg flex-shrink-0
-        cursor-pointer transition-all duration-200
+        px-6 py-3 flex-shrink-0
+        cursor-pointer transition-all duration-100
         ${
           isSelected
-            ? "bg-white border-2 border-primary shadow-md -mt-1"
-            : "bg-white border-2 border-primary-grey"
+            ? "bg-white border-b-3 border-primary shadow-md"
+            : "bg-white border-b-3 border-primary-grey"
         }
       `}
     >
       <span
         className={`
         text-sm mb-1
-        ${isSelected ? "text-primary" : "text-gray-400"}
+        ${isSelected ? "text-primary" : "text-primary-grey"}
       `}
       >
         {day}
@@ -42,8 +42,8 @@ const DayCard: React.FC<DayCardProps> = ({
 
       <span
         className={`
-        text-2xl font-bold text-center
-        ${isSelected ? "text-primary" : "text-gray-400"}
+        text-3xl font-bold text-center
+        ${isSelected ? "text-primary" : "text-primary-grey"}
       `}
       >
         {date}
@@ -52,8 +52,8 @@ const DayCard: React.FC<DayCardProps> = ({
       {month && (
         <span
           className={`
-          text-xs mt-1
-          ${isSelected ? "text-primary" : "text-gray-400"}
+          text-xs font-bold mt-1
+          ${isSelected ? "text-primary" : "text-primary-grey"}
         `}
         >
           {month}
@@ -62,8 +62,8 @@ const DayCard: React.FC<DayCardProps> = ({
 
       {isToday && (
         <span
-          className={`text-xs mt-1 ${
-            isSelected ? "text-primary" : "text-gray-400"
+          className={`text-xs font-bold mt-1 ${
+            isSelected ? "text-primary" : "text-primary-grey"
           }`}
         >
           오늘
