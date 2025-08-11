@@ -1,4 +1,11 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest } from "next/server";
+import { PrRoutineCompletionsRepository } from "../../../../backend/routine-completions/infrastructures/repositories/PrRoutineCompletionsRepository";
+import { 
+  createErrorResponse, 
+  createSuccessResponse
+} from "../../../../libs/utils/apiUtils";
+
+const routineCompletionsRepository = new PrRoutineCompletionsRepository();
 
 // 루틴 완료 수정 (PATCH)
 export async function PATCH(
@@ -47,26 +54,21 @@ export async function DELETE(
   try {
     const { id } = await params;
 
-    if (!id) {
-      return NextResponse.json(
-        { error: "완료 ID는 필수입니다." },
-        { status: 400 }
-      );
+    if (!id || isNaN(parseInt(id))) {
+      return createErrorResponse("유효하지 않은 완료 ID입니다.", 400);
     }
 
-    // TODO: 실제 데이터베이스에서 루틴 완료 삭제
-    // 현재는 임시 응답
+    const completionId = parseInt(id);
+    const success = await routineCompletionsRepository.delete(completionId);
+    
+    if (!success) {
+      return createErrorResponse("루틴 완료를 찾을 수 없습니다.", 404);
+    }
 
-    return NextResponse.json({
-      success: true,
-      message: "루틴 완료가 삭제되었습니다.",
-    });
+    return createSuccessResponse({ message: "루틴 완료가 삭제되었습니다." });
 
   } catch (error) {
     console.error("루틴 완료 삭제 오류:", error);
-    return NextResponse.json(
-      { error: "루틴 완료 삭제에 실패했습니다." },
-      { status: 500 }
-    );
+    return createErrorResponse("루틴 완료 삭제에 실패했습니다.");
   }
 }

@@ -10,6 +10,7 @@ import DownArrow from '@/public/icons/icon_down_arrow.svg';
 
 //props 임시임 -승민
 interface ChallengesAccordionProps {
+  challengeId: number;
   title: string;
   totalRoutines: number;
   completedRoutines: number;
@@ -19,6 +20,7 @@ interface ChallengesAccordionProps {
 }
 
 const ChallengesAccordion: React.FC<ChallengesAccordionProps> = ({
+  challengeId,
   title,
   totalRoutines,
   completedRoutines,
