@@ -1,5 +1,5 @@
 import { IChallengeRepository } from '@/backend/challenges/domains/repositories/IChallengeRepository';
-import { Challenge } from '@/backend/challenges/domains/entities/ChallengeEntity';
+import { Challenge } from '@/backend/challenges/domains/entities/Challenge';
 
 // 챌린지 삭제 유스케이스 
 export class DeleteChallengeUsecase {

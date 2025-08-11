@@ -24,11 +24,12 @@ interface CategoryChallengesResponse {
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { categoryId: string } }
+  { params }: { params: Promise<{ categoryId: string }> }
 ): Promise<NextResponse<CategoryChallengesResponse>> {
   try {
     // categoryId를 숫자로 변환
-    const categoryId = parseInt(params.categoryId, 10);
+    const { categoryId: categoryIdStr } = await params;
+    const categoryId = parseInt(categoryIdStr, 10);
 
     // 유효성 검사
     if (isNaN(categoryId) || categoryId <= 0) {
