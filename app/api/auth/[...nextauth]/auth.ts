@@ -24,16 +24,17 @@ export const authOptions = {
         const loginRequestdto = new LoginRequestDto(email, password);
         const result = await loginUsecase.execute(loginRequestdto);
 
-        if (!email || !password) { 
-
+        if (!email || !password) {
+          return null;
         }
-        if(result.user){
+
+        if (result.user) {
           return {
             id: result.user.id,
             email: result.user.email,
           };
         }
-          return null;
+        return null;
       },
     }),
     GoogleProvider({
