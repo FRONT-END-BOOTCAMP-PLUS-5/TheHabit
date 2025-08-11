@@ -9,7 +9,8 @@ export interface IUserRepository {
   findAll(): Promise<User[] | undefined>;
 
   // Update
-  update(id: string, nickname: string): Promise<boolean | undefined>;
+  updateUserNickname(id: string, nickname: string): Promise<User | undefined>;
+  updateUserName(id: string, username: string): Promise<User | undefined>;
 
   // Delete
   delete(id: string): Promise<boolean | undefined>;

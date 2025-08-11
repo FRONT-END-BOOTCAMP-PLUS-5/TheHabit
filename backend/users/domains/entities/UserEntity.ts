@@ -6,8 +6,8 @@ export class User {
     public readonly id?: string,
     public readonly password?: string,
     public readonly email?: string,
-    public readonly createdAt?: string,
-    public readonly updatedAt?: string,
+    public readonly createdAt?: Date,
+    public readonly updatedAt?: Date,
   ) { }
 }
 

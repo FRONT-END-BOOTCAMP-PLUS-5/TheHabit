@@ -1,5 +1,5 @@
-import { Logo } from "@/app/_components/logos/logo";
-import { Button } from "@/app/_components/buttons/Button";
+import { Logo } from "../../../_components/logos/logo";
+import { Button } from "../../../_components/buttons/Button";
 import Link from "next/link";
 
 const SELECTED = "border-b-4 border-black";
@@ -14,12 +14,9 @@ const UserProfilePage= async () => {
             <section id="top" className="flex mt-10 justify-center items-center px-5">
                 <section id="top_wrapper" className="flex flex-col  w-[100%]">
                     <div id="user_wrapper" className="flex text-center items-end justify-between px-5">
-                        <div id="test_img" className="rounded-full w-[120] h-[120] bg-black"/>
-                        <div id="challenge" className="flex flex-col items-start">
-                            <div className="flex flex-col mb-5 items-start">
-                                <span className="font-semibold">노석준</span>
-                                <span className="font-normal text-[12px] text-[#A1A4B2]">(일반인일까)</span>
-                            </div>
+                        <div id="test_img" className="rounded-full w-[100] h-[100] bg-black"/>
+                        <div id="challenge">
+                            <p className="font-semibold mb-5">노석준</p>
                             <div>
                                 <span className="font-bold">99일</span><br/>진행중
                             </div>
@@ -53,15 +50,13 @@ const UserProfilePage= async () => {
                                 챌린지 보기
                             </Link>
                         </Button>
-                        <Link href={{
-                            pathname: `/user/profile/edit/${NICK_NAME}`
-                        }}>
-                            <Button type="default" color="default" className="w-[200px]">
+                        <Button type="default" color="default" className="w-[200px]">
+                            <Link href={`/user/profile/edit/${NICK_NAME}`}>
                                 프로필 편집
-                            </Button>
-                        </Link>
+                            </Link>
+                        </Button>
                     </div>
-                    <div id="routine_wrapper" className="flex flex-col py-8 gap-1 px-5">
+                    <div id="routine_wrapper" className="flex flex-col py-8 gap-1">
                         <p className="w-[100%]">금주 21일째 실천중! 💦</p>
                         <p className="w-[100%]">금주 21일째 실천중! 💦</p>
                         <p className="w-[100%]">금주 21일째 실천중! 💦</p>
