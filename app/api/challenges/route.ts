@@ -20,15 +20,15 @@ const createAddChallengeUsecase = () => {
 }
 
 // 실제로 서비스에서 사용되는 API는 아닙니다. -승민
-export async function GET(): Promise<NextResponse<ChallengeDto[] | null>> {
+export const GET = async (): Promise<NextResponse<ChallengeDto[] | null>> => {
   const usecase = createGetAllChallengesUsecase();
   const challenges = await usecase.execute();
 
   return NextResponse.json(ChallengeDtoMapper.fromEntities(challenges));
-}
+};
 
 // 챌린지 생성 API Post
-export async function POST(requestBody: NextRequest): Promise<NextResponse> {
+export const POST = async (requestBody: NextRequest): Promise<NextResponse> => {
   const usecase = createAddChallengeUsecase();
   console.log(requestBody);
   try {
@@ -61,4 +61,4 @@ export async function POST(requestBody: NextRequest): Promise<NextResponse> {
       }
     }, { status: 500 });
   }
-}
+};

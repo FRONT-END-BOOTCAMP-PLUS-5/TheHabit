@@ -9,7 +9,7 @@ import { DeleteChallengeUsecase } from "@/backend/challenges/applications/usecas
 import { ChallengeDtoMapper } from "@/backend/challenges/applications/dtos/ChallengeDto";
 import { ChallengeDto } from "@/backend/challenges/applications/dtos/ChallengeDto";
 import { AddChallengeRequestDto } from "@/backend/challenges/applications/dtos/AddChallengeDto";
-import { Challenge } from "@/backend/challenges/domains/entities/ChallengeEntity";
+import { Challenge } from "@/backend/challenges/domains/entities/Challenge";
 
 const createGetChallengeByIdUsecase = () => {
   const repository = new PrChallengeRepository()
@@ -40,10 +40,11 @@ interface ChallengeResponse {
 // 특정 챌린지 상세 조회
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ): Promise<NextResponse<ChallengeResponse>> {
   try {
-    const challengeId = parseInt(params.id, 10);
+    const { id } = await params;
+    const challengeId = parseInt(id, 10);
 
     // 유효성 검사
     if (isNaN(challengeId) || challengeId <= 0) {
@@ -85,10 +86,11 @@ export async function GET(
 // 챌린지 수정
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ): Promise<NextResponse<ChallengeResponse>> {
   try {
-    const challengeId = parseInt(params.id, 10);
+    const { id } = await params;
+    const challengeId = parseInt(id, 10);
 
     // 유효성 검사
     if (isNaN(challengeId) || challengeId <= 0) {
@@ -150,10 +152,11 @@ export async function PUT(
 // 챌린지 삭제
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ): Promise<NextResponse<ChallengeResponse>> {
   try {
-    const challengeId = parseInt(params.id, 10);
+    const { id } = await params;
+    const challengeId = parseInt(id, 10);
 
     // 유효성 검사
     if (isNaN(challengeId) || challengeId <= 0) {

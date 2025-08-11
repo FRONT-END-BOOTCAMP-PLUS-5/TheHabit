@@ -1,13 +1,8 @@
 import type { Metadata } from "next";
-import localFont from "next/font/local";
 import "./globals.css";
 import { QueryProvider } from "./_components/query-providers/QueryProvider";
-
-const pretendard = localFont({
-  src: "../public/fonts/PretendardVariable.woff2",
-  display: "swap",
-  variable: "--font-pretendard",
-});
+import Header from "./_components/layouts/Header";
+import { pretendard } from "../public/fonts/font";
 
 export const metadata: Metadata = {
   title: "TheHabit - 습관 관리 앱",
@@ -71,6 +66,7 @@ const RootLayout = ({
         className={`${pretendard.variable} ${pretendard.variable} antialiased mobile-container`}
       >
         <div className="mobile-wrapper">
+          <Header />
           <QueryProvider>{children}</QueryProvider>
         </div>
       </body>

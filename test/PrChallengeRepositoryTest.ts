@@ -1,5 +1,5 @@
 import { PrChallengeRepository } from "@/backend/challenges/infrastructures/repositories/PrChallengeRepository";
-import { Challenge } from "@/backend/challenges/domains/entities/ChallengeEntity";
+import { Challenge } from "@/backend/challenges/domains/entities/Challenge";
 import prisma from "@/public/utils/prismaClient";
 
 let createdChallengeId: number;
