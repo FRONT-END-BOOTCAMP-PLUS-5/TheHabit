@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useMemo } from "react";
 import DayCard from "./DayCard";
 
 interface DayCard {
@@ -16,16 +16,17 @@ interface WeeklySlideProps {
 }
 
 const WeeklySlide: React.FC<WeeklySlideProps> = ({ onDateSelect }) => {
-  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
-  const [weekDays, setWeekDays] = useState<DayCard[]>([]);
+  const [selectedDayIndex, setSelectedDayIndex] = useState<number>(
+    new Date().getDay()
+  );
 
-  // 현재 주의 날짜들을 생성하는 함수
-  const generateWeekDays = (date: Date): DayCard[] => {
-    const startOfWeek = new Date(date);
-    startOfWeek.setDate(date.getDate() - date.getDay()); // 일요일부터 시작
+  // useMemo로 날짜 계산 최적화
+  const weekDays = useMemo(() => {
+    const today = new Date();
+    const startOfWeek = new Date(today);
+    startOfWeek.setDate(today.getDate() - today.getDay()); // 일요일부터 시작
 
     const days: DayCard[] = [];
-    const today = new Date();
     const isToday = (date: Date) =>
       date.getDate() === today.getDate() &&
       date.getMonth() === today.getMonth() &&
@@ -35,7 +36,7 @@ const WeeklySlide: React.FC<WeeklySlideProps> = ({ onDateSelect }) => {
       const currentDate = new Date(startOfWeek);
       currentDate.setDate(startOfWeek.getDate() + i);
 
-      const dayNames = ["일", "월", "화", "수", "목", "금", "토", "일"];
+      const dayNames = ["일", "월", "화", "수", "목", "금", "토"];
 
       days.push({
         day: dayNames[i],
@@ -45,28 +46,21 @@ const WeeklySlide: React.FC<WeeklySlideProps> = ({ onDateSelect }) => {
             ? `${currentDate.getMonth() + 1}월`
             : undefined,
         isToday: isToday(currentDate),
-        isSelected: isToday(currentDate),
+        isSelected: i === selectedDayIndex,
       });
     }
 
     return days;
-  };
-
-  useEffect(() => {
-    setWeekDays(generateWeekDays(selectedDate));
-  }, [selectedDate]);
+  }, [selectedDayIndex]);
 
   const handleDateClick = (index: number) => {
-    const newWeekDays = weekDays.map((day, i) => ({
-      ...day,
-      isSelected: i === index,
-    }));
-    setWeekDays(newWeekDays);
+    setSelectedDayIndex(index);
 
     // 선택된 날짜를 부모 컴포넌트로 전달
     if (onDateSelect) {
-      const startOfWeek = new Date(selectedDate);
-      startOfWeek.setDate(selectedDate.getDate() - selectedDate.getDay());
+      const today = new Date();
+      const startOfWeek = new Date(today);
+      startOfWeek.setDate(today.getDate() - today.getDay());
       const clickedDate = new Date(startOfWeek);
       clickedDate.setDate(startOfWeek.getDate() + index);
       onDateSelect(clickedDate);
