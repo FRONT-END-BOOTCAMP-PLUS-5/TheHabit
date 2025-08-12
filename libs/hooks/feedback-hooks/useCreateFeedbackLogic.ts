@@ -46,5 +46,5 @@ export const useCreateFeedbackLogic = (id: number) => {
   const finalGptContent =
     feedBack?.gptResponseContent || gptResponse?.gptResponseContent;
 
-  return { challengeName, gptResponse: finalGptContent, mutation };
+  return { challenge, gptResponse: finalGptContent };
 };

@@ -6,7 +6,7 @@ import React from "react";
 const FeedBackDetail = ({ id }: { id: number }) => {
   const result = useCreateFeedbackLogic(id);
 
-  console.log(result);
+  console.log(result.challenge?.data);
 
   return <div></div>;
 };
