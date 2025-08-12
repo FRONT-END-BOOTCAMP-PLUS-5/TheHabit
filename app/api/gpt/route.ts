@@ -4,6 +4,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 interface GPTRequestBody {
   gptResponseContent: string;
+  enabled: boolean;
 }
 
 export const POST = async (request: NextRequest): Promise<NextResponse> => {

@@ -16,4 +16,16 @@ export class PrFeedBackRepository implements FeedBackRepository {
       createdFeedBack.challengeId
     );
   }
+
+  async findByFeedBackId(id: number): Promise<FeedBackEntity> {
+    const feedBack = await prisma.feedback.findFirst({
+      where: { challengeId: id },
+    });
+
+    return new FeedBackEntity(
+      feedBack?.gptResponseContent ?? "",
+      feedBack?.challengeId ?? 0,
+      feedBack?.id
+    );
+  }
 }

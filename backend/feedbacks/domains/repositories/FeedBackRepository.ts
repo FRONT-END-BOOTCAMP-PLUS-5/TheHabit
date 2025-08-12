@@ -3,4 +3,6 @@ import { FeedBackEntity } from "@/backend/feedbacks/domains/entities/FeedBackEnt
 export interface FeedBackRepository {
   //create
   create(feedBack: FeedBackEntity): Promise<FeedBackEntity>;
+
+  findByFeedBackId(id: number): Promise<FeedBackEntity>;
 }

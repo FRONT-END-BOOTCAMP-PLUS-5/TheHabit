@@ -4,6 +4,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 export const POST = async (request: NextRequest) => {
   const body = await request.json();
+  console.log("POST", body);
 
   if (!body.gptResponseContent || !body.challengeId) {
     return NextResponse.json(
@@ -23,10 +24,7 @@ export const POST = async (request: NextRequest) => {
         { status: 400 }
       );
     }
-    return NextResponse.json(
-      { message: "피드백 데이터가 저장되었습니다." },
-      { status: 200 }
-    );
+    return NextResponse.json({ data: result }, { status: 200 });
   } catch (error) {
     console.error(error);
     return NextResponse.json(
