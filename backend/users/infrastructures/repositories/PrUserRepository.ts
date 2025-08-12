@@ -1,9 +1,9 @@
 import prisma from "@/public/utils/prismaClient";
 import { IUserRepository } from "@/backend/users/domains/repositories/IUserRepository";
 import { User } from "@/backend/users/domains/entities/UserEntity";
+import {RoutineCompletion} from "@/backend/routine-completions/domains/entities/routine-completion/routineCompletion";
 import {DeleteObjectCommand, PutObjectCommand, S3Client} from "@aws-sdk/client-s3";
 import {v4 as uuidv4} from "uuid";
-import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { Prisma } from "@prisma/client";
 
 export class PrUserRepository implements IUserRepository {
@@ -70,6 +70,31 @@ export class PrUserRepository implements IUserRepository {
     }catch(e){
       if(e instanceof  Error) throw new Error(e.message)
     }
+  }
+
+  /**
+   * 해당 메소드는 유저 닉네임으로 컴플리션 데이터 가져오는
+   * @param nickname: string
+   * @return RoutineCompletion[]
+   * */
+  async findByUserNicknameRoutineCompletion(nickname: string): Promise<RoutineCompletion[] | undefined> {
+    try{
+      const completedRoutines = await prisma.routineCompletion.findMany({
+        where: {
+          routine: {
+            challenge: {
+              user: {
+                nickname,
+              },
+            },
+          },
+        },
+      });
+      return completedRoutines;
+    }catch(e){
+      if(e instanceof  Error) throw new Error(e.message)
+    }
+
   }
 
   async findAll(nickname: string = ''): Promise<User[] | undefined> {

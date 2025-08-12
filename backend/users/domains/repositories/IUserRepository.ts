@@ -1,4 +1,5 @@
 import { User } from "@/backend/users/domains/entities/UserEntity";
+import {RoutineCompletion} from "@/backend/routine-completions/domains/entities/routine-completion/routineCompletion";
 
 export interface IUserRepository {
   // Create
@@ -8,6 +9,7 @@ export interface IUserRepository {
   // Read
   findById(id: string): Promise<User | null | undefined>;
   findAll(): Promise<User[] | undefined>;
+  findByUserNicknameRoutineCompletion(nickname: string): Promise<RoutineCompletion[] | undefined>
 
   // Update
   updateUserNickname(id: string, nickname: string): Promise<User | {message: string} | undefined>;

@@ -1,5 +1,6 @@
 import { axiosInstance } from "@/libs/axios/axiosInstance";
 import {UserDto} from "@/backend/users/applications/dtos/UserDto";
+import {CreateRoutineCompletionResponseDto} from "@/backend/routine-completions/applications/dtos/RoutineCompletionDto";
 
 
 // API 응답 타입 정의
@@ -12,6 +13,26 @@ interface ApiResponse<T> {
         message: string;
     };
 }
+
+
+/**
+ * 해당 함수는 user nickname으로 해당 유저 완료 루틴 가져오기
+ * @param id: string
+ * @param nickname: string
+ * @return Promise<ApiResponse<User>>
+ * */
+export const getUserRoutineCompletion = async (nickname: string): Promise<ApiResponse<CreateRoutineCompletionResponseDto[]>> => {
+    try {
+        const response = await axiosInstance.get<ApiResponse<CreateRoutineCompletionResponseDto[]>>(`/api/users/routine/${nickname}`,{
+            params: {
+                nickname
+            }
+        });
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};
 
 /**
  * 해당 함수는 user name update 하기
@@ -89,6 +110,7 @@ export const deleteUserRegister = async (id: string): Promise<ApiResponse<void>>
 
 
 export const usersApi = {
+    getUserRoutineCompletion,
     updateNickname: updateUserNickname,
     updateUsername: updateUserName,
     updateUserProfile,
