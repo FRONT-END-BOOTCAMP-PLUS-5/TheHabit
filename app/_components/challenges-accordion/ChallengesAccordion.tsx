@@ -1,6 +1,10 @@
 "use client";
 import Image from "next/image";
 import { useRef, useState, useEffect } from "react";
+import HealthIcon from "@/public/icons/icon_health.png";
+import BookIcon from "@/public/icons/icon_study.svg";
+import DevelopIcon from "@/public/icons/icon_develop.png";
+import GuitarIcon from "@/public/icons/icon_guitar.png";
 import UpArrow from "@/public/icons/icon_up_arrow.png";
 import DownArrow from "@/public/icons/icon_down_arrow.svg";
 
@@ -13,13 +17,6 @@ interface ChallengesAccordionProps {
   completedColor: string;
   category: number;
 }
-
-const CATEGORY_ICON: { [key: number]: string } = {
-  0: "💪",
-  1: "📚",
-  2: "💻",
-  3: "🎸",
-};
 
 const ChallengesAccordion: React.FC<ChallengesAccordionProps> = ({
   title,
@@ -51,23 +48,42 @@ const ChallengesAccordion: React.FC<ChallengesAccordionProps> = ({
   return (
     <div className="px-1 py-0.5 w-full rounded-lg">
       <div
-        className={`w-full rounded-lg relative overflow-hidden ${completedColor}`}
+        className={`w-full rounded-full relative overflow-hidden ${completedColor} duration-300`}
       >
         <div
-          className={`absolute top-0 left-0 h-full rounded-l-lg ${backgroundColor}`}
-          style={{ width: `${completedRatio}%` }}
+          className={`absolute top-0 left-0 h-full rounded-full ${backgroundColor} transition-all duration-1000 ease-out`}
+          style={
+            {
+              width: `${completedRatio}%`,
+              animation: "progressFill 1s ease-out forwards",
+              "--progress-width": `${completedRatio}%`,
+            } as React.CSSProperties
+          }
         ></div>
 
         <div className="flex items-center justify-between relative z-10 w-full">
-          <div className="flex flex-col gap-1 p-3">
-            <div className="flex items-center gap-1 font-bold text-2xl text-white">
+          <div className="flex flex-col gap-1 p-2">
+            <div className="flex items-center gap-2">
               <div className="flex justify-center items-center rounded-full bg-white p-1 w-10 h-10 border-primary border-2">
-                {CATEGORY_ICON[category]}
+                {category === 0 && (
+                  <Image src={HealthIcon} alt="health" width={24} height={24} />
+                )}
+                {category === 1 && (
+                  <Image src={BookIcon} alt="book" width={24} height={24} />
+                )}
+                {category === 2 && (
+                  <Image
+                    src={DevelopIcon}
+                    alt="develop"
+                    width={24}
+                    height={24}
+                  />
+                )}
+                {category === 3 && (
+                  <Image src={GuitarIcon} alt="guitar" width={24} height={24} />
+                )}
               </div>
-              <div className="text-2xl font-bold text-white">{title}</div>
-            </div>
-            <div className="text-sm font-bold text-white">
-              {totalRoutines}개의 루틴 중 {completedRoutines}개 완료
+              <div className="text-xl font-bold text-white">{title}</div>
             </div>
           </div>
           <button
@@ -75,9 +91,9 @@ const ChallengesAccordion: React.FC<ChallengesAccordionProps> = ({
             onClick={openHandler}
           >
             {isOpen ? (
-              <Image src={UpArrow} alt="up-arrow" width={16} height={16} />
+              <Image src={UpArrow} alt="up-arrow" width={12} height={12} />
             ) : (
-              <Image src={DownArrow} alt="down-arrow" width={16} height={16} />
+              <Image src={DownArrow} alt="down-arrow" width={12} height={12} />
             )}
           </button>
         </div>

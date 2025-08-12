@@ -4,56 +4,176 @@ import ChallengesAccordion from "@/app/_components/challenges-accordion/Challeng
 import WeeklySlide from "@/app/_components/weekly-slides/WeeklySlide";
 import { getKoreanDateFromDate } from "@/public/utils/dateUtils";
 import { useState } from "react";
+import { Radio, RadioChangeEvent } from "antd";
+import AddChallengeButton from "./AddChallengeButton";
+import "@ant-design/v5-patch-for-react-19";
 
 const ChallengeListSection: React.FC = () => {
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+  const [selectedSort, setSelectedSort] = useState<string>("all");
+  const [isAddChallengeModalOpen, setIsAddChallengeModalOpen] =
+    useState<boolean>(false);
 
   const handleDateSelect = (date: Date) => {
     setSelectedDate(date);
   };
 
-  return (
-    <section className="flex flex-col gap-2 px-2 py-2 w-full">
-      <WeeklySlide onDateSelect={handleDateSelect} />
-      <div className="flex flex-col gap-2">
-        <div className="flex flex-col gap-1">
-          <div className="flex items-center justify-center font-bold text-2xl text-primary">
-            {getKoreanDateFromDate(selectedDate)}
-          </div>
-          {/* 이 부분은 사용자의 챌린지 중 지속 기간이 가장 긴 챌린지만 출력합니다. -승민 */}
-          <div className="flex items-center justify-center border-2 border-primary rounded-xl text-xl font-normal text-black py-1 px-2">
-            🔥 <span className="font-bold text-[#007EA7]">매일 팔굽혀펴기</span>{" "}
-            23일 연속 진행중!
-          </div>
-        </div>
+  const handleSort = (e: RadioChangeEvent) => {
+    setSelectedSort(e.target.value);
+  };
 
+  const allChallenges: React.ReactNode = (
+    <div className="flex flex-col gap-0.5">
+      <ChallengesAccordion
+        title="매일 팔굽혀펴기"
+        totalRoutines={3}
+        completedRoutines={2}
+        backgroundColor="bg-[#4FB9A8]"
+        completedColor="bg-[#a4dfd5]"
+        category={0}
+      />
+      <ChallengesAccordion
+        title="매일 팔굽혀펴기"
+        totalRoutines={3}
+        completedRoutines={2}
+        backgroundColor="bg-[#4FB9A8]"
+        completedColor="bg-[#a4dfd5]"
+        category={1}
+      />
+      <ChallengesAccordion
+        title="매일 팔굽혀펴기"
+        totalRoutines={3}
+        completedRoutines={2}
+        backgroundColor="bg-[#4FB9A8]"
+        completedColor="bg-[#a4dfd5]"
+        category={2}
+      />
+      <ChallengesAccordion
+        title="매일 팔굽혀펴기"
+        totalRoutines={3}
+        completedRoutines={2}
+        backgroundColor="bg-[#4FB9A8]"
+        completedColor="bg-[#a4dfd5]"
+        category={3}
+      />
+    </div>
+  );
+
+  const categoryChallenges: React.ReactNode = (
+    <div className="flex flex-col gap-0.5">
+      <div className="flex flex-col gap-0.5">
+        <div className="text-lg font-bold text-secondary">건강</div>
         <div className="flex flex-col gap-0.5">
           <ChallengesAccordion
             title="매일 팔굽혀펴기"
             totalRoutines={3}
-            completedRoutines={0}
-            backgroundColor="bg-[#007EA7]"
-            completedColor="bg-[#AAE3F6]"
+            completedRoutines={2}
+            backgroundColor="bg-[#4FB9A8]"
+            completedColor="bg-[#a4dfd5]"
             category={0}
           />
           <ChallengesAccordion
-            title="독서 습관 들이기"
-            totalRoutines={3}
-            completedRoutines={1}
-            backgroundColor="bg-[#FFD447]"
-            completedColor="bg-[#FFE89B]"
-            category={1}
-          />
-          <ChallengesAccordion
-            title="매일 스케이트보드 타기"
+            title="매일 팔굽혀펴기"
             totalRoutines={3}
             completedRoutines={2}
-            backgroundColor="bg-[#FA6A8E]"
-            completedColor="bg-[#FFB5C7]"
-            category={3}
+            backgroundColor="bg-[#4FB9A8]"
+            completedColor="bg-[#a4dfd5]"
+            category={0}
+          />
+          <ChallengesAccordion
+            title="매일 팔굽혀펴기"
+            totalRoutines={3}
+            completedRoutines={2}
+            backgroundColor="bg-[#4FB9A8]"
+            completedColor="bg-[#a4dfd5]"
+            category={0}
           />
         </div>
+        <div className="flex flex-col gap-0.5">
+          <div className="text-lg font-bold text-secondary">공부</div>
+          <div className="flex flex-col gap-0.5">
+            <ChallengesAccordion
+              title="매일 영어 스피킹"
+              totalRoutines={3}
+              completedRoutines={2}
+              backgroundColor="bg-[#5BA9D9]"
+              completedColor="bg-[#88c0e3]"
+              category={0}
+            />
+            <ChallengesAccordion
+              title="TOEIC 700점 목표"
+              totalRoutines={3}
+              completedRoutines={2}
+              backgroundColor="bg-[#5BA9D9]"
+              completedColor="bg-[#88c0e3]"
+              category={0}
+            />
+          </div>
+        </div>
+        <div className="flex flex-col gap-0.5">
+          <div className="text-lg font-bold text-secondary">자기계발</div>
+          <div className="flex flex-col gap-0.5">
+            <ChallengesAccordion
+              title="매일 아침 8시 기상"
+              totalRoutines={3}
+              completedRoutines={2}
+              backgroundColor="bg-[#F28C6B]"
+              completedColor="bg-[#f8beab]"
+              category={2}
+            />
+          </div>
+        </div>
+
+        <div className="flex flex-col gap-0.5">
+          <div className="text-lg font-bold text-secondary">기타</div>
+          <div className="flex flex-col gap-0.5">
+            <ChallengesAccordion
+              title="여자친구 만들기"
+              totalRoutines={3}
+              completedRoutines={1}
+              backgroundColor="bg-[#A88BDB]"
+              completedColor="bg-[#cfbbf1]"
+              category={3}
+            />
+          </div>
+        </div>
       </div>
+    </div>
+  );
+
+  return (
+    <section className="flex flex-col gap-2 px-2 py-2 w-full relative mb-10">
+      <WeeklySlide onDateSelect={handleDateSelect} />
+      <div className="flex flex-col gap-3">
+        <div className="flex flex-col gap-3">
+          <div className="flex items-center justify-center font-bold text-2xl text-secondary">
+            {getKoreanDateFromDate(selectedDate)}
+          </div>
+          <div className="flex justify-center w-full">
+            <Radio.Group
+              onChange={(e) => handleSort(e)}
+              value={selectedSort}
+              style={{
+                marginBottom: 8,
+                display: "flex",
+                width: "50%",
+                justifyContent: "center",
+              }}
+              buttonStyle="solid"
+              className="custom-radio-group w-full max-w-md"
+            >
+              <Radio.Button value="all" className="flex-1 text-center">
+                전체
+              </Radio.Button>
+              <Radio.Button value="category" className="flex-1 text-center">
+                카테고리
+              </Radio.Button>
+            </Radio.Group>
+          </div>
+        </div>
+        {selectedSort === "all" ? allChallenges : categoryChallenges}
+      </div>
+      <AddChallengeButton onClick={() => setIsAddChallengeModalOpen(true)} />
     </section>
   );
 };
