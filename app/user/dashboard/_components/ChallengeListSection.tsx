@@ -7,12 +7,25 @@ import { useState } from "react";
 import { Radio, RadioChangeEvent } from "antd";
 import AddChallengeButton from "./AddChallengeButton";
 import "@ant-design/v5-patch-for-react-19";
+import { useModalStore } from "@/libs/stores/modalStore";
+import AddChallengeForm from "./AddChallengeForm";
 
 const ChallengeListSection: React.FC = () => {
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [selectedSort, setSelectedSort] = useState<string>("all");
-  const [isAddChallengeModalOpen, setIsAddChallengeModalOpen] =
-    useState<boolean>(false);
+  const { openModal } = useModalStore();
+
+  // 카테고리별 색상 목록
+  const categoryColors = {
+    0: { background: "#FA6A8E", completed: "#FFB5C7" }, // 건강 - 분홍색
+    1: { background: "#FFD447", completed: "#FFE89B" }, // 학습 - 노란색
+    2: { background: "#007EA7", completed: "#AAE3F6" }, // 개발 - 파란색
+    3: { background: "#A88BDB", completed: "#CFBBF1" }, // 취미 - 보라색
+  };
+
+  const handleOpenModal = () => {
+    openModal(<AddChallengeForm />);
+  };
 
   const handleDateSelect = (date: Date) => {
     setSelectedDate(date);
@@ -28,32 +41,32 @@ const ChallengeListSection: React.FC = () => {
         title="매일 팔굽혀펴기"
         totalRoutines={3}
         completedRoutines={2}
-        backgroundColor="bg-[#4FB9A8]"
-        completedColor="bg-[#a4dfd5]"
+        backgroundColor={categoryColors[0].background}
+        completedColor={categoryColors[0].completed}
         category={0}
       />
       <ChallengesAccordion
-        title="매일 팔굽혀펴기"
+        title="매일 영어 스피킹"
         totalRoutines={3}
         completedRoutines={2}
-        backgroundColor="bg-[#4FB9A8]"
-        completedColor="bg-[#a4dfd5]"
+        backgroundColor={categoryColors[1].background}
+        completedColor={categoryColors[1].completed}
         category={1}
       />
       <ChallengesAccordion
-        title="매일 팔굽혀펴기"
+        title="매일 아침 8시 기상"
         totalRoutines={3}
         completedRoutines={2}
-        backgroundColor="bg-[#4FB9A8]"
-        completedColor="bg-[#a4dfd5]"
+        backgroundColor={categoryColors[2].background}
+        completedColor={categoryColors[2].completed}
         category={2}
       />
       <ChallengesAccordion
-        title="매일 팔굽혀펴기"
+        title="여자친구 만들기"
         totalRoutines={3}
-        completedRoutines={2}
-        backgroundColor="bg-[#4FB9A8]"
-        completedColor="bg-[#a4dfd5]"
+        completedRoutines={1}
+        backgroundColor={categoryColors[3].background}
+        completedColor={categoryColors[3].completed}
         category={3}
       />
     </div>
@@ -173,7 +186,7 @@ const ChallengeListSection: React.FC = () => {
         </div>
         {selectedSort === "all" ? allChallenges : categoryChallenges}
       </div>
-      <AddChallengeButton onClick={() => setIsAddChallengeModalOpen(true)} />
+      <AddChallengeButton onClick={handleOpenModal} />
     </section>
   );
 };

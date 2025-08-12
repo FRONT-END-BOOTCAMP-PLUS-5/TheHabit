@@ -1,3 +1,4 @@
+import React from "react";
 import UserProfileSection from "../../_components/user-profile-section/UserProfileSection";
 import ChallengeListSection from "./_components/ChallengeListSection";
 
