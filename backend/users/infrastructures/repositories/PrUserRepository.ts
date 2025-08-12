@@ -1,9 +1,9 @@
 import prisma from "@/public/utils/prismaClient";
 import { IUserRepository } from "@/backend/users/domains/repositories/IUserRepository";
 import { User } from "@/backend/users/domains/entities/UserEntity";
+import {RoutineCompletion} from "@/backend/routine-completions/domains/entities/routine-completion/routineCompletion";
 import {DeleteObjectCommand, PutObjectCommand, S3Client} from "@aws-sdk/client-s3";
 import {v4 as uuidv4} from "uuid";
-import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { Prisma } from "@prisma/client";
 
 export class PrUserRepository implements IUserRepository {
@@ -72,6 +72,31 @@ export class PrUserRepository implements IUserRepository {
     }
   }
 
+  /**
+   * 해당 메소드는 유저 닉네임으로 컴플리션 데이터 가져오는
+   * @param nickname: string
+   * @return RoutineCompletion[]
+   * */
+  async findByUserNicknameRoutineCompletion(nickname: string): Promise<RoutineCompletion[] | undefined> {
+    try{
+      const completedRoutines = await prisma.routineCompletion.findMany({
+        where: {
+          routine: {
+            challenge: {
+              user: {
+                nickname,
+              },
+            },
+          },
+        },
+      });
+      return completedRoutines;
+    }catch(e){
+      if(e instanceof  Error) throw new Error(e.message)
+    }
+
+  }
+
   async findAll(nickname: string = ''): Promise<User[] | undefined> {
     try{
       const users = await prisma.user.findMany({
@@ -96,15 +121,15 @@ export class PrUserRepository implements IUserRepository {
   async findByEmail(email: string): Promise<User | null | undefined> {
     console.log("🔍 PrUserRepository.findByEmail 시작");
     console.log("📧 조회할 이메일:", email);
-    
+
     try {
       console.log("📡 Prisma 쿼리 실행: findUnique({ where: { email } })");
       const user = await prisma.user.findUnique({
         where: { email }
       });
-      
+
       console.log("📊 Prisma 쿼리 결과:", user);
-      
+
       if (!user) {
         console.log("❌ 사용자를 찾을 수 없음");
         return null;
@@ -125,10 +150,10 @@ export class PrUserRepository implements IUserRepository {
           user.nickname,
           user.profileImg,
           user.id,
-          user.password,  
-          user.email     
+          user.password,
+          user.email
       );
-      
+
       console.log("🏗️ 생성된 User 엔티티:", {
         id: userEntity.id,
         username: userEntity.username,
@@ -137,7 +162,7 @@ export class PrUserRepository implements IUserRepository {
         hasPassword: !!userEntity.password,
         email: userEntity.email
       });
-      
+
       return userEntity;
     } catch (e) {
       console.error("💥 PrUserRepository.findByEmail 오류:", e);

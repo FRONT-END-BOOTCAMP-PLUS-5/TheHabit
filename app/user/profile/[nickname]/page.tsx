@@ -1,6 +1,8 @@
 import { Logo } from "../../../_components/logos/logo";
 import { Button } from "../../../_components/buttons/Button";
 import Link from "next/link";
+import {CompletionComponent} from "@/app/user/profile/components/Completion";
+import React from "react";
 
 const SELECTED = "border-b-4 border-black";
 // 나중에 전역관리로 할꺼 같으니까 우선은 final화 시킴 follow 페이지에도 사용할꺼임
@@ -68,8 +70,8 @@ const UserProfilePage= async () => {
                     </div>
                 </section>
             </section>
-            <section id="bottom">
-
+            <section id="bottom" className="px-5">
+                <CompletionComponent/>
             </section>
         </main>
     )
