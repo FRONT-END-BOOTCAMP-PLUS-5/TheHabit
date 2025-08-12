@@ -16,9 +16,15 @@ export const NicknameComponent = () => {
     const handleUpdateUserNickname = async () => {
         //임시 id
         const response = await updateNickname('a70ecc14-fb02-41ce-8f1d-750a69f5558d', getValue);
-        const nickname = response.data?.nickname as string;
-        setNickname(nickname);
-        setState(prev => !prev);
+        if(response.success){
+            const nickname = response.data?.nickname as string
+            setNickname(nickname);
+            setState(prev => !prev);
+        }else{
+            alert(response.message);
+            return;
+        }
+
     }
 
     return (

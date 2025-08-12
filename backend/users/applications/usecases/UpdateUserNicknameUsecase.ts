@@ -7,7 +7,7 @@ export class UpdateUserNicknameUsecase {
     constructor(private readonly userRepo: IUserRepository) { }
 
     //유저 update 실행
-    async execute(id:string, nickname:string): Promise<User | undefined> {
+    async execute(id:string, nickname:string): Promise<User | { message: string } | undefined> {
         try{
             const updatedUserNickname = await this.userRepo.updateUserNickname(id, nickname);
 

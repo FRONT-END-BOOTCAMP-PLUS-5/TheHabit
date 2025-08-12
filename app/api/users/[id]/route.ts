@@ -9,6 +9,7 @@ const createDeleteUser = () => {
 }
 
 
+
 export async function DELETE(request: NextRequest): Promise<NextResponse | undefined> {
     try{
         const { id } = await request.json();
