@@ -30,3 +30,31 @@ export interface CreateTodayRoutineCompletionDto {
 export interface UpdateRoutineCompletionDto {
   proofImgUrl: string | null;
 }
+
+// 루틴 완료 DTO - 기본
+export interface RoutineCompletionDto {
+  id: number;
+  userId: string;
+  routineId: number;
+  createdAt: Date;
+  proofImgUrl: string | null;
+}
+
+// DTO Mapper
+import { RoutineCompletion } from "../../domains/entities/routine-completion/routineCompletion";
+
+export class RoutineCompletionDtoMapper {
+  static fromEntity(entity: RoutineCompletion): RoutineCompletionDto {
+    return {
+      id: entity.id,
+      userId: entity.userId,
+      routineId: entity.routineId,
+      createdAt: entity.createdAt,
+      proofImgUrl: entity.proofImgUrl,
+    };
+  }
+
+  static fromEntities(entities: RoutineCompletion[]): RoutineCompletionDto[] {
+    return entities.map(entity => this.fromEntity(entity));
+  }
+}

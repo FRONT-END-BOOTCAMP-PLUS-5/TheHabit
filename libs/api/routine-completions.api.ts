@@ -2,7 +2,20 @@ import { axiosInstance } from "@/libs/axios/axiosInstance";
 import {
   CreateRoutineCompletionRequestDto,
   CreateRoutineCompletionResponseDto,
+  RoutineCompletionDto,
+  UpdateRoutineCompletionDto,
 } from "@/backend/routine-completions/applications/dtos/RoutineCompletionDto";
+
+// API 응답 구조
+interface ApiResponse<T> {
+  success: boolean;
+  data: T;
+  message?: string;
+  error?: {
+    code: string;
+    message: string;
+  };
+}
 
 // Create routine completion
 export const createRoutineCompletion = async (
@@ -54,15 +67,30 @@ export const getRoutineCompletionsByUser = async (
 export const updateRoutineCompletion = async (
   id: number,
   proofImgUrl: string | null
-): Promise<CreateRoutineCompletionResponseDto> => {
+): Promise<RoutineCompletionDto> => {
   try {
-    const response = await axiosInstance.patch<CreateRoutineCompletionResponseDto>(
+    const response = await axiosInstance.patch<ApiResponse<RoutineCompletionDto>>(
       `/api/routine-completions/${id}`,
       { proofImgUrl }
     );
-    return response.data;
+    return response.data.data;
   } catch (error) {
     console.error("Failed to update routine completion:", error);
+    throw error;
+  }
+};
+
+// Get routine completion by ID
+export const getRoutineCompletionById = async (
+  id: number
+): Promise<RoutineCompletionDto> => {
+  try {
+    const response = await axiosInstance.get<ApiResponse<RoutineCompletionDto>>(
+      `/api/routine-completions/${id}`
+    );
+    return response.data.data;
+  } catch (error) {
+    console.error("Failed to get routine completion:", error);
     throw error;
   }
 };
@@ -72,7 +100,7 @@ export const deleteRoutineCompletion = async (
   id: number
 ): Promise<void> => {
   try {
-    await axiosInstance.delete(`/api/routine-completions/${id}`);
+    await axiosInstance.delete<ApiResponse<void>>(`/api/routine-completions/${id}`);
   } catch (error) {
     console.error("Failed to delete routine completion:", error);
     throw error;
@@ -84,6 +112,7 @@ export const routineCompletionsApi = {
   create: createRoutineCompletion,
   getByChallenge: getRoutineCompletionsByChallenge,
   getByUser: getRoutineCompletionsByUser,
+  getById: getRoutineCompletionById,
   update: updateRoutineCompletion,
   delete: deleteRoutineCompletion,
 };
