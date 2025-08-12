@@ -65,7 +65,7 @@ const ToastModal: React.FC<ToastModalProps> = ({
         </div>
 
         {/* 모달 내용 */}
-        <div className="px-6 pb-6 w-full h-[90vh]">{children}</div>
+        <div className="px-6 pb-6 w-full">{children}</div>
       </div>
     </div>
   );
