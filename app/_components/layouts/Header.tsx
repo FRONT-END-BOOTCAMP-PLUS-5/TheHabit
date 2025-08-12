@@ -1,4 +1,3 @@
-"use client";
 import Link from "next/link";
 import Image from "next/image";
 import FireIcon from "@/public/icons/icon_fire.png";
