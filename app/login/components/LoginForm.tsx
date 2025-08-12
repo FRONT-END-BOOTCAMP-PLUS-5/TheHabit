@@ -90,7 +90,12 @@ export const LoginForm = () => {
     }
   };
 
-  const onError = (errors: any) => {
+  const onError = (errors: unknown) => {
+    if (typeof errors === "object" && errors instanceof Error) {
+      console.log("Error 타입입니다:", errors.message);
+    } else {
+      console.log("Error 타입이 아닙니다:", errors);
+    }
     console.log("❌ 폼 검증 실패");
     console.log("🔍 검증 오류 상세:", errors);
     console.log("📝 사용자에게 오류 메시지 표시");
