@@ -8,12 +8,12 @@ export interface IUserRepository {
   // Read
   findById(id: string): Promise<User | null | undefined>;
   findAll(): Promise<User[] | undefined>;
-  findByEmail(email: string): Promise<User | null | undefined>;
+  findByEmail(email: string): Promise<User>;
 
   // Update
-  updateUserNickname(id: string, nickname: string): Promise<User | {message: string} | undefined>;
+  updateUserNickname(id: string, nickname: string): Promise<User | { message: string } | undefined>;
   updateUserName(id: string, username: string): Promise<User | undefined>;
-  updateProfileImg(id: string, userProfilePath: string, file:File, type:'create' | 'update'): Promise<User | undefined>;
+  updateProfileImg(id: string, userProfilePath: string, file: File, type: 'create' | 'update'): Promise<User | undefined>;
 
 
   // Delete

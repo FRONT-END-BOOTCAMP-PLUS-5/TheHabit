@@ -3,7 +3,8 @@ import { IUserRepository } from "@/backend/users/domains/repositories/IUserRepos
 import { User } from "@/backend/users/domains/entities/UserEntity";
 import { DeleteObjectCommand, PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { v4 as uuidv4 } from "uuid";
-import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
+// import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
+//일단 사용되지 않는 import 빌드용으로 주석처리합니다 -승민
 import { Prisma } from "@prisma/client";
 
 export class PrUserRepository implements IUserRepository {
@@ -93,7 +94,7 @@ export class PrUserRepository implements IUserRepository {
 
   }
 
-  async findByEmail(email: string): Promise<User | null | undefined> {
+  async findByEmail(email: string): Promise<User> {
     console.log("🔍 PrUserRepository.findByEmail 시작");
     console.log("📧 조회할 이메일:", email);
 
@@ -106,8 +107,7 @@ export class PrUserRepository implements IUserRepository {
       console.log("📊 Prisma 쿼리 결과:", user);
 
       if (!user) {
-        console.log("❌ 사용자를 찾을 수 없음");
-        return null;
+        throw new Error("사용자를 찾을 수 없습니다.");
       }
 
       console.log("✅ 사용자 발견, User 객체 생성 시작");
@@ -124,6 +124,7 @@ export class PrUserRepository implements IUserRepository {
         user.username,
         user.nickname,
         user.profileImg,
+        null, // profileImgPath
         user.id,
         user.password,
         user.email
@@ -141,7 +142,7 @@ export class PrUserRepository implements IUserRepository {
       return userEntity;
     } catch (e) {
       console.error("💥 PrUserRepository.findByEmail 오류:", e);
-      if (e instanceof Error) throw new Error(e.message);
+      throw e; // 에러를 다시 던져서 상위에서 처리하도록 함
     }
   }
 
