@@ -11,7 +11,10 @@ import { ReadRoutineResponseDto } from '@/backend/routines/applications/dtos/Rou
 export const useGetRoutinesByChallenge = (challengeId: number, enabled: boolean = true) => {
   return useQuery<ReadRoutineResponseDto[]>({
     queryKey: ['routines', 'challenge', challengeId],
-    queryFn: () => getRoutinesByChallenge(challengeId),
+    queryFn: async () => {
+      const response = await getRoutinesByChallenge(challengeId);
+      return response.data || []; // 새로운 응답 구조에서 data 필드 추출
+    },
     enabled: enabled && challengeId > 0, // challengeId가 유효하고 enabled가 true일 때만 실행
     staleTime: 3 * 60 * 1000, // 3분간 데이터를 fresh로 유지
     gcTime: 5 * 60 * 1000,    // 5분간 캐시 유지
