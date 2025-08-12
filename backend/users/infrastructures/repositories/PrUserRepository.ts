@@ -1,8 +1,20 @@
+import prisma from "@/public/utils/prismaClient";
 import { IUserRepository } from "@/backend/users/domains/repositories/IUserRepository";
 import { User } from "@/backend/users/domains/entities/UserEntity";
-import prisma from "@/public/utils/prismaClient";
+import {DeleteObjectCommand, PutObjectCommand, S3Client} from "@aws-sdk/client-s3";
+import {v4 as uuidv4} from "uuid";
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
+import { Prisma } from "@prisma/client";
 
 export class PrUserRepository implements IUserRepository {
+  private s3 = new S3Client({
+    region: process.env.AWS_REGION,
+    credentials: {
+      accessKeyId: process.env.AWS_ACCESS_KEY_ID as string,
+      secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY as string,
+    },
+  });
+
   async create(user: User): Promise<User | undefined> {
     try{
       const createdUser = await prisma.user.create({
@@ -21,6 +33,40 @@ export class PrUserRepository implements IUserRepository {
           createdUser.id,
           createdUser.password
       );
+    }catch(e){
+      if(e instanceof  Error) throw new Error(e.message)
+    }
+  }
+
+  /**
+   * 해당 메소드는 s3에 이미지 생성
+   * @param fromUserId: string
+   * @param toUserId: string
+   * @return string
+   * */
+  async createProfileImg(file: File): Promise<string[] | undefined> {
+    try{
+      const { name, type } = file
+
+      const key = `${uuidv4()}-${name}`;
+
+      const arrayBuffer = await file.arrayBuffer();
+      const buffer = Buffer.from(arrayBuffer);
+
+      const command = new PutObjectCommand({
+        Bucket: process.env.AMPLIFY_BUCKET as string,
+        Key: key,
+        ContentType: type,
+        Body: buffer
+      });
+
+      this.s3.send(command);
+
+      const signedUrl:string = `https://${process.env.AMPLIFY_BUCKET}.s3.${process.env.AWS_REGION}.amazonaws.com/${key}`;;
+
+
+      return [signedUrl, key];
+
     }catch(e){
       if(e instanceof  Error) throw new Error(e.message)
     }
@@ -121,20 +167,68 @@ export class PrUserRepository implements IUserRepository {
   }
 
 
-
-  async update(id: string, nickname: string): Promise<boolean | undefined> {
+  async updateUserName(id: string, username: string): Promise<User | undefined> {
     try{
-      const updatedUser = await prisma.user.update({
+      const updatedUserName = await prisma.user.update({
         where: { id },
-        data: { nickname },
+        data: { username },
       });
 
-      return updatedUser ? true : false;
+      return updatedUserName;
     }catch(e){
       if(e instanceof  Error) throw new Error(e.message)
     }
 
   }
+
+  async updateUserNickname(id: string, nickname: string): Promise<User | {message: string}| undefined> {
+    try{
+      const updatedUserNickname = await prisma.user.update({
+        where: { id },
+        data: { nickname },
+      });
+
+      return updatedUserNickname;
+    }catch(e){
+      if (e instanceof Prisma.PrismaClientKnownRequestError) {
+        if (e.code === 'P2002') {
+          return { message: "해당 닉네임은 이미 사용 중입니다." };
+        }
+      }
+
+      if(e instanceof  Error) {
+        throw new Error(e.message)
+      }
+    }
+
+  }
+
+  /**
+   * 해당 메소드는 s3 이미지 업데이트
+   * @param fromUserId: string
+   * @param toUserId: string
+   * @return boolean
+   * */
+  async updateProfileImg(id: string, userProfilePath: string, file:File, type: 'create' | 'update'): Promise<User | undefined> {
+    try{
+      if(type === "update") await this.deleteProfileImg(userProfilePath)
+
+      const signedUrl = await this.createProfileImg(file)
+      const img = signedUrl?.length && signedUrl[0] || '';
+      const path = signedUrl?.length && signedUrl[1] || '';
+
+      const updatedUserName = await prisma.user.update({
+        where: { id },
+        data: { profileImg: img, profileImgPath: path },
+      });
+
+      return updatedUserName;
+    }catch(e){
+      if(e instanceof  Error) throw new Error(e.message)
+    }
+
+  }
+
 
   async delete(id: string): Promise<boolean | undefined> {
     try{
@@ -148,5 +242,34 @@ export class PrUserRepository implements IUserRepository {
     }
 
   }
+
+  /**
+   * 해당 메소드는 s3 기존 이미지 삭제
+   * @param fromUserId: string
+   * @param toUserId: string
+   * @return boolean
+   * */
+  async deleteProfileImg(userProfileImgPath: string): Promise<boolean | undefined> {
+    try{
+      const userProfile = `${userProfileImgPath}`
+      const deleteCommand = new DeleteObjectCommand({
+        Bucket: process.env.AMPLIFY_BUCKET as string,
+        Key: userProfile,
+      });
+
+      this.s3.send(deleteCommand);
+
+      return true;
+    }catch(e){
+      if(e instanceof  Error) throw new Error(e.message)
+    }
+
+  }
+
+
+
+
+
+
 
 }

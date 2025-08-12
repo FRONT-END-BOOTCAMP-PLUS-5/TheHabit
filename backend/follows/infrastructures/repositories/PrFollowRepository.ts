@@ -65,7 +65,7 @@ export class PrFollowRepository implements IFollowRepository{
           followers: {
             where: {
               fromUser: {
-                nickname: {
+                username: {
                   contains: keyword,
                 },
               },
@@ -106,7 +106,7 @@ export class PrFollowRepository implements IFollowRepository{
           following: {
             where: {
               toUser: {
-                nickname: {
+                username: {
                   contains: keyword,
                 },
               },
