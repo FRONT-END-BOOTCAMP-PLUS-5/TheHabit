@@ -1,14 +1,7 @@
+import { ReadRoutineResponseDto } from "@/backend/routines/applications/dtos/RoutineDto";
 import { CreateRoutineCompletionResponseDto } from "@/backend/routine-completions/applications/dtos/RoutineCompletionDto";
 
-export interface RoutineDto {
-  id: number;
-  routineTitle: string;
-  emoji: number;
-  challengeId: number;
-  createdAt: string;
-  updatedAt: string;
-}
-
+// UI 전용 Props 타입들
 export interface RoutineAccordionContentProps {
   challengeId: number;
   challengeName: string;
@@ -16,15 +9,17 @@ export interface RoutineAccordionContentProps {
 
 export interface RoutineModalState {
   isReviewModalOpen: boolean;
-  selectedRoutine: RoutineDto | null;
+  selectedRoutine: ReadRoutineResponseDto | null;
   reviewText: string;
   reviewSubmitting: boolean;
 }
 
 export interface PhotoModalState {
   isPhotoModalOpen: boolean;
-  selectedRoutineForPhoto: RoutineDto | null;
+  selectedRoutineForPhoto: ReadRoutineResponseDto | null;
   photoUploading: boolean;
 }
 
+// 백엔드 DTO 타입 재사용
+export type RoutineDto = ReadRoutineResponseDto;
 export type RoutineCompletion = CreateRoutineCompletionResponseDto;

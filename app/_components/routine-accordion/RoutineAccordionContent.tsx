@@ -7,13 +7,16 @@ import { ReviewModal } from "./ReviewModal";
 import { ErrorBoundary } from "./ErrorBoundary";
 import { RoutineListSkeleton } from "./RoutineListSkeleton";
 import { useGetRoutinesByChallenge } from "@/libs/hooks/routines-hooks";
-import { useGetRoutineCompletionsByChallenge } from "@/libs/hooks/routine-completions-hooks";
+import { 
+  useGetRoutineCompletionsByChallenge, 
+  useCreateRoutineCompletion, 
+  useDeleteRoutineCompletion 
+} from "@/libs/hooks/routine-completions-hooks";
+import { useState } from "react";
 
 // 타입과 상수 import
 import { RoutineDto, RoutineAccordionContentProps } from './types';
 import { UI_MESSAGES } from '../../../public/consts/routineItem';
-import { useRoutineCompletion } from '@/libs/hooks/routine-hooks/useRoutineCompletion';
-import { useModalState } from '@/libs/hooks/routine-hooks/useModalState';
 
 
 
@@ -25,49 +28,85 @@ function RoutineAccordionContentInner({
   const { data: routines = [], isLoading, error } = useGetRoutinesByChallenge(challengeId);
   const { data: completions = [], isLoading: completionsLoading } = useGetRoutineCompletionsByChallenge(challengeId);
   
-  // 커스텀 훅들
-  const routineCompletion = useRoutineCompletion({ completions });
-  const modalState = useModalState();
+  // 뮤테이션 훅들
+  const createCompletionMutation = useCreateRoutineCompletion();
+  const deleteCompletionMutation = useDeleteRoutineCompletion();
+  
+  // 모달 상태들
+  const [isReviewModalOpen, setIsReviewModalOpen] = useState<boolean>(false);
+  const [selectedRoutine, setSelectedRoutine] = useState<RoutineDto | null>(null);
+  const [reviewText, setReviewText] = useState<string>("");
+  const [reviewSubmitting, setReviewSubmitting] = useState<boolean>(false);
+  const [isPhotoModalOpen, setIsPhotoModalOpen] = useState<boolean>(false);
+  const [selectedRoutineForPhoto, setSelectedRoutineForPhoto] = useState<RoutineDto | null>(null);
+  const [photoUploading, setPhotoUploading] = useState<boolean>(false);
+  
+  // 루틴 완료 상태 확인 함수들
+  const isRoutineCompleted = (routineId: number) => {
+    return completions.some(completion => completion.routineId === routineId);
+  };
+  
+  const getRoutineCompletion = (routineId: number) => {
+    return completions.find(completion => completion.routineId === routineId);
+  };
 
 
   // 이벤트 핸들러들
   const handleRoutineCheck = (checked: boolean, routine: RoutineDto) => {
     if (checked) {
-      modalState.openReviewModal(routine);
+      setSelectedRoutine(routine);
+      setIsReviewModalOpen(true);
     } else {
-      routineCompletion.deleteCompletion(routine.id);
+      const completion = getRoutineCompletion(routine.id);
+      if (completion) {
+        deleteCompletionMutation.mutate(completion.id);
+      }
     }
   };
 
   const handleReviewSubmit = async () => {
-    if (!modalState.routineModal.selectedRoutine) {
+    if (!selectedRoutine) {
       alert("루틴을 선택해주세요.");
       return;
     }
 
-    modalState.setReviewSubmitting(true);
+    setReviewSubmitting(true);
     
-    await routineCompletion.createCompletion(
-      modalState.routineModal.selectedRoutine,
-      modalState.closeReviewModal
+    createCompletionMutation.mutate(
+      {
+        userId: "f1c6b5ae-b27e-4ae3-9e30-0cb8653b04fd", // TODO: 실제 사용자 ID 사용
+        routineId: selectedRoutine.id,
+        proofImgUrl: null // 현재는 소감만 제출, 추후 리뷰 필드 추가 필요
+      },
+      {
+        onSuccess: () => {
+          setIsReviewModalOpen(false);
+          setSelectedRoutine(null);
+          setReviewText("");
+          alert("소감이 제출되었습니다!");
+        },
+        onError: (error) => {
+          console.error("루틴 완료 생성 오류:", error);
+          alert("소감 제출에 실패했습니다. 다시 시도해주세요.");
+        }
+      }
     );
     
-    modalState.setReviewSubmitting(false);
+    setReviewSubmitting(false);
   };
 
   const handlePhotoUpload = (routine: RoutineDto) => {
-    modalState.openPhotoModal(routine);
+    setSelectedRoutineForPhoto(routine);
+    setIsPhotoModalOpen(true);
   };
 
   const handlePhotoSubmit = async (photoUrl: string) => {
-    if (!modalState.photoModal.selectedRoutineForPhoto) return;
+    if (!selectedRoutineForPhoto) return;
 
-    modalState.setPhotoUploading(true);
+    setPhotoUploading(true);
     
     try {
-      const completion = routineCompletion.getRoutineCompletion(
-        modalState.photoModal.selectedRoutineForPhoto.id
-      );
+      const completion = getRoutineCompletion(selectedRoutineForPhoto.id);
       if (completion) {
         // TODO: updateRoutineCompletion API 호출
         console.log("인증샷 업로드:", photoUrl, "for completion:", completion.id);
@@ -76,9 +115,21 @@ function RoutineAccordionContentInner({
     } catch (error) {
       console.error("인증샷 업로드 오류:", error);
     } finally {
-      modalState.setPhotoUploading(false);
-      modalState.closePhotoModal();
+      setPhotoUploading(false);
+      setIsPhotoModalOpen(false);
+      setSelectedRoutineForPhoto(null);
     }
+  };
+
+  const closeReviewModal = () => {
+    setIsReviewModalOpen(false);
+    setSelectedRoutine(null);
+    setReviewText("");
+  };
+
+  const closePhotoModal = () => {
+    setIsPhotoModalOpen(false);
+    setSelectedRoutineForPhoto(null);
   };
 
   if (isLoading || completionsLoading) {
@@ -114,8 +165,8 @@ function RoutineAccordionContentInner({
 
         <div className="space-y-3">
           {routines.map((routine) => {
-            const isCompleted = routineCompletion.isRoutineCompleted(routine.id);
-            const completion = routineCompletion.getRoutineCompletion(routine.id);
+            const isCompleted = isRoutineCompleted(routine.id);
+            const completion = getRoutineCompletion(routine.id);
 
             return (
               <RoutineItem
@@ -133,22 +184,22 @@ function RoutineAccordionContentInner({
 
       {/* 소감 작성 모달 */}
       <ReviewModal
-        isOpen={modalState.routineModal.isReviewModalOpen}
-        selectedRoutine={modalState.routineModal.selectedRoutine}
-        reviewText={modalState.routineModal.reviewText}
-        isSubmitting={modalState.routineModal.reviewSubmitting}
-        onClose={modalState.closeReviewModal}
+        isOpen={isReviewModalOpen}
+        selectedRoutine={selectedRoutine}
+        reviewText={reviewText}
+        isSubmitting={reviewSubmitting}
+        onClose={closeReviewModal}
         onSubmit={handleReviewSubmit}
-        onReviewTextChange={modalState.setReviewText}
+        onReviewTextChange={setReviewText}
       />
 
       {/* 인증샷 업로드 모달 */}
       <PhotoUploadModal
-        isOpen={modalState.photoModal.isPhotoModalOpen}
-        onClose={modalState.closePhotoModal}
+        isOpen={isPhotoModalOpen}
+        onClose={closePhotoModal}
         onUpload={handlePhotoSubmit}
-        routineTitle={modalState.photoModal.selectedRoutineForPhoto?.routineTitle || ""}
-        loading={modalState.photoModal.photoUploading}
+        routineTitle={selectedRoutineForPhoto?.routineTitle || ""}
+        loading={photoUploading}
       />
     </div>
   );

@@ -4,6 +4,7 @@ import { useState, useRef } from "react";
 import { Modal, Upload } from "antd";
 import { Button } from "@/app/_components/buttons/Button";
 import { CameraOutlined, PictureOutlined } from "@ant-design/icons";
+import "@ant-desgin/v5-patch-for-react-19";
 
 interface PhotoUploadModalProps {
   isOpen: boolean;
@@ -22,7 +23,7 @@ export function PhotoUploadModal({
 }: PhotoUploadModalProps) {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
-  const [uploading, setUploading] = useState(false);
+  const [uploading, setUploading] = useState<boolean>(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // 파일 선택 핸들러
@@ -127,12 +128,12 @@ export function PhotoUploadModal({
       footer={null}
       width={400}
       styles={{
-        body: { padding: '20px' }
-      }}
-    >
+        body: { padding: "20px" },
+      }}>
       <div>
         <p className="text-gray-600 mb-4">
-          "<strong>{routineTitle}</strong>" 루틴을 완료한 증명 사진을 업로드해주세요.
+          "<strong>{routineTitle}</strong>" 루틴을 완료한 증명 사진을
+          업로드해주세요.
         </p>
 
         {/* 미리보기 */}
@@ -154,18 +155,16 @@ export function PhotoUploadModal({
                 type="primary"
                 color="blue"
                 onClick={handleTakePhoto}
-                className="w-full h-12 flex items-center justify-center space-x-2"
-              >
-                <CameraOutlined style={{ fontSize: '18px' }} />
+                className="w-full h-12 flex items-center justify-center space-x-2">
+                <CameraOutlined style={{ fontSize: "18px" }} />
                 <span>카메라로 촬영</span>
               </Button>
 
               <Button
                 type="default"
                 onClick={handleSelectFromGallery}
-                className="w-full h-12 flex items-center justify-center space-x-2"
-              >
-                <PictureOutlined style={{ fontSize: '18px' }} />
+                className="w-full h-12 flex items-center justify-center space-x-2">
+                <PictureOutlined style={{ fontSize: "18px" }} />
                 <span>갤러리에서 선택</span>
               </Button>
             </>
@@ -176,8 +175,7 @@ export function PhotoUploadModal({
                 color="green"
                 onClick={handleUpload}
                 className="w-full h-12"
-                style={{ opacity: uploading || loading ? 0.6 : 1 }}
-              >
+                style={{ opacity: uploading || loading ? 0.6 : 1 }}>
                 {uploading || loading ? "업로드 중..." : "인증 완료"}
               </Button>
 
@@ -188,8 +186,7 @@ export function PhotoUploadModal({
                   setPreviewUrl(null);
                 }}
                 className="w-full h-10"
-                style={{ opacity: uploading || loading ? 0.6 : 1 }}
-              >
+                style={{ opacity: uploading || loading ? 0.6 : 1 }}>
                 다시 선택
               </Button>
             </div>
