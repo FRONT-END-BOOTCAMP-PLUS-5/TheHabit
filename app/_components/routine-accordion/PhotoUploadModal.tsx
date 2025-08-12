@@ -4,7 +4,7 @@ import { useState, useRef } from "react";
 import { Modal, Upload } from "antd";
 import { Button } from "@/app/_components/buttons/Button";
 import { CameraOutlined, PictureOutlined } from "@ant-design/icons";
-import "@ant-desgin/v5-patch-for-react-19";
+import "@ant-design/v5-patch-for-react-19";
 
 interface PhotoUploadModalProps {
   isOpen: boolean;
