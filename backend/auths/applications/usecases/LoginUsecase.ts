@@ -10,7 +10,7 @@ export class LoginUsecase {
     async execute(loginRequest: LoginRequestDto): Promise<LoginResponseDto> {
         console.log("🚀 LoginUsecase.execute 시작");
         console.log("📝 입력된 로그인 요청:", loginRequest);
-        
+
         try {
             // 1. 입력 검증(이메일 비밀번호 둘 다 입력되었는지)
             console.log("🔍 1단계: 입력 검증 시작");
@@ -31,7 +31,7 @@ export class LoginUsecase {
             const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
             const isEmailValid = emailRegex.test(loginRequest.email);
             console.log("📧 이메일 형식 검증 결과:", isEmailValid);
-            
+
             if (!isEmailValid) {
                 console.log("❌ 이메일 형식 검증 실패");
                 return {
@@ -44,10 +44,10 @@ export class LoginUsecase {
             // 3. 사용자 조회 (이메일로 찾기)
             console.log("🔍 3단계: 사용자 조회 시작");
             console.log("🔍 조회할 이메일:", loginRequest.email);
-            
+
             const user = await this.userRepository.findByEmail(loginRequest.email);
             console.log("👤 사용자 조회 결과:", user);
-            
+
             if (!user) {
                 console.log("❌ 사용자 조회 실패: 존재하지 않는 이메일");
                 return {
@@ -68,7 +68,7 @@ export class LoginUsecase {
             console.log("🔍 4단계: 비밀번호 검증 시작");
             console.log("🔑 입력된 비밀번호:", loginRequest.password);
             console.log("🔑 저장된 비밀번호:", user.password);
-            
+
             // const isPasswordValid = await bcrypt.compare(
             //     loginRequest.password,
             //     user.password || ""
@@ -98,8 +98,8 @@ export class LoginUsecase {
                 success: true,
                 message: "로그인 성공",
                 user: {
-                    id: user.id || "",
-                    email: user.email || "",
+                    id: user.id,
+                    email: user.email,
                 }
             };
             console.log("✅ 최종 응답:", successResponse);

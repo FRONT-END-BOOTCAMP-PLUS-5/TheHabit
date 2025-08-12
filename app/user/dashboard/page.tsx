@@ -1,4 +1,4 @@
-import UserProfileSection from "../_components/user-profile-section/UserProfileSection";
+import UserProfileSection from "../../_components/user-profile-section/UserProfileSection";
 import ChallengeListSection from "./_components/ChallengeListSection";
 
 const MainPage: React.FC = () => {

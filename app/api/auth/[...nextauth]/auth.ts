@@ -18,7 +18,7 @@ export const authOptions = {
       // 로컬 로그인
       async authorize(credentials) {
         const { email, password } = credentials ?? {};
-        
+
         console.log("🔐 NextAuth authorize 시작");
         console.log("📧 입력된 이메일:", email);
         console.log("🔑 입력된 비밀번호:", password);
@@ -32,7 +32,7 @@ export const authOptions = {
           const loginUsecase = new LoginUsecase(new PrUserRepository());
           const loginRequestdto: LoginRequestDto = { email, password };
           console.log("🚀 LoginUsecase 실행 시작");
-          
+
           const result = await loginUsecase.execute(loginRequestdto);
           console.log("📊 LoginUsecase 결과:", result);
 
@@ -41,6 +41,7 @@ export const authOptions = {
             return {
               id: result.user.id,
               email: result.user.email,
+              name: result.user.email, // NextAuth에서 name도 필요할 수 있음
             };
           } else {
             console.log("❌ 로그인 실패:", result.message);
