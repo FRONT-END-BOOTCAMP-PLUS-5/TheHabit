@@ -1,6 +1,6 @@
-'use client'
-import Input from "../../_components/inputs/Input";
-import {useState, useEffect, useCallback} from "react";
+"use client";
+import Input from "@/app/_components/inputs/Input";
+import {useState, useEffect, useCallback, useRef} from "react";
 import {  useSearchParams } from "next/navigation";
 import { debounce } from 'lodash';
 import { followsApi } from "@/libs/api/follows.api";
@@ -23,29 +23,42 @@ const FollowPage = () => {
     const [getFollows, setFollows] = useState<FollowerDto | FollowingDto>()
     const [getInputText, setInputText] = useState<string>('')
 
-
     const {follower, following } = followsApi;
 
+    const isMounted = useRef(false);
 
     const init = () => {
         setInputText('');
     }
 
-
-    const handleSearch = useCallback(debounce(async (value: string) => {
-        if(type === "follower" || type === "following") await getFollow(type, value);
-    },500),[type]);
-
-    const getFollow = async (type:'follower' | 'following', keyword:string = '') => {
+    const getFollow = useCallback(async (type:'follower' | 'following', keyword:string = '') => {
         const response = type === 'follower' ?  await follower(ID, keyword) : await following(ID, keyword);
-        setFollows(response?.data);
-    };
+        if (isMounted.current) {
+            setFollows(response?.data);
+        }
+    }, [follower, following]);
+
+    const handleSearch = useCallback(
+        debounce(async (value: string) => {
+            if(type === "follower" || type === "following") await getFollow(type, value);
+        },500),
+        [type, getFollow]
+    );
 
     useEffect(() => {
+        isMounted.current = true;
+
         (async function(){
-            if(type === "follower" || type === "following") await getFollow(type);
+            if(type === "follower" || type === "following") {
+                await getFollow(type);
+            }
         }());
-    },[type]);
+
+        return () => {
+            isMounted.current = false;
+            handleSearch.cancel();
+        }
+    },[type, getFollow, handleSearch]);
 
     return (
         <main className="px-5">
@@ -68,4 +81,4 @@ const FollowPage = () => {
     );
 };
 
-export default FollowPage
+export default FollowPage;

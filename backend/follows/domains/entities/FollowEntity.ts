@@ -4,6 +4,7 @@ export class Follower {
       public readonly nickname: string,
       public readonly username: string,
       public readonly profileImg: string | null,
+      public readonly profileImgPath: string | null,
       public readonly followers: {
           fromUser: {
               id: string
