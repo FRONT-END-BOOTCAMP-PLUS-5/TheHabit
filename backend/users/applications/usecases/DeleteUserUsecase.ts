@@ -7,10 +7,9 @@ export class DeleteUserUsecase {
     constructor(private readonly userRepo: IUserRepository) { }
 
     //유저 delete 실행
-    async execute(user: User): Promise<boolean | undefined> {
+    async execute(id: string): Promise<boolean | undefined> {
         try{
-            const { id } = user
-            const deletedUser = await this.userRepo.delete(id || '');
+            const deletedUser = await this.userRepo.delete(id);
 
             return deletedUser;
         }catch(error){
