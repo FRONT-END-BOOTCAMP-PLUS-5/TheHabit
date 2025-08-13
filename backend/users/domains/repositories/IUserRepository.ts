@@ -10,6 +10,7 @@ export interface IUserRepository {
   findAll(): Promise<User[] | undefined>;
 
   findByEmail(email: string): Promise<User>;
+  checkEmailExists(email: string): Promise<boolean>;
 
   // Update
   updateUserNickname(id: string, nickname: string): Promise<User | { message: string } | undefined>;

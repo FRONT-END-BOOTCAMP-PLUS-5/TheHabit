@@ -183,6 +183,19 @@ export class PrUserRepository implements IUserRepository {
     }
   }
 
+  // 회원가입용 이메일 중복 체크
+  async checkEmailExists(email: string): Promise<boolean> {
+    try {
+        const user = await prisma.user.findUnique({
+            where: { email }
+        });
+        return !!user; // 사용자가 존재하면 true, 없으면 false
+    } catch (e) {
+        console.error("이메일 존재 여부 확인 중 오류:", e);
+        throw e;
+    }
+}
+
 
   async findById(id: string): Promise<User | null | undefined> {
     try {
