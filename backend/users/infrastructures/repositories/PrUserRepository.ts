@@ -3,8 +3,7 @@ import { IUserRepository } from "@/backend/users/domains/repositories/IUserRepos
 import { User } from "@/backend/users/domains/entities/UserEntity";
 import { DeleteObjectCommand, PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { v4 as uuidv4 } from "uuid";
-// import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
-//일단 사용되지 않는 import 빌드용으로 주석처리합니다 -승민
+
 import { Prisma } from "@prisma/client";
 
 export class PrUserRepository implements IUserRepository {
@@ -73,6 +72,40 @@ export class PrUserRepository implements IUserRepository {
     }
   }
 
+  /**
+   * 해당 메소드는 s3에 이미지 생성
+   * @param fromUserId: string
+   * @param toUserId: string
+   * @return string
+   * */
+  async createProfileImg(file: File): Promise<string[] | undefined> {
+    try{
+      const { name, type } = file
+
+      const key = `${uuidv4()}-${name}`;
+
+      const arrayBuffer = await file.arrayBuffer();
+      const buffer = Buffer.from(arrayBuffer);
+
+      const command = new PutObjectCommand({
+        Bucket: process.env.AMPLIFY_BUCKET as string,
+        Key: key,
+        ContentType: type,
+        Body: buffer
+      });
+
+      this.s3.send(command);
+
+      const signedUrl:string = `https://${process.env.AMPLIFY_BUCKET}.s3.${process.env.AWS_REGION}.amazonaws.com/${key}`;;
+
+
+      return [signedUrl, key];
+
+    }catch(e){
+      if(e instanceof  Error) throw new Error(e.message)
+    }
+  }
+
   async findAll(nickname: string = ''): Promise<User[] | undefined> {
     try {
       const users = await prisma.user.findMany({
@@ -94,6 +127,7 @@ export class PrUserRepository implements IUserRepository {
 
   }
 
+
   async findByEmail(email: string): Promise<User> {
     console.log("🔍 PrUserRepository.findByEmail 시작");
     console.log("📧 조회할 이메일:", email);
@@ -108,6 +142,7 @@ export class PrUserRepository implements IUserRepository {
 
       if (!user) {
         throw new Error("사용자를 찾을 수 없습니다.");
+
       }
 
       console.log("✅ 사용자 발견, User 객체 생성 시작");
@@ -130,6 +165,7 @@ export class PrUserRepository implements IUserRepository {
         user.email
       );
 
+
       console.log("🏗️ 생성된 User 엔티티:", {
         id: userEntity.id,
         username: userEntity.username,
@@ -143,6 +179,7 @@ export class PrUserRepository implements IUserRepository {
     } catch (e) {
       console.error("💥 PrUserRepository.findByEmail 오류:", e);
       throw e; // 에러를 다시 던져서 상위에서 처리하도록 함
+
     }
   }
 
@@ -169,7 +206,9 @@ export class PrUserRepository implements IUserRepository {
 
 
   async updateUserName(id: string, username: string): Promise<User | undefined> {
+
     try {
+
       const updatedUserName = await prisma.user.update({
         where: { id },
         data: { username },
@@ -184,6 +223,7 @@ export class PrUserRepository implements IUserRepository {
 
   async updateUserNickname(id: string, nickname: string): Promise<User | { message: string } | undefined> {
     try {
+
       const updatedUserNickname = await prisma.user.update({
         where: { id },
         data: { nickname },
@@ -191,13 +231,16 @@ export class PrUserRepository implements IUserRepository {
 
       return updatedUserNickname;
     } catch (e) {
+
       if (e instanceof Prisma.PrismaClientKnownRequestError) {
         if (e.code === 'P2002') {
           return { message: "해당 닉네임은 이미 사용 중입니다." };
         }
       }
 
+
       if (e instanceof Error) {
+
         throw new Error(e.message)
       }
     }
@@ -210,9 +253,11 @@ export class PrUserRepository implements IUserRepository {
    * @param toUserId: string
    * @return boolean
    * */
+
   async updateProfileImg(id: string, userProfilePath: string, file: File, type: 'create' | 'update'): Promise<User | undefined> {
     try {
       if (type === "update") await this.deleteProfileImg(userProfilePath)
+
 
       const signedUrl = await this.createProfileImg(file)
       const img = signedUrl?.length && signedUrl[0] || '';
@@ -226,6 +271,7 @@ export class PrUserRepository implements IUserRepository {
       return updatedUserName;
     } catch (e) {
       if (e instanceof Error) throw new Error(e.message)
+
     }
 
   }
@@ -252,6 +298,7 @@ export class PrUserRepository implements IUserRepository {
    * */
   async deleteProfileImg(userProfileImgPath: string): Promise<boolean | undefined> {
     try {
+
       const userProfile = `${userProfileImgPath}`
       const deleteCommand = new DeleteObjectCommand({
         Bucket: process.env.AMPLIFY_BUCKET as string,
@@ -263,14 +310,10 @@ export class PrUserRepository implements IUserRepository {
       return true;
     } catch (e) {
       if (e instanceof Error) throw new Error(e.message)
+
     }
 
   }
-
-
-
-
-
 
 
 }

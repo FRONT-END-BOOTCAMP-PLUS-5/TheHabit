@@ -1,7 +1,7 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { createChallenge } from '@/libs/api/challenges.api';
-import { AddChallengeRequestDto } from '@/backend/challenges/applications/dtos/AddChallengeDto';
-import { ChallengeDto } from '@/backend/challenges/applications/dtos/ChallengeDto';
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { createChallenge } from "@/libs/api/challenges.api";
+import { AddChallengeRequestDto } from "@/backend/challenges/applications/dtos/AddChallengeDto";
+import { ChallengeDto } from "@/backend/challenges/applications/dtos/ChallengeDto";
 
 /**
  * 챌린지를 생성하는 훅
@@ -10,17 +10,26 @@ import { ChallengeDto } from '@/backend/challenges/applications/dtos/ChallengeDt
 export const useCreateChallenge = () => {
   const queryClient = useQueryClient();
 
-  return useMutation<{ success: boolean; data?: ChallengeDto; message?: string; error?: { code: string; message: string } }, Error, AddChallengeRequestDto>({
+  return useMutation<
+    {
+      success: boolean;
+      data?: ChallengeDto;
+      message?: string;
+      error?: { code: string; message: string };
+    },
+    Error,
+    AddChallengeRequestDto
+  >({
     mutationFn: createChallenge,
     onSuccess: (data) => {
       // 챌린지 생성 성공 시 관련 캐시 무효화
-      queryClient.invalidateQueries({ queryKey: ['challenges', 'all'] });
-      queryClient.invalidateQueries({ queryKey: ['challenges', 'category'] });
+      queryClient.invalidateQueries({ queryKey: ["challenges", "all"] });
+      queryClient.invalidateQueries({ queryKey: ["challenges", "category"] });
 
-      console.log('챌린지 생성 성공:', data);
+      console.log("챌린지 생성 성공:", data);
     },
     onError: (error) => {
-      console.error('챌린지 생성 실패:', error);
+      console.error("챌린지 생성 실패:", error);
     },
   });
-}; 
+};

@@ -97,6 +97,7 @@ export const authOptions = {
         console.log("✅ [NextAuth] JWT token 업데이트 완료");
       } else {
         console.log("🔄 [NextAuth] JWT callback - 기존 token 반환");
+
       }
 
       return token;
@@ -125,9 +126,22 @@ export const authOptions = {
         });
       } else {
         console.log("⚠️ [NextAuth] Session callback - session.user가 없음");
+
       }
 
       return session;
     },
+    async redirect({ url, baseUrl }: { url: string; baseUrl: string }) {
+      // 로그인 후 리다이렉트
+      if (url.startsWith("/")) return `${baseUrl}${url}`;
+      // 외부 URL인 경우 홈으로 리다이렉트
+      else if (new URL(url).origin === baseUrl) return url;
+      return baseUrl;
+    },
+  },
+  pages: {
+    signIn: "/login", // 로그인 페이지 경로
+    signUp: "/signup", // 회원가입 페이지 경로
+    error: "/login", // 에러 페이지 경로
   },
 };

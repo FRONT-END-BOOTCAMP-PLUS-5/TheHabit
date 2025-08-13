@@ -1,6 +1,8 @@
 import { LoginRequestDto } from "@/backend/auths/applications/dtos/LoginRequestDto";
 import { LoginResponseDto } from "@/backend/auths/applications/dtos/LoginResponseDto";
 import { IUserRepository } from "@/backend/users/domains/repositories/IUserRepository";
+// import bcrypt from "bcryptjs";
+
 
 export class LoginUsecase {
     constructor(private readonly userRepository: IUserRepository) {
@@ -25,11 +27,13 @@ export class LoginUsecase {
             const isEmailValid = emailRegex.test(loginRequest.email);
 
             if (!isEmailValid) {
+
                 return {
                     success: false,
                     message: "올바른 이메일 형식을 입력해주세요."
                 };
             }
+
 
             // 사용자 조회
             const user = await this.userRepository.findByEmail(loginRequest.email);
@@ -45,13 +49,18 @@ export class LoginUsecase {
             const isPasswordValid = loginRequest.password === user.password;
 
             if (!isPasswordValid) {
+
                 return {
                     success: false,
                     message: "비밀번호가 일치하지 않습니다."
                 };
             }
 
-            // 성공 응답
+            console.log("✅ 비밀번호 검증 성공");
+
+            // 5. 성공 응답
+            console.log("🎉 5단계: 로그인 성공 응답 생성");
+
             const successResponse = {
                 success: true,
                 message: "로그인 성공",
@@ -63,6 +72,7 @@ export class LoginUsecase {
                     profileImg: user.profileImg,
                 }
             };
+
             return successResponse;
 
         } catch (error) {

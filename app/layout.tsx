@@ -71,6 +71,7 @@ const RootLayout = ({
           <QueryProvider>
             <ModalProvider>{children}</ModalProvider>
           </QueryProvider>
+
         </div>
       </body>
     </html>

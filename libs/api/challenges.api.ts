@@ -27,65 +27,88 @@ interface CategoryChallengesResponse {
 // 1. 전체 챌린지 목록 조회
 export const getAllChallenges = async (): Promise<ChallengeDto[]> => {
   try {
-    const response = await axiosInstance.get<ChallengeDto[]>('/api/challenges');
+    const response = await axiosInstance.get<ChallengeDto[]>("/api/challenges");
     return response.data;
   } catch (error) {
-    console.error('전체 챌린지 조회 실패:', error);
+    console.error("전체 챌린지 조회 실패:", error);
     throw error;
   }
 };
 
 // 2. 챌린지 생성
-export const createChallenge = async (challengeData: AddChallengeRequestDto): Promise<ApiResponse<ChallengeDto>> => {
+export const createChallenge = async (
+  challengeData: AddChallengeRequestDto
+): Promise<ApiResponse<ChallengeDto>> => {
   try {
-    const response = await axiosInstance.post<ApiResponse<ChallengeDto>>('/api/challenges', challengeData);
+    const response = await axiosInstance.post<ApiResponse<ChallengeDto>>(
+      "/api/challenges",
+      challengeData
+    );
     return response.data;
   } catch (error) {
-    console.error('챌린지 생성 실패:', error);
+    console.error("챌린지 생성 실패:", error);
     throw error;
   }
 };
 
 // 3. 특정 챌린지 상세 조회
-export const getChallengeById = async (id: number): Promise<ApiResponse<ChallengeDto>> => {
+export const getChallengeById = async (
+  id: number
+): Promise<ApiResponse<ChallengeDto>> => {
   try {
-    const response = await axiosInstance.get<ApiResponse<ChallengeDto>>(`/api/challenges/${id}`);
+    const response = await axiosInstance.get<ApiResponse<ChallengeDto>>(
+      `/api/challenges/${id}`
+    );
     return response.data;
   } catch (error) {
-    console.error('챌린지 상세 조회 실패:', error);
+    console.error("챌린지 상세 조회 실패:", error);
     throw error;
   }
 };
 
 // 4. 챌린지 수정
-export const updateChallenge = async (id: number, challengeData: Partial<AddChallengeRequestDto>): Promise<ApiResponse<ChallengeDto>> => {
+export const updateChallenge = async (
+  id: number,
+  challengeData: Partial<AddChallengeRequestDto>
+): Promise<ApiResponse<ChallengeDto>> => {
   try {
-    const response = await axiosInstance.put<ApiResponse<ChallengeDto>>(`/api/challenges/${id}`, challengeData);
+    const response = await axiosInstance.put<ApiResponse<ChallengeDto>>(
+      `/api/challenges/${id}`,
+      challengeData
+    );
     return response.data;
   } catch (error) {
-    console.error('챌린지 수정 실패:', error);
+    console.error("챌린지 수정 실패:", error);
     throw error;
   }
 };
 
 // 5. 챌린지 삭제
-export const deleteChallenge = async (id: number): Promise<ApiResponse<void>> => {
+export const deleteChallenge = async (
+  id: number
+): Promise<ApiResponse<void>> => {
   try {
-    const response = await axiosInstance.delete<ApiResponse<void>>(`/api/challenges/${id}`);
+    const response = await axiosInstance.delete<ApiResponse<void>>(
+      `/api/challenges/${id}`
+    );
     return response.data;
   } catch (error) {
-    console.error('챌린지 삭제 실패:', error);
+    console.error("챌린지 삭제 실패:", error);
     throw error;
   }
 };
 
 // 6. 카테고리별 챌린지 목록 조회
-export const getChallengesByCategory = async (categoryId: number): Promise<CategoryChallengesResponse> => {
+export const getChallengesByCategory = async (
+  categoryId: number
+): Promise<CategoryChallengesResponse> => {
   try {
-    const response = await axiosInstance.get<CategoryChallengesResponse>(`/api/challenges/categories/${categoryId}`);
+    const response = await axiosInstance.get<CategoryChallengesResponse>(
+      `/api/challenges/categories/${categoryId}`
+    );
     return response.data;
   } catch (error) {
-    console.error('카테고리별 챌린지 조회 실패:', error);
+    console.error("카테고리별 챌린지 조회 실패:", error);
     throw error;
   }
 };
