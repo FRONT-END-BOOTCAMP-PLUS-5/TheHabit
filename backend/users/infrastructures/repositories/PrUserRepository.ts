@@ -318,9 +318,4 @@ export class PrUserRepository implements IUserRepository {
 
     }
 
-import {RoutineCompletion} from "@/backend/routine-completions/domains/entities/routine-completion/routineCompletion";
-import {DeleteObjectCommand, PutObjectCommand, S3Client} from "@aws-sdk/client-s3";
-import {v4 as uuidv4} from "uuid";
-import { Prisma } from "@prisma/client";
-
 }

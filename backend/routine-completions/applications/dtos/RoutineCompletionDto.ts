@@ -10,6 +10,7 @@ export interface CreateRoutineCompletionResponseDto {
   routineId: number;
   createdAt: Date;
   proofImgUrl: string | null;
+  content: string | null;
 }
 
 // 루틴 완료 목록 조회

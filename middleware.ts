@@ -12,12 +12,12 @@ export default function middleware(req: NextRequest) {
     //   method: req.method
     // });
 
-    if (!token) {
-        return NextResponse.redirect(new URL('/login', req.url));
-    }
+    //if (!token) {
+      //  return NextResponse.redirect(new URL('/login', req.url));
+    //}
 
 
-    return NextResponse.next();
+    //return NextResponse.next();
 }
 
 export const config = {

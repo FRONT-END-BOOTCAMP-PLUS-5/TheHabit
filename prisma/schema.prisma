@@ -77,6 +77,7 @@ model RoutineCompletion {
   id          Int      @id @default(autoincrement())
   createdAt   DateTime @default(now()) @map("created_at")
   proofImgUrl String?  @map("proof_img_url")
+  content     String?  @map("content")
 
   userId String @map("user_id")
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
