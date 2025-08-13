@@ -8,7 +8,7 @@ export function useSignUp() {
     email: string;
     password: string;
     passwordConfirm: string;
-    nickName: string;
+    nickname: string;
     profileImage: string | null;
   }
 

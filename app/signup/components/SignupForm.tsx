@@ -10,11 +10,11 @@ import { CheckBox } from "@/app/signup/components/CheckBox";
 import { useSignUp } from "@/libs/hooks/signup/useSignUp";
 
 interface ISignupForm {
-  name: string;
+  username: string;
   email: string;
   password: string;
   passwordConfirm: string;
-  nickName: string;
+  nickname: string;
   profileImage: string | null;
 }
 
@@ -22,10 +22,11 @@ export const SignUpForm = () => {
   const methods = useForm<ISignupForm>({
     mode: "onChange",
     defaultValues: {
+      username: "",
       email: "",
       password: "",
       passwordConfirm: "",
-      nickName: "",
+      nickname: "",
       profileImage: null,
     },
   });

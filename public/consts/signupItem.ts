@@ -1,18 +1,18 @@
 import { UseFormGetValues } from "react-hook-form";
 
 interface ISignupForm {
-  name: string;
+  username: string;
   email: string;
   password: string;
   passwordConfirm: string;
-  nickName: string;
+  nickname: string;
   profileImage: string | null;
 }
 
 interface ISignupItem {
   id: number;
   label: string;
-  name: "name" | "email" | "password" | "passwordConfirm";
+  name: "username" | "email" | "password" | "passwordConfirm";
   type: "text" | "email" | "password";
   placeholder: string;
   required: boolean;
@@ -28,7 +28,7 @@ export const SignupItem: ISignupItem[] = [
   {
     id: 1,
     label: "이름",
-    name: "name",
+    name: "username",
     type: "text",
     placeholder: "이름",
     required: true,
