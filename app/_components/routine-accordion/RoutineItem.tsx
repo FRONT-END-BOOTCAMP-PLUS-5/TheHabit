@@ -1,35 +1,37 @@
-import { Button } from "@/app/_components/buttons/Button";
-import { Checkbox } from "@/app/_components/checkboxes/Checkbox";
-import { EmojiDisplay } from "@/app/_components/emoji/EmojiDisplay";
-import { RoutineDto, RoutineCompletion } from './types';
-import { UI_MESSAGES } from '../../../public/consts/routineItem';
+import { Button } from '@/app/_components/buttons/Button';
+import { Checkbox } from '@/app/_components/checkboxes/Checkbox';
+import { EmojiDisplay } from '@/app/_components/emoji/EmojiDisplay';
+import { ReadRoutineResponseDto } from '@/backend/routines/applications/dtos/RoutineDto';
+import { RoutineCompletionDto } from '@/backend/routine-completions/applications/dtos/RoutineCompletionDto';
+import { UI_MESSAGES } from '@/public/consts/routineItem';
 
 interface RoutineItemProps {
-  routine: RoutineDto;
+  routine: ReadRoutineResponseDto;
   isCompleted: boolean;
-  completion?: RoutineCompletion;
-  onRoutineCheck: (checked: boolean, routine: RoutineDto) => void;
-  onPhotoUpload: (routine: RoutineDto) => void;
+  completion?: RoutineCompletionDto;
+  onRoutineCheck: (checked: boolean, routine: ReadRoutineResponseDto) => void;
+  onPhotoUpload: (routine: ReadRoutineResponseDto) => void;
 }
 
-export function RoutineItem({
+export const RoutineItem = ({
   routine,
   isCompleted,
   completion,
   onRoutineCheck,
   onPhotoUpload,
-}: RoutineItemProps) {
+}: RoutineItemProps) => {
   return (
     <div
       className={`flex items-center justify-between p-3 rounded-lg border transition-colors ${
         isCompleted
-          ? "bg-green-50 border-green-200"
-          : "bg-white border-gray-200 hover:border-gray-300"
-      }`}>
+          ? 'bg-green-50 border-green-200'
+          : 'bg-white border-gray-200 hover:border-gray-300'
+      }`}
+    >
       <div className="flex items-center space-x-3">
         <Checkbox
           checked={isCompleted}
-          onChange={(checked) => onRoutineCheck(checked, routine)}
+          onChange={(e) => onRoutineCheck(e.target.checked, routine)}
           className="text-lg"
         />
 
@@ -42,10 +44,9 @@ export function RoutineItem({
         <div>
           <p
             className={`font-medium ${
-              isCompleted
-                ? "text-green-800 line-through"
-                : "text-gray-800"
-            }`}>
+              isCompleted ? 'text-green-800 line-through' : 'text-gray-800'
+            }`}
+          >
             {routine.routineTitle}
           </p>
           {isCompleted && (
@@ -67,7 +68,8 @@ export function RoutineItem({
               type="link"
               color="blue"
               onClick={() => onPhotoUpload(routine)}
-              className="text-xs">
+              className="text-xs"
+            >
               📸 인증샷
             </Button>
           )}
@@ -75,4 +77,4 @@ export function RoutineItem({
       )}
     </div>
   );
-}
+};

@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import React, { useRef, useState } from "react";
-import { Button } from "@/app/_components/buttons/Button";
-import { CameraOutlined, PictureOutlined } from "@ant-design/icons";
+import React, { useRef, useState } from 'react';
+import { Button } from '@/app/_components/buttons/Button';
+import { CameraOutlined, PictureOutlined } from '@ant-design/icons';
 
 interface FileUploadProps {
   onFileSelect: (file: File) => void;
@@ -14,10 +14,10 @@ interface FileUploadProps {
 
 export const FileUpload: React.FC<FileUploadProps> = ({
   onFileSelect,
-  accept = "image/*",
+  accept = 'image/*',
   maxSize = 5,
   preview = true,
-  className = "",
+  className = '',
 }) => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
@@ -28,8 +28,8 @@ export const FileUpload: React.FC<FileUploadProps> = ({
     if (!file) return;
 
     // 파일 타입 검증
-    if (accept.startsWith("image/") && !file.type.startsWith("image/")) {
-      alert("이미지 파일만 업로드 가능합니다.");
+    if (accept.startsWith('image/') && !file.type.startsWith('image/')) {
+      alert('이미지 파일만 업로드 가능합니다.');
       return;
     }
 
@@ -44,7 +44,7 @@ export const FileUpload: React.FC<FileUploadProps> = ({
     onFileSelect(file);
 
     // 미리보기 생성
-    if (preview && file.type.startsWith("image/")) {
+    if (preview && file.type.startsWith('image/')) {
       const reader = new FileReader();
       reader.onload = (e) => {
         setPreviewUrl(e.target?.result as string);
@@ -55,14 +55,14 @@ export const FileUpload: React.FC<FileUploadProps> = ({
 
   const handleTakePhoto = () => {
     if (fileInputRef.current) {
-      fileInputRef.current.setAttribute("capture", "environment");
+      fileInputRef.current.setAttribute('capture', 'environment');
       fileInputRef.current.click();
     }
   };
 
   const handleSelectFromGallery = () => {
     if (fileInputRef.current) {
-      fileInputRef.current.removeAttribute("capture");
+      fileInputRef.current.removeAttribute('capture');
       fileInputRef.current.click();
     }
   };
@@ -71,7 +71,7 @@ export const FileUpload: React.FC<FileUploadProps> = ({
     setSelectedFile(null);
     setPreviewUrl(null);
     if (fileInputRef.current) {
-      fileInputRef.current.value = "";
+      fileInputRef.current.value = '';
     }
   };
 
@@ -91,14 +91,14 @@ export const FileUpload: React.FC<FileUploadProps> = ({
       {/* 버튼들 */}
       {!selectedFile ? (
         <>
-          {accept.startsWith("image/") && (
+          {accept.startsWith('image/') && (
             <Button
               type="primary"
               color="blue"
               onClick={handleTakePhoto}
               className="w-full h-12 flex items-center justify-center space-x-2"
             >
-              <CameraOutlined style={{ fontSize: "18px" }} />
+              <CameraOutlined style={{ fontSize: '18px' }} />
               <span>카메라로 촬영</span>
             </Button>
           )}
@@ -108,16 +108,12 @@ export const FileUpload: React.FC<FileUploadProps> = ({
             onClick={handleSelectFromGallery}
             className="w-full h-12 flex items-center justify-center space-x-2"
           >
-            <PictureOutlined style={{ fontSize: "18px" }} />
+            <PictureOutlined style={{ fontSize: '18px' }} />
             <span>파일 선택</span>
           </Button>
         </>
       ) : (
-        <Button
-          type="default"
-          onClick={resetFile}
-          className="w-full h-10"
-        >
+        <Button type="default" onClick={resetFile} className="w-full h-10">
           다시 선택
         </Button>
       )}
@@ -132,7 +128,8 @@ export const FileUpload: React.FC<FileUploadProps> = ({
       />
 
       <p className="text-xs text-gray-400 text-center">
-        {accept.startsWith("image/") ? "이미지 파일만" : "파일"} 업로드 가능하며, 최대 {maxSize}MB까지 지원됩니다.
+        {accept.startsWith('image/') ? '이미지 파일만' : '파일'} 업로드
+        가능하며, 최대 {maxSize}MB까지 지원됩니다.
       </p>
     </div>
   );

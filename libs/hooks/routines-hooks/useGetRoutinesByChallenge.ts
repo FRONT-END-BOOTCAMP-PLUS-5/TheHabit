@@ -8,7 +8,10 @@ import { ReadRoutineResponseDto } from '@/backend/routines/applications/dtos/Rou
  * @param enabled 쿼리 활성화 여부 (기본값: true)
  * @returns 루틴 목록 조회 결과
  */
-export const useGetRoutinesByChallenge = (challengeId: number, enabled: boolean = true) => {
+export const useGetRoutinesByChallenge = (
+  challengeId: number,
+  enabled: boolean = true,
+) => {
   return useQuery<ReadRoutineResponseDto[]>({
     queryKey: ['routines', 'challenge', challengeId],
     queryFn: async () => {
@@ -17,6 +20,6 @@ export const useGetRoutinesByChallenge = (challengeId: number, enabled: boolean 
     },
     enabled: enabled && challengeId > 0, // challengeId가 유효하고 enabled가 true일 때만 실행
     staleTime: 3 * 60 * 1000, // 3분간 데이터를 fresh로 유지
-    gcTime: 5 * 60 * 1000,    // 5분간 캐시 유지
+    gcTime: 5 * 60 * 1000, // 5분간 캐시 유지
   });
 };

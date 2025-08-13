@@ -7,7 +7,7 @@ import { UpdateRoutineCompletionUseCase } from "@/backend/routine-completions/ap
 import { DeleteRoutineCompletionUseCase } from "@/backend/routine-completions/applications/usecases/DeleteRoutineCompletionUseCase";
 import { RoutineCompletionDtoMapper } from "@/backend/routine-completions/applications/dtos/RoutineCompletionDto";
 import { RoutineCompletionDto } from "@/backend/routine-completions/applications/dtos/RoutineCompletionDto";
-import { UpdateRoutineCompletionDto } from "@/backend/routine-completions/applications/dtos/RoutineCompletionDto";
+import { ApiResponse } from "@/backend/shared/types/ApiResponse";
 
 
 const createUpdateRoutineCompletionUseCase = () => {
@@ -21,15 +21,7 @@ const createDeleteRoutineCompletionUseCase = () => {
 };
 
 // 응답 타입 정의
-interface RoutineCompletionResponse {
-  success: boolean;
-  data?: RoutineCompletionDto;
-  message?: string;
-  error?: {
-    code: string;
-    message: string;
-  };
-}
+type RoutineCompletionResponse = ApiResponse<RoutineCompletionDto>;
 
 // 특정 루틴 완료 조회
 export async function GET(
@@ -112,7 +104,7 @@ export async function PATCH(
     console.log("완료 ID:", completionId);
     console.log("요청 URL:", request.url);
 
-    const requestData: UpdateRoutineCompletionDto = await request.json();
+    const requestData: { proofImgUrl: string | null } = await request.json();
     console.log("요청 바디:", JSON.stringify(requestData, null, 2));
     console.log("=== PATCH /api/routine-completions/[id] 요청 끝 ===");
 
@@ -164,18 +156,22 @@ export async function DELETE(
     console.log("요청 URL:", request.url);
     console.log("=== DELETE /api/routine-completions/[id] 요청 끝 ===");
 
-    const usecase = createDeleteRoutineCompletionUseCase();
-    const success = await usecase.execute(completionId);
+    // 기존 루틴 완료 조회 (삭제 전 확인)
+    const repository = new PrRoutineCompletionsRepository();
+    const existingCompletion = await repository.findById(completionId);
 
-    if (!success) {
+    if (!existingCompletion) {
       return NextResponse.json({
         success: false,
         error: {
-          code: "DELETE_FAILED",
-          message: "루틴 완료 삭제에 실패했습니다."
+          code: "COMPLETION_NOT_FOUND",
+          message: "루틴 완료를 찾을 수 없습니다."
         }
-      }, { status: 500 });
+      }, { status: 404 });
     }
+
+    const usecase = createDeleteRoutineCompletionUseCase();
+    await usecase.execute(existingCompletion);
 
     return NextResponse.json({
       success: true,

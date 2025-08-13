@@ -13,9 +13,13 @@ export const useDeleteRoutineCompletion = () => {
     onSuccess: (data, completionId) => {
       // 루틴 완료 삭제 성공 시 관련 캐시 무효화
       queryClient.invalidateQueries({ queryKey: ['routine-completions'] });
-      queryClient.invalidateQueries({ queryKey: ['routine-completions', 'challenge'] });
-      queryClient.invalidateQueries({ queryKey: ['routine-completions', 'user'] });
-      
+      queryClient.invalidateQueries({
+        queryKey: ['routine-completions', 'challenge'],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ['routine-completions', 'user'],
+      });
+
       console.log('루틴 완료 삭제 성공:', completionId);
     },
     onError: (error) => {

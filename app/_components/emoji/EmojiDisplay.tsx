@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import React from "react";
-import { EMOJI_MAP } from "../../../public/consts/routineItem";
+import React from 'react';
+import { EMOJI_MAP } from '@/public/consts/routineItem';
 
 interface EmojiDisplayProps {
   emojiNumber: number;
@@ -13,8 +13,8 @@ interface EmojiDisplayProps {
 export const EmojiDisplay: React.FC<EmojiDisplayProps> = ({
   emojiNumber,
   emojiMap = EMOJI_MAP, // 기본값으로 전역 이모지 맵 사용
-  defaultEmoji = "🌱",
-  className = "",
+  defaultEmoji = '🌱',
+  className = '',
 }) => {
   const emoji = emojiMap[emojiNumber] || defaultEmoji;
 

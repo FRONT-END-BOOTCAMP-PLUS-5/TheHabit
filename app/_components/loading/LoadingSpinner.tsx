@@ -1,22 +1,22 @@
-"use client";
+'use client';
 
-import React from "react";
+import React from 'react';
 
 interface LoadingSpinnerProps {
-  size?: "small" | "medium" | "large";
+  size?: 'small' | 'medium' | 'large';
   message?: string;
   className?: string;
 }
 
 export const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
-  size = "medium",
+  size = 'medium',
   message,
-  className = "",
+  className = '',
 }) => {
   const sizeClasses = {
-    small: "w-4 h-4",
-    medium: "w-6 h-6", 
-    large: "w-8 h-8",
+    small: 'w-4 h-4',
+    medium: 'w-6 h-6',
+    large: 'w-8 h-8',
   };
 
   return (
