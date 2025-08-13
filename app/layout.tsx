@@ -3,6 +3,7 @@ import "./globals.css";
 import { QueryProvider } from "./_components/query-providers/QueryProvider";
 import Header from "./_components/layouts/Header";
 import { pretendard } from "../public/fonts/font";
+import NextAuthSessionProvider from "./login/components/NextAuthSessionProvider";
 
 export const metadata: Metadata = {
   title: "TheHabit - 습관 관리 앱",
@@ -67,7 +68,9 @@ const RootLayout = ({
       >
         <div className="mobile-wrapper">
           <Header />
-          <QueryProvider>{children}</QueryProvider>
+          <NextAuthSessionProvider>
+            <QueryProvider>{children}</QueryProvider>
+          </NextAuthSessionProvider>
         </div>
       </body>
     </html>

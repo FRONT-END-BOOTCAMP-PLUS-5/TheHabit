@@ -1,4 +1,3 @@
-
 import axios from "axios";
 
 export const axiosInstance = axios.create({
@@ -7,4 +6,4 @@ export const axiosInstance = axios.create({
     "Content-Type": "application/json",
   },
   withCredentials: true,
-})
+});

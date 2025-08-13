@@ -74,6 +74,8 @@ body {
   overflow: hidden;
 }
 
+/* removed react-calendar-heatmap styles */
+
 /* Mobile container: centers content horizontally, aligns to top, applies safe area insets, and constrains max width for mobile layout */
 .mobile-container {
   display: flex;
