@@ -77,19 +77,29 @@ export class PrUserRepository implements IUserRepository {
    * @param nickname: string
    * @return RoutineCompletion[]
    * */
-  async findByUserNicknameRoutineCompletion(nickname: string): Promise<RoutineCompletion[] | undefined> {
+  async findByUserNicknameRoutineCompletion(nickname: string, page: number, pageSize: number): Promise<RoutineCompletion[] | undefined> {
     try{
       const completedRoutines = await prisma.routineCompletion.findMany({
         where: {
           routine: {
             challenge: {
               user: {
-                nickname,
-              },
-            },
-          },
+                nickname: nickname
+              }
+            }
+          }
         },
-      });
+        skip: (page - 1) * pageSize,
+        take: pageSize,
+        include: {
+          routine: true
+        },
+        orderBy: {
+          createdAt: 'desc',
+        },
+      })
+
+
       return completedRoutines;
     }catch(e){
       if(e instanceof  Error) throw new Error(e.message)

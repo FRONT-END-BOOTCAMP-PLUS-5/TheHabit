@@ -4,7 +4,7 @@ export class RoutineCompletion {
     public readonly userId: string,
     public readonly routineId: number,
     public readonly createdAt: Date,
-    public readonly proofImgUrl: string | null
-
+    public readonly proofImgUrl: string | null,
+    public readonly content: string | null
   ) {}
 }

@@ -1,5 +1,5 @@
 import { User } from "@/backend/users/domains/entities/UserEntity";
-import {RoutineCompletion} from "@/backend/routine-completions/domains/entities/routine-completion/routineCompletion";
+import {RoutineCompletion} from "@prisma/client";
 
 export interface IUserRepository {
   // Create
@@ -10,7 +10,7 @@ export interface IUserRepository {
   findById(id: string): Promise<User | null | undefined>;
   findAll(): Promise<User[] | undefined>;
   findByEmail(email: string): Promise<User | null | undefined>;
-  findByUserNicknameRoutineCompletion(nickname: string): Promise<RoutineCompletion[] | undefined>
+  findByUserNicknameRoutineCompletion(nickname: string, page: number, pageSize: number): Promise<RoutineCompletion[] | undefined>
 
   // Update
   updateUserNickname(id: string, nickname: string): Promise<User | {message: string} | undefined>;

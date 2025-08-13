@@ -7,9 +7,11 @@ export class GetUserRoutineCompletion {
     constructor(private readonly userRepo: IUserRepository) { }
 
     //유저 Get 실행
-    async execute(nickname: string): Promise<RoutineCompletion[] | undefined> {
+    async execute(nickname: string, pageParam:string, pageSize: string): Promise<RoutineCompletion[] | undefined> {
         try{
-            const getUserRoutineCompletion = await this.userRepo.findByUserNicknameRoutineCompletion(nickname);
+            const numberPageParam = Number(pageParam);
+            const numberPageSize = Number(pageSize);
+            const getUserRoutineCompletion = await this.userRepo.findByUserNicknameRoutineCompletion(nickname, numberPageParam, numberPageSize);
 
             return getUserRoutineCompletion;
         }catch(error){
