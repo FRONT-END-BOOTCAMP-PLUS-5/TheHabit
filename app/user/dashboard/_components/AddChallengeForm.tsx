@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useMemo } from "react";
+import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { AddChallengeRequestDto } from "@/backend/challenges/applications/dtos/AddChallengeDto";
 import Image from "next/image";
@@ -8,6 +8,7 @@ import BookIcon from "@/public/icons/icon_study.svg";
 import DevelopIcon from "@/public/icons/icon_develop.png";
 import GuitarIcon from "@/public/icons/icon_guitar.png";
 import CustomInput from "@/app/_components/inputs/CustomInput";
+import { CHALLENGE_COLORS } from "@/public/consts/challengeColors";
 
 const AddChallengeForm: React.FC = () => {
   const {
@@ -20,17 +21,6 @@ const AddChallengeForm: React.FC = () => {
 
   const watchCreatedAt = watch("createdAt");
   const watchCategoryId = watch("categoryId");
-
-  // 카테고리별 기본 색상 정의
-  const CATEGORY_COLORS = useMemo(
-    () => ({
-      0: { background: "#FA6A8E", completed: "#FFB5C7" }, // 건강 - 분홍색
-      1: { background: "#FFD447", completed: "#FFE89B" }, // 학습 - 노란색
-      2: { background: "#007EA7", completed: "#AAE3F6" }, // 개발 - 파란색
-      3: { background: "#A88BDB", completed: "#CFBBF1" }, // 취미 - 보라색
-    }),
-    []
-  );
 
   // 시작 날짜가 변경될 때마다 종료 날짜를 21일 후로 자동 설정
   useEffect(() => {
@@ -49,13 +39,13 @@ const AddChallengeForm: React.FC = () => {
   useEffect(() => {
     if (watchCategoryId) {
       const categoryId = Number(watchCategoryId);
-      if (!isNaN(categoryId) && categoryId in CATEGORY_COLORS) {
+      if (!isNaN(categoryId) && categoryId in CHALLENGE_COLORS) {
         const selectedColor =
-          CATEGORY_COLORS[categoryId as keyof typeof CATEGORY_COLORS];
+          CHALLENGE_COLORS[categoryId as keyof typeof CHALLENGE_COLORS];
         setValue("color", selectedColor.background);
       }
     }
-  }, [watchCategoryId, setValue, CATEGORY_COLORS]);
+  }, [watchCategoryId, setValue]);
 
   const onSubmitHandler = (data: AddChallengeRequestDto) => {
     alert(JSON.stringify(data));
