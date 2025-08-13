@@ -21,13 +21,15 @@ interface ApiResponse<T> {
  * @param nickname: string
  * @return Promise<ApiResponse<User>>
  * */
-export const getUserRoutineCompletion = async (nickname: string, pageparam: number, pagesize: number): Promise<ApiResponse<CreateRoutineCompletionResponseDto[]>> => {
+export const getUserRoutineCompletion = async (nickname: string, pageparam: number, pagesize: number, categoryid: string): Promise<ApiResponse<CreateRoutineCompletionResponseDto[]>> => {
     try {
+        console.log(categoryid, "categoryId")
         const response = await axiosInstance.get<ApiResponse<CreateRoutineCompletionResponseDto[]>>(`/api/users/routine/${nickname}`,{
             params: {
                 nickname,
                 pageparam,
-                pagesize
+                pagesize,
+                categoryid
             }
         });
         return response.data;

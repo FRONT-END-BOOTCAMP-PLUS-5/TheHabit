@@ -14,13 +14,14 @@ export async function GET(request: NextRequest): Promise<NextResponse | undefine
         const nickname = request.nextUrl.searchParams.get('nickname');
         const pageParam = request.nextUrl.searchParams.get('pageparam');
         const pageSize = request.nextUrl.searchParams.get('pagesize');
+        const categoryid = request.nextUrl.searchParams.get('categoryid');
 
 
 
         if(!nickname) throw new Error("사용자 닉네임이 존재하지 않습니다!");
 
         const usecase = createGetUserRoutineCompletion();
-        const userRoutineCompletion = await usecase.execute(nickname, pageParam || '1', pageSize || '3');
+        const userRoutineCompletion = await usecase.execute(nickname, pageParam || '1', pageSize || '3', categoryid || 'All');
 
         return NextResponse.json({
             success: true,

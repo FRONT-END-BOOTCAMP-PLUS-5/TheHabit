@@ -68,7 +68,7 @@ const UserProfilePage= () => {
                     </div>
                 </section>
             </section>
-            <section id="bottom" className="px-5">
+            <section id="bottom" className="px-5 h-[550px]">
                 <CompletionComponent/>
             </section>
         </main>

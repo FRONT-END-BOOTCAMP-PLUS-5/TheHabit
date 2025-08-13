@@ -10,7 +10,7 @@ export interface IUserRepository {
   findById(id: string): Promise<User | null | undefined>;
   findAll(): Promise<User[] | undefined>;
   findByEmail(email: string): Promise<User | null | undefined>;
-  findByUserNicknameRoutineCompletion(nickname: string, page: number, pageSize: number): Promise<RoutineCompletion[] | undefined>
+  findByUserNicknameRoutineCompletion(nickname: string, page: number, pageSize: number, categoryId: string): Promise<RoutineCompletion[] | undefined>
 
   findByEmail(email: string): Promise<User>;
 
