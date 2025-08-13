@@ -105,10 +105,12 @@ export class LoginUsecase {
 
         } catch (error) {
             // console.error("💥 [LoginUsecase] 로그인 처리 중 오류 발생:", error);
-            return {
-                success: false,
-                message: "로그인 처리 중 오류가 발생했습니다."
-            };
+
+            if (error instanceof Error) {
+                throw new Error(error.message);
+            }
+
+            throw new Error("로그인 처리 중 알 수 없는 오류가 발생했습니다.");
         }
     }
 }
