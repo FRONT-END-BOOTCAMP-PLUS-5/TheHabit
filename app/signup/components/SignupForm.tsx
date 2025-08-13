@@ -7,8 +7,10 @@ import { Controller, FormProvider, useForm } from "react-hook-form";
 import { Button } from "@/app/_components/buttons/Button";
 import "@ant-design/v5-patch-for-react-19";
 import { CheckBox } from "@/app/signup/components/CheckBox";
+import { useSignUp } from "@/libs/hooks/signup/useSignUp";
 
 interface ISignupForm {
+  name: string;
   email: string;
   password: string;
   passwordConfirm: string;
@@ -35,8 +37,14 @@ export const SignUpForm = () => {
     formState: { errors },
   } = methods;
 
-  const onSubmit = (data: ISignupForm) => {
-    console.log(data);
+  const { signUp, loading, error } = useSignUp();
+
+  const onSubmit = async (data: ISignupForm) => {
+    try {
+      await signUp(data);
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   return (
@@ -83,9 +91,14 @@ export const SignUpForm = () => {
           </div>
         ))}
         <CheckBox />
-        <Button className="login-button" htmlType="submit">
-          회원가입
+        <Button
+          className="login-button"
+          htmlType="submit"
+          disabled={loading}
+        >
+          {loading ? "회원가입 중..." : "회원가입"}
         </Button>
+        {error && <p className="text-red-500 text-xs">{error}</p>}
       </form>
     </FormProvider>
   );

@@ -1,6 +1,7 @@
 import { UseFormGetValues } from "react-hook-form";
 
 interface ISignupForm {
+  name: string;
   email: string;
   password: string;
   passwordConfirm: string;
@@ -11,8 +12,8 @@ interface ISignupForm {
 interface ISignupItem {
   id: number;
   label: string;
-  name: "email" | "password" | "passwordConfirm";
-  type: "email" | "password";
+  name: "name" | "email" | "password" | "passwordConfirm";
+  type: "text" | "email" | "password";
   placeholder: string;
   required: boolean;
   regEx: RegExp;
@@ -26,6 +27,16 @@ interface ISignupItem {
 export const SignupItem: ISignupItem[] = [
   {
     id: 1,
+    label: "이름",
+    name: "name",
+    type: "text",
+    placeholder: "이름",
+    required: true,
+    regEx: /^[가-힣a-zA-Z]{2,20}$/,
+    errorMessage: "이름을 입력해주세요",
+  },
+  {
+    id: 2,
     label: "이메일",
     name: "email",
     type: "email",
@@ -35,7 +46,7 @@ export const SignupItem: ISignupItem[] = [
     errorMessage: "올바른 이메일 형식을 입력하세요",
   },
   {
-    id: 2,
+    id: 3,
     label: "비밀번호",
     name: "password",
     type: "password",
@@ -45,7 +56,7 @@ export const SignupItem: ISignupItem[] = [
     errorMessage: "8-15자의 영문 대소문자, 숫자, 특수문자를 포함하세요",
   },
   {
-    id: 3,
+    id: 4,
     label: "비밀번호 확인",
     name: "passwordConfirm",
     type: "password",

@@ -29,6 +29,7 @@ export class CreateUserUsecase {
                 username,
                 nickname,
                 profileImg: null,
+                profileImgPath: null,
             });
 
             // 성공 응답
@@ -40,7 +41,7 @@ export class CreateUserUsecase {
                     email: user?.email ?? "",
                     username: user?.username ?? "",
                     nickname: user?.nickname ?? "",
-                    profileImg: user?.profileImg ?? null,   
+                    profileImg: user?.profileImg ?? null,
                 },
             };
         } catch (error) {
