@@ -1,4 +1,5 @@
 import { UseFormGetValues } from "react-hook-form";
+import { Rex } from "@/public/consts/Rex";
 
 interface ISignupForm {
   username: string;
@@ -32,7 +33,7 @@ export const SignupItem: ISignupItem[] = [
     type: "text",
     placeholder: "이름",
     required: true,
-    regEx: /^[가-힣a-zA-Z]{2,20}$/,
+    regEx: Rex.username.korean,
     errorMessage: "이름을 입력해주세요",
   },
   {
@@ -42,7 +43,7 @@ export const SignupItem: ISignupItem[] = [
     type: "email",
     placeholder: "이메일",
     required: true,
-    regEx: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,15}$/,
+    regEx: Rex.email.standard,
     errorMessage: "올바른 이메일 형식을 입력하세요",
   },
   {
@@ -52,7 +53,7 @@ export const SignupItem: ISignupItem[] = [
     type: "password",
     placeholder: "비밀번호",
     required: true,
-    regEx: /^(?=.*[^a-zA-Z0-9])(?=.*[a-zA-Z])(?=.*\d).{8,15}$/,
+    regEx: Rex.password.standard,
     errorMessage: "8-15자의 영문 대소문자, 숫자, 특수문자를 포함하세요",
   },
   {
@@ -62,7 +63,7 @@ export const SignupItem: ISignupItem[] = [
     type: "password",
     placeholder: "비밀번호 확인",
     required: true,
-    regEx: /^(?=.*[^a-zA-Z0-9])(?=.*[a-zA-Z])(?=.*\d).{8,15}$/,
+    regEx: Rex.password.standard,
     errorMessage: "비밀번호를 확인해주세요",
     validate: (value: string, getValues: UseFormGetValues<ISignupForm>) => {
       if (value !== getValues("password")) {
