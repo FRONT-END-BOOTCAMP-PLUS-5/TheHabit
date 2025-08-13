@@ -1,9 +1,10 @@
+import { RoutineCompletion } from '@/backend/routine-completions/domains/entities/routine-completion/routineCompletion';
+
 export interface CreateRoutineCompletionRequestDto {
   userId: string;
   routineId: number;
   proofImgUrl: string | null;
 }
-
 
 // 루틴 완료 목록 조회
 export interface ReadRoutineCompletionListDto {
@@ -34,7 +35,6 @@ export interface RoutineCompletionDto {
 }
 
 // DTO Mapper
-import { RoutineCompletion } from "../../domains/entities/routine-completion/routineCompletion";
 
 export class RoutineCompletionDtoMapper {
   static fromEntity(entity: RoutineCompletion): RoutineCompletionDto {
@@ -48,6 +48,6 @@ export class RoutineCompletionDtoMapper {
   }
 
   static fromEntities(entities: RoutineCompletion[]): RoutineCompletionDto[] {
-    return entities.map(entity => this.fromEntity(entity));
+    return entities.map((entity) => this.fromEntity(entity));
   }
 }
