@@ -41,7 +41,7 @@ export class CreateUserUsecase {
                     email: user?.email ?? "",
                     username: user?.username ?? "",
                     nickname: user?.nickname ?? "",
-                    profileImg: user?.profileImg ?? null,
+                    profileImg: user?.profileImg ?? null,   
                 },
             };
         } catch (error) {

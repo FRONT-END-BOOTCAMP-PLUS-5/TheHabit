@@ -3,7 +3,7 @@ import { FeedBackRepository } from "@/backend/feedbacks/domains/repositories/Fee
 import prisma from "@/public/utils/prismaClient";
 
 export class PrFeedBackRepository implements FeedBackRepository {
-  async AddFeedBack(feedBack: FeedBackEntity): Promise<FeedBackEntity> {
+  async create(feedBack: FeedBackEntity): Promise<FeedBackEntity> {
     const createdFeedBack = await prisma.feedback.create({
       data: {
         gptResponseContent: feedBack.gptResponseContent,
@@ -14,6 +14,18 @@ export class PrFeedBackRepository implements FeedBackRepository {
     return new FeedBackEntity(
       createdFeedBack.gptResponseContent,
       createdFeedBack.challengeId
+    );
+  }
+
+  async findByFeedBackId(id: number): Promise<FeedBackEntity> {
+    const feedBack = await prisma.feedback.findFirst({
+      where: { challengeId: id },
+    });
+
+    return new FeedBackEntity(
+      feedBack?.gptResponseContent ?? "",
+      feedBack?.challengeId ?? 0,
+      feedBack?.id
     );
   }
 }

@@ -72,7 +72,10 @@ model RoutineCompletion {
   proofImgUrl String?  @map("proof_img_url")
   userId      String   @map("user_id")
   routineId   Int      @map("routine_id")
+<<<<<<< HEAD
   content     String?
+=======
+>>>>>>> 96c9a1c40344a3c968e5e4777d9f0bc2fbf954b3
   review      Review?
   routine     Routine  @relation(fields: [routineId], references: [id], onDelete: Cascade)
   user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
