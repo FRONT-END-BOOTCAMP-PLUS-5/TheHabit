@@ -48,6 +48,6 @@ export class RoutineCompletionDtoMapper {
   }
 
   static fromEntities(entities: RoutineCompletion[]): RoutineCompletionDto[] {
-    return entities.map((entity) => this.fromEntity(entity));
+    return entities.map(entity => this.fromEntity(entity));
   }
 }

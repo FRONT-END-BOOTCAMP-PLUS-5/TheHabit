@@ -10,7 +10,7 @@ import { RoutineCompletionDto } from '@/backend/routine-completions/applications
  */
 export const useGetRoutineCompletionsByChallenge = (
   challengeId: number,
-  enabled: boolean = true,
+  enabled: boolean = true
 ) => {
   return useQuery<RoutineCompletionDto[]>({
     queryKey: ['routine-completions', 'challenge', challengeId],

@@ -22,7 +22,7 @@ export const useDeleteRoutineCompletion = () => {
 
       console.log('루틴 완료 삭제 성공:', completionId);
     },
-    onError: (error) => {
+    onError: error => {
       console.error('루틴 완료 삭제 실패:', error);
     },
   });

@@ -15,7 +15,7 @@ interface UseRoutineCompletionProps {
 
 export const useRoutineCompletion = ({
   completions,
-  onError = (msg) => alert(msg),
+  onError = msg => alert(msg),
 }: UseRoutineCompletionProps) => {
   const createCompletionMutation = useCreateRoutineCompletion();
   const deleteCompletionMutation = useDeleteRoutineCompletion();
@@ -23,21 +23,17 @@ export const useRoutineCompletion = ({
   // 루틴 완료 여부 확인
   const isRoutineCompleted = useCallback(
     (routineId: number) => {
-      return completions.some(
-        (completion) => completion.routineId === routineId,
-      );
+      return completions.some(completion => completion.routineId === routineId);
     },
-    [completions],
+    [completions]
   );
 
   // 완료된 루틴의 completion 데이터 가져오기
   const getRoutineCompletion = useCallback(
     (routineId: number) => {
-      return completions.find(
-        (completion) => completion.routineId === routineId,
-      );
+      return completions.find(completion => completion.routineId === routineId);
     },
-    [completions],
+    [completions]
   );
 
   // 루틴 완료 생성
@@ -55,7 +51,7 @@ export const useRoutineCompletion = ({
         onError('루틴 완료 생성에 실패했습니다.');
       }
     },
-    [createCompletionMutation, onError],
+    [createCompletionMutation, onError]
   );
 
   // 루틴 완료 삭제
@@ -71,7 +67,7 @@ export const useRoutineCompletion = ({
         onError('루틴 완료 삭제에 실패했습니다.');
       }
     },
-    [deleteCompletionMutation, getRoutineCompletion, onError],
+    [deleteCompletionMutation, getRoutineCompletion, onError]
   );
 
   return {

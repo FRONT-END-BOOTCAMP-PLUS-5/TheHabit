@@ -11,7 +11,7 @@ export class CreateRoutineCompletionUseCase {
     request: CreateRoutineCompletionRequestDto
   ): Promise<CreateRoutineCompletionResponseDto> {
     const completionToCreate = {
-      userId: "f1c6b5ae-b27e-4ae3-9e30-0cb8653b04fd",
+      userId: 'f1c6b5ae-b27e-4ae3-9e30-0cb8653b04fd',
       routineId: request.routineId,
       proofImgUrl: request.proofImgUrl,
     };

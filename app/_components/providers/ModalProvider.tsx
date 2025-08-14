@@ -18,7 +18,8 @@ const ModalProvider: React.FC<{ children: React.ReactNode }> = ({ children }) =>
             isOpen={isOpen}
             onClose={closeModal}
             modalTitle={modalTitle}
-            modalDescription={modalDescription}>
+            modalDescription={modalDescription}
+          >
             {content}
           </FloatingModal>
         );

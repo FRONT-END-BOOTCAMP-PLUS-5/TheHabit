@@ -10,9 +10,7 @@ interface CheckBoxListProps {
 }
 
 export const CheckBoxList: React.FC<CheckBoxListProps> = ({ onChange }) => {
-  const [checkedItems, setCheckedItems] = useState<{ [key: number]: boolean }>(
-    {},
-  );
+  const [checkedItems, setCheckedItems] = useState<{ [key: number]: boolean }>({});
 
   const handleItemChange = (itemId: number, checked: boolean) => {
     const newCheckedItems = { ...checkedItems, [itemId]: checked };
@@ -24,21 +22,17 @@ export const CheckBoxList: React.FC<CheckBoxListProps> = ({ onChange }) => {
   };
 
   return (
-    <div className="flex flex-col gap-4">
-      {CheckBoxItem.map((item) => (
+    <div className='flex flex-col gap-4'>
+      {CheckBoxItem.map(item => (
         <AntdCheckbox
           key={item.id}
           required={item.required}
-          className="flex"
+          className='flex'
           checked={checkedItems[item.id] || false}
-          onChange={(e: CheckboxChangeEvent) =>
-            handleItemChange(item.id, e.target.checked)
-          }
+          onChange={(e: CheckboxChangeEvent) => handleItemChange(item.id, e.target.checked)}
         >
           {item.required && (
-            <span className="text-[#34A853] text-sm text-bold font-bold">
-              [필수]
-            </span>
+            <span className='text-[#34A853] text-sm text-bold font-bold'>[필수]</span>
           )}
           {item.label}
         </AntdCheckbox>

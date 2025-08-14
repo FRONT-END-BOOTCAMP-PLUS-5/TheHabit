@@ -54,10 +54,10 @@ const FloatingModal: React.FC<FloatingModalProps> = ({
       <div
         className={`relative w-11/12 max-w-[440px] bg-white rounded-2xl shadow-lg mx-auto transition-all duration-300 ease-in-out ${
           isAnimating ? 'transform scale-100 opacity-100' : 'transform scale-95 opacity-0'
-        }`}>
+        }`}
+      >
         {/* 모달 내용 */}
         <div className='flex flex-col gap-1 p-6 w-full'>
-          
           <div className='flex justify-end items-end w-full'>
             <button onClick={onClose} className='cursor-pointer'>
               <Image src={CloseModal} alt='close' width={16} height={16} />
