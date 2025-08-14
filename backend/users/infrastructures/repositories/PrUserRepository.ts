@@ -9,7 +9,6 @@ import {
 import { v4 as uuidv4 } from "uuid";
 
 import { Prisma } from "@prisma/client";
-import { PrUserRepository } from "@/backend/users/infrastructures/repositories/PrUserRepository";
 
 export class PrUserRepository implements IUserRepository {
   private s3 = new S3Client({
@@ -38,6 +37,38 @@ export class PrUserRepository implements IUserRepository {
         createdUser.id,
         createdUser.password
       );
+    } catch (e) {
+      if (e instanceof Error) throw new Error(e.message);
+    }
+  }
+
+  /**
+   * 해당 메소드는 s3에 이미지 생성
+   * @param fromUserId: string
+   * @param toUserId: string
+   * @return string
+   * */
+  async createProfileImg(file: File): Promise<string[] | undefined> {
+    try {
+      const { name, type } = file;
+
+      const key = `${uuidv4()}-${name}`;
+
+      const arrayBuffer = await file.arrayBuffer();
+      const buffer = Buffer.from(arrayBuffer);
+
+      const command = new PutObjectCommand({
+        Bucket: process.env.AMPLIFY_BUCKET as string,
+        Key: key,
+        ContentType: type,
+        Body: buffer,
+      });
+
+      this.s3.send(command);
+
+      const signedUrl: string = `https://${process.env.AMPLIFY_BUCKET}.s3.${process.env.AWS_REGION}.amazonaws.com/${key}`;
+
+      return [signedUrl, key];
     } catch (e) {
       if (e instanceof Error) throw new Error(e.message);
     }
