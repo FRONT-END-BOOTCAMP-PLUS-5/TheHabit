@@ -15,7 +15,8 @@ interface ISignupForm {
   password: string;
   passwordConfirm: string;
   nickname: string;
-  profileImage: string | null;
+  // profileImage: string | null;
+  profileImage: File | null;
 }
 
 export const SignUpForm = () => {
@@ -42,7 +43,36 @@ export const SignUpForm = () => {
 
   const onSubmit = async (data: ISignupForm) => {
     try {
-      await signUp(data);
+      // 프로필 이미지가 있는 경우 먼저 S3에 업로드
+      let profileImgPath = null;
+      let profileImg = null;
+
+      if (data.profileImage) {
+        const formData = new FormData();
+        formData.append('file', data.profileImage);
+
+        // S3 업로드 API 호출
+        const uploadResponse = await fetch('/api/upload', {
+          method: 'POST',
+          body: formData,
+        });
+
+        if (uploadResponse.ok) {
+          const uploadResult = await uploadResponse.json();
+          profileImgPath = uploadResult.filePath; // S3 파일 경로
+          profileImg = uploadResult.fileName; // 파일명
+        }
+      }
+
+      // 회원가입 데이터에 프로필 정보 포함
+      const signUpData = {
+        ...data,
+        profileImg,
+        profileImgPath,
+      };
+
+      await signUp(signUpData);
+      // await signUp(data);
     } catch (err) {
       console.error(err);
     }

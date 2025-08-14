@@ -28,7 +28,7 @@ export const ProfileSection = () => {
     if (profileFile) {
       setValue('profileImage', profileFile);
     }
-  }, [profileFile]);
+  }, [profileFile, setValue]);
 
   return (
     <section className='grid grid-cols-[1fr_3fr] items-center gap-5 w-full'>
