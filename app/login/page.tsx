@@ -1,10 +1,8 @@
 import { LoginForm } from "@/app/login/components/LoginForm";
-import NextAuthSessionProvider from "@/app/login/components/NextAuthSessionProvider";
 import Link from "next/link";
 
 export default function LoginPage() {
   return (
-    <NextAuthSessionProvider>
       <main className="w-full h-full flex">
         <Link href="/" className="text-3xl font-bold absolute left-2.5 top-2.5">
           더: 해빛
@@ -20,6 +18,5 @@ export default function LoginPage() {
           </p>
         </section>
       </main>
-    </NextAuthSessionProvider>
   );
 }
