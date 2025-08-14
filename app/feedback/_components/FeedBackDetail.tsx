@@ -1,14 +1,27 @@
 'use client';
 
-import { useCreateFeedbackLogic } from '@/libs/hooks/feedback-hooks/useCreateFeedbackLogic';
 import React from 'react';
+import { useGetAllChallenges } from '@/libs/hooks/challenges-hooks/useGetAllChallenges';
+import Link from 'next/link';
 
-const FeedBackDetail = ({ id }: { id: number }) => {
-  const result = useCreateFeedbackLogic(id);
+const FeedBackDetail = () => {
+  const { data } = useGetAllChallenges();
 
-  console.log(result.challenge?.data);
-
-  return <div></div>;
+  return (
+    <div>
+      {data && data.length > 0 ? (
+        data.map(challenge => (
+          <div key={challenge.id}>
+            <Link key={challenge.id} href={`/user/feedback/${challenge.id}`}>
+              {challenge.name}
+            </Link>
+          </div>
+        ))
+      ) : (
+        <p>데이터가 없습니다.</p>
+      )}
+    </div>
+  );
 };
 
 export default FeedBackDetail;

@@ -5,7 +5,7 @@ const FeedbackPage = async ({ params }: { params: Promise<{ id: number }> }) => 
   const { id } = await params;
   console.log('id', id);
 
-  return <FeedBackDetail id={Number(id)} />;
+  return <FeedBackDetail />;
 };
 
 export default FeedbackPage;

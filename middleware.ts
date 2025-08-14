@@ -1,8 +1,8 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest, NextResponse } from 'next/server';
 
 export default function middleware(req: NextRequest) {
   // const { pathname } = req.nextUrl;
-  const token = req.cookies.get("next-auth.session-token");
+  const token = req.cookies.get('next-auth.session-token');
 
   // console.log('🔍 Middleware 실행:', {
   //   pathname: pathname,
@@ -13,12 +13,12 @@ export default function middleware(req: NextRequest) {
   // });
 
   if (!token) {
-    return NextResponse.redirect(new URL("/login", req.url));
+    return NextResponse.redirect(new URL('/login', req.url));
   }
 
   return NextResponse.next();
 }
 
 export const config = {
-  matcher: ["/user/:path*"],
+  matcher: ['/user/:path*'],
 };

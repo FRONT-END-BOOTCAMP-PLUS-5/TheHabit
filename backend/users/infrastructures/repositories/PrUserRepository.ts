@@ -1,14 +1,10 @@
-import prisma from "@/public/utils/prismaClient";
-import { IUserRepository } from "@/backend/users/domains/repositories/IUserRepository";
-import { User } from "@/backend/users/domains/entities/UserEntity";
-import {
-  DeleteObjectCommand,
-  PutObjectCommand,
-  S3Client,
-} from "@aws-sdk/client-s3";
-import { v4 as uuidv4 } from "uuid";
+import prisma from '@/public/utils/prismaClient';
+import { IUserRepository } from '@/backend/users/domains/repositories/IUserRepository';
+import { User } from '@/backend/users/domains/entities/UserEntity';
+import { DeleteObjectCommand, PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
+import { v4 as uuidv4 } from 'uuid';
 
-import { Prisma } from "@prisma/client";
+import { Prisma } from '@prisma/client';
 
 export class PrUserRepository implements IUserRepository {
   private s3 = new S3Client({
@@ -23,9 +19,9 @@ export class PrUserRepository implements IUserRepository {
     try {
       const createdUser = await prisma.user.create({
         data: {
-          email: user.email || "",
+          email: user.email || '',
           nickname: user.nickname,
-          password: user.password || "",
+          password: user.password || '',
           username: user.username,
           profileImg: user.profileImg,
         },
@@ -74,7 +70,7 @@ export class PrUserRepository implements IUserRepository {
     }
   }
 
-  async findAll(nickname: string = ""): Promise<User[] | undefined> {
+  async findAll(nickname: string = ''): Promise<User[] | undefined> {
     try {
       const users = await prisma.user.findMany({
         where: {
@@ -84,13 +80,7 @@ export class PrUserRepository implements IUserRepository {
         },
       });
       return users.map(
-        (user) =>
-          new User(
-            user.username,
-            user.nickname,
-            user.profileImg || "",
-            user.id || ""
-          )
+        user => new User(user.username, user.nickname, user.profileImg || '', user.id || '')
       );
     } catch (e) {
       if (e instanceof Error) throw new Error(e.message);
@@ -98,28 +88,28 @@ export class PrUserRepository implements IUserRepository {
   }
 
   async findByEmail(email: string): Promise<User> {
-    console.log("🔍 PrUserRepository.findByEmail 시작");
-    console.log("📧 조회할 이메일:", email);
+    console.log('🔍 PrUserRepository.findByEmail 시작');
+    console.log('📧 조회할 이메일:', email);
 
     try {
-      console.log("📡 Prisma 쿼리 실행: findUnique({ where: { email } })");
+      console.log('📡 Prisma 쿼리 실행: findUnique({ where: { email } })');
       const user = await prisma.user.findUnique({
         where: { email },
       });
 
-      console.log("📊 Prisma 쿼리 결과:", user);
+      console.log('📊 Prisma 쿼리 결과:', user);
 
       if (!user) {
-        throw new Error("사용자를 찾을 수 없습니다.");
+        throw new Error('사용자를 찾을 수 없습니다.');
       }
 
-      console.log("✅ 사용자 발견, User 객체 생성 시작");
-      console.log("👤 원본 사용자 데이터:", {
+      console.log('✅ 사용자 발견, User 객체 생성 시작');
+      console.log('👤 원본 사용자 데이터:', {
         id: user.id,
         username: user.username,
         nickname: user.nickname,
         profileImg: user.profileImg,
-        password: user.password ? "***" : "undefined",
+        password: user.password ? '***' : 'undefined',
         email: user.email,
       });
 
@@ -133,7 +123,7 @@ export class PrUserRepository implements IUserRepository {
         user.email
       );
 
-      console.log("🏗️ 생성된 User 엔티티:", {
+      console.log('🏗️ 생성된 User 엔티티:', {
         id: userEntity.id,
         username: userEntity.username,
         nickname: userEntity.nickname,
@@ -144,7 +134,7 @@ export class PrUserRepository implements IUserRepository {
 
       return userEntity;
     } catch (e) {
-      console.error("💥 PrUserRepository.findByEmail 오류:", e);
+      console.error('💥 PrUserRepository.findByEmail 오류:', e);
       throw e; // 에러를 다시 던져서 상위에서 처리하도록 함
     }
   }
@@ -157,7 +147,7 @@ export class PrUserRepository implements IUserRepository {
       });
       return !!user; // 사용자가 존재하면 true, 없으면 false
     } catch (e) {
-      console.error("이메일 존재 여부 확인 중 오류:", e);
+      console.error('이메일 존재 여부 확인 중 오류:', e);
       throw e;
     }
   }
@@ -176,10 +166,7 @@ export class PrUserRepository implements IUserRepository {
     }
   }
 
-  async updateUserName(
-    id: string,
-    username: string
-  ): Promise<User | undefined> {
+  async updateUserName(id: string, username: string): Promise<User | undefined> {
     try {
       const updatedUserName = await prisma.user.update({
         where: { id },
@@ -205,8 +192,8 @@ export class PrUserRepository implements IUserRepository {
       return updatedUserNickname;
     } catch (e) {
       if (e instanceof Prisma.PrismaClientKnownRequestError) {
-        if (e.code === "P2002") {
-          return { message: "해당 닉네임은 이미 사용 중입니다." };
+        if (e.code === 'P2002') {
+          return { message: '해당 닉네임은 이미 사용 중입니다.' };
         }
       }
 
@@ -227,14 +214,14 @@ export class PrUserRepository implements IUserRepository {
     id: string,
     userProfilePath: string,
     file: File,
-    type: "create" | "update"
+    type: 'create' | 'update'
   ): Promise<User | undefined> {
     try {
-      if (type === "update") await this.deleteProfileImg(userProfilePath);
+      if (type === 'update') await this.deleteProfileImg(userProfilePath);
 
       const signedUrl = await this.createProfileImg(file);
-      const img = (signedUrl?.length && signedUrl[0]) || "";
-      const path = (signedUrl?.length && signedUrl[1]) || "";
+      const img = (signedUrl?.length && signedUrl[0]) || '';
+      const path = (signedUrl?.length && signedUrl[1]) || '';
 
       const updatedUserName = await prisma.user.update({
         where: { id },
@@ -265,9 +252,7 @@ export class PrUserRepository implements IUserRepository {
    * @param toUserId: string
    * @return boolean
    * */
-  async deleteProfileImg(
-    userProfileImgPath: string
-  ): Promise<boolean | undefined> {
+  async deleteProfileImg(userProfileImgPath: string): Promise<boolean | undefined> {
     try {
       const userProfile = `${userProfileImgPath}`;
       const deleteCommand = new DeleteObjectCommand({
