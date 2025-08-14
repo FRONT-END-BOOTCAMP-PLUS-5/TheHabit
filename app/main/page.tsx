@@ -1,9 +1,9 @@
-import UserProfileSection from "../_components/user-profile-section/UserProfileSection";
-import ChallengeListSection from "./_components/ChallengeListSection";
+import UserProfileSection from '../_components/user-profile-section/UserProfileSection';
+import ChallengeListSection from './_components/ChallengeListSection';
 
 const MainPage: React.FC = () => {
   return (
-    <main className="px-2 py-2">
+    <main className='px-2 py-2'>
       <UserProfileSection />
       <ChallengeListSection />
     </main>

@@ -16,16 +16,18 @@ export function useSignUp() {
   const signUp = async (userData: SignUpData) => {
     setLoading(true);
     setError(null);
-    
+
     try {
       const response = await axiosInstance.post('/api/signup', userData);
       return response.data;
     } catch (err) {
-      const errorMessage = err instanceof Error && 'response' in err 
-        ? (err as { response?: { data?: { error?: string } } }).response?.data?.error || '회원가입 실패'
-        : err instanceof Error 
-          ? err.message 
-          : '회원가입 실패';
+      const errorMessage =
+        err instanceof Error && 'response' in err
+          ? (err as { response?: { data?: { error?: string } } }).response?.data?.error ||
+            '회원가입 실패'
+          : err instanceof Error
+            ? err.message
+            : '회원가입 실패';
       setError(errorMessage);
       throw new Error(errorMessage);
     } finally {

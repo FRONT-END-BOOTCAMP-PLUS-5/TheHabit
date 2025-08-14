@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import React, { forwardRef } from "react";
+import React, { forwardRef } from 'react';
 
 interface CustomInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label?: string;
@@ -11,9 +11,9 @@ interface CustomInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
 const CustomInput = forwardRef<HTMLInputElement, CustomInputProps>(
   ({ label, labelHtmlFor, labelStyle, className, ...props }, ref) => {
     return (
-      <div className="flex flex-col gap-2">
+      <div className='flex flex-col gap-2'>
         {label && (
-          <label className="w-full p-1 text-secondary" htmlFor={labelHtmlFor}>
+          <label className='w-full p-1 text-secondary' htmlFor={labelHtmlFor}>
             {label}
           </label>
         )}
@@ -21,7 +21,7 @@ const CustomInput = forwardRef<HTMLInputElement, CustomInputProps>(
           {...props}
           ref={ref}
           className={`w-full px-3 py-2 text-secondary placeholder:text-secondary-grey border-2 border-primary-grey rounded-md focus:border-primary focus:outline-none ${
-            className || ""
+            className || ''
           }`}
         />
       </div>
@@ -29,6 +29,6 @@ const CustomInput = forwardRef<HTMLInputElement, CustomInputProps>(
   }
 );
 
-CustomInput.displayName = "CustomInput";
+CustomInput.displayName = 'CustomInput';
 
 export default CustomInput;

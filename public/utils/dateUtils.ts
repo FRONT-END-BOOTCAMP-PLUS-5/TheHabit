@@ -6,7 +6,7 @@ export const getKoreanDate = (): string => {
   const date = today.getDate();
   const day = today.getDay();
 
-  const dayNames = ["일", "월", "화", "수", "목", "금", "토"];
+  const dayNames = ['일', '월', '화', '수', '목', '금', '토'];
   const dayName = dayNames[day];
 
   return `${year}년 ${month}월 ${date}일 ${dayName}요일`;
@@ -19,8 +19,8 @@ export const getKoreanDateFromDate = (selectedDate: Date): string => {
   const date = selectedDate.getDate();
   const day = selectedDate.getDay();
 
-  const dayNames = ["일", "월", "화", "수", "목", "금", "토"];
+  const dayNames = ['일', '월', '화', '수', '목', '금', '토'];
   const dayName = dayNames[day];
 
   return `${year}년 ${month}월 ${date}일 ${dayName}요일`;
-}; 
+};

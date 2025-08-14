@@ -1,10 +1,14 @@
-import { IUserRepository } from "@/backend/users/domains/repositories/IUserRepository";
-import { User } from "@/backend/users/domains/entities/UserEntity";
-import prisma from "@/public/utils/prismaClient";
-import {IFollowRepository} from "@/backend/follows/domains/repositories/IFollowRepository";
-import {Follower, FollowerFollowing, Following} from "@/backend/follows/domains/entities/FollowEntity";
+import { IUserRepository } from '@/backend/users/domains/repositories/IUserRepository';
+import { User } from '@/backend/users/domains/entities/UserEntity';
+import prisma from '@/public/utils/prismaClient';
+import { IFollowRepository } from '@/backend/follows/domains/repositories/IFollowRepository';
+import {
+  Follower,
+  FollowerFollowing,
+  Following,
+} from '@/backend/follows/domains/entities/FollowEntity';
 
-export class PrFollowRepository implements IFollowRepository{
+export class PrFollowRepository implements IFollowRepository {
   /**
    * 해당 메소드는 following 생성
    * @param fromUserId: string
@@ -12,18 +16,17 @@ export class PrFollowRepository implements IFollowRepository{
    * @return boolean
    * */
   async create(fromUserId: string, toUserId: string): Promise<boolean | undefined> {
-    try{
+    try {
       const addFollowing = await prisma.follow.create({
         data: {
           fromUserId,
-          toUserId
-        }
-      })
+          toUserId,
+        },
+      });
 
       return !!addFollowing;
-
-    }catch(e){
-      if(e instanceof  Error) throw new Error(e.message)
+    } catch (e) {
+      if (e instanceof Error) throw new Error(e.message);
     }
   }
 
@@ -33,8 +36,11 @@ export class PrFollowRepository implements IFollowRepository{
    * @param toUserId: string
    * @return
    * */
-  async findFollowStatus(fromUserId: string, toUserId: string): Promise<FollowerFollowing | null | undefined> {
-    try{
+  async findFollowStatus(
+    fromUserId: string,
+    toUserId: string
+  ): Promise<FollowerFollowing | null | undefined> {
+    try {
       const status = await prisma.follow.findUnique({
         where: {
           fromUserId_toUserId: {
@@ -45,8 +51,8 @@ export class PrFollowRepository implements IFollowRepository{
       });
 
       return status;
-    }catch(e){
-      if(e instanceof  Error) throw new Error(e.message)
+    } catch (e) {
+      if (e instanceof Error) throw new Error(e.message);
     }
   }
 
@@ -55,8 +61,8 @@ export class PrFollowRepository implements IFollowRepository{
    * @param toUserId: string
    * @return follower
    * */
-  async findByToUserId(toUserId:string, keyword: string = ''): Promise<Follower | undefined> {
-    try{
+  async findByToUserId(toUserId: string, keyword: string = ''): Promise<Follower | undefined> {
+    try {
       const followers = await prisma.user.findUnique({
         where: {
           id: toUserId,
@@ -76,19 +82,18 @@ export class PrFollowRepository implements IFollowRepository{
                   id: true,
                   nickname: true,
                   username: true,
-                  profileImg: true
-                }
-              }
-            }
+                  profileImg: true,
+                },
+              },
+            },
           },
         },
       });
 
-      if(followers) return followers;
-    }catch(e){
-      if(e instanceof  Error) throw new Error(e.message)
+      if (followers) return followers;
+    } catch (e) {
+      if (e instanceof Error) throw new Error(e.message);
     }
-
   }
 
   /**
@@ -97,7 +102,7 @@ export class PrFollowRepository implements IFollowRepository{
    * @return following
    * */
   async findByFromUserId(fromUserId: string, keyword: string = ''): Promise<Following | undefined> {
-    try{
+    try {
       const followings = await prisma.user.findUnique({
         where: {
           id: fromUserId,
@@ -117,21 +122,19 @@ export class PrFollowRepository implements IFollowRepository{
                   id: true,
                   nickname: true,
                   username: true,
-                  profileImg: true
-                }
-              }
-            }
+                  profileImg: true,
+                },
+              },
+            },
           },
         },
       });
 
-      if(followings) return followings;
-    }catch(e){
-      if(e instanceof  Error) throw new Error(e.message)
+      if (followings) return followings;
+    } catch (e) {
+      if (e instanceof Error) throw new Error(e.message);
     }
-
   }
-
 
   /**
    * 해당 메소드는 unfollow
@@ -140,21 +143,19 @@ export class PrFollowRepository implements IFollowRepository{
    * @return boolean
    * */
   async delete(fromUserId: string, toUserId: string): Promise<boolean | undefined> {
-    try{
-     await prisma.follow.delete({
+    try {
+      await prisma.follow.delete({
         where: {
           fromUserId_toUserId: {
             fromUserId,
-            toUserId
-          }
-        }
+            toUserId,
+          },
+        },
       });
 
       return true;
-    }catch(e){
-      if(e instanceof  Error) throw new Error(e.message)
+    } catch (e) {
+      if (e instanceof Error) throw new Error(e.message);
     }
-
   }
-
 }

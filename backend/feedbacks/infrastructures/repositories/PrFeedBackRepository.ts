@@ -1,6 +1,6 @@
-import { FeedBackEntity } from "@/backend/feedbacks/domains/entities/FeedBackEntity";
-import { FeedBackRepository } from "@/backend/feedbacks/domains/repositories/FeedBackRepository";
-import prisma from "@/public/utils/prismaClient";
+import { FeedBackEntity } from '@/backend/feedbacks/domains/entities/FeedBackEntity';
+import { FeedBackRepository } from '@/backend/feedbacks/domains/repositories/FeedBackRepository';
+import prisma from '@/public/utils/prismaClient';
 
 export class PrFeedBackRepository implements FeedBackRepository {
   async create(feedBack: FeedBackEntity): Promise<FeedBackEntity> {
@@ -11,10 +11,7 @@ export class PrFeedBackRepository implements FeedBackRepository {
       },
     });
 
-    return new FeedBackEntity(
-      createdFeedBack.gptResponseContent,
-      createdFeedBack.challengeId
-    );
+    return new FeedBackEntity(createdFeedBack.gptResponseContent, createdFeedBack.challengeId);
   }
 
   async findByFeedBackId(id: number): Promise<FeedBackEntity> {
@@ -23,7 +20,7 @@ export class PrFeedBackRepository implements FeedBackRepository {
     });
 
     return new FeedBackEntity(
-      feedBack?.gptResponseContent ?? "",
+      feedBack?.gptResponseContent ?? '',
       feedBack?.challengeId ?? 0,
       feedBack?.id
     );

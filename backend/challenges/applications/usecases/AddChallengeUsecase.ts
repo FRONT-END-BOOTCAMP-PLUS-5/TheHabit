@@ -2,10 +2,10 @@ import { IChallengeRepository } from '@/backend/challenges/domains/repositories/
 import { Challenge } from '@/backend/challenges/domains/entities/Challenge';
 import { AddChallengeRequestDto } from '@/backend/challenges/applications/dtos/AddChallengeDto';
 
-// 챌린지 등록 유스케이스 
+// 챌린지 등록 유스케이스
 export class AddChallengeUseCase {
   // 리포지토리 주입
-  constructor(private readonly challengeRepo: IChallengeRepository) { }
+  constructor(private readonly challengeRepo: IChallengeRepository) {}
 
   // 챌린지 등록 실행
   async execute(challenge: AddChallengeRequestDto): Promise<Challenge> {
@@ -17,7 +17,7 @@ export class AddChallengeUseCase {
       challenge.startTime ? new Date(challenge.startTime) : null,
       challenge.endTime ? new Date(challenge.endTime) : null,
       challenge.color,
-      "f1c6b5ae-b27e-4ae3-9e30-0cb8653b04fd", // 정적 userId (임시)
+      'f1c6b5ae-b27e-4ae3-9e30-0cb8653b04fd', // 정적 userId (임시)
       challenge.categoryId
     );
     const createdChallenge = await this.challengeRepo.create(challengeEntity);

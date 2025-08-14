@@ -1,7 +1,7 @@
-import { Routine } from "../entities/routine/routine";
+import { Routine } from '../entities/routine';
 export interface IRoutinesRepository {
   // 루틴 생성
-  create(routine: Omit<Routine, "id" | "createdAt">): Promise<Routine>;
+  create(routine: Omit<Routine, 'id' | 'createdAt'>): Promise<Routine>;
   // 루틴 조회
   findByChallengeId(challengeId: number): Promise<Routine[]>;
   findByUserId(userId: string): Promise<Routine[]>;

@@ -2,6 +2,7 @@ import { LoginRequestDto } from "@/backend/auths/applications/dtos/LoginRequestD
 import { LoginResponseDto } from "@/backend/auths/applications/dtos/LoginResponseDto";
 import { IUserRepository } from "@/backend/users/domains/repositories/IUserRepository";
 import bcrypt from "bcryptjs";
+import { Rex } from "@/public/consts/Rex";
 
 export class LoginUsecase {
     constructor(private readonly userRepository: IUserRepository) {
@@ -29,7 +30,7 @@ export class LoginUsecase {
 
             // 이메일 형식 검증
             // console.log("🔍 [LoginUsecase] 2단계: 이메일 형식 검증 시작");
-            const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+            const emailRegex = Rex.email.standard;
             const isEmailValid = emailRegex.test(loginRequest.email);
 
             if (!isEmailValid) {
@@ -112,4 +113,4 @@ export class LoginUsecase {
             throw new Error("로그인 처리 중 알 수 없는 오류가 발생했습니다.");
         }
     }
-}
+  }

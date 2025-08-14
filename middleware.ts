@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest, NextResponse } from 'next/server';
 
 export default function middleware(req: NextRequest) {
   // const { pathname } = req.nextUrl;
@@ -16,12 +16,9 @@ export default function middleware(req: NextRequest) {
     return NextResponse.redirect(new URL('/login', req.url));
   }
 
-
   return NextResponse.next();
 }
 
 export const config = {
-  matcher: [
-    '/user/:path*',
-  ],
+  matcher: ['/user/:path*'],
 };

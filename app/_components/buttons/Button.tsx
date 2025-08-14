@@ -6,27 +6,27 @@ import { Button as AntdButton } from "antd";
 
 interface IButton {
   children: React.ReactNode;
-  type?: "default" | "primary" | "link" | "text" | "dashed";
+  type?: 'default' | 'primary' | 'link' | 'text' | 'dashed';
   color?:
-    | "default"
-    | "primary"
-    | "danger"
-    | "blue"
-    | "purple"
-    | "cyan"
-    | "green"
-    | "magenta"
-    | "pink"
-    | "red"
-    | "orange"
-    | "yellow"
-    | "volcano"
-    | "geekblue"
-    | "lime"
-    | "gold";
+    | 'default'
+    | 'primary'
+    | 'danger'
+    | 'blue'
+    | 'purple'
+    | 'cyan'
+    | 'green'
+    | 'magenta'
+    | 'pink'
+    | 'red'
+    | 'orange'
+    | 'yellow'
+    | 'volcano'
+    | 'geekblue'
+    | 'lime'
+    | 'gold';
   onClick?: () => void;
   className?: string;
-  htmlType?: "button" | "submit" | "reset";
+  htmlType?: 'button' | 'submit' | 'reset';
   style?: React.CSSProperties;
   disabled?: boolean;
 }

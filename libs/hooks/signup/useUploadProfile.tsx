@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import React, { useRef, useState } from "react";
+import React, { useRef, useState } from 'react';
 
 export const useUploadProfile = () => {
   const [profilePreview, setProfilePreview] = useState<string | null>(null);
@@ -22,7 +22,7 @@ export const useUploadProfile = () => {
     setProfilePreview(null);
     setProfileFile(null);
     if (fileInputRef.current) {
-      fileInputRef.current.value = "";
+      fileInputRef.current.value = '';
     }
   };
 
