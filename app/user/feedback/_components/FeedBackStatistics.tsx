@@ -1,10 +1,14 @@
 "use client";
 
 import React from "react";
-import { useGetAllChallenges } from "@/libs/hooks/challenges-hooks/useGetAllChallenges";
+import { Progress } from "antd";
+import { ChallengeDto } from "@/backend/challenges/applications/dtos/ChallengeDto";
 
-export const FeedBackStatistics = () => {
-  const { data } = useGetAllChallenges();
+export const FeedBackStatistics = ({
+  challenges,
+}: {
+  challenges: ChallengeDto[];
+}) => {
   const userId = "a70ecc14-fb02-41ce-8f1d-750a69f5558d";
 
   //피드백 -> 루틴에 대한 피드백을 주는겁니다.
@@ -12,7 +16,9 @@ export const FeedBackStatistics = () => {
   //루틴이 어떤 챌린지 인지는 챌린지 ID로 알 수 있고, 또한 created_at으로 그날 챌린지를 했는지 알 수 있다.
   //루틴 ID로 어떤 루틴이 완료되었는지 확인할 수 있다.
 
-  const userFeedback = data?.filter((challenge) => challenge.userId === userId);
+  const userFeedback = challenges?.filter(
+    (challenge) => challenge.userId === userId
+  );
 
   const userFeedbackByDate = userFeedback?.map((challenge) => {
     return {
@@ -50,7 +56,7 @@ export const FeedBackStatistics = () => {
   const weekdayLabels = ["일", "월", "화", "수", "목", "금", "토"];
 
   return (
-    <div className="w-4/5 mx-auto mt-10 shadow-md flex flex-col items-center justify-center p-5 rounded-lg">
+    <div className="w-full mx-auto mt-10 shadow-md flex flex-col items-center justify-center p-5 rounded-lg">
       <div className="flex flex-col gap-2">
         <div className="grid gap-6 grid-cols-7 text-md font-medium">
           {weekdayLabels.map((label) => (
@@ -72,6 +78,7 @@ export const FeedBackStatistics = () => {
             );
           })}
         </div>
+        <Progress percent={4} />
       </div>
     </div>
   );

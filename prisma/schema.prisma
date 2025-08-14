@@ -76,7 +76,6 @@ model RoutineCompletion {
   review      Review?
   routine     Routine  @relation(fields: [routineId], references: [id], onDelete: Cascade)
   user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-
   @@map("routines_completions")
 }
 

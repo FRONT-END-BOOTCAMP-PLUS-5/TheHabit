@@ -3,6 +3,8 @@
 import { useState } from "react";
 import { FeedBackStatistics } from "@/app/user/feedback/_components/FeedBackStatistics";
 import FeedBackDetail from "@/app/user/feedback/_components/FeedBackDetail";
+import { useGetAllChallenges } from "@/libs/hooks";
+import { FeedBackCategoryProgress } from "./FeedBackCategoryProgress";
 
 const FEEDBACK_CATEGORIES = [
   { id: 1, name: "통계" },
@@ -10,6 +12,8 @@ const FEEDBACK_CATEGORIES = [
 ] as const;
 
 export const FeedBackList = () => {
+  const { data: challenges } = useGetAllChallenges();
+
   const [selectedCategoryName, setSelectedCategoryName] =
     useState<string>("통계");
 
@@ -45,7 +49,10 @@ export const FeedBackList = () => {
         </div>
       </nav>
       {selectedCategoryName === "통계" ? (
-        <FeedBackStatistics />
+        <div className="flex flex-col gap-10 w-4/6 mx-auto">
+          <FeedBackStatistics challenges={challenges || []} />
+          <FeedBackCategoryProgress challenges={challenges || []} />
+        </div>
       ) : (
         <FeedBackDetail />
       )}
