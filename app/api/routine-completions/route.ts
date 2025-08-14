@@ -27,7 +27,7 @@ export async function POST(
     }
 
     const addRoutineCompletionUseCase = new AddRoutineCompletionUseCase(
-      routineCompletionsRepository,
+      routineCompletionsRepository
     );
 
     const result = await addRoutineCompletionUseCase.execute({
@@ -39,10 +39,7 @@ export async function POST(
     return NextResponse.json(result, { status: 201 });
   } catch (error) {
     console.error('루틴 완료 생성 오류:', error);
-    return NextResponse.json(
-      { error: '루틴 완료 생성에 실패했습니다.' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: '루틴 완료 생성에 실패했습니다.' }, { status: 500 });
   }
 }
 
@@ -65,20 +62,15 @@ export async function GET(
 
     const getRoutinesUseCase = new GetRoutinesUseCase(routinesRepository);
     const getRoutineCompletionsUseCase = new GetRoutineCompletionsUseCase(
-      routineCompletionsRepository,
+      routineCompletionsRepository
     );
 
     // 1. 해당 챌린지의 루틴 목록 조회
-    const routines = await getRoutinesUseCase.getByChallengeId(
-      parseInt(challengeId!),
-    );
+    const routines = await getRoutinesUseCase.getByChallengeId(parseInt(challengeId!));
 
     // 2. 각 루틴에 대한 사용자의 완료 상태 조회 (병렬 처리로 성능 개선)
-    const completionPromises = routines.map((routine) =>
-      getRoutineCompletionsUseCase.getByUserAndRoutine(
-        TEMP_USER_ID,
-        routine.id,
-      ),
+    const completionPromises = routines.map(routine =>
+      getRoutineCompletionsUseCase.getByUserAndRoutine(TEMP_USER_ID, routine.id)
     );
 
     const completionResults = await Promise.all(completionPromises);
@@ -87,9 +79,6 @@ export async function GET(
     return NextResponse.json(completions);
   } catch (error) {
     console.error('루틴 완료 목록 조회 오류:', error);
-    return NextResponse.json(
-      { error: '루틴 완료 목록 조회에 실패했습니다.' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: '루틴 완료 목록 조회에 실패했습니다.' }, { status: 500 });
   }
 }

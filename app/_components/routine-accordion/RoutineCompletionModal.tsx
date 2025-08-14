@@ -63,12 +63,12 @@ export const RoutineCompletionModal = ({
   return (
     <Modal
       title={
-        <div className="flex items-center space-x-2">
+        <div className='flex items-center space-x-2'>
           {selectedRoutine && (
             <EmojiDisplay
               emojiNumber={selectedRoutine.emoji}
-              defaultEmoji="🌱"
-              className="text-2xl"
+              defaultEmoji='🌱'
+              className='text-2xl'
             />
           )}
           <span>{UI_MESSAGES.MODAL.REVIEW_TITLE}</span>
@@ -77,12 +77,12 @@ export const RoutineCompletionModal = ({
       open={isOpen}
       onCancel={handleClose}
       footer={[
-        <Button key="cancel" onClick={handleClose} disabled={isSubmitting}>
+        <Button key='cancel' onClick={handleClose} disabled={isSubmitting}>
           취소
         </Button>,
         <Button
-          key="submit"
-          type="primary"
+          key='submit'
+          type='primary'
           onClick={handleSubmit}
           style={{ opacity: isSubmitting || loading ? 0.6 : 1 }}
           disabled={isSubmitting || loading}
@@ -96,41 +96,36 @@ export const RoutineCompletionModal = ({
       }}
     >
       <div>
-        <p className="text-gray-600 mb-3">
-          "<strong>{selectedRoutine?.routineTitle}</strong>" 루틴을
-          완료하셨네요! 🎉
+        <p className='text-gray-600 mb-3'>
+          "<strong>{selectedRoutine?.routineTitle}</strong>" 루틴을 완료하셨네요! 🎉
         </p>
-        <p className="text-gray-600 mb-4">
-          {UI_MESSAGES.MODAL.REVIEW_DESCRIPTION}
-        </p>
+        <p className='text-gray-600 mb-4'>{UI_MESSAGES.MODAL.REVIEW_DESCRIPTION}</p>
 
         {/* 소감 작성 영역 */}
-        <div className="mb-6">
-          <h4 className="text-sm font-medium text-gray-700 mb-3">✍️ 소감 작성</h4>
+        <div className='mb-6'>
+          <h4 className='text-sm font-medium text-gray-700 mb-3'>✍️ 소감 작성</h4>
           <CustomInput
-            type="text"
+            type='text'
             placeholder={UI_MESSAGES.PLACEHOLDER.REVIEW}
             value={reviewText}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-              setReviewText(e.target.value)
-            }
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setReviewText(e.target.value)}
             maxLength={FORM_LIMITS.REVIEW_MAX_LENGTH}
             style={{ minHeight: '80px' }}
           />
-          <p className="text-xs text-gray-400 mt-2">
+          <p className='text-xs text-gray-400 mt-2'>
             최대 {FORM_LIMITS.REVIEW_MAX_LENGTH}자까지 입력할 수 있습니다.
           </p>
         </div>
 
         {/* 사진 업로드 영역 */}
         <div>
-          <h4 className="text-sm font-medium text-gray-700 mb-3">📸 인증샷 추가 (선택사항)</h4>
+          <h4 className='text-sm font-medium text-gray-700 mb-3'>📸 인증샷 추가 (선택사항)</h4>
           <FileUpload
             onFileSelect={handleFileSelect}
-            accept="image/*"
+            accept='image/*'
             maxSize={5}
             preview={true}
-            className=""
+            className=''
           />
         </div>
       </div>

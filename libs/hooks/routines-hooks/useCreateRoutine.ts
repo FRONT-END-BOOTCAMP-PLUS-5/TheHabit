@@ -33,7 +33,7 @@ export const useCreateRoutine = () => {
 
       console.log('루틴 생성 성공:', data);
     },
-    onError: (error) => {
+    onError: error => {
       console.error('루틴 생성 실패:', error);
     },
   });
