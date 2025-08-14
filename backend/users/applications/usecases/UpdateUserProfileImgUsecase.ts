@@ -4,7 +4,7 @@ import { User } from '@/backend/users/domains/entities/UserEntity';
 // 유저 profile Update 유스케이스
 export class UpdateUserProfileImgUsecase {
   // 리포지토리 주입
-  constructor(private readonly userRepo: IUserRepository) {}
+  constructor(private readonly userRepository: IUserRepository) {}
 
   //유저 profile update 실행
   async execute(
@@ -14,7 +14,7 @@ export class UpdateUserProfileImgUsecase {
     type: 'create' | 'update'
   ): Promise<User | undefined> {
     try {
-      const updatedUserProfile = await this.userRepo.updateProfileImg(
+      const updatedUserProfile = await this.userRepository.updateProfileImg(
         id,
         userProfileImgPath,
         file,

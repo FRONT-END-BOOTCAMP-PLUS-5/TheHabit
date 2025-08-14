@@ -22,28 +22,7 @@ export interface UpdateRoutineRequestDto {
   emoji?: number;
 }
 
-export interface UpdateRoutineResponseDto {
-  id: number;
-  routineTitle: string;
-  alertTime: Date | null;
-  emoji: number;
-  challengeId: number;
-  createdAt: Date;
-  updatedAt: Date;
-}
 
-export interface DeleteRoutineRequestDto {
-  routineId: number;
-}
-
-export interface DeleteRoutineResponseDto {
-  success: boolean;
-  message: string;
-}
-
-export interface GetRoutineByIdRequestDto {
-  routineId: number;
-}
 
 // 메인페이지 READ용 루틴 DTO (Application Service에서 사용)
 export interface DashboardRoutineDto {
@@ -54,13 +33,5 @@ export interface DashboardRoutineDto {
   challengeId: number;
   createdAt: Date;
   updatedAt: Date;
-  emojiData?: EmojiDto;
   isCompletedToday: boolean;
-}
-
-export interface EmojiDto {
-  id: number;
-  name: string;
-  unicode: string;
-  category: string;
 }
