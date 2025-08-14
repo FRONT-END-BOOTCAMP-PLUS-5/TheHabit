@@ -27,6 +27,7 @@ const Header: React.FC = () => {
         className="flex flex-2 items-center justify-end gap-1 pr-4 cursor-pointer"
         onClick={handleOpenModal}
       >
+v
         <Image src={FireIcon} alt="fire" width={24} height={24} />
         <div className="text-xl font-extrabold bg-gradient-to-r from-[#FF6D00] via-[#FF9800] to-[#FFC107] bg-clip-text text-transparent">
           21

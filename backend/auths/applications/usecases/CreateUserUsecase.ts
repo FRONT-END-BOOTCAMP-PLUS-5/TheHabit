@@ -13,6 +13,10 @@ export class CreateUserUsecase {
             if (!email || !password || !username || !nickname) {
                 throw new Error("필수 입력값입니다.");
             }
+
+            // 이미지가 있을 경우
+            
+
             // 이메일 중복 확인
             const emailExists = await this.userRepository.checkEmailExists(email);
             if (emailExists) {
