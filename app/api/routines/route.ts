@@ -1,16 +1,15 @@
 // GET /api/routines - 루틴 목록 조회
 // POST /api/routines - 루틴 생성
 import { NextRequest, NextResponse } from 'next/server';
-import { CreateRoutineUseCase } from '../../../backend/routines/applications/usecases/AddRoutineUseCase';
-import { GetRoutinesUseCase } from '../../../backend/routines/applications/usecases/GetRoutinesUseCase';
-import { PrRoutinesRepository } from '../../../backend/routines/infrastructures/repositories/PrRoutinesRepository';
-import { CreateRoutineRequestDto } from '../../../backend/routines/applications/dtos/RoutineDto';
+import { AddRoutineUseCase } from '@/backend/routines/applications/usecases/AddRoutineUseCase';
+import { GetRoutinesUseCase } from '@/backend/routines/applications/usecases/GetRoutinesUseCase';
+import { PrRoutinesRepository } from '@/backend/routines/infrastructures/repositories/PrRoutinesRepository';
+import { CreateRoutineRequestDto } from '@/backend/routines/applications/dtos/RoutineDto';
 
 const repository = new PrRoutinesRepository();
 
-// 팩토리 함수들
-const createCreateRoutineUseCase = () => {
-  return new CreateRoutineUseCase(repository);
+const createAddRoutineUseCase = () => {
+  return new AddRoutineUseCase(repository);
 };
 
 const createGetRoutinesUseCase = () => {
@@ -19,7 +18,7 @@ const createGetRoutinesUseCase = () => {
 
 // POST /api/routines - 루틴 생성
 export const POST = async (requestBody: NextRequest): Promise<NextResponse> => {
-  const usecase = createCreateRoutineUseCase();
+  const usecase = createAddRoutineUseCase();
   
   try {
     // 요청 바디를 콘솔에 출력
