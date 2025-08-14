@@ -8,7 +8,11 @@ import { deleteChallenge } from '@/libs/api/challenges.api';
 export const useDeleteChallenge = () => {
   const queryClient = useQueryClient();
 
-  return useMutation<{ success: boolean; message?: string; error?: { code: string; message: string } }, Error, number>({
+  return useMutation<
+    { success: boolean; message?: string; error?: { code: string; message: string } },
+    Error,
+    number
+  >({
     mutationFn: deleteChallenge,
     onSuccess: (data, deletedId) => {
       // 챌린지 삭제 성공 시 관련 캐시 무효화
@@ -20,8 +24,8 @@ export const useDeleteChallenge = () => {
 
       console.log('챌린지 삭제 성공:', data);
     },
-    onError: (error) => {
+    onError: error => {
       console.error('챌린지 삭제 실패:', error);
     },
   });
-}; 
+};

@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import { useState, useMemo } from "react";
-import DayCard from "./DayCard";
+import { useState, useMemo } from 'react';
+import DayCard from './DayCard';
 
 interface DayCard {
   day: string;
@@ -16,9 +16,7 @@ interface WeeklySlideProps {
 }
 
 const WeeklySlide: React.FC<WeeklySlideProps> = ({ onDateSelect }) => {
-  const [selectedDayIndex, setSelectedDayIndex] = useState<number>(
-    new Date().getDay()
-  );
+  const [selectedDayIndex, setSelectedDayIndex] = useState<number>(new Date().getDay());
 
   // useMemo로 날짜 계산 최적화
   const weekDays = useMemo(() => {
@@ -36,7 +34,7 @@ const WeeklySlide: React.FC<WeeklySlideProps> = ({ onDateSelect }) => {
       const currentDate = new Date(startOfWeek);
       currentDate.setDate(startOfWeek.getDate() + i);
 
-      const dayNames = ["일", "월", "화", "수", "목", "금", "토"];
+      const dayNames = ['일', '월', '화', '수', '목', '금', '토'];
 
       days.push({
         day: dayNames[i],
@@ -68,8 +66,8 @@ const WeeklySlide: React.FC<WeeklySlideProps> = ({ onDateSelect }) => {
   };
 
   return (
-    <div className="w-full">
-      <div className="flex gap-1 overflow-x-auto scrollbar-hide min-w-full overflow-y-visible px-2 py-2">
+    <div className='w-full'>
+      <div className='flex gap-1 overflow-x-auto scrollbar-hide min-w-full overflow-y-visible px-2 py-2'>
         {weekDays.map((day, index) => (
           <DayCard
             key={index}

@@ -1,17 +1,18 @@
 ---
 name: 버그 보고 (Bug report)
 about: merge 후 해당 기능 개발자가 모르는 버그가 발견되었을 경우
-title: "[Bug]"
+title: '[Bug]'
 labels: ''
 assignees: ''
-
 ---
 
 ---
+
 name: 버그 리포트
 about: 버그 발생 시 이 템플릿을 사용해 주세요
 title: "[BUG] "
 labels: bug
+
 ---
 
 ## #️⃣ 어떤 버그인가요?

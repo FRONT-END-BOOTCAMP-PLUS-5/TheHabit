@@ -8,4 +8,3 @@ export interface AddChallengeRequestDto {
   readonly color: string;
   readonly categoryId: number;
 }
-

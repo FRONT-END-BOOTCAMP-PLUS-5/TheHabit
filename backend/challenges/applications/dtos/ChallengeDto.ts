@@ -33,21 +33,23 @@ export class ChallengeDtoMapper {
       endTime: challenge.endTime ? challenge.endTime.toISOString() : null,
       color: challenge.color,
       userId: challenge.userId,
-      categoryId: challenge.categoryId
+      categoryId: challenge.categoryId,
     };
   }
 
-  static fromEntities(challenges: {
-    id: number;
-    name: string;
-    createdAt: Date;
-    endAt: Date;
-    startTime: Date | null;
-    endTime: Date | null;
-    color: string;
-    userId: string;
-    categoryId: number;
-  }[]): ChallengeDto[] {
+  static fromEntities(
+    challenges: {
+      id: number;
+      name: string;
+      createdAt: Date;
+      endAt: Date;
+      startTime: Date | null;
+      endTime: Date | null;
+      color: string;
+      userId: string;
+      categoryId: number;
+    }[]
+  ): ChallengeDto[] {
     return challenges.map(challenge => ChallengeDtoMapper.fromEntity(challenge));
   }
 }

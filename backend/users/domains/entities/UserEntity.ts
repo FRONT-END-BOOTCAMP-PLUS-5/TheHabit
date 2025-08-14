@@ -8,7 +8,6 @@ export class User {
     public readonly password?: string,
     public readonly email?: string,
     public readonly createdAt?: Date,
-    public readonly updatedAt?: Date,
-  ) { }
+    public readonly updatedAt?: Date
+  ) {}
 }
-
