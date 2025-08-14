@@ -17,9 +17,7 @@ const ChallengeListSection: React.FC = () => {
   const { openModal } = useModalStore();
 
   const handleOpenModal = () => {
-    openModal(<div className='h-100 bg-primary text-white font-bold flex items-center justify-center'>
-      여기에 내용이 들어가면 됩니다.
-    </div>, 'floating', '모달 제목 예시', '어쩌구저쩌구 설명');
+    openModal(<AddChallengeForm />, 'toast');
   };
 
   const handleDateSelect = (date: Date) => {
