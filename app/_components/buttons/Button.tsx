@@ -1,9 +1,5 @@
 "use client";
 import '@ant-design/v5-patch-for-react-19';
-<<<<<<< HEAD
-
-=======
->>>>>>> 690e8c53bf2141217965b4787c2aa5bf2cd79274
 import { Button as AntdButton } from "antd";
 
 //차후 tailwind css 사용할때 상수화
