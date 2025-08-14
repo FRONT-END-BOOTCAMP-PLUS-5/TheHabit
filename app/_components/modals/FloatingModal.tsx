@@ -3,14 +3,22 @@
 import React, { useState, useEffect } from 'react';
 
 interface FloatingModalProps {
+  modalTitle: string;
+  modalDescription: string;
   children: React.ReactNode;
   isOpen?: boolean;
   onClose?: () => void;
 }
 
-const FloatingModal: React.FC<FloatingModalProps> = ({ children, isOpen = false, onClose }) => {
-  const [isVisible, setIsVisible] = useState(false);
-  const [isAnimating, setIsAnimating] = useState(false);
+const FloatingModal: React.FC<FloatingModalProps> = ({
+  children,
+  isOpen = false,
+  onClose,
+  modalTitle,
+  modalDescription,
+}) => {
+  const [isVisible, setIsVisible] = useState<boolean>(false);
+  const [isAnimating, setIsAnimating] = useState<boolean>(false);
 
   useEffect(() => {
     if (isOpen) {
@@ -46,7 +54,16 @@ const FloatingModal: React.FC<FloatingModalProps> = ({ children, isOpen = false,
           isAnimating ? 'transform scale-100 opacity-100' : 'transform scale-95 opacity-0'
         }`}>
         {/* 모달 내용 */}
-        <div className='p-6'>{children}</div>
+        <div className='flex flex-col gap-5 p-6 w-full'>
+          <div className='flex justify-between items-end w-full'>
+            <div className='w-full h-1 bg-primary rounded-full'></div>
+          </div>
+          <div className='flex justify-between items-end'>
+            <div className='text-2xl font-bold text-primary'>{modalTitle}</div>
+            <div className='text-sm text-secondary'>{modalDescription}</div>
+          </div>
+          {children}
+        </div>
       </div>
     </div>
   );

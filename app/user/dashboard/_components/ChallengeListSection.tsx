@@ -17,7 +17,7 @@ const ChallengeListSection: React.FC = () => {
   const { openModal } = useModalStore();
 
   const handleOpenModal = () => {
-    openModal(<AddChallengeForm />);
+    openModal(<AddChallengeForm />, 'floating');
   };
 
   const handleDateSelect = (date: Date) => {
@@ -166,8 +166,7 @@ const ChallengeListSection: React.FC = () => {
                 justifyContent: 'center',
               }}
               buttonStyle='solid'
-              className='custom-radio-group w-full max-w-md'
-            >
+              className='custom-radio-group w-full max-w-md'>
               <Radio.Button value='all' className='flex-1 text-center'>
                 전체
               </Radio.Button>

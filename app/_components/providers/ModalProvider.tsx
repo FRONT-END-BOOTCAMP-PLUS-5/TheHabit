@@ -6,7 +6,7 @@ import ToastModal from '@/app/_components/modals/ToastModal';
 import FloatingModal from '@/app/_components/modals/FloatingModal';
 
 const ModalProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { isOpen, modalType, content, closeModal } = useModalStore();
+  const { isOpen, modalType, content, modalTitle, modalDescription, closeModal } = useModalStore();
 
   const renderModal = () => {
     if (!isOpen || !content) return null;
@@ -14,7 +14,11 @@ const ModalProvider: React.FC<{ children: React.ReactNode }> = ({ children }) =>
     switch (modalType) {
       case 'floating':
         return (
-          <FloatingModal isOpen={isOpen} onClose={closeModal}>
+          <FloatingModal
+            isOpen={isOpen}
+            onClose={closeModal}
+            modalTitle={modalTitle}
+            modalDescription={modalDescription}>
             {content}
           </FloatingModal>
         );
