@@ -54,7 +54,7 @@ export const ProfileSection = () => {
 
       <Controller
         control={control}
-        name="nickName"
+        name="nickname"
         rules={{
           required: "닉네임을 입력해주세요",
           pattern: {
@@ -67,14 +67,14 @@ export const ProfileSection = () => {
           <div className="relative">
             <Input
               label="닉네임"
-              labelHtmlFor="nickName"
+              labelHtmlFor="nickname"
               placeholder="ex) 홍길동"
               className="login-input relative"
               {...field}
             />
-            {errors.nickName && (
+            {errors.nickname && (
               <p className="text-red-500 text-xs absolute left-0">
-                {errors.nickName?.message?.toString()}
+                {errors.nickname?.message?.toString()}
               </p>
             )}
           </div>

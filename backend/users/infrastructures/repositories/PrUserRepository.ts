@@ -72,40 +72,6 @@ export class PrUserRepository implements IUserRepository {
     }
   }
 
-  /**
-   * 해당 메소드는 s3에 이미지 생성
-   * @param fromUserId: string
-   * @param toUserId: string
-   * @return string
-   * */
-  async createProfileImg(file: File): Promise<string[] | undefined> {
-    try{
-      const { name, type } = file
-
-      const key = `${uuidv4()}-${name}`;
-
-      const arrayBuffer = await file.arrayBuffer();
-      const buffer = Buffer.from(arrayBuffer);
-
-      const command = new PutObjectCommand({
-        Bucket: process.env.AMPLIFY_BUCKET as string,
-        Key: key,
-        ContentType: type,
-        Body: buffer
-      });
-
-      this.s3.send(command);
-
-      const signedUrl:string = `https://${process.env.AMPLIFY_BUCKET}.s3.${process.env.AWS_REGION}.amazonaws.com/${key}`;;
-
-
-      return [signedUrl, key];
-
-    }catch(e){
-      if(e instanceof  Error) throw new Error(e.message)
-    }
-  }
-
   async findAll(nickname: string = ''): Promise<User[] | undefined> {
     try {
       const users = await prisma.user.findMany({
@@ -182,6 +148,19 @@ export class PrUserRepository implements IUserRepository {
 
     }
   }
+
+  // 회원가입용 이메일 중복 체크
+  async checkEmailExists(email: string): Promise<boolean> {
+    try {
+        const user = await prisma.user.findUnique({
+            where: { email }
+        });
+        return !!user; // 사용자가 존재하면 true, 없으면 false
+    } catch (e) {
+        console.error("이메일 존재 여부 확인 중 오류:", e);
+        throw e;
+    }
+}
 
 
   async findById(id: string): Promise<User | null | undefined> {

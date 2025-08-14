@@ -1,3 +1,5 @@
+import { Rex } from "@/public/consts/Rex";
+
 interface ILoginItem {
   id: number;
   label: string;
@@ -17,7 +19,7 @@ export const LoginItem: ILoginItem[] = [
     type: "text",
     placeholder: "이메일",
     required: true,
-    regEx: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,15}$/,
+    regEx: Rex.email.standard,
     errorMessage: "올바른 이메일 형식을 입력하세요",
   },
   {
@@ -27,7 +29,7 @@ export const LoginItem: ILoginItem[] = [
     type: "password",
     placeholder: "비밀번호",
     required: true,
-    regEx: /^(?=.*[^a-zA-Z0-9])(?=.*[a-zA-Z])(?=.*\d).{8,15}$/,
+    regEx: Rex.password.standard,
     errorMessage: "8-15자의 영문 대소문자, 숫자, 특수문자를 포함하세요",
   },
 ];

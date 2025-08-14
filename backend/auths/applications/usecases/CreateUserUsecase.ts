@@ -14,9 +14,9 @@ export class CreateUserUsecase {
                 throw new Error("필수 입력값입니다.");
             }
             // 이메일 중복 확인
-            const existingUser = await this.userRepository.findByEmail(email);
-            if (existingUser) {
-                throw new Error("이미 존재하는 이메일입니다.");
+            const emailExists = await this.userRepository.checkEmailExists(email);
+            if (emailExists) {
+            throw new Error("이미 존재하는 이메일입니다.");
             }
 
             // 비밀번호 해싱
@@ -29,6 +29,7 @@ export class CreateUserUsecase {
                 username,
                 nickname,
                 profileImg: null,
+                profileImgPath: null,
             });
 
             // 성공 응답
