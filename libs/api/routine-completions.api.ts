@@ -17,7 +17,7 @@ export const createRoutineCompletion = async (
       );
     return response.data;
   } catch (error) {
-    console.error('Failed to create routine completion:', error);
+    console.error('루틴 완료 생성 실패:', error);
     throw error;
   }
 };
@@ -32,7 +32,7 @@ export const getRoutineCompletionsByChallenge = async (
     >(`/api/routine-completions?challengeId=${challengeId}`);
     return response.data;
   } catch (error) {
-    console.error('Failed to get routine completions by challenge:', error);
+    console.error('챌린지별 루틴 완료 조회 실패:', error);
     throw error;
   }
 };
@@ -47,7 +47,7 @@ export const getRoutineCompletionsByUser = async (
     >(`/api/routine-completions?userId=${userId}`);
     return response.data;
   } catch (error) {
-    console.error('Failed to get routine completions by user:', error);
+    console.error('루틴 완료 조회 실패:', error);
     throw error;
   }
 };
@@ -63,12 +63,12 @@ export const updateRoutineCompletion = async (
     >(`/api/routine-completions/${id}`, { proofImgUrl });
     
     if (!response.data.data) {
-      throw new Error('No data returned from server');
+      throw new Error('서버에서 반환된 데이터가 없습니다');
     }
     
     return response.data.data;
   } catch (error) {
-    console.error('Failed to update routine completion:', error);
+    console.error('루틴 완료 수정 실패:', error);
     throw error;
   }
 };
@@ -83,12 +83,12 @@ export const getRoutineCompletionById = async (
     );
     
     if (!response.data.data) {
-      throw new Error('No data returned from server');
+      throw new Error('서버에서 반환된 데이터가 없습니다');
     }
     
     return response.data.data;
   } catch (error) {
-    console.error('Failed to get routine completion:', error);
+    console.error('루틴 완료 상세 조회 실패:', error);
     throw error;
   }
 };
@@ -100,7 +100,7 @@ export const deleteRoutineCompletion = async (id: number): Promise<void> => {
       `/api/routine-completions/${id}`,
     );
   } catch (error) {
-    console.error('Failed to delete routine completion:', error);
+    console.error('루틴 완료 삭제 실패:', error);
     throw error;
   }
 };

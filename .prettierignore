@@ -1,7 +1,3 @@
 # Ignore artifacts:
 .next
 node_modules
-
-# Ignore generated files:
-package-lock.json
-bun.lock

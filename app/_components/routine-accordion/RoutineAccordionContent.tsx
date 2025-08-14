@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import { LoadingSpinner } from '@/app/_components/loading/LoadingSpinner';
 import { RoutineItem } from './RoutineItem';
 import { RoutineCompletionModal } from './RoutineCompletionModal';
@@ -11,7 +12,6 @@ import {
   useCreateRoutineCompletion,
   useDeleteRoutineCompletion,
 } from '@/libs/hooks/routine-completions-hooks';
-import { useModalState } from '@/libs/hooks/routine-hooks';
 
 // 타입과 상수 import
 import { RoutineAccordionContentProps } from './types';
@@ -38,7 +38,18 @@ const RoutineAccordionContentInner = ({
   const deleteCompletionMutation = useDeleteRoutineCompletion();
 
   // 모달 상태
-  const { isCompletionModalOpen, selectedRoutine, openModal, closeModal } = useModalState();
+  const [isCompletionModalOpen, setIsCompletionModalOpen] = useState(false);
+  const [selectedRoutine, setSelectedRoutine] = useState<ReadRoutineResponseDto | null>(null);
+
+  const openModal = (routine: ReadRoutineResponseDto) => {
+    setSelectedRoutine(routine);
+    setIsCompletionModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsCompletionModalOpen(false);
+    setSelectedRoutine(null);
+  };
 
   // 루틴 완료 상태 확인 함수들
   const isRoutineCompleted = (routineId: number) => {
@@ -49,7 +60,7 @@ const RoutineAccordionContentInner = ({
     return completions.find((completion) => completion.routineId === routineId);
   };
 
-  // 이벤트 핸들러들
+  // 이벤트 핸들러
   const handleRoutineCheck = (checked: boolean, routine: ReadRoutineResponseDto) => {
     if (checked) {
       openModal(routine);

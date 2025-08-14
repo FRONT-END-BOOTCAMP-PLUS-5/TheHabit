@@ -4,15 +4,7 @@ import {
   useDeleteRoutineCompletion,
 } from '@/libs/hooks/routine-completions-hooks';
 import { RoutineCompletionDto } from '@/backend/routine-completions/applications/dtos/RoutineCompletionDto';
-
-interface RoutineDto {
-  id: number;
-  routineTitle: string;
-  emoji: number;
-  challengeId: number;
-  createdAt: string;
-  updatedAt: string;
-}
+import { ReadRoutineResponseDto } from '@/backend/routines/applications/dtos/RoutineDto';
 
 type RoutineCompletion = RoutineCompletionDto;
 
@@ -50,7 +42,7 @@ export const useRoutineCompletion = ({
 
   // 루틴 완료 생성
   const createCompletion = useCallback(
-    async (routine: RoutineDto, onSuccess?: () => void) => {
+    async (routine: ReadRoutineResponseDto, onSuccess?: () => void) => {
       try {
         await createCompletionMutation.mutateAsync({
           userId: 'f1c6b5ae-b27e-4ae3-9e30-0cb8653b04fd', // TODO: 실제 사용자 ID
@@ -59,8 +51,8 @@ export const useRoutineCompletion = ({
         });
         onSuccess?.();
       } catch (error) {
-        console.error('루틴 완료 처리 오류:', error);
-        onError('루틴 완료 처리에 실패했습니다.');
+        console.error('루틴 완료 생성 실패:', error);
+        onError('루틴 완료 생성에 실패했습니다.');
       }
     },
     [createCompletionMutation, onError],
@@ -75,8 +67,8 @@ export const useRoutineCompletion = ({
           await deleteCompletionMutation.mutateAsync(completion.id);
         }
       } catch (error) {
-        console.error('루틴 완료 취소 오류:', error);
-        onError('루틴 완료 취소에 실패했습니다.');
+        console.error('루틴 완료 삭제 실패:', error);
+        onError('루틴 완료 삭제에 실패했습니다.');
       }
     },
     [deleteCompletionMutation, getRoutineCompletion, onError],

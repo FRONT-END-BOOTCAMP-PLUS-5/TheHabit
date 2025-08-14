@@ -13,15 +13,8 @@ interface ApiResponse<T> {
   };
 }
 
-interface CategoryChallengesResponse {
-  success: boolean;
-  data?: ChallengeDto[];
-  message?: string;
+interface CategoryChallengesResponse extends ApiResponse<ChallengeDto[]> {
   count?: number;
-  error?: {
-    code: string;
-    message: string;
-  };
 }
 
 // 1. 전체 챌린지 목록 조회

@@ -8,3 +8,6 @@ export { useGetDashboardRoutines } from './useGetDashboardRoutines';
 export { useCreateRoutine } from './useCreateRoutine';
 export { useUpdateRoutine } from './useUpdateRoutine';
 export { useDeleteRoutine } from './useDeleteRoutine';
+
+// 비즈니스 로직 훅들
+export { useRoutineCompletion } from './useRoutineCompletion';

@@ -18,7 +18,7 @@ export const getAllRoutines = async (): Promise<
       );
     return response.data;
   } catch (error) {
-    console.error('Failed to get all routines:', error);
+    console.error('전체 루틴 조회 실패:', error);
     throw error;
   }
 };
@@ -33,7 +33,7 @@ export const getRoutinesByChallenge = async (
     );
     return response.data;
   } catch (error) {
-    console.error('Failed to get routines by challenge:', error);
+    console.error('챌린지별 루틴 조회 실패:', error);
     throw error;
   }
 };
@@ -48,7 +48,7 @@ export const getRoutinesByUser = async (
     >(`/api/routines?userId=${userId}`);
     return response.data;
   } catch (error) {
-    console.error('Failed to get routines by user:', error);
+    console.error('사용자별 루틴 조회 실패:', error);
     throw error;
   }
 };
@@ -63,7 +63,7 @@ export const getRoutineById = async (
     >(`/api/routines/${id}`);
     return response.data;
   } catch (error) {
-    console.error('Failed to get routine by ID:', error);
+    console.error('루틴 상세 조회 실패:', error);
     throw error;
   }
 };
@@ -78,7 +78,7 @@ export const createRoutine = async (
     >('/api/routines', routineData);
     return response.data;
   } catch (error) {
-    console.error('Failed to create routine:', error);
+    console.error('루틴 생성 실패:', error);
     throw error;
   }
 };
@@ -94,7 +94,7 @@ export const updateRoutine = async (
     >(`/api/routines/${id}`, routineData);
     return response.data;
   } catch (error) {
-    console.error('Failed to update routine:', error);
+    console.error('루틴 수정 실패:', error);
     throw error;
   }
 };
@@ -109,7 +109,7 @@ export const deleteRoutine = async (
     >(`/api/routines/${id}`);
     return response.data;
   } catch (error) {
-    console.error('Failed to delete routine:', error);
+    console.error('루틴 삭제 실패:', error);
     throw error;
   }
 };
@@ -134,7 +134,7 @@ export const getDashboardRoutines = async (
       await axiosInstance.get<ApiResponse<DashboardRoutineDto[]>>(url);
     return response.data;
   } catch (error) {
-    console.error('Failed to get dashboard routines:', error);
+    console.error('대시보드 루틴 조회 실패:', error);
     throw error;
   }
 };
