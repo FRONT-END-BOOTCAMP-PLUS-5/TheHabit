@@ -1,6 +1,6 @@
-import { IChallengeRepository } from "@/backend/challenges/domains/repositories/IChallengeRepository";
-import { Challenge } from "@/backend/challenges/domains/entities/Challenge";
-import prisma from "@/public/utils/prismaClient";
+import { IChallengeRepository } from '@/backend/challenges/domains/repositories/IChallengeRepository';
+import { Challenge } from '@/backend/challenges/domains/entities/Challenge';
+import prisma from '@/public/utils/prismaClient';
 
 export class PrChallengeRepository implements IChallengeRepository {
   async create(challenge: Challenge): Promise<Challenge> {
@@ -33,7 +33,7 @@ export class PrChallengeRepository implements IChallengeRepository {
   async findAll(): Promise<Challenge[]> {
     const challenges = await prisma.challenge.findMany();
     return challenges.map(
-      (challenge) =>
+      challenge =>
         new Challenge(
           challenge.id,
           challenge.name,
@@ -74,7 +74,7 @@ export class PrChallengeRepository implements IChallengeRepository {
     });
 
     return challenges.map(
-      (challenge) =>
+      challenge =>
         new Challenge(
           challenge.id,
           challenge.name,
@@ -95,7 +95,7 @@ export class PrChallengeRepository implements IChallengeRepository {
     });
 
     return challenges.map(
-      (challenge) =>
+      challenge =>
         new Challenge(
           challenge.id,
           challenge.name,
@@ -110,10 +110,7 @@ export class PrChallengeRepository implements IChallengeRepository {
     );
   }
 
-  async update(
-    id: number,
-    challenge: Partial<Challenge>
-  ): Promise<Challenge | null> {
+  async update(id: number, challenge: Partial<Challenge>): Promise<Challenge | null> {
     const updateData: {
       name?: string;
       createdAt?: Date;
@@ -126,16 +123,13 @@ export class PrChallengeRepository implements IChallengeRepository {
     } = {};
 
     if (challenge.name !== undefined) updateData.name = challenge.name;
-    if (challenge.createdAt !== undefined)
-      updateData.createdAt = challenge.createdAt;
+    if (challenge.createdAt !== undefined) updateData.createdAt = challenge.createdAt;
     if (challenge.endAt !== undefined) updateData.endAt = challenge.endAt;
-    if (challenge.startTime !== undefined)
-      updateData.startTime = challenge.startTime;
+    if (challenge.startTime !== undefined) updateData.startTime = challenge.startTime;
     if (challenge.endTime !== undefined) updateData.endTime = challenge.endTime;
     if (challenge.color !== undefined) updateData.color = challenge.color;
     if (challenge.userId !== undefined) updateData.userId = challenge.userId;
-    if (challenge.categoryId !== undefined)
-      updateData.categoryId = challenge.categoryId;
+    if (challenge.categoryId !== undefined) updateData.categoryId = challenge.categoryId;
 
     const updatedChallenge = await prisma.challenge.update({
       where: { id },
@@ -165,7 +159,7 @@ export class PrChallengeRepository implements IChallengeRepository {
       if (teenieping instanceof Error) {
         console.error(`챌린지 삭제 중 오류 발생: ${teenieping.message}`);
       } else {
-        console.error("챌린지 삭제 중 알 수 없는 오류 발생:", teenieping);
+        console.error('챌린지 삭제 중 알 수 없는 오류 발생:', teenieping);
       }
       return false;
     }
@@ -181,10 +175,7 @@ export class PrChallengeRepository implements IChallengeRepository {
       if (teenieping instanceof Error) {
         console.error(`사용자 챌린지 삭제 중 오류 발생: ${teenieping.message}`);
       } else {
-        console.error(
-          "사용자 챌린지 삭제 중 알 수 없는 오류 발생:",
-          teenieping
-        );
+        console.error('사용자 챌린지 삭제 중 알 수 없는 오류 발생:', teenieping);
       }
       return false;
     }

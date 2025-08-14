@@ -1,15 +1,10 @@
-import { IRoutinesRepository } from "../../domains/repositories/IRoutinesRepository";
-import {
-  UpdateRoutineRequestDto,
-  UpdateRoutineResponseDto,
-} from "../dtos/RoutineDto";
+import { IRoutinesRepository } from '../../domains/repositories/IRoutinesRepository';
+import { UpdateRoutineRequestDto, UpdateRoutineResponseDto } from '../dtos/RoutineDto';
 
 export class UpdateRoutineUseCase {
   constructor(private readonly IRoutinesRepository: IRoutinesRepository) {}
 
-  async execute(
-    request: UpdateRoutineRequestDto
-  ): Promise<UpdateRoutineResponseDto> {
+  async execute(request: UpdateRoutineRequestDto): Promise<UpdateRoutineResponseDto> {
     const { routineId, ...updateData } = request;
 
     // 루틴 존재여부 확인
@@ -24,10 +19,7 @@ export class UpdateRoutineUseCase {
       updatedAt: new Date(),
     };
 
-    const updatedRoutine = await this.IRoutinesRepository.update(
-      routineId,
-      routineUpdateData
-    );
+    const updatedRoutine = await this.IRoutinesRepository.update(routineId, routineUpdateData);
 
     return {
       id: updatedRoutine.id,

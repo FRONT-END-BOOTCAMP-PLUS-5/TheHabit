@@ -1,15 +1,10 @@
-import { IRoutinesRepository } from "../../domains/repositories/IRoutinesRepository";
-import {
-  CreateRoutineRequestDto,
-  ReadRoutineResponseDto,
-} from "../dtos/RoutineDto";
+import { IRoutinesRepository } from '../../domains/repositories/IRoutinesRepository';
+import { CreateRoutineRequestDto, ReadRoutineResponseDto } from '../dtos/RoutineDto';
 
 export class CreateRoutineUseCase {
   constructor(private readonly IRoutinesRepository: IRoutinesRepository) {}
 
-  async execute(
-    request: CreateRoutineRequestDto
-  ): Promise<ReadRoutineResponseDto> {
+  async execute(request: CreateRoutineRequestDto): Promise<ReadRoutineResponseDto> {
     const routineToCreate = {
       routineTitle: request.routineTitle,
       alertTime: request.alertTime,
@@ -18,9 +13,7 @@ export class CreateRoutineUseCase {
       updatedAt: new Date(),
     };
 
-    const createdRoutine = await this.IRoutinesRepository.create(
-      routineToCreate
-    );
+    const createdRoutine = await this.IRoutinesRepository.create(routineToCreate);
 
     return {
       id: createdRoutine.id,

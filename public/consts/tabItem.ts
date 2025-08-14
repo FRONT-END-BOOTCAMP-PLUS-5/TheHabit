@@ -1,36 +1,36 @@
-import homeIcon from "@/public/icons/home.svg";
-import searchIcon from "@/public/icons/search.svg";
-import alarmIcon from "@/public/icons/alarm.svg";
-import settingIcon from "@/public/icons/setting.svg";
-import activeHomeIcon from "@/public/icons/activeHome.svg";
-import activeSearchIcon from "@/public/icons/activeSearch.svg";
-import activeAlarmIcon from "@/public/icons/activeAlarm.svg";
-import activeSettingIcon from "@/public/icons/activeSetting.svg";
+import homeIcon from '@/public/icons/home.svg';
+import searchIcon from '@/public/icons/search.svg';
+import alarmIcon from '@/public/icons/alarm.svg';
+import settingIcon from '@/public/icons/setting.svg';
+import activeHomeIcon from '@/public/icons/activeHome.svg';
+import activeSearchIcon from '@/public/icons/activeSearch.svg';
+import activeAlarmIcon from '@/public/icons/activeAlarm.svg';
+import activeSettingIcon from '@/public/icons/activeSetting.svg';
 
 export const tabItem = [
   {
-    name: "home",
+    name: 'home',
     icon: homeIcon,
-    href: "/",
+    href: '/',
     isHover: activeHomeIcon,
   },
   {
-    name: "search",
+    name: 'search',
     icon: searchIcon,
-    href: "/search",
+    href: '/search',
     isHover: activeSearchIcon,
   },
 
   {
-    name: "alarm",
+    name: 'alarm',
     icon: alarmIcon,
-    href: "/alarm",
+    href: '/alarm',
     isHover: activeAlarmIcon,
   },
   {
-    name: "setting",
+    name: 'setting',
     icon: settingIcon,
-    href: "/setting",
+    href: '/setting',
     isHover: activeSettingIcon,
   },
 ];

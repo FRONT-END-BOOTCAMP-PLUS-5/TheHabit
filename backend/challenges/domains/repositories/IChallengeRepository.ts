@@ -1,4 +1,4 @@
-import { Challenge } from "@/backend/challenges/domains/entities/Challenge";
+import { Challenge } from '@/backend/challenges/domains/entities/Challenge';
 
 export interface IChallengeRepository {
   // Create

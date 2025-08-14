@@ -1,7 +1,7 @@
-"use client";
-import React, { RefObject } from "react";
-import { Input, InputRef } from "antd";
-import { EyeInvisibleOutlined, EyeTwoTone } from "@ant-design/icons";
+'use client';
+import React, { RefObject } from 'react';
+import { Input, InputRef } from 'antd';
+import { EyeInvisibleOutlined, EyeTwoTone } from '@ant-design/icons';
 
 interface CustomInputProps {
   placeholder?: string;
@@ -10,7 +10,7 @@ interface CustomInputProps {
   maxLength?: number;
   className?: string;
   style?: React.CSSProperties;
-  type?: "text" | "password" | "email" | "number";
+  type?: 'text' | 'password' | 'email' | 'number';
   onChange?: (evt: React.ChangeEvent<HTMLInputElement>) => void;
   onKeyPress?: (evt: React.KeyboardEvent<HTMLInputElement>) => void;
   labelStyle?: string;
@@ -20,10 +20,7 @@ interface CustomInputProps {
   ref?: React.Ref<InputRef>;
 }
 
-export const CustomInput: React.FC<CustomInputProps> = React.forwardRef<
-  InputRef,
-  CustomInputProps
->(
+export const CustomInput: React.FC<CustomInputProps> = React.forwardRef<InputRef, CustomInputProps>(
   (
     {
       placeholder,
@@ -33,7 +30,7 @@ export const CustomInput: React.FC<CustomInputProps> = React.forwardRef<
       className,
       style,
       labelStyle,
-      type = "text",
+      type = 'text',
       onChange,
       onKeyPress,
       value,
@@ -44,18 +41,16 @@ export const CustomInput: React.FC<CustomInputProps> = React.forwardRef<
     ref
   ) => {
     return (
-      <div className="flex flex-col gap-2">
+      <div className='flex flex-col gap-2'>
         {label && (
           <label className={labelStyle} htmlFor={labelHtmlFor}>
             {label}
           </label>
         )}
-        {type === "password" ? (
+        {type === 'password' ? (
           <Input.Password
             placeholder={placeholder}
-            iconRender={(visible) =>
-              visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />
-            }
+            iconRender={visible => (visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />)}
             id={labelHtmlFor}
             className={className}
             style={style}
@@ -88,6 +83,6 @@ export const CustomInput: React.FC<CustomInputProps> = React.forwardRef<
   }
 );
 
-CustomInput.displayName = "CustomInput";
+CustomInput.displayName = 'CustomInput';
 
 export default CustomInput;

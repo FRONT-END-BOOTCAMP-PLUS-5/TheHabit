@@ -1,14 +1,14 @@
-import { AddFeedBackUsecase } from "@/backend/feedbacks/applications/usecases/AddFeedBackUsecase";
-import { PrFeedBackRepository } from "@/backend/feedbacks/infrastructures/repositories/PrFeedBackRepository";
-import { NextRequest, NextResponse } from "next/server";
+import { AddFeedBackUsecase } from '@/backend/feedbacks/applications/usecases/AddFeedBackUsecase';
+import { PrFeedBackRepository } from '@/backend/feedbacks/infrastructures/repositories/PrFeedBackRepository';
+import { NextRequest, NextResponse } from 'next/server';
 
 export const POST = async (request: NextRequest) => {
   const body = await request.json();
-  console.log("POST", body);
+  console.log('POST', body);
 
   if (!body.gptResponseContent || !body.challengeId) {
     return NextResponse.json(
-      { error: "gptResponseContent 또는 challengeId가 없습니다." },
+      { error: 'gptResponseContent 또는 challengeId가 없습니다.' },
       { status: 400 }
     );
   }
@@ -19,17 +19,11 @@ export const POST = async (request: NextRequest) => {
     const result = await feedBackUseCase.execute(body);
 
     if (!result) {
-      return NextResponse.json(
-        { error: "피드백 데이터 저장에 실패했습니다." },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: '피드백 데이터 저장에 실패했습니다.' }, { status: 400 });
     }
     return NextResponse.json({ data: result }, { status: 200 });
   } catch (error) {
     console.error(error);
-    return NextResponse.json(
-      { error: "Internal Server Error" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 };

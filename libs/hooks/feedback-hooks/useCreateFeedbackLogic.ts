@@ -1,11 +1,11 @@
-"use client";
+'use client';
 
-import { FeedbackApi } from "@/libs/api/feedback.api";
-import { useGetChallengeById } from "@/libs/hooks";
-import { useGetGptResponse } from "@/libs/hooks/gpt-hooks/useGetGptResponse";
-import { useMutation } from "@tanstack/react-query";
-import { useEffect } from "react";
-import { useGetFeedBackById } from "@/libs/hooks/feedback-hooks/useGetFeedBackById";
+import { FeedbackApi } from '@/libs/api/feedback.api';
+import { useGetChallengeById } from '@/libs/hooks';
+import { useGetGptResponse } from '@/libs/hooks/gpt-hooks/useGetGptResponse';
+import { useMutation } from '@tanstack/react-query';
+import { useEffect } from 'react';
+import { useGetFeedBackById } from '@/libs/hooks/feedback-hooks/useGetFeedBackById';
 
 export const useCreateFeedbackLogic = (id: number) => {
   const { data: challenge } = useGetChallengeById(id);
@@ -17,10 +17,10 @@ export const useCreateFeedbackLogic = (id: number) => {
   const requestInput =
     challengeName && !hasExistingFeedback
       ? `나는 일주일 동안 ${challengeName} 챌린지를 하고 있어, 이 챌린지에 대해서 피드백을 해줘 글자수는 10글자 이내로 작성해줘`
-      : "";
+      : '';
 
   const { data: gptResponse } = useGetGptResponse({
-    gptResponseContent: requestInput || "",
+    gptResponseContent: requestInput || '',
   });
 
   const mutation = useMutation({
@@ -37,14 +37,9 @@ export const useCreateFeedbackLogic = (id: number) => {
       gptResponseContent: content,
       challengeId,
     });
-  }, [
-    hasExistingFeedback,
-    gptResponse?.gptResponseContent,
-    challenge?.data?.id,
-  ]);
+  }, [hasExistingFeedback, gptResponse?.gptResponseContent, challenge?.data?.id]);
 
-  const finalGptContent =
-    feedBack?.gptResponseContent || gptResponse?.gptResponseContent;
+  const finalGptContent = feedBack?.gptResponseContent || gptResponse?.gptResponseContent;
 
   return { challenge, gptResponse: finalGptContent };
 };

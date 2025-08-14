@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import { useCreateFeedbackLogic } from "@/libs/hooks/feedback-hooks/useCreateFeedbackLogic";
-import React from "react";
+import { useCreateFeedbackLogic } from '@/libs/hooks/feedback-hooks/useCreateFeedbackLogic';
+import React from 'react';
 
 const FeedBackDetail = ({ id }: { id: number }) => {
   const result = useCreateFeedbackLogic(id);

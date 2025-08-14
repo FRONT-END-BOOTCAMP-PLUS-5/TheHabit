@@ -1,9 +1,9 @@
-import prisma from "@/public/utils/prismaClient";
-import { IRoutinesRepository } from "../../domains/repositories/IRoutinesRepository";
-import { Routine } from "../../domains/entities/routine/routine";
+import prisma from '@/public/utils/prismaClient';
+import { IRoutinesRepository } from '../../domains/repositories/IRoutinesRepository';
+import { Routine } from '../../domains/entities/routine/routine';
 
 export class PrRoutinesRepository implements IRoutinesRepository {
-  async create(routine: Omit<Routine, "id" | "createdAt">): Promise<Routine> {
+  async create(routine: Omit<Routine, 'id' | 'createdAt'>): Promise<Routine> {
     const createdRoutine = await prisma.routine.create({
       data: {
         routineTitle: routine.routineTitle,

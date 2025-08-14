@@ -1,15 +1,10 @@
-import { IRoutinesRepository } from "../../domains/repositories/IRoutinesRepository";
-import {
-  DeleteRoutineRequestDto,
-  DeleteRoutineResponseDto,
-} from "../dtos/RoutineDto";
+import { IRoutinesRepository } from '../../domains/repositories/IRoutinesRepository';
+import { DeleteRoutineRequestDto, DeleteRoutineResponseDto } from '../dtos/RoutineDto';
 
 export class DeleteRoutineUseCase {
   constructor(private readonly routinesRepository: IRoutinesRepository) {}
 
-  async execute(
-    request: DeleteRoutineRequestDto
-  ): Promise<DeleteRoutineResponseDto> {
+  async execute(request: DeleteRoutineRequestDto): Promise<DeleteRoutineResponseDto> {
     const { routineId } = request;
 
     // 루틴 존재여부 확인

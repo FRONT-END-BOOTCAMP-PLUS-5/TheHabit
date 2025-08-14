@@ -1,6 +1,6 @@
-import { axiosInstance } from "@/libs/axios/axiosInstance";
-import { ChallengeDto } from "@/backend/challenges/applications/dtos/ChallengeDto";
-import { AddChallengeRequestDto } from "@/backend/challenges/applications/dtos/AddChallengeDto";
+import { axiosInstance } from '@/libs/axios/axiosInstance';
+import { ChallengeDto } from '@/backend/challenges/applications/dtos/ChallengeDto';
+import { AddChallengeRequestDto } from '@/backend/challenges/applications/dtos/AddChallengeDto';
 
 // API 응답 타입 정의
 interface ApiResponse<T> {
@@ -27,10 +27,10 @@ interface CategoryChallengesResponse {
 // 1. 전체 챌린지 목록 조회
 export const getAllChallenges = async (): Promise<ChallengeDto[]> => {
   try {
-    const response = await axiosInstance.get<ChallengeDto[]>("/api/challenges");
+    const response = await axiosInstance.get<ChallengeDto[]>('/api/challenges');
     return response.data;
   } catch (error) {
-    console.error("전체 챌린지 조회 실패:", error);
+    console.error('전체 챌린지 조회 실패:', error);
     throw error;
   }
 };
@@ -41,27 +41,23 @@ export const createChallenge = async (
 ): Promise<ApiResponse<ChallengeDto>> => {
   try {
     const response = await axiosInstance.post<ApiResponse<ChallengeDto>>(
-      "/api/challenges",
+      '/api/challenges',
       challengeData
     );
     return response.data;
   } catch (error) {
-    console.error("챌린지 생성 실패:", error);
+    console.error('챌린지 생성 실패:', error);
     throw error;
   }
 };
 
 // 3. 특정 챌린지 상세 조회
-export const getChallengeById = async (
-  id: number
-): Promise<ApiResponse<ChallengeDto>> => {
+export const getChallengeById = async (id: number): Promise<ApiResponse<ChallengeDto>> => {
   try {
-    const response = await axiosInstance.get<ApiResponse<ChallengeDto>>(
-      `/api/challenges/${id}`
-    );
+    const response = await axiosInstance.get<ApiResponse<ChallengeDto>>(`/api/challenges/${id}`);
     return response.data;
   } catch (error) {
-    console.error("챌린지 상세 조회 실패:", error);
+    console.error('챌린지 상세 조회 실패:', error);
     throw error;
   }
 };
@@ -78,22 +74,18 @@ export const updateChallenge = async (
     );
     return response.data;
   } catch (error) {
-    console.error("챌린지 수정 실패:", error);
+    console.error('챌린지 수정 실패:', error);
     throw error;
   }
 };
 
 // 5. 챌린지 삭제
-export const deleteChallenge = async (
-  id: number
-): Promise<ApiResponse<void>> => {
+export const deleteChallenge = async (id: number): Promise<ApiResponse<void>> => {
   try {
-    const response = await axiosInstance.delete<ApiResponse<void>>(
-      `/api/challenges/${id}`
-    );
+    const response = await axiosInstance.delete<ApiResponse<void>>(`/api/challenges/${id}`);
     return response.data;
   } catch (error) {
-    console.error("챌린지 삭제 실패:", error);
+    console.error('챌린지 삭제 실패:', error);
     throw error;
   }
 };
@@ -108,7 +100,7 @@ export const getChallengesByCategory = async (
     );
     return response.data;
   } catch (error) {
-    console.error("카테고리별 챌린지 조회 실패:", error);
+    console.error('카테고리별 챌린지 조회 실패:', error);
     throw error;
   }
 };

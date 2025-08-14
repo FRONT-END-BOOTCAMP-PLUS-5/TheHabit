@@ -1,13 +1,11 @@
-import { IRoutineCompletionsRepository } from "../../domains/repositories/IRoutineCompletionsRepository";
+import { IRoutineCompletionsRepository } from '../../domains/repositories/IRoutineCompletionsRepository';
 import {
   CreateRoutineCompletionRequestDto,
   CreateRoutineCompletionResponseDto,
-} from "../dtos/RoutineCompletionDto";
+} from '../dtos/RoutineCompletionDto';
 
 export class CreateRoutineCompletionUseCase {
-  constructor(
-    private readonly routineCompletionsRepository: IRoutineCompletionsRepository
-  ) {}
+  constructor(private readonly routineCompletionsRepository: IRoutineCompletionsRepository) {}
 
   async execute(
     request: CreateRoutineCompletionRequestDto
@@ -18,9 +16,7 @@ export class CreateRoutineCompletionUseCase {
       proofImgUrl: request.proofImgUrl,
     };
 
-    const createdCompletion = await this.routineCompletionsRepository.create(
-      completionToCreate
-    );
+    const createdCompletion = await this.routineCompletionsRepository.create(completionToCreate);
 
     return {
       id: createdCompletion.id,

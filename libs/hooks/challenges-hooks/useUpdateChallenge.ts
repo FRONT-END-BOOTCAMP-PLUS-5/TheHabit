@@ -15,7 +15,16 @@ interface UpdateChallengeParams {
 export const useUpdateChallenge = () => {
   const queryClient = useQueryClient();
 
-  return useMutation<{ success: boolean; data?: ChallengeDto; message?: string; error?: { code: string; message: string } }, Error, UpdateChallengeParams>({
+  return useMutation<
+    {
+      success: boolean;
+      data?: ChallengeDto;
+      message?: string;
+      error?: { code: string; message: string };
+    },
+    Error,
+    UpdateChallengeParams
+  >({
     mutationFn: ({ id, data }) => updateChallenge(id, data),
     onSuccess: (data, variables) => {
       // 챌린지 수정 성공 시 관련 캐시 무효화
@@ -25,8 +34,8 @@ export const useUpdateChallenge = () => {
 
       console.log('챌린지 수정 성공:', data);
     },
-    onError: (error) => {
+    onError: error => {
       console.error('챌린지 수정 실패:', error);
     },
   });
-}; 
+};

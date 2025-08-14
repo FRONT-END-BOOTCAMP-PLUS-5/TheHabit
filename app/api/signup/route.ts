@@ -9,24 +9,23 @@ export async function POST(request: NextRequest) {
   try {
     // 1. 요청 데이터 파싱
     const body = await request.json();
-    
+
     // 2. DTO로 데이터 변환 및 검증
-      const signUpData = {
-        email: body.email,
-        password: body.password,
-        username: body.username,
-        nickname: body.nickname,
-      }
-      // 3. UseCase 실행
+    const signUpData = {
+      email: body.email,
+      password: body.password,
+      username: body.username,
+      nickname: body.nickname,
+    };
+    // 3. UseCase 실행
     const createUserUsecase = new CreateUserUsecase(userRepository);
-    const result = await createUserUsecase.signUp(signUpData); 
-    
+    const result = await createUserUsecase.signUp(signUpData);
+
     // 4. 성공 응답 반환
     return NextResponse.json(
       { message: '회원가입이 완료되었습니다.', user: result },
       { status: 201 }
     );
-    
   } catch (error) {
     // 5. 에러 처리
     return NextResponse.json(

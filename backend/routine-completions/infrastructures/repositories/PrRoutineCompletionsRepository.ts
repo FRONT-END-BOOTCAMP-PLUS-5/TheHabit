@@ -1,12 +1,10 @@
-import prisma from "@/public/utils/prismaClient";
-import { IRoutineCompletionsRepository } from "../../domains/repositories/IRoutineCompletionsRepository";
-import { RoutineCompletion } from "../../domains/entities/routine-completion/routineCompletion";
+import prisma from '@/public/utils/prismaClient';
+import { IRoutineCompletionsRepository } from '../../domains/repositories/IRoutineCompletionsRepository';
+import { RoutineCompletion } from '../../domains/entities/routine-completion/routineCompletion';
 
-export class PrRoutineCompletionsRepository
-  implements IRoutineCompletionsRepository
-{
+export class PrRoutineCompletionsRepository implements IRoutineCompletionsRepository {
   async create(
-    routineCompletion: Omit<RoutineCompletion, "id" | "createdAt">
+    routineCompletion: Omit<RoutineCompletion, 'id' | 'createdAt'>
   ): Promise<RoutineCompletion> {
     const createdCompletion = await prisma.routineCompletion.create({
       data: {
@@ -69,10 +67,7 @@ export class PrRoutineCompletionsRepository
     };
   }
 
-  async findByUserIdAndRoutineId(
-    userId: string,
-    routineId: number
-  ): Promise<RoutineCompletion[]> {
+  async findByUserIdAndRoutineId(userId: string, routineId: number): Promise<RoutineCompletion[]> {
     const completions = await prisma.routineCompletion.findMany({
       where: {
         userId,
