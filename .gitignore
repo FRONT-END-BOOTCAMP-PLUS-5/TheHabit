@@ -43,3 +43,4 @@ next-env.d.ts
 # intellij idea폴더 제외
 *.idea
 /app/generated/prisma
+claude.local.md

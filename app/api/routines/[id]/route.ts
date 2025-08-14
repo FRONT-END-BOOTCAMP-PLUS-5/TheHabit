@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { GetRoutineByIdUseCase } from '../../../../backend/routines/applications/usecases/GetRoutineByIdUseCase';
-import { UpdateRoutineUseCase } from '../../../../backend/routines/applications/usecases/UpdateRoutineUseCase';
-import { DeleteRoutineUseCase } from '../../../../backend/routines/applications/usecases/DeleteRoutineUseCase';
-import { PrRoutinesRepository } from '../../../../backend/routines/infrastructures/repositories/PrRoutinesRepository';
+import { GetRoutineByIdUseCase } from '@/backend/routines/applications/usecases/GetRoutineByIdUseCase';
+import { UpdateRoutineUseCase } from '@/backend/routines/applications/usecases/UpdateRoutineUseCase';
+import { DeleteRoutineUseCase } from '@/backend/routines/applications/usecases/DeleteRoutineUseCase';
+import { PrRoutinesRepository } from '@/backend/routines/infrastructures/repositories/PrRoutinesRepository';
 
 // Repository 인스턴스 생성
 const routinesRepository = new PrRoutinesRepository();

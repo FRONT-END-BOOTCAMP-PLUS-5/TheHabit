@@ -87,6 +87,14 @@ const ChallengeListSection: React.FC = () => {
             completedColor='bg-[#a4dfd5]'
             category={0}
           />
+          <ChallengesAccordion
+            title='매일 팔굽혀펴기'
+            totalRoutines={3}
+            completedRoutines={2}
+            backgroundColor='bg-[#4FB9A8]'
+            completedColor='bg-[#a4dfd5]'
+            category={0}
+          />
         </div>
         <div className='flex flex-col gap-0.5'>
           <div className='text-lg font-bold text-secondary'>공부</div>

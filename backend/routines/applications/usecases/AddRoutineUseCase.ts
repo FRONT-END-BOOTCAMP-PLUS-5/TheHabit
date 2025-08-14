@@ -1,7 +1,7 @@
 import { IRoutinesRepository } from '../../domains/repositories/IRoutinesRepository';
 import { CreateRoutineRequestDto, ReadRoutineResponseDto } from '../dtos/RoutineDto';
 
-export class CreateRoutineUseCase {
+export class AddRoutineUseCase {
   constructor(private readonly IRoutinesRepository: IRoutinesRepository) {}
 
   async execute(request: CreateRoutineRequestDto): Promise<ReadRoutineResponseDto> {

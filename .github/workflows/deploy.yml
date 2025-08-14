@@ -36,14 +36,13 @@ jobs:
       - name: Setup Bun
         uses: oven-sh/setup-bun@v2
         with:
-          bun-version: "1.2.19"
+          bun-version: '1.2.19'
 
       # 의존성 설치 및 빌드
       - name: Install dependencies and build with Bun
         run: |
           bun install
           bun run build
-
 
   # =============================================================
   # 2. 배포 잡 (CD)

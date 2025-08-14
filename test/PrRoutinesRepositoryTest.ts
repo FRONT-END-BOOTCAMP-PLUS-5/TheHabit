@@ -1,5 +1,5 @@
 import { PrRoutinesRepository } from '@/backend/routines/infrastructures/repositories/PrRoutinesRepository';
-import { Routine } from '@/backend/routines/domains/entities/routine/routine';
+import { Routine } from '@/backend/routines/domains/entities/routine';
 import prisma from '@/public/utils/prismaClient';
 
 let createdRoutineId: number;
@@ -35,8 +35,8 @@ async function setupTestData() {
     const testChallenge = await prisma.challenge.create({
       data: {
         name: '테스트 챌린지',
-        startDate: new Date('2024-12-01'),
-        endDate: new Date('2024-12-31'),
+        createdAt: new Date('2024-12-01'),
+        endAt: new Date('2024-12-31'),
         startTime: new Date('2024-12-01T09:00:00'),
         endTime: new Date('2024-12-01T10:00:00'),
         color: '#FF5733',
