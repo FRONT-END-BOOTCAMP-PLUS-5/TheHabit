@@ -4,9 +4,9 @@ import { useState } from 'react';
 import { FeedBackStatistics } from '@/app/feedback/_components/FeedBackStatistics';
 import FeedBackDetail from '@/app/feedback/_components/FeedBackDetail';
 import { useGetAllChallenges } from '@/libs/hooks';
-import { FeedBackCategoryProgress } from './FeedBackCategoryProgress';
-import Image from 'next/image';
-import { FeedBackDescription } from './FeedBackDescription';
+import { FeedBackCategoryProgress } from '@/app/feedback/_components/FeedBackCategoryProgress';
+import { FeedBackDescription } from '@/app/feedback/_components/FeedBackDescription';
+import { FeedBackBarChart } from '@/app/feedback/_components/FeedBackBarChart';
 
 const FEEDBACK_CATEGORIES = [
   { id: 1, name: '통계' },
@@ -50,6 +50,7 @@ export const FeedBackList = () => {
           <FeedBackStatistics challenges={challenges || []} />
           <FeedBackDescription />
           <FeedBackCategoryProgress challenges={challenges || []} />
+          <FeedBackBarChart challenges={challenges || []} />
         </div>
       ) : (
         <FeedBackDetail />
