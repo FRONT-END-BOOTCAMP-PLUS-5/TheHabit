@@ -27,7 +27,7 @@ export class LoginUsecase {
 
       const user = await this.userRepository.findByEmail(loginRequest.email);
 
-      if (!user.id) {
+      if (!user?.id) {
         return {
           success: false,
           message: '사용자 ID가 유효하지 않습니다.',
