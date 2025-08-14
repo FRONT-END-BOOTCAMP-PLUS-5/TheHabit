@@ -47,18 +47,18 @@ const ChallengesAccordion: React.FC<ChallengesAccordionProps> = ({
   return (
     <div className='px-1 py-0.5 w-full rounded-lg'>
       <div
-        className={`w-full rounded-full relative overflow-hidden ${completedColor} duration-300`}
-      >
+        className='w-full rounded-full relative overflow-hidden duration-300'
+        style={{ backgroundColor: completedColor }}>
         <div
-          className={`absolute top-0 left-0 h-full rounded-full ${backgroundColor} transition-all duration-1000 ease-out`}
+          className='absolute top-0 left-0 h-full rounded-full transition-all duration-1000 ease-out'
           style={
             {
+              backgroundColor: backgroundColor,
               width: `${completedRatio}%`,
               animation: 'progressFill 1s ease-out forwards',
               '--progress-width': `${completedRatio}%`,
             } as React.CSSProperties
-          }
-        ></div>
+          }></div>
 
         <div className='flex items-center justify-between relative z-10 w-full'>
           <div className='flex flex-col gap-1 p-2'>
@@ -74,8 +74,7 @@ const ChallengesAccordion: React.FC<ChallengesAccordionProps> = ({
           </div>
           <button
             className='w-[60px] flex items-center justify-center p-3 cursor-pointer'
-            onClick={openHandler}
-          >
+            onClick={openHandler}>
             {isOpen ? (
               <Image src={UpArrow} alt='up-arrow' width={12} height={12} />
             ) : (
@@ -91,14 +90,12 @@ const ChallengesAccordion: React.FC<ChallengesAccordionProps> = ({
         style={{
           height: isOpen ? `${contentHeight}px` : '0px',
           opacity: isOpen ? 1 : 0,
-        }}
-      >
+        }}>
         <div ref={contentRef} className='p-3'>
           {/* 완료된 루틴 표시 */}
           <div className='flex items-center gap-3 mb-4'>
             <div
-              className={`w-8 h-8 rounded-full ${backgroundColor} flex items-center justify-center`}
-            >
+              className={`w-8 h-8 rounded-full ${backgroundColor} flex items-center justify-center`}>
               <div className='text-white text-sm'>✓</div>
             </div>
             <div className='flex items-center gap-2'>
