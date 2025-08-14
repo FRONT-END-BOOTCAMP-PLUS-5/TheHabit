@@ -6,6 +6,7 @@ import { Controller, useFormContext } from "react-hook-form";
 import { ProfileImage } from "@/app/_components/profile-images/ProfileImage";
 import { useUploadProfile } from "@/libs/hooks/signup/useUploadProfile";
 import { useEffect } from "react";
+import { Rex } from "@/public/consts/Rex";
 
 export const ProfileSection = () => {
   const {
@@ -17,10 +18,11 @@ export const ProfileSection = () => {
   const {
     profilePreview,
     handleImageClick,
-    handleFileChange,
     fileInputRef,
+    handleFileChange,
     profileFile,
   } = useUploadProfile();
+
 
   useEffect(() => {
     if (profileFile) {
@@ -58,7 +60,7 @@ export const ProfileSection = () => {
         rules={{
           required: "닉네임을 입력해주세요",
           pattern: {
-            value: /^[ㄱ-ㅎ|가-힣|a-z|A-Z|0-9|]{2,10}$/,
+            value: Rex.nickname.standard,
             message:
               "닉네임은 한글, 영문, 숫자를 포함해 2자 이상 10자여야 합니다",
           },

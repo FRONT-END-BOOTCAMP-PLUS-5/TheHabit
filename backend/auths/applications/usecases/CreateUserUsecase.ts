@@ -8,14 +8,11 @@ export class CreateUserUsecase {
 
     async signUp(signUpRequest: SignUpRequestDto): Promise<SignUpResponseDto> {
         try {
-            const { email, password, username, nickname } = signUpRequest;
+            const { email, password, username, nickname, profileImg, profileImgPath } = signUpRequest;
             // 필수 입력란 검증
             if (!email || !password || !username || !nickname) {
                 throw new Error("필수 입력값입니다.");
             }
-
-            // 이미지가 있을 경우
-            
 
             // 이메일 중복 확인
             const emailExists = await this.userRepository.checkEmailExists(email);
@@ -32,8 +29,8 @@ export class CreateUserUsecase {
                 password: hashedPassword,
                 username,
                 nickname,
-                profileImg: null,
-                profileImgPath: null,
+                profileImg: profileImg || null,
+                profileImgPath: profileImgPath || null,
             });
 
             // 성공 응답
