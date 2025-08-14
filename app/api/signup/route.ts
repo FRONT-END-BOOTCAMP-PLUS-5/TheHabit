@@ -17,10 +17,13 @@ export async function POST(request: NextRequest) {
         username: body.username,
         nickname: body.nickname,
 <<<<<<< HEAD
+<<<<<<< HEAD
         profileImage: body.profileImage,
         profileImagePath: body.profileImagePath,
 =======
 >>>>>>> 3774aacf0fc1c0dd1a5cf1b67bad11d5e008a55b
+=======
+>>>>>>> d8a4760c455f02db7f4debdd45e8a7fe789e418c
       }
       // 3. UseCase 실행
     const createUserUsecase = new CreateUserUsecase(userRepository);
