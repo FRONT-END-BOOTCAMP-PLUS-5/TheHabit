@@ -49,7 +49,7 @@ export const FeedBackList = () => {
         </div>
       </nav>
       {selectedCategoryName === "통계" ? (
-        <div className="flex flex-col gap-10 w-4/6 mx-auto">
+        <div className="flex flex-col gap-10 w-6/7 mx-auto">
           <FeedBackStatistics challenges={challenges || []} />
           <FeedBackCategoryProgress challenges={challenges || []} />
         </div>
