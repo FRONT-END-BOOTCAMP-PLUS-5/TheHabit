@@ -68,9 +68,9 @@ export class PrChallengeRepository implements IChallengeRepository {
     );
   }
 
-  async findByUserId(userId: string): Promise<Challenge[]> {
+  async findByNickname(nickname: string): Promise<Challenge[]> {
     const challenges = await prisma.challenge.findMany({
-      where: { userId },
+      where: { user: { nickname } },
     });
 
     return challenges.map(
