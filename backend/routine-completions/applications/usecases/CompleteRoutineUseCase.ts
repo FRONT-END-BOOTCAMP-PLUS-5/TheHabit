@@ -1,7 +1,7 @@
-import { IRoutineCompletionsRepository } from '../../domains/repositories/IRoutineCompletionsRepository';
+import { IRoutineCompletionsRepository } from '@/backend/routine-completions/domains/repositories/IRoutineCompletionsRepository';
 import {
   CreateRoutineCompletionRequestDto,
-  CreateRoutineCompletionResponseDto,
+  RoutineCompletionDto,
 } from '../dtos/RoutineCompletionDto';
 
 export class CompleteRoutineUseCase {
@@ -9,7 +9,7 @@ export class CompleteRoutineUseCase {
 
   async execute(
     request: CreateRoutineCompletionRequestDto
-  ): Promise<CreateRoutineCompletionResponseDto> {
+  ): Promise<RoutineCompletionDto> {
     const { userId, routineId, proofImgUrl } = request;
 
     const routineCompletionToCreate = {

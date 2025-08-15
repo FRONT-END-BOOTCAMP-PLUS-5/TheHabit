@@ -1,13 +1,10 @@
-// GET /api/routine-completions/[id] - 특정 루틴 완료 조회
-// PATCH /api/routine-completions/[id] - 루틴 완료 수정
-// DELETE /api/routine-completions/[id] - 루틴 완료 삭제
 import { NextRequest, NextResponse } from "next/server";
 import { PrRoutineCompletionsRepository } from "@/backend/routine-completions/infrastructures/repositories/PrRoutineCompletionsRepository";
 import { UpdateRoutineCompletionUseCase } from "@/backend/routine-completions/applications/usecases/UpdateRoutineCompletionUseCase";
 import { DeleteRoutineCompletionUseCase } from "@/backend/routine-completions/applications/usecases/DeleteRoutineCompletionUseCase";
 import { RoutineCompletionDtoMapper } from "@/backend/routine-completions/applications/dtos/RoutineCompletionDto";
 import { RoutineCompletionDto } from "@/backend/routine-completions/applications/dtos/RoutineCompletionDto";
-import { ApiResponse } from "@/backend/shared/types/ApiResponse";
+import { getSessionUserIdOrError } from '@/libs/utils/sessionUtils';
 
 
 const createUpdateRoutineCompletionUseCase = () => {
@@ -20,15 +17,17 @@ const createDeleteRoutineCompletionUseCase = () => {
   return new DeleteRoutineCompletionUseCase(repository);
 };
 
-// 응답 타입 정의
-type RoutineCompletionResponse = ApiResponse<RoutineCompletionDto>;
 
-// 특정 루틴 완료 조회
+// 루틴 완료 조회
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
-): Promise<NextResponse<RoutineCompletionResponse>> {
+) {
   try {
+    // TODO: 추후 논의 - 루틴 완료 조회 시 본인 완료 내역만 조회 권한
+    // const { userId, errorResponse } = await getSessionUserIdOrError();
+    // if (errorResponse) return errorResponse;
+    
     const { id } = await params;
     const completionId = parseInt(id, 10);
 
@@ -43,10 +42,6 @@ export async function GET(
       }, { status: 400 });
     }
 
-    console.log("=== GET /api/routine-completions/[id] 요청 시작 ===");
-    console.log("완료 ID:", completionId);
-    console.log("요청 URL:", request.url);
-    console.log("=== GET /api/routine-completions/[id] 요청 끝 ===");
 
     // Repository 직접 사용 (단일 완료 조회를 위한 메서드)
     const repository = new PrRoutineCompletionsRepository();
@@ -84,8 +79,12 @@ export async function GET(
 export async function PATCH(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
-): Promise<NextResponse<RoutineCompletionResponse>> {
+) {
   try {
+    // 세션 인증 체크
+    const { userId, errorResponse } = await getSessionUserIdOrError();
+    if (errorResponse) return errorResponse;
+    
     const { id } = await params;
     const completionId = parseInt(id, 10);
 
@@ -100,13 +99,7 @@ export async function PATCH(
       }, { status: 400 });
     }
 
-    console.log("=== PATCH /api/routine-completions/[id] 요청 시작 ===");
-    console.log("완료 ID:", completionId);
-    console.log("요청 URL:", request.url);
-
     const requestData: { proofImgUrl: string | null } = await request.json();
-    console.log("요청 바디:", JSON.stringify(requestData, null, 2));
-    console.log("=== PATCH /api/routine-completions/[id] 요청 끝 ===");
 
     const usecase = createUpdateRoutineCompletionUseCase();
     const updatedCompletion = await usecase.execute(completionId, {
@@ -135,8 +128,12 @@ export async function PATCH(
 export async function DELETE(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
-): Promise<NextResponse<RoutineCompletionResponse>> {
+) {
   try {
+    // 세션 인증 체크
+    const { userId, errorResponse } = await getSessionUserIdOrError();
+    if (errorResponse) return errorResponse;
+    
     const { id } = await params;
     const completionId = parseInt(id, 10);
 
@@ -151,10 +148,6 @@ export async function DELETE(
       }, { status: 400 });
     }
 
-    console.log("=== DELETE /api/routine-completions/[id] 요청 시작 ===");
-    console.log("완료 ID:", completionId);
-    console.log("요청 URL:", request.url);
-    console.log("=== DELETE /api/routine-completions/[id] 요청 끝 ===");
 
     // 기존 루틴 완료 조회 (삭제 전 확인)
     const repository = new PrRoutineCompletionsRepository();

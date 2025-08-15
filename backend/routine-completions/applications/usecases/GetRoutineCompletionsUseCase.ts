@@ -1,10 +1,10 @@
 import { IRoutineCompletionsRepository } from '../../domains/repositories/IRoutineCompletionsRepository';
-import { CreateRoutineCompletionResponseDto } from '../dtos/RoutineCompletionDto';
+import { RoutineCompletionDto } from '../dtos/RoutineCompletionDto';
 
 export class GetRoutineCompletionsUseCase {
   constructor(private readonly routineCompletionsRepository: IRoutineCompletionsRepository) {}
 
-  async getByRoutineId(routineId: number): Promise<CreateRoutineCompletionResponseDto[]> {
+  async getByRoutineId(routineId: number): Promise<RoutineCompletionDto[]> {
     const completions = await this.routineCompletionsRepository.findByRoutineId(routineId);
 
     return completions.map(completion => ({
@@ -16,7 +16,7 @@ export class GetRoutineCompletionsUseCase {
     }));
   }
 
-  async getByUserId(userId: string): Promise<CreateRoutineCompletionResponseDto[]> {
+  async getByUserId(userId: string): Promise<RoutineCompletionDto[]> {
     const completions = await this.routineCompletionsRepository.findByUserId(userId);
 
     return completions.map(completion => ({
@@ -31,7 +31,7 @@ export class GetRoutineCompletionsUseCase {
   async getByUserAndRoutine(
     userId: string,
     routineId: number
-  ): Promise<CreateRoutineCompletionResponseDto[]> {
+  ): Promise<RoutineCompletionDto[]> {
     const completions = await this.routineCompletionsRepository.findByUserIdAndRoutineId(
       userId,
       routineId

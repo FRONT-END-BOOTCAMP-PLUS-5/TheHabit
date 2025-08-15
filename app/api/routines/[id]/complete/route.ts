@@ -1,14 +1,19 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { CompleteRoutineUseCase } from '../../../../../backend/routine-completions/applications/usecases/CompleteRoutineUseCase';
-import { GetRoutineCompletionsUseCase } from '../../../../../backend/routine-completions/applications/usecases/GetRoutineCompletionsUseCase';
-import { PrRoutineCompletionsRepository } from '../../../../../backend/routine-completions/infrastructures/repositories/PrRoutineCompletionsRepository';
+import { CompleteRoutineUseCase } from '@/backend/routine-completions/applications/usecases/CompleteRoutineUseCase';
+import { GetRoutineCompletionsUseCase } from '@/backend/routine-completions/applications/usecases/GetRoutineCompletionsUseCase';
+import { PrRoutineCompletionsRepository } from '@/backend/routine-completions/infrastructures/repositories/PrRoutineCompletionsRepository';
+import { getSessionUserIdOrError } from '@/libs/utils/sessionUtils';
 
 // Repository 인스턴스 생성
 const routineCompletionsRepository = new PrRoutineCompletionsRepository();
 
-// POST /api/routines/[id]/complete - 루틴 완료 처리
+// 루틴 완료 처리
 export async function POST(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
+    // 세션 인증 체크
+    const { userId, errorResponse } = await getSessionUserIdOrError();
+    if (errorResponse) return errorResponse;
+
     const { id } = await params;
     const routineId = parseInt(id);
     const body = await request.json();
@@ -17,15 +22,11 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
       return NextResponse.json({ error: '유효하지 않은 루틴 ID입니다.' }, { status: 400 });
     }
 
-    const { userId, proofImgUrl } = body;
-
-    if (!userId) {
-      return NextResponse.json({ error: '사용자 ID가 필요합니다.' }, { status: 400 });
-    }
+    const { proofImgUrl } = body;
 
     const completeRoutineUseCase = new CompleteRoutineUseCase(routineCompletionsRepository);
     const result = await completeRoutineUseCase.execute({
-      userId,
+      userId: userId!,
       routineId,
       proofImgUrl: proofImgUrl || null,
     });
@@ -37,9 +38,13 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
   }
 }
 
-// GET /api/routines/[id]/complete - 루틴 완료 목록 조회
+// 루틴 완료 목록 조회
 export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
+    // 세션 인증 체크
+    const { userId, errorResponse } = await getSessionUserIdOrError();
+    if (errorResponse) return errorResponse;
+
     const { id } = await params;
     const routineId = parseInt(id);
 
@@ -47,19 +52,12 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
       return NextResponse.json({ error: '유효하지 않은 루틴 ID입니다.' }, { status: 400 });
     }
 
-    const { searchParams } = new URL(request.url);
-    const userId = searchParams.get('userId');
-
     const getRoutineCompletionsUseCase = new GetRoutineCompletionsUseCase(
       routineCompletionsRepository
     );
 
-    let result;
-    if (userId) {
-      result = await getRoutineCompletionsUseCase.getByUserAndRoutine(userId, routineId);
-    } else {
-      result = await getRoutineCompletionsUseCase.getByRoutineId(routineId);
-    }
+    // 세션에서 가져온 userId로 개인 완료 목록 조회
+    const result = await getRoutineCompletionsUseCase.getByUserAndRoutine(userId!, routineId);
 
     return NextResponse.json(result);
   } catch (error: unknown) {

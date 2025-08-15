@@ -1,10 +1,15 @@
 import { IRoutinesRepository } from '../../domains/repositories/IRoutinesRepository';
-import { GetRoutineByIdRequestDto, ReadRoutineResponseDto } from '../dtos/RoutineDto';
+import { ReadRoutineResponseDto } from '../dtos/RoutineDto';
+
+// 간단한 요청 인터페이스
+interface GetRoutineByIdRequest {
+  routineId: number;
+}
 
 export class GetRoutineByIdUseCase {
   constructor(private readonly routinesRepository: IRoutinesRepository) {}
 
-  async execute(request: GetRoutineByIdRequestDto): Promise<ReadRoutineResponseDto> {
+  async execute(request: GetRoutineByIdRequest): Promise<ReadRoutineResponseDto> {
     const { routineId } = request;
 
     const routine = await this.routinesRepository.findById(routineId);

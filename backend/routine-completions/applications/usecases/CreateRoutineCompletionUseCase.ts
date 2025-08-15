@@ -1,7 +1,7 @@
 import { IRoutineCompletionsRepository } from '../../domains/repositories/IRoutineCompletionsRepository';
 import {
   CreateRoutineCompletionRequestDto,
-  CreateRoutineCompletionResponseDto,
+  RoutineCompletionDto,
 } from '../dtos/RoutineCompletionDto';
 
 export class CreateRoutineCompletionUseCase {
@@ -9,7 +9,7 @@ export class CreateRoutineCompletionUseCase {
 
   async execute(
     request: CreateRoutineCompletionRequestDto
-  ): Promise<CreateRoutineCompletionResponseDto> {
+  ): Promise<RoutineCompletionDto> {
     const completionToCreate = {
       userId: "f1c6b5ae-b27e-4ae3-9e30-0cb8653b04fd",
       routineId: request.routineId,
