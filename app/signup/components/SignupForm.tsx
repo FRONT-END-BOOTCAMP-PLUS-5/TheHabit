@@ -15,8 +15,9 @@ interface ISignupForm {
   password: string;
   passwordConfirm: string;
   nickname: string;
-  // profileImage: string | null;
-  profileImage: File | null;
+  profileImage: string | null;
+  profileImagePath: string | null;
+  profileFile: File | null;
 }
 
 export const SignUpForm = () => {
@@ -29,6 +30,8 @@ export const SignUpForm = () => {
       passwordConfirm: '',
       nickname: '',
       profileImage: null,
+      profileImagePath: null,
+      profileFile: null,
     },
   });
 
@@ -43,36 +46,18 @@ export const SignUpForm = () => {
 
   const onSubmit = async (data: ISignupForm) => {
     try {
-      // 프로필 이미지가 있는 경우 먼저 S3에 업로드
-      let profileImgPath = null;
-      let profileImg = null;
-
-      if (data.profileImage) {
-        const formData = new FormData();
-        formData.append('file', data.profileImage);
-
-        // S3 업로드 API 호출
-        const uploadResponse = await fetch('/api/upload', {
-          method: 'POST',
-          body: formData,
-        });
-
-        if (uploadResponse.ok) {
-          const uploadResult = await uploadResponse.json();
-          profileImgPath = uploadResult.filePath; // S3 파일 경로
-          profileImg = uploadResult.fileName; // 파일명
-        }
+      // FormData로 데이터 전송
+      const formData = new FormData();
+      formData.append('email', data.email);
+      formData.append('password', data.password);
+      formData.append('username', data.username);
+      formData.append('nickname', data.nickname);
+      
+      if (data.profileFile) {
+        formData.append('profileImage', data.profileFile);
       }
 
-      // 회원가입 데이터에 프로필 정보 포함
-      const signUpData = {
-        ...data,
-        profileImg,
-        profileImgPath,
-      };
-
-      await signUp(signUpData);
-      // await signUp(data);
+      await signUp(formData);
     } catch (err) {
       console.error(err);
     }

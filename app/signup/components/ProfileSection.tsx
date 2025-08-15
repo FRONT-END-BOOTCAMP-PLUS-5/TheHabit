@@ -1,12 +1,12 @@
 'use client';
 
-import Image from "next/image";
-import Input from "@/app/_components/inputs/Input";
-import { Controller, useFormContext } from "react-hook-form";
-import { ProfileImage } from "@/app/_components/profile-images/ProfileImage";
-import { useUploadProfile } from "@/libs/hooks/signup/useUploadProfile";
-import { useEffect } from "react";
-import { Rex } from "@/public/consts/Rex";
+import Image from 'next/image';
+import Input from '@/app/_components/inputs/Input';
+import { Controller, useFormContext } from 'react-hook-form';
+import { ProfileImage } from '@/app/_components/profile-images/ProfileImage';
+import { useUploadProfile } from '@/libs/hooks/signup/useUploadProfile';
+import { useEffect } from 'react';
+import { Rex } from '@/public/consts/Rex';
 
 export const ProfileSection = () => {
   const {
@@ -15,18 +15,13 @@ export const ProfileSection = () => {
     setValue,
   } = useFormContext();
 
-  const {
-    profilePreview,
-    handleImageClick,
-    fileInputRef,
-    handleFileChange,
-    profileFile,
-  } = useUploadProfile();
-
+  const { profilePreview, handleImageClick, fileInputRef, profileFile, handleFileChange } = useUploadProfile();
 
   useEffect(() => {
     if (profileFile) {
-      setValue('profileImage', profileFile);
+      setValue('profileImage', profileFile.name);
+      setValue('profileImagePath', profileFile.name); // 임시로 파일명을 경로로 사용
+      setValue('profileFile', profileFile); // profileFile 객체 자체를 폼에 설정
     }
   }, [profileFile, setValue]);
 
@@ -58,8 +53,7 @@ export const ProfileSection = () => {
           required: '닉네임을 입력해주세요',
           pattern: {
             value: Rex.nickname.standard,
-            message:
-              "닉네임은 한글, 영문, 숫자를 포함해 2자 이상 10자여야 합니다",
+            message: '닉네임은 한글, 영문, 숫자를 포함해 2자 이상 10자여야 합니다',
           },
         }}
         render={({ field }) => (

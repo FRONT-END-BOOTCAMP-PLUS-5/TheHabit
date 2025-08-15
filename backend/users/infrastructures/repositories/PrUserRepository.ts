@@ -24,14 +24,17 @@ export class PrUserRepository implements IUserRepository {
           password: user.password || '',
           username: user.username,
           profileImg: user.profileImg,
+          profileImgPath: user.profileImgPath, // 추가
         },
       });
       return new User(
         createdUser.username,
         createdUser.nickname,
         createdUser.profileImg,
+        createdUser.profileImgPath, // profileImgPath 전달
         createdUser.id,
-        createdUser.password
+        createdUser.password,
+        createdUser.email
       );
     } catch (e) {
       if (e instanceof Error) throw new Error(e.message);

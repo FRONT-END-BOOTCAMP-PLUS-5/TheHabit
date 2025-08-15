@@ -5,20 +5,25 @@ export function useSignUp() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  interface SignUpData {
-    email: string;
-    password: string;
-    passwordConfirm: string;
-    nickname: string;
-    profileImage: string | null;
-  }
+  // interface SignUpData {
+  //   email: string;
+  //   password: string;
+  //   passwordConfirm: string;
+  //   nickname: string;
+  //   profileImage: string | null;
+  //   profileImagePath: string | null; // 추가
+  // }
 
-  const signUp = async (userData: SignUpData) => {
+  const signUp = async (formData: FormData) => {
     setLoading(true);
     setError(null);
 
     try {
-      const response = await axiosInstance.post('/api/signup', userData);
+      const response = await axiosInstance.post('/api/signup', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
       return response.data;
     } catch (err) {
       const errorMessage =
