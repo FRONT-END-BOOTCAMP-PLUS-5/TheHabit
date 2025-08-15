@@ -1,5 +1,5 @@
 import { PrevButton } from '@/app/_components/buttons/PrevButton';
-import { FeedBackList } from '@/app/feedback/_components/FeedBackList';
+import { FeedBackList } from '@/app/user/feedback/_components/FeedBackList';
 
 const FeedbackPage = () => {
   return (

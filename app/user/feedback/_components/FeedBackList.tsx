@@ -1,12 +1,12 @@
 'use client';
 
 import { useState } from 'react';
-import { FeedBackStatistics } from '@/app/feedback/_components/FeedBackStatistics';
-import FeedBackDetail from '@/app/feedback/_components/FeedBackDetail';
+import { FeedBackStatistics } from '@/app/user/feedback/_components/FeedBackStatistics';
 import { useGetAllChallenges } from '@/libs/hooks';
-import { FeedBackCategoryProgress } from '@/app/feedback/_components/FeedBackCategoryProgress';
-import { FeedBackDescription } from '@/app/feedback/_components/FeedBackDescription';
-import { FeedBackBarChart } from '@/app/feedback/_components/FeedBackBarChart';
+import { FeedBackCategoryProgress } from '@/app/user/feedback/_components/FeedBackCategoryProgress';
+import { FeedBackDescription } from '@/app/user/feedback/_components/FeedBackDescription';
+import FeedBackDetail from '@/app/user/feedback/_components/FeedBackDetail';
+import { FeedBackBarChart } from '@/app/user/feedback/_components/FeedBackBarChart';
 
 const FEEDBACK_CATEGORIES = [
   { id: 1, name: '통계' },
