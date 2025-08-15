@@ -19,7 +19,13 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
     const body = await request.json();
 
     if (isNaN(routineId)) {
-      return NextResponse.json({ error: '유효하지 않은 루틴 ID입니다.' }, { status: 400 });
+      return NextResponse.json({
+        success: false,
+        error: {
+          code: 'INVALID_ROUTINE_ID',
+          message: '유효하지 않은 루틴 ID입니다.'
+        }
+      }, { status: 400 });
     }
 
     const { proofImgUrl } = body;
@@ -31,10 +37,20 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
       proofImgUrl: proofImgUrl || null,
     });
 
-    return NextResponse.json(result, { status: 201 });
+    return NextResponse.json({
+      success: true,
+      data: result,
+      message: '루틴이 성공적으로 완료되었습니다.'
+    }, { status: 201 });
   } catch (error: unknown) {
     console.error('루틴 완료 처리 중 오류 발생:', error);
-    return NextResponse.json({ error: '루틴 완료 처리에 실패했습니다.' }, { status: 500 });
+    return NextResponse.json({
+      success: false,
+      error: {
+        code: 'COMPLETION_FAILED',
+        message: '루틴 완료 처리에 실패했습니다.'
+      }
+    }, { status: 500 });
   }
 }
 
@@ -49,7 +65,13 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     const routineId = parseInt(id);
 
     if (isNaN(routineId)) {
-      return NextResponse.json({ error: '유효하지 않은 루틴 ID입니다.' }, { status: 400 });
+      return NextResponse.json({
+        success: false,
+        error: {
+          code: 'INVALID_ROUTINE_ID',
+          message: '유효하지 않은 루틴 ID입니다.'
+        }
+      }, { status: 400 });
     }
 
     const getRoutineCompletionsUseCase = new GetRoutineCompletionsUseCase(
@@ -59,9 +81,19 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     // 세션에서 가져온 userId로 개인 완료 목록 조회
     const result = await getRoutineCompletionsUseCase.getByUserAndRoutine(userId!, routineId);
 
-    return NextResponse.json(result);
+    return NextResponse.json({
+      success: true,
+      data: result,
+      message: '루틴 완료 목록을 성공적으로 조회했습니다.'
+    });
   } catch (error: unknown) {
     console.error('루틴 완료 목록 조회 중 오류 발생:', error);
-    return NextResponse.json({ error: '루틴 완료 목록 조회에 실패했습니다.' }, { status: 500 });
+    return NextResponse.json({
+      success: false,
+      error: {
+        code: 'FETCH_FAILED',
+        message: '루틴 완료 목록 조회에 실패했습니다.'
+      }
+    }, { status: 500 });
   }
 }
