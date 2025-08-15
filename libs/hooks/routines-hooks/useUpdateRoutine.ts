@@ -30,7 +30,7 @@ export const useUpdateRoutine = () => {
 
       console.log('루틴 수정 성공:', data);
     },
-    onError: (error) => {
+    onError: error => {
       console.error('루틴 수정 실패:', error);
     },
   });

@@ -8,6 +8,6 @@ export class Challenge {
     public readonly endTime: Date | null,
     public readonly color: string,
     public readonly userId: string,
-    public readonly categoryId: number,
+    public readonly categoryId: number
   ) {}
 }

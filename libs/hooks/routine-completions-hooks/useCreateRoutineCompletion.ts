@@ -12,11 +12,7 @@ import {
 export const useCreateRoutineCompletion = () => {
   const queryClient = useQueryClient();
 
-  return useMutation<
-    RoutineCompletionDto,
-    Error,
-    CreateRoutineCompletionRequestDto
-  >({
+  return useMutation<RoutineCompletionDto, Error, CreateRoutineCompletionRequestDto>({
     mutationFn: createRoutineCompletion,
     onSuccess: (data, variables) => {
       // 루틴 완료 생성 성공 시 관련 캐시 무효화
@@ -30,7 +26,7 @@ export const useCreateRoutineCompletion = () => {
 
       console.log('루틴 완료 생성 성공:', data);
     },
-    onError: (error) => {
+    onError: error => {
       console.error('루틴 완료 생성 실패:', error);
     },
   });

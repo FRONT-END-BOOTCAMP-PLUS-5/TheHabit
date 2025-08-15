@@ -214,8 +214,7 @@ select {
 
 /* Radio Button 구분선 색상 변경 - 높은 우선순위 */
 .custom-radio-group .ant-radio-button-wrapper:not(:first-child)::before,
-.custom-radio-group
-  .ant-radio-button-wrapper-checked:not(:first-child)::before {
+.custom-radio-group .ant-radio-button-wrapper-checked:not(:first-child)::before {
   background-color: var(--primary) !important;
 }
 

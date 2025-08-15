@@ -8,10 +8,7 @@ import { ReadRoutineResponseDto } from '@/backend/routines/applications/dtos/Rou
  * @param enabled 쿼리 활성화 여부 (기본값: true)
  * @returns 루틴 목록 조회 결과
  */
-export const useGetRoutinesByChallenge = (
-  challengeId: number,
-  enabled: boolean = true,
-) => {
+export const useGetRoutinesByChallenge = (challengeId: number, enabled: boolean = true) => {
   return useQuery<ReadRoutineResponseDto[]>({
     queryKey: ['routines', 'challenge', challengeId],
     queryFn: async () => {

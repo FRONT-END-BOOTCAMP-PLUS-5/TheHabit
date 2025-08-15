@@ -47,7 +47,7 @@ export const FileUpload: React.FC<FileUploadProps> = ({
     // 미리보기 생성
     if (preview && file.type.startsWith('image/')) {
       const reader = new FileReader();
-      reader.onload = (e) => {
+      reader.onload = e => {
         setPreviewUrl(e.target?.result as string);
       };
       reader.readAsDataURL(file);
@@ -80,11 +80,11 @@ export const FileUpload: React.FC<FileUploadProps> = ({
     <div className={`space-y-3 ${className}`}>
       {/* 미리보기 */}
       {previewUrl && (
-        <div className="mb-4">
+        <div className='mb-4'>
           <img
             src={previewUrl}
-            alt="미리보기"
-            className="w-full h-48 object-cover rounded-lg border border-gray-200"
+            alt='미리보기'
+            className='w-full h-48 object-cover rounded-lg border border-gray-200'
           />
         </div>
       )}
@@ -94,10 +94,10 @@ export const FileUpload: React.FC<FileUploadProps> = ({
         <>
           {accept.startsWith('image/') && (
             <Button
-              type="primary"
-              color="blue"
+              type='primary'
+              color='blue'
               onClick={handleTakePhoto}
-              className="w-full h-12 flex items-center justify-center space-x-2"
+              className='w-full h-12 flex items-center justify-center space-x-2'
             >
               <CameraOutlined style={{ fontSize: '18px' }} />
               <span>카메라로 촬영</span>
@@ -105,16 +105,16 @@ export const FileUpload: React.FC<FileUploadProps> = ({
           )}
 
           <Button
-            type="default"
+            type='default'
             onClick={handleSelectFromGallery}
-            className="w-full h-12 flex items-center justify-center space-x-2"
+            className='w-full h-12 flex items-center justify-center space-x-2'
           >
             <PictureOutlined style={{ fontSize: '18px' }} />
             <span>파일 선택</span>
           </Button>
         </>
       ) : (
-        <Button type="default" onClick={resetFile} className="w-full h-10">
+        <Button type='default' onClick={resetFile} className='w-full h-10'>
           다시 선택
         </Button>
       )}
@@ -122,15 +122,15 @@ export const FileUpload: React.FC<FileUploadProps> = ({
       {/* 숨겨진 파일 입력 */}
       <input
         ref={fileInputRef}
-        type="file"
+        type='file'
         accept={accept}
         onChange={handleFileSelect}
-        className="hidden"
+        className='hidden'
       />
 
-      <p className="text-xs text-gray-400 text-center">
-        {accept.startsWith('image/') ? '이미지 파일만' : '파일'} 업로드
-        가능하며, 최대 {maxSize}MB까지 지원됩니다.
+      <p className='text-xs text-gray-400 text-center'>
+        {accept.startsWith('image/') ? '이미지 파일만' : '파일'} 업로드 가능하며, 최대 {maxSize}
+        MB까지 지원됩니다.
       </p>
     </div>
   );
