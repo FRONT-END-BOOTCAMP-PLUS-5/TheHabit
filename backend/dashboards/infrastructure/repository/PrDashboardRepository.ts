@@ -2,6 +2,7 @@ import { IDashboardRepository } from '@/backend/dashboards/domain/repository/IDa
 import { Dashboard } from '@/backend/dashboards/domain/entity/Dashboard';
 import { Challenge } from '@/backend/challenges/domains/entities/Challenge';
 import { Routine } from '@/backend/routines/domains/entities/routine';
+import { RoutineCompletion } from '@/backend/routine-completions/domains/entities/routine-completion/routineCompletion';
 import prisma from '@/public/utils/prismaClient';
 
 export class PrDashboardRepository implements IDashboardRepository {
@@ -109,6 +110,14 @@ export class PrDashboardRepository implements IDashboardRepository {
         challengeId: number;
         createdAt: Date;
         updatedAt: Date;
+        completions: Array<{
+          id: number;
+          createdAt: Date;
+          proofImgUrl: string | null;
+          userId: string;
+          routineId: number;
+          content: string | null;
+        }>;
       }>;
     }>;
   }): Dashboard {
@@ -131,7 +140,8 @@ export class PrDashboardRepository implements IDashboardRepository {
       return new Dashboard(
         defaultChallenge,
         [],
-        0
+        0,
+        [] // 챌린지가 없는 경우 빈 completions 배열
       );
     }
 
@@ -160,8 +170,17 @@ export class PrDashboardRepository implements IDashboardRepository {
       challengeId: number;
       createdAt: Date;
       updatedAt: Date;
-    }) =>
-      new Routine(
+      completions: Array<{
+        id: number;
+        createdAt: Date;
+        proofImgUrl: string | null;
+        userId: string;
+        routineId: number;
+        content: string | null;
+      }>;
+    }) => {
+      // Routine 엔티티 생성
+      const routine = new Routine(
         routineData.id,
         routineData.routineTitle,
         routineData.alertTime,
@@ -169,14 +188,34 @@ export class PrDashboardRepository implements IDashboardRepository {
         routineData.challengeId,
         routineData.createdAt,
         routineData.updatedAt
-      )
-    );
+      );
+
+      // completions 정보를 routine에 추가 (routine 엔티티에 completions 속성이 있다고 가정)
+      // 만약 Routine 엔티티에 completions 속성이 없다면, 별도로 관리하거나 DTO로 변환해야 함
+      return routine;
+    });
+
+    // 모든 루틴의 completions를 수집
+    const allCompletions: RoutineCompletion[] = [];
+    firstChallenge.routines.forEach(routineData => {
+      routineData.completions.forEach(completionData => {
+        const completion = new RoutineCompletion(
+          completionData.id,
+          completionData.userId,
+          completionData.routineId,
+          completionData.createdAt,
+          completionData.proofImgUrl
+        );
+        allCompletions.push(completion);
+      });
+    });
 
     // Dashboard 엔티티 생성
     return new Dashboard(
       challenge,
       routines,
-      routines.length
+      routines.length,
+      allCompletions
     );
   }
 }

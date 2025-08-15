@@ -125,15 +125,45 @@ export function DashboardByNicknameSection() {
                 루틴 정보 (총 {dashboard.routineCount}개)
               </h5>
               {dashboard.routines.length > 0 ? (
-                <div className="space-y-2">
+                <div className="space-y-3">
                   {dashboard.routines.map((routine, index) => (
-                    <div key={routine.id} className="flex items-center justify-between p-2 bg-gray-50 rounded">
-                      <div className="flex items-center gap-3">
-                        <span className="text-2xl">🎯</span>
-                        <span className="font-medium">{routine.routineTitle}</span>
+                    <div key={routine.id} className="p-3 bg-gray-50 rounded-lg border border-gray-200">
+                      <div className="flex items-center justify-between mb-2">
+                        <div className="flex items-center gap-3">
+                          <span className="text-2xl">🎯</span>
+                          <span className="font-medium">{routine.routineTitle}</span>
+                        </div>
+                        <div className="text-sm text-gray-500">
+                          {routine.alertTime ? new Date(routine.alertTime).toLocaleTimeString() : '알림 없음'}
+                        </div>
                       </div>
-                      <div className="text-sm text-gray-500">
-                        {routine.alertTime ? new Date(routine.alertTime).toLocaleTimeString() : '알림 없음'}
+                      
+                      {/* 루틴 완료 정보 */}
+                      <div className="ml-8">
+                        <h6 className="text-sm font-medium text-gray-600 mb-1">완료 기록</h6>
+                        {dashboard.routineCompletion.filter(completion => completion.routineId === routine.id).length > 0 ? (
+                          <div className="space-y-2">
+                            {dashboard.routineCompletion
+                              .filter(completion => completion.routineId === routine.id)
+                              .map(completion => (
+                                <div key={completion.id} className="flex items-center gap-3 p-2 bg-blue-50 rounded border border-blue-100">
+                                  <span className="text-blue-600">✅</span>
+                                  <div className="flex-1">
+                                    <div className="text-sm text-blue-800">
+                                      {new Date(completion.createdAt).toLocaleString()}
+                                    </div>
+                                    {completion.proofImgUrl && (
+                                      <div className="text-xs text-blue-600">
+                                        증명 이미지: {completion.proofImgUrl}
+                                      </div>
+                                    )}
+                                  </div>
+                                </div>
+                              ))}
+                          </div>
+                        ) : (
+                          <p className="text-xs text-gray-500 italic">완료 기록이 없습니다.</p>
+                        )}
                       </div>
                     </div>
                   ))}

@@ -86,18 +86,36 @@ export function AllDashboardsSection() {
                   <div>
                     <h6 className="text-sm font-medium text-gray-600 mb-1">루틴</h6>
                     {dashboard.routines.length > 0 ? (
-                      <div className="space-y-1">
-                        {dashboard.routines.slice(0, 3).map((routine) => (
-                          <div key={routine.id} className="flex items-center gap-2 text-xs">
-                            <span>🎯</span>
-                            <span className="text-gray-900">{routine.routineTitle}</span>
-                            {routine.alertTime && (
-                              <span className="text-gray-500">
-                                ({new Date(routine.alertTime).toLocaleTimeString()})
-                              </span>
-                            )}
-                          </div>
-                        ))}
+                      <div className="space-y-2">
+                        {dashboard.routines.slice(0, 3).map((routine) => {
+                          const routineCompletions = dashboard.routineCompletion.filter(
+                            completion => completion.routineId === routine.id
+                          );
+                          return (
+                            <div key={routine.id} className="text-xs">
+                              <div className="flex items-center gap-2 mb-1">
+                                <span>🎯</span>
+                                <span className="text-gray-900">{routine.routineTitle}</span>
+                                {routine.alertTime && (
+                                  <span className="text-gray-500">
+                                    ({new Date(routine.alertTime).toLocaleTimeString()})
+                                  </span>
+                                )}
+                              </div>
+                              {/* 완료 정보 */}
+                              {routineCompletions.length > 0 && (
+                                <div className="ml-4 text-xs text-blue-600">
+                                  ✅ 완료 {routineCompletions.length}회
+                                  {routineCompletions.length > 1 && (
+                                    <span className="text-gray-500 ml-1">
+                                      (최근: {new Date(routineCompletions[0].createdAt).toLocaleDateString()})
+                                    </span>
+                                  )}
+                                </div>
+                              )}
+                            </div>
+                          );
+                        })}
                         {dashboard.routines.length > 3 && (
                           <p className="text-xs text-gray-500 italic">
                             ... 외 {dashboard.routines.length - 3}개 더
@@ -105,7 +123,7 @@ export function AllDashboardsSection() {
                         )}
                       </div>
                     ) : (
-                      <p className="text-gray-500 italic text-sm">루틴이 없습니다.</p>
+                      <p className="text-xs text-gray-500 italic">루틴이 없습니다.</p>
                     )}
                   </div>
                 </div>
