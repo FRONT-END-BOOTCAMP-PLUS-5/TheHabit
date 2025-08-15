@@ -2,9 +2,7 @@ import { IRoutineCompletionsRepository } from '@/backend/routine-completions/dom
 import { RoutineCompletion } from '@/backend/routine-completions/domains/entities/routine-completion/routineCompletion';
 
 export class DeleteRoutineCompletionUseCase {
-  constructor(
-    private readonly routineCompletionsRepository: IRoutineCompletionsRepository,
-  ) {}
+  constructor(private readonly routineCompletionsRepository: IRoutineCompletionsRepository) {}
 
   async execute(completion: RoutineCompletion): Promise<void> {
     const isDeleted = await this.routineCompletionsRepository.delete(completion.id);

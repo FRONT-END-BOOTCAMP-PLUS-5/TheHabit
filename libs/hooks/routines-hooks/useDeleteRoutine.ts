@@ -9,11 +9,7 @@ import { ApiResponse } from '@/backend/shared/types/ApiResponse';
 export const useDeleteRoutine = () => {
   const queryClient = useQueryClient();
 
-  return useMutation<
-    ApiResponse<void>,
-    Error,
-    number
-  >({
+  return useMutation<ApiResponse<void>, Error, number>({
     mutationFn: deleteRoutine,
     onSuccess: (data, routineId) => {
       // 루틴 삭제 성공 시 관련 캐시 무효화
@@ -26,7 +22,7 @@ export const useDeleteRoutine = () => {
 
       console.log('루틴 삭제 성공:', data);
     },
-    onError: (error) => {
+    onError: error => {
       console.error('루틴 삭제 실패:', error);
     },
   });

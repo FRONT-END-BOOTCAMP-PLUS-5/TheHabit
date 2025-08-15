@@ -8,7 +8,12 @@ interface ModalState {
   content: React.ReactNode | null;
   modalTitle: string;
   modalDescription: string;
-  openModal: (content: React.ReactNode, type?: ModalType, modalTitle?: string, modalDescription?: string) => void;
+  openModal: (
+    content: React.ReactNode,
+    type?: ModalType,
+    modalTitle?: string,
+    modalDescription?: string
+  ) => void;
   closeModal: () => void;
 }
 
@@ -26,11 +31,12 @@ export const useModalStore = create<ModalState>(set => ({
       modalTitle,
       modalDescription,
     }),
-  closeModal: () => set({
-    isOpen: false,
-    content: null,
-    modalType: 'toast',
-    modalTitle: '',
-    modalDescription: '',
-  }),
+  closeModal: () =>
+    set({
+      isOpen: false,
+      content: null,
+      modalType: 'toast',
+      modalTitle: '',
+      modalDescription: '',
+    }),
 }));
