@@ -10,8 +10,6 @@ export class PrDashboardRepository implements IDashboardRepository {
   // 사용자 닉네임으로 대시보드 조회
   async findByNickname(nickname: string): Promise<Dashboard | null> {
     try {
-      console.log('🔍 닉네임으로 대시보드 조회 시작:', nickname);
-
       // 사용자 정보와 함께 챌린지와 루틴을 join해서 조회
       const userData = await prisma.user.findUnique({
         where: { nickname },
@@ -30,24 +28,14 @@ export class PrDashboardRepository implements IDashboardRepository {
       });
 
       if (!userData) {
-        console.log('❌ 사용자를 찾을 수 없음:', nickname);
         return null;
       }
-
-      console.log('✅ 사용자 데이터 조회 완료:', {
-        userId: userData.id,
-        nickname: userData.nickname,
-        challengeCount: userData.challenges.length
-      });
 
       // Dashboard 엔티티로 변환
       const dashboard = this.mapToDashboard(userData);
 
-      console.log('✅ 대시보드 변환 완료');
-
       return dashboard;
     } catch (error) {
-      console.error('❌ 닉네임으로 대시보드 조회 중 오류:', error);
       throw new Error(`대시보드 조회에 실패했습니다: ${error instanceof Error ? error.message : '알 수 없는 오류'}`);
     }
   }
@@ -55,8 +43,6 @@ export class PrDashboardRepository implements IDashboardRepository {
   // 모든 사용자의 대시보드 조회
   async findAll(): Promise<Dashboard[]> {
     try {
-      console.log('🔍 모든 사용자 대시보드 조회 시작');
-
       // 모든 사용자의 챌린지와 루틴을 join해서 조회
       const allUsersData = await prisma.user.findMany({
         include: {
@@ -73,18 +59,13 @@ export class PrDashboardRepository implements IDashboardRepository {
         }
       });
 
-      console.log('✅ 전체 사용자 데이터 조회 완료:', allUsersData.length);
-
       // 각 사용자별로 Dashboard 엔티티로 변환
       const dashboards = allUsersData.map(userData =>
         this.mapToDashboard(userData)
       );
 
-      console.log('✅ 대시보드 변환 완료:', dashboards.length);
-
       return dashboards;
     } catch (error) {
-      console.error('❌ 모든 사용자 대시보드 조회 중 오류:', error);
       throw new Error(`전체 대시보드 조회에 실패했습니다: ${error instanceof Error ? error.message : '알 수 없는 오류'}`);
     }
   }

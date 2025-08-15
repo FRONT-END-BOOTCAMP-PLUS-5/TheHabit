@@ -30,7 +30,7 @@ export interface RoutineCompletionDto {
   id: number;
   userId: string;
   routineId: number;
-  createdAt: Date;
+  createdAt: string;
   proofImgUrl: string | null;
 }
 
@@ -42,7 +42,7 @@ export class RoutineCompletionDtoMapper {
       id: entity.id,
       userId: entity.userId,
       routineId: entity.routineId,
-      createdAt: entity.createdAt,
+      createdAt: entity.createdAt.toISOString(),
       proofImgUrl: entity.proofImgUrl,
     };
   }
