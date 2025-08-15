@@ -5,4 +5,5 @@ export interface SignUpRequestDto {
   readonly nickname: string; // 닉네임 (필수)
   readonly profileImg?: string | null; // 프로필 이미지 URL (선택)
   readonly profileImgPath?: string | null; // 프로필 이미지 경로 (선택)
+  readonly profileFile?: File | null; // 프로필 이미지 파일 (선택)
 }
