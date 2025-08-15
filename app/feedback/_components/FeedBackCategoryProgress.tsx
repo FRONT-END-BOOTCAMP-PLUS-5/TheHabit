@@ -11,6 +11,8 @@ export const FeedBackCategoryProgress = ({ challenges }: { challenges: Challenge
     };
   });
 
+  console.log(data);
+
   //여기도 루틴이 필요함 루틴 완료 확인 -> 이미지로 확인 해야 함
   const progressBarLabel = [
     {

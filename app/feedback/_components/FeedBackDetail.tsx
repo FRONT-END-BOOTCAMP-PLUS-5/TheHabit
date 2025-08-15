@@ -6,6 +6,7 @@ import Link from 'next/link';
 
 const FeedBackDetail = () => {
   const { data } = useGetAllChallenges();
+  console.log(data);
 
   return (
     <div>
