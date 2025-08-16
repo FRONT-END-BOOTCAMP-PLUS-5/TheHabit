@@ -6,9 +6,9 @@ import { RoutineCompletion } from '@/backend/routine-completions/domains/entitie
 // 일종의 View 테이블 개념으로 생각하면 될 듯 합니다.
 export class Dashboard {
   constructor(
-    public readonly challenge: Challenge,
+    public readonly challenge: Challenge[],
     public readonly routines: Routine[],
     public readonly routineCount: number,
-    public readonly routineCompletion: RoutineCompletion[],
-  ) { }
+    public readonly routineCompletion: RoutineCompletion[]
+  ) {}
 }
