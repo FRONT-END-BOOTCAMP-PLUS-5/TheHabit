@@ -2,316 +2,406 @@ import prisma from '@/public/utils/prismaClient';
 import { IUserRepository } from '@/backend/users/domains/repositories/IUserRepository';
 import { User } from '@/backend/users/domains/entities/UserEntity';
 import { DeleteObjectCommand, PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
-import {RoutineCompletion} from "@/backend/routine-completions/domains/entities/routine-completion/routineCompletion";
+import { RoutineCompletion } from '@/backend/routine-completions/domains/entities/routine-completion/routineCompletion';
 import { v4 as uuidv4 } from 'uuid';
 
 import { Prisma } from '@prisma/client';
+import { UserReviewEntity } from '@/backend/users/domains/entities/UserReviewEntity';
 
 export class PrUserRepository implements IUserRepository {
-    private s3 = new S3Client({
-        region: process.env.AWS_REGION,
-        credentials: {
-            accessKeyId: process.env.AWS_ACCESS_KEY_ID as string,
-            secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY as string,
+  private s3 = new S3Client({
+    region: process.env.AWS_REGION,
+    credentials: {
+      accessKeyId: process.env.AWS_ACCESS_KEY_ID as string,
+      secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY as string,
+    },
+  });
+
+  async create(user: User): Promise<User | undefined> {
+    try {
+      const createdUser = await prisma.user.create({
+        data: {
+          email: user.email || '',
+          nickname: user.nickname,
+          password: user.password || '',
+          username: user.username,
+          profileImg: user.profileImg,
         },
-    });
-
-    async create(user: User): Promise<User | undefined> {
-        try {
-            const createdUser = await prisma.user.create({
-                data: {
-                    email: user.email || '',
-                    nickname: user.nickname,
-                    password: user.password || '',
-                    username: user.username,
-                    profileImg: user.profileImg,
-                },
-            });
-            return new User(
-                createdUser.username,
-                createdUser.nickname,
-                createdUser.profileImg,
-                createdUser.id,
-                createdUser.password
-            );
-        } catch (e) {
-            if (e instanceof Error) throw new Error(e.message);
-        }
+      });
+      return new User(
+        createdUser.username,
+        createdUser.nickname,
+        createdUser.profileImg,
+        createdUser.id,
+        createdUser.password
+      );
+    } catch (e) {
+      if (e instanceof Error) throw new Error(e.message);
     }
+  }
 
-    /**
-     * 해당 메소드는 s3에 이미지 생성
-     * @param fromUserId: string
-     * @param toUserId: string
-     * @return string
-     * */
-    async createProfileImg(file: File): Promise<string[] | undefined> {
-        try {
-            const { name, type } = file;
+  /**
+   * 해당 메소드는 s3에 이미지 생성
+   * @param fromUserId: string
+   * @param toUserId: string
+   * @return string
+   * */
+  async createProfileImg(file: File): Promise<string[] | undefined> {
+    try {
+      const { name, type } = file;
 
-            const key = `${uuidv4()}-${name}`;
+      const key = `${uuidv4()}-${name}`;
 
-            const arrayBuffer = await file.arrayBuffer();
-            const buffer = Buffer.from(arrayBuffer);
+      const arrayBuffer = await file.arrayBuffer();
+      const buffer = Buffer.from(arrayBuffer);
 
-            const command = new PutObjectCommand({
-                Bucket: process.env.AMPLIFY_BUCKET as string,
-                Key: key,
-                ContentType: type,
-                Body: buffer,
-            });
+      const command = new PutObjectCommand({
+        Bucket: process.env.AMPLIFY_BUCKET as string,
+        Key: key,
+        ContentType: type,
+        Body: buffer,
+      });
 
-            this.s3.send(command);
+      this.s3.send(command);
 
-            const signedUrl: string = `https://${process.env.AMPLIFY_BUCKET}.s3.${process.env.AWS_REGION}.amazonaws.com/${key}`;
+      const signedUrl: string = `https://${process.env.AMPLIFY_BUCKET}.s3.${process.env.AWS_REGION}.amazonaws.com/${key}`;
 
-            return [signedUrl, key];
-        } catch (e) {
-            if (e instanceof Error) throw new Error(e.message);
-        }
+      return [signedUrl, key];
+    } catch (e) {
+      if (e instanceof Error) throw new Error(e.message);
     }
+  }
 
-    /**
-     * 해당 메소드는 유저 닉네임으로 컴플리션 데이터 가져오는
-     * @param nickname: string
-     * @return RoutineCompletion[]
-     * */
-    async findByUserNicknameRoutineCompletion(nickname: string, page: number, pageSize: number, categoryId: string): Promise<RoutineCompletion[] | undefined> {
-        try{
-            let query;
-            const check = categoryId === 'All'
-            if(check){ query =  {
-                user: {
-                    nickname
-                }
-            }
-            }else{
-                query =  {
-                    user: {
-                        nickname
-                    },
-                    categoryId: Number(categoryId)
-                }
-            }
-            const completedRoutines = await prisma.routineCompletion.findMany({
-                where: {
-                    routine: {
-                        challenge: query
-                    }
-                },
-                skip: (page - 1) * pageSize,
-                take: pageSize,
-                include: {
-                    routine: true
-                },
-                orderBy: {
-                    createdAt: 'desc',
-                },
-            })
+  /**
+   * 해당 메소드는 reviews 테이블에 감정표현을 생성
+   * @param reviewContent: string
+   * @param routineCompletionId: number
+   * @param userId: string
+   * @return string
+   * */
+  async createUserReview(
+    reviewContent: string,
+    routineCompletionId: number,
+    userId: string
+  ): Promise<UserReviewEntity | undefined> {
+    try {
+      const createdReview = await prisma.review.create({
+        data: {
+          reviewContent,
+          routineCompletionId,
+          userId,
+        },
+      });
 
-            return completedRoutines;
-        }catch(e){
-            if(e instanceof  Error) throw new Error(e.message)
-        }
-
+      return createdReview;
+    } catch (e) {
+      if (e instanceof Error) throw new Error(e.message);
     }
+  }
 
-    async findAll(nickname: string = ''): Promise<User[] | undefined> {
-        try {
-            const users = await prisma.user.findMany({
-                where: {
-                    nickname: {
-                        contains: nickname,
-                    },
-                },
-            });
-            return users.map(
-                user => new User(user.username, user.nickname, user.profileImg || '', user.id || '')
-            );
-        } catch (e) {
-            if (e instanceof Error) throw new Error(e.message);
-        }
+  /**
+   * 해당 메소드는 유저 닉네임으로 컴플리션 데이터 가져오는
+   * @param nickname: string
+   * @return RoutineCompletion[]
+   * */
+  async findByUserNicknameRoutineCompletion(
+    nickname: string,
+    page: number,
+    pageSize: number,
+    categoryId: string
+  ): Promise<RoutineCompletion[] | undefined> {
+    try {
+      let query;
+      const check = categoryId === 'All';
+      if (check) {
+        query = {
+          user: {
+            nickname,
+          },
+        };
+      } else {
+        query = {
+          user: {
+            nickname,
+          },
+          categoryId: Number(categoryId),
+        };
+      }
+      const completedRoutines = await prisma.routineCompletion.findMany({
+        where: {
+          routine: {
+            challenge: query,
+          },
+        },
+        skip: (page - 1) * pageSize,
+        take: pageSize,
+        include: {
+          routine: true,
+        },
+        orderBy: {
+          createdAt: 'desc',
+        },
+      });
+
+      return completedRoutines;
+    } catch (e) {
+      if (e instanceof Error) throw new Error(e.message);
     }
+  }
 
-    async findByEmail(email: string): Promise<User> {
-        console.log('🔍 PrUserRepository.findByEmail 시작');
-        console.log('📧 조회할 이메일:', email);
-
-        try {
-            console.log('📡 Prisma 쿼리 실행: findUnique({ where: { email } })');
-            const user = await prisma.user.findUnique({
-                where: { email },
-            });
-
-            console.log('📊 Prisma 쿼리 결과:', user);
-
-            if (!user) {
-                throw new Error('사용자를 찾을 수 없습니다.');
-            }
-
-            console.log('✅ 사용자 발견, User 객체 생성 시작');
-            console.log('👤 원본 사용자 데이터:', {
-                id: user.id,
-                username: user.username,
-                nickname: user.nickname,
-                profileImg: user.profileImg,
-                password: user.password ? '***' : 'undefined',
-                email: user.email,
-            });
-
-            const userEntity = new User(
-                user.username,
-                user.nickname,
-                user.profileImg,
-                null, // profileImgPath
-                user.id,
-                user.password,
-                user.email
-            );
-
-            console.log('🏗️ 생성된 User 엔티티:', {
-                id: userEntity.id,
-                username: userEntity.username,
-                nickname: userEntity.nickname,
-                profileImg: userEntity.profileImg,
-                hasPassword: !!userEntity.password,
-                email: userEntity.email,
-            });
-
-            return userEntity;
-        } catch (e) {
-            console.error('💥 PrUserRepository.findByEmail 오류:', e);
-            throw e; // 에러를 다시 던져서 상위에서 처리하도록 함
-        }
+  async findAll(nickname: string = ''): Promise<User[] | undefined> {
+    try {
+      const users = await prisma.user.findMany({
+        where: {
+          nickname: {
+            contains: nickname,
+          },
+        },
+      });
+      return users.map(
+        user => new User(user.username, user.nickname, user.profileImg || '', user.id || '')
+      );
+    } catch (e) {
+      if (e instanceof Error) throw new Error(e.message);
     }
+  }
 
-    // 회원가입용 이메일 중복 체크
-    async checkEmailExists(email: string): Promise<boolean> {
-        try {
-            const user = await prisma.user.findUnique({
-                where: { email },
-            });
-            return !!user; // 사용자가 존재하면 true, 없으면 false
-        } catch (e) {
-            console.error('이메일 존재 여부 확인 중 오류:', e);
-            throw e;
-        }
+  async findByEmail(email: string): Promise<User> {
+    console.log('🔍 PrUserRepository.findByEmail 시작');
+    console.log('📧 조회할 이메일:', email);
+
+    try {
+      console.log('📡 Prisma 쿼리 실행: findUnique({ where: { email } })');
+      const user = await prisma.user.findUnique({
+        where: { email },
+      });
+
+      console.log('📊 Prisma 쿼리 결과:', user);
+
+      if (!user) {
+        throw new Error('사용자를 찾을 수 없습니다.');
+      }
+
+      console.log('✅ 사용자 발견, User 객체 생성 시작');
+      console.log('👤 원본 사용자 데이터:', {
+        id: user.id,
+        username: user.username,
+        nickname: user.nickname,
+        profileImg: user.profileImg,
+        password: user.password ? '***' : 'undefined',
+        email: user.email,
+      });
+
+      const userEntity = new User(
+        user.username,
+        user.nickname,
+        user.profileImg,
+        null, // profileImgPath
+        user.id,
+        user.password,
+        user.email
+      );
+
+      console.log('🏗️ 생성된 User 엔티티:', {
+        id: userEntity.id,
+        username: userEntity.username,
+        nickname: userEntity.nickname,
+        profileImg: userEntity.profileImg,
+        hasPassword: !!userEntity.password,
+        email: userEntity.email,
+      });
+
+      return userEntity;
+    } catch (e) {
+      console.error('💥 PrUserRepository.findByEmail 오류:', e);
+      throw e; // 에러를 다시 던져서 상위에서 처리하도록 함
     }
+  }
 
-    async findById(id: string): Promise<User | null | undefined> {
-        try {
-            const user = await prisma.user.findUnique({
-                where: { id },
-            });
+  /**
+   * 해당 메소드는 유저의 루틴 완료에 전체 감정표현을 가져오는 메소드
+   * @param nickname: string
+   * @return RoutineCompletion[]
+   * */
+  async findUserRoutineCompletionReview(
+    routineCompletionId: number
+  ): Promise<UserReviewEntity[] | undefined> {
+    try {
+      const userRoutineCompletionReview = await prisma.review.findMany({
+        where: {
+          routineCompletionId,
+        },
+        include: {
+          User: {
+            select: {
+              username: true,
+              nickname: true,
+            },
+          },
+        },
+      });
 
-            if (!user) return null;
-
-            return new User(user.username, user.nickname, user.profileImg, user.id);
-        } catch (e) {
-            if (e instanceof Error) throw new Error(e.message);
-        }
+      return userRoutineCompletionReview;
+    } catch (e) {
+      if (e instanceof Error) throw new Error(e.message);
     }
+  }
 
-    async updateUserName(id: string, username: string): Promise<User | undefined> {
-        try {
-            const updatedUserName = await prisma.user.update({
-                where: { id },
-                data: { username },
-            });
-
-            return updatedUserName;
-        } catch (e) {
-            if (e instanceof Error) throw new Error(e.message);
-        }
+  // 회원가입용 이메일 중복 체크
+  async checkEmailExists(email: string): Promise<boolean> {
+    try {
+      const user = await prisma.user.findUnique({
+        where: { email },
+      });
+      return !!user; // 사용자가 존재하면 true, 없으면 false
+    } catch (e) {
+      console.error('이메일 존재 여부 확인 중 오류:', e);
+      throw e;
     }
+  }
 
-    async updateUserNickname(
-        id: string,
-        nickname: string
-    ): Promise<User | { message: string } | undefined> {
-        try {
-            const updatedUserNickname = await prisma.user.update({
-                where: { id },
-                data: { nickname },
-            });
+  async findById(id: string): Promise<User | null | undefined> {
+    try {
+      const user = await prisma.user.findUnique({
+        where: { id },
+      });
 
-            return updatedUserNickname;
-        } catch (e) {
-            if (e instanceof Prisma.PrismaClientKnownRequestError) {
-                if (e.code === 'P2002') {
-                    return { message: '해당 닉네임은 이미 사용 중입니다.' };
-                }
-            }
+      if (!user) return null;
 
-            if (e instanceof Error) {
-                throw new Error(e.message);
-            }
-        }
+      return new User(user.username, user.nickname, user.profileImg, user.id);
+    } catch (e) {
+      if (e instanceof Error) throw new Error(e.message);
     }
+  }
 
-    /**
-     * 해당 메소드는 s3 이미지 업데이트
-     * @param fromUserId: string
-     * @param toUserId: string
-     * @return boolean
-     * */
+  async updateUserName(id: string, username: string): Promise<User | undefined> {
+    try {
+      const updatedUserName = await prisma.user.update({
+        where: { id },
+        data: { username },
+      });
 
-    async updateProfileImg(
-        id: string,
-        userProfilePath: string,
-        file: File,
-        type: 'create' | 'update'
-    ): Promise<User | undefined> {
-        try {
-            if (type === 'update') await this.deleteProfileImg(userProfilePath);
-
-            const signedUrl = await this.createProfileImg(file);
-            const img = (signedUrl?.length && signedUrl[0]) || '';
-            const path = (signedUrl?.length && signedUrl[1]) || '';
-
-            const updatedUserName = await prisma.user.update({
-                where: { id },
-                data: { profileImg: img, profileImgPath: path },
-            });
-
-            return updatedUserName;
-        } catch (e) {
-            if (e instanceof Error) throw new Error(e.message);
-        }
+      return updatedUserName;
+    } catch (e) {
+      if (e instanceof Error) throw new Error(e.message);
     }
+  }
 
-    async delete(id: string): Promise<boolean | undefined> {
-        try {
-            await prisma.user.delete({
-                where: { id },
-            });
+  async updateUserNickname(
+    id: string,
+    nickname: string
+  ): Promise<User | { message: string } | undefined> {
+    try {
+      const updatedUserNickname = await prisma.user.update({
+        where: { id },
+        data: { nickname },
+      });
 
-            return true;
-        } catch (e) {
-            if (e instanceof Error) throw new Error(e.message);
+      return updatedUserNickname;
+    } catch (e) {
+      if (e instanceof Prisma.PrismaClientKnownRequestError) {
+        if (e.code === 'P2002') {
+          return { message: '해당 닉네임은 이미 사용 중입니다.' };
         }
+      }
+
+      if (e instanceof Error) {
+        throw new Error(e.message);
+      }
     }
+  }
 
-    /**
-     * 해당 메소드는 s3 기존 이미지 삭제
-     * @param fromUserId: string
-     * @param toUserId: string
-     * @return boolean
-     * */
-    async deleteProfileImg(userProfileImgPath: string): Promise<boolean | undefined> {
-        try {
-            const userProfile = `${userProfileImgPath}`;
-            const deleteCommand = new DeleteObjectCommand({
-                Bucket: process.env.AMPLIFY_BUCKET as string,
-                Key: userProfile,
-            });
+  /**
+   * 해당 메소드는 s3 이미지 업데이트
+   * @param fromUserId: string
+   * @param toUserId: string
+   * @return boolean
+   * */
 
-            this.s3.send(deleteCommand);
+  async updateProfileImg(
+    id: string,
+    userProfilePath: string,
+    file: File,
+    type: 'create' | 'update'
+  ): Promise<User | undefined> {
+    try {
+      if (type === 'update') await this.deleteProfileImg(userProfilePath);
 
-            return true;
-        } catch (e) {
-            if (e instanceof Error) throw new Error(e.message);
-        }
+      const signedUrl = await this.createProfileImg(file);
+      const img = (signedUrl?.length && signedUrl[0]) || '';
+      const path = (signedUrl?.length && signedUrl[1]) || '';
+
+      const updatedUserName = await prisma.user.update({
+        where: { id },
+        data: { profileImg: img, profileImgPath: path },
+      });
+
+      return updatedUserName;
+    } catch (e) {
+      if (e instanceof Error) throw new Error(e.message);
     }
+  }
 
+  async delete(id: string): Promise<boolean | undefined> {
+    try {
+      await prisma.user.delete({
+        where: { id },
+      });
+
+      return true;
+    } catch (e) {
+      if (e instanceof Error) throw new Error(e.message);
+    }
+  }
+
+  /**
+   * 해당 메소드는 s3 기존 이미지 삭제
+   * @param fromUserId: string
+   * @param toUserId: string
+   * @return boolean
+   * */
+  async deleteProfileImg(userProfileImgPath: string): Promise<boolean | undefined> {
+    try {
+      const userProfile = `${userProfileImgPath}`;
+      const deleteCommand = new DeleteObjectCommand({
+        Bucket: process.env.AMPLIFY_BUCKET as string,
+        Key: userProfile,
+      });
+
+      this.s3.send(deleteCommand);
+
+      return true;
+    } catch (e) {
+      if (e instanceof Error) throw new Error(e.message);
+    }
+  }
+
+  /**
+   * 해당 메소드는 유저의 루틴 완료에 해당 감정표현을 제거하는 메소드
+   * @param reviewContent: string
+   * @param routineCompletionId: number
+   * @param userId: string
+   * @return true
+   * */
+  async deleteUserRoutineCompletionReview(
+    reviewContent: string,
+    routineCompletionId: number,
+    userId: string
+  ): Promise<boolean | undefined> {
+    try {
+      await prisma.review.delete({
+        where: {
+          reviewContent_routineCompletionId_userId: {
+            reviewContent,
+            routineCompletionId,
+            userId,
+          },
+        },
+      });
+
+      return true;
+    } catch (e) {
+      if (e instanceof Error) throw new Error(e.message);
+    }
+  }
 }

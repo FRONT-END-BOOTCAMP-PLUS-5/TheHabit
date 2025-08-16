@@ -1,20 +1,33 @@
-import { User } from "@/backend/users/domains/entities/UserEntity";
-import {RoutineCompletion} from "@prisma/client";
+import { User } from '@/backend/users/domains/entities/UserEntity';
+import { RoutineCompletion } from '@prisma/client';
+import { UserReviewEntity } from '@/backend/users/domains/entities/UserReviewEntity';
 
 export interface IUserRepository {
   // Create
   create(user: User): Promise<User | undefined>;
   createProfileImg(file: File): Promise<string[] | undefined>;
+  createUserReview(
+    reviewContent: string,
+    routineCompletionId: number,
+    userId: string
+  ): Promise<UserReviewEntity | undefined>;
 
   // Read
   findById(id: string): Promise<User | null | undefined>;
   findAll(): Promise<User[] | undefined>;
   findByEmail(email: string): Promise<User | null | undefined>;
-  findByUserNicknameRoutineCompletion(nickname: string, page: number, pageSize: number, categoryId: string): Promise<RoutineCompletion[] | undefined>
+  findByUserNicknameRoutineCompletion(
+    nickname: string,
+    page: number,
+    pageSize: number,
+    categoryId: string
+  ): Promise<RoutineCompletion[] | undefined>;
+  findUserRoutineCompletionReview(
+    routineCompletionId: number
+  ): Promise<UserReviewEntity[] | undefined>;
 
   findByEmail(email: string): Promise<User>;
   checkEmailExists(email: string): Promise<boolean>;
-
 
   // Update
   updateUserNickname(id: string, nickname: string): Promise<User | { message: string } | undefined>;
@@ -29,5 +42,9 @@ export interface IUserRepository {
   // Delete
   delete(id: string): Promise<boolean | undefined>;
   deleteProfileImg(key: string): Promise<boolean | undefined>;
+  deleteUserRoutineCompletionReview(
+    reviewContent: string,
+    routineCompletionId: number,
+    userId: string
+  ): Promise<boolean | undefined>;
 }
-
