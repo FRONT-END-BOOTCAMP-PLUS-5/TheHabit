@@ -6,7 +6,6 @@ import { RoutineCompletion } from '@/backend/routine-completions/domains/entitie
 import prisma from '@/public/utils/prismaClient';
 
 export class PrDashboardRepository implements IDashboardRepository {
-
   // 사용자 닉네임으로 대시보드 조회
   async findByNickname(nickname: string): Promise<Dashboard | null> {
     try {
@@ -18,13 +17,13 @@ export class PrDashboardRepository implements IDashboardRepository {
             include: {
               routines: {
                 include: {
-                  completions: true // 루틴 완료 정보도 함께 가져오기
-                }
+                  completions: true, // 루틴 완료 정보도 함께 가져오기
+                },
               },
-              category: true // 챌린지 카테고리 정보도 함께
-            }
-          }
-        }
+              category: true, // 챌린지 카테고리 정보도 함께
+            },
+          },
+        },
       });
 
       if (!userData) {
@@ -36,7 +35,9 @@ export class PrDashboardRepository implements IDashboardRepository {
 
       return dashboard;
     } catch (error) {
-      throw new Error(`대시보드 조회에 실패했습니다: ${error instanceof Error ? error.message : '알 수 없는 오류'}`);
+      throw new Error(
+        `대시보드 조회에 실패했습니다: ${error instanceof Error ? error.message : '알 수 없는 오류'}`
+      );
     }
   }
 
@@ -50,23 +51,23 @@ export class PrDashboardRepository implements IDashboardRepository {
             include: {
               routines: {
                 include: {
-                  completions: true
-                }
+                  completions: true,
+                },
               },
-              category: true
-            }
-          }
-        }
+              category: true,
+            },
+          },
+        },
       });
 
       // 각 사용자별로 Dashboard 엔티티로 변환
-      const dashboards = allUsersData.map(userData =>
-        this.mapToDashboard(userData)
-      );
+      const dashboards = allUsersData.map(userData => this.mapToDashboard(userData));
 
       return dashboards;
     } catch (error) {
-      throw new Error(`전체 대시보드 조회에 실패했습니다: ${error instanceof Error ? error.message : '알 수 없는 오류'}`);
+      throw new Error(
+        `전체 대시보드 조회에 실패했습니다: ${error instanceof Error ? error.message : '알 수 없는 오류'}`
+      );
     }
   }
 
@@ -119,84 +120,85 @@ export class PrDashboardRepository implements IDashboardRepository {
       );
 
       return new Dashboard(
-        defaultChallenge,
+        [defaultChallenge],
         [],
         0,
         [] // 챌린지가 없는 경우 빈 completions 배열
       );
     }
 
-    // 첫 번째 챌린지와 그 루틴들로 Dashboard 생성
-    const firstChallenge = challenges[0];
-
-    // Challenge 엔티티 생성
-    const challenge = new Challenge(
-      firstChallenge.id,
-      firstChallenge.name,
-      firstChallenge.createdAt,
-      firstChallenge.endAt,
-      firstChallenge.startTime,
-      firstChallenge.endTime,
-      firstChallenge.color,
-      firstChallenge.userId,
-      firstChallenge.categoryId
+    // 모든 챌린지들을 Challenge 엔티티로 변환
+    const challengeEntities = challenges.map(
+      challengeData =>
+        new Challenge(
+          challengeData.id,
+          challengeData.name,
+          challengeData.createdAt,
+          challengeData.endAt,
+          challengeData.startTime,
+          challengeData.endTime,
+          challengeData.color,
+          challengeData.userId,
+          challengeData.categoryId
+        )
     );
 
-    // Routine 엔티티들 생성
-    const routines = firstChallenge.routines.map((routineData: {
-      id: number;
-      routineTitle: string;
-      alertTime: Date | null;
-      emoji: number;
-      challengeId: number;
-      createdAt: Date;
-      updatedAt: Date;
-      completions: Array<{
-        id: number;
-        createdAt: Date;
-        proofImgUrl: string | null;
-        userId: string;
-        routineId: number;
-        content: string | null;
-      }>;
-    }) => {
-      // Routine 엔티티 생성
-      const routine = new Routine(
-        routineData.id,
-        routineData.routineTitle,
-        routineData.alertTime,
-        routineData.emoji,
-        routineData.challengeId,
-        routineData.createdAt,
-        routineData.updatedAt
-      );
+    // 모든 챌린지의 루틴들을 수집
+    const allRoutines: Routine[] = [];
+    challenges.forEach(challengeData => {
+      const routines = challengeData.routines.map(
+        (routineData: {
+          id: number;
+          routineTitle: string;
+          alertTime: Date | null;
+          emoji: number;
+          challengeId: number;
+          createdAt: Date;
+          updatedAt: Date;
+          completions: Array<{
+            id: number;
+            createdAt: Date;
+            proofImgUrl: string | null;
+            userId: string;
+            routineId: number;
+            content: string | null;
+          }>;
+        }) => {
+          // Routine 엔티티 생성
+          const routine = new Routine(
+            routineData.id,
+            routineData.routineTitle,
+            routineData.alertTime,
+            routineData.emoji,
+            routineData.challengeId,
+            routineData.createdAt,
+            routineData.updatedAt
+          );
 
-      // completions 정보를 routine에 추가 (routine 엔티티에 completions 속성이 있다고 가정)
-      // 만약 Routine 엔티티에 completions 속성이 없다면, 별도로 관리하거나 DTO로 변환해야 함
-      return routine;
+          return routine;
+        }
+      );
+      allRoutines.push(...routines);
     });
 
     // 모든 루틴의 completions를 수집
     const allCompletions: RoutineCompletion[] = [];
-    firstChallenge.routines.forEach(routineData => {
-      routineData.completions.forEach(completionData => {
-        const completion = new RoutineCompletion(
-          completionData.id,
-          completionData.userId,
-          completionData.routineId,
-          completionData.createdAt,
-          completionData.proofImgUrl
-        );
-        allCompletions.push(completion);
+    challenges.forEach(challengeData => {
+      challengeData.routines.forEach(routineData => {
+        routineData.completions.forEach(completionData => {
+          const completion = new RoutineCompletion(
+            completionData.id,
+            completionData.userId,
+            completionData.routineId,
+            completionData.createdAt,
+            completionData.proofImgUrl
+          );
+          allCompletions.push(completion);
+        });
       });
     });
 
-    // Dashboard 엔티티 생성
-    return new Dashboard(
-      challenge,
-      routines,
-      routines.length,
-      allCompletions
-    );
+    // Dashboard 엔티티 생성 (모든 챌린지, 모든 루틴, 모든 완료 기록 포함)
+    return new Dashboard(challengeEntities, allRoutines, allRoutines.length, allCompletions);
   }
 }

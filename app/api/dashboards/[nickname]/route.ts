@@ -37,18 +37,18 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
 
     // 엔터티 -> DTO 변환 (userId 제외, 날짜는 문자열)
     const dto: DashboardDto = {
-      challenge: dashboard.challenge
-        ? {
-          id: dashboard.challenge.id,
-          name: dashboard.challenge.name,
-          createdAt: dashboard.challenge.createdAt.toISOString(),
-          endAt: dashboard.challenge.endAt.toISOString(),
-          startTime: dashboard.challenge.startTime ? dashboard.challenge.startTime.toISOString() : null,
-          endTime: dashboard.challenge.endTime ? dashboard.challenge.endTime.toISOString() : null,
-          color: dashboard.challenge.color,
-          categoryId: dashboard.challenge.categoryId
-        }
-        : null,
+      challenge: dashboard.challenge && dashboard.challenge.length > 0
+        ? dashboard.challenge.map(challenge => ({
+          id: challenge.id,
+          name: challenge.name,
+          createdAt: challenge.createdAt.toISOString(),
+          endAt: challenge.endAt.toISOString(),
+          startTime: challenge.startTime ? challenge.startTime.toISOString() : null,
+          endTime: challenge.endTime ? challenge.endTime.toISOString() : null,
+          color: challenge.color,
+          categoryId: challenge.categoryId
+        }))
+        : [],
       routines: dashboard.routines.map(routine => ({
         id: routine.id,
         routineTitle: routine.routineTitle,
