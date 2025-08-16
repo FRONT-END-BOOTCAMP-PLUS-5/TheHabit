@@ -37,9 +37,8 @@ export interface UpdateRoutineCompletionDto {
 // 루틴 완료 DTO - 기본
 export interface RoutineCompletionDto {
   id: number;
-  userId: string;
   routineId: number;
-  createdAt: Date;
+  createdAt: string;
   proofImgUrl: string | null;
 }
 
@@ -49,9 +48,8 @@ export class RoutineCompletionDtoMapper {
   static fromEntity(entity: RoutineCompletion): RoutineCompletionDto {
     return {
       id: entity.id,
-      userId: entity.userId,
       routineId: entity.routineId,
-      createdAt: entity.createdAt,
+      createdAt: entity.createdAt.toISOString(),
       proofImgUrl: entity.proofImgUrl,
     };
   }

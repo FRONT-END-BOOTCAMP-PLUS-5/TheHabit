@@ -7,7 +7,6 @@ export interface ChallengeDto {
   readonly startTime: string | null;
   readonly endTime: string | null;
   readonly color: string;
-  readonly userId: string;
   readonly categoryId: number;
 }
 
@@ -32,7 +31,6 @@ export class ChallengeDtoMapper {
       startTime: challenge.startTime ? challenge.startTime.toISOString() : null,
       endTime: challenge.endTime ? challenge.endTime.toISOString() : null,
       color: challenge.color,
-      userId: challenge.userId,
       categoryId: challenge.categoryId,
     };
   }
