@@ -68,25 +68,38 @@ export class PrChallengeRepository implements IChallengeRepository {
     );
   }
 
-  async findByUserId(userId: string): Promise<Challenge[]> {
-    const challenges = await prisma.challenge.findMany({
-      where: { userId },
-    });
+  async findByNickname(nickname: string): Promise<Challenge[]> {
+    console.log('🔍 닉네임으로 챌린지 조회 시작:', nickname);
+    try {
+      const challenges = await prisma.challenge.findMany({
+        where: { user: { nickname } },
+        include: {
+          user: {
+            select: {
+              nickname: true
+            }
+          }
+        }
+      });
 
-    return challenges.map(
-      challenge =>
-        new Challenge(
-          challenge.id,
-          challenge.name,
-          challenge.createdAt,
-          challenge.endAt,
-          challenge.startTime,
-          challenge.endTime,
-          challenge.color,
-          challenge.userId,
-          challenge.categoryId
-        )
-    );
+      return challenges.map(
+        challenge =>
+          new Challenge(
+            challenge.id,
+            challenge.name,
+            challenge.createdAt,
+            challenge.endAt,
+            challenge.startTime,
+            challenge.endTime,
+            challenge.color,
+            challenge.userId,
+            challenge.categoryId
+          )
+      );
+    } catch (error) {
+      console.error('닉네임으로 챌린지 조회 중 오류:', error);
+      throw new Error(`닉네임 '${nickname}'으로 챌린지 조회에 실패했습니다: ${error instanceof Error ? error.message : '알 수 없는 오류'}`);
+    }
   }
 
   async findByCategoryId(categoryId: number): Promise<Challenge[]> {
