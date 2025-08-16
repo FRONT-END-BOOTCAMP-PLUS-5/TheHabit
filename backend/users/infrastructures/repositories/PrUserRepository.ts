@@ -260,7 +260,7 @@ export class PrUserRepository implements IUserRepository {
     }
   }
 
-  async findById(id: string): Promise<User | null | undefined> {
+  async findById(id: string): Promise<User | null> {
     try {
       const user = await prisma.user.findUnique({
         where: { id },
@@ -342,7 +342,7 @@ export class PrUserRepository implements IUserRepository {
     }
   }
 
-  async delete(id: string): Promise<boolean | undefined> {
+  async delete(id: string): Promise<boolean> {
     try {
       await prisma.user.delete({
         where: { id },
