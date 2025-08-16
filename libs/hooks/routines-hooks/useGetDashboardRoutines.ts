@@ -12,7 +12,7 @@ import { DashboardRoutineDto } from '@/backend/routines/applications/dtos/Routin
 export const useGetDashboardRoutines = (
   challengeId?: number,
   userId?: string,
-  enabled: boolean = true,
+  enabled: boolean = true
 ) => {
   return useQuery<{
     success: boolean;

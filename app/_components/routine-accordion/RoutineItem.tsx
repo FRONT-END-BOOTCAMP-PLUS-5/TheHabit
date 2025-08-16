@@ -28,18 +28,14 @@ export const RoutineItem = ({
           : 'bg-white border-gray-200 hover:border-gray-300'
       }`}
     >
-      <div className="flex items-center space-x-3">
+      <div className='flex items-center space-x-3'>
         <Checkbox
           checked={isCompleted}
-          onChange={(e) => onRoutineCheck(e.target.checked, routine)}
-          className="text-lg"
+          onChange={e => onRoutineCheck(e.target.checked, routine)}
+          className='text-lg'
         />
 
-        <EmojiDisplay
-          emojiNumber={routine.emoji}
-          defaultEmoji="🌱"
-          className="text-2xl"
-        />
+        <EmojiDisplay emojiNumber={routine.emoji} defaultEmoji='🌱' className='text-2xl' />
 
         <div>
           <p
@@ -50,25 +46,23 @@ export const RoutineItem = ({
             {routine.routineTitle}
           </p>
           {isCompleted && (
-            <p className="text-sm text-green-600 mt-1">
-              {UI_MESSAGES.SUCCESS.ROUTINE_COMPLETED}
-            </p>
+            <p className='text-sm text-green-600 mt-1'>{UI_MESSAGES.SUCCESS.ROUTINE_COMPLETED}</p>
           )}
         </div>
       </div>
 
       {isCompleted && (
-        <div className="flex items-center space-x-2">
+        <div className='flex items-center space-x-2'>
           {completion?.proofImgUrl ? (
-            <span className="text-sm text-green-600 bg-green-100 px-2 py-1 rounded">
+            <span className='text-sm text-green-600 bg-green-100 px-2 py-1 rounded'>
               {UI_MESSAGES.SUCCESS.PHOTO_VERIFIED}
             </span>
           ) : (
             <Button
-              type="link"
-              color="blue"
+              type='link'
+              color='blue'
               onClick={() => onPhotoUpload(routine)}
-              className="text-xs"
+              className='text-xs'
             >
               📸 인증샷
             </Button>

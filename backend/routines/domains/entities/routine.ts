@@ -6,6 +6,6 @@ export class Routine {
     public readonly emoji: number,
     public readonly challengeId: number,
     public readonly createdAt: Date,
-    public readonly updatedAt: Date,
+    public readonly updatedAt: Date
   ) {}
 }

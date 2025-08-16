@@ -5,21 +5,16 @@ import {
 } from '@/backend/routine-completions/applications/dtos/RoutineCompletionDto';
 
 export class AddRoutineCompletionUseCase {
-  constructor(
-    private readonly routineCompletionsRepository: IRoutineCompletionsRepository,
-  ) {}
+  constructor(private readonly routineCompletionsRepository: IRoutineCompletionsRepository) {}
 
-  async execute(
-    request: CreateRoutineCompletionRequestDto,
-  ): Promise<RoutineCompletionDto> {
+  async execute(request: CreateRoutineCompletionRequestDto): Promise<RoutineCompletionDto> {
     const completionToCreate = {
       userId: 'f1c6b5ae-b27e-4ae3-9e30-0cb8653b04fd',
       routineId: request.routineId,
       proofImgUrl: request.proofImgUrl,
     };
 
-    const createdCompletion =
-      await this.routineCompletionsRepository.create(completionToCreate);
+    const createdCompletion = await this.routineCompletionsRepository.create(completionToCreate);
 
     return {
       id: createdCompletion.id,

@@ -16,7 +16,8 @@ export const ProfileImage = ({
     <>
       {imageSrc && (
         <div
-          className={`w-${wrapperWidth} h-${wrapperHeight} rounded-full overflow-hidden border-primary border-2`}>
+          className={`w-${wrapperWidth} h-${wrapperHeight} rounded-full overflow-hidden border-primary border-2`}
+        >
           <Image
             src={imageSrc}
             alt='프로필'

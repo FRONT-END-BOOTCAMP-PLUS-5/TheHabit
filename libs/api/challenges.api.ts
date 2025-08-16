@@ -105,6 +105,16 @@ export const getChallengesByCategory = async (
   }
 };
 
+export const getChallengesByNickname = async (nickname: string): Promise<ChallengeDto[]> => {
+  try {
+    const response = await axiosInstance.get<ChallengeDto[]>(`/api/challenges/${nickname}`);
+    return response.data;
+  } catch (error) {
+    console.error('닉네임으로 챌린지 조회 실패:', error);
+    throw error;
+  }
+};
+
 // 편의 함수들
 export const challengesApi = {
   getAll: getAllChallenges,
@@ -113,4 +123,5 @@ export const challengesApi = {
   update: updateChallenge,
   delete: deleteChallenge,
   getByCategory: getChallengesByCategory,
+  getByNickname: getChallengesByNickname,
 };

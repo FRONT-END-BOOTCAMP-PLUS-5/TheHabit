@@ -25,11 +25,7 @@ const RoutineAccordionContentInner = ({
   contentRef,
 }: RoutineAccordionContentProps) => {
   // 데이터 페칭
-  const {
-    data: routines = [],
-    isLoading,
-    error,
-  } = useGetRoutinesByChallenge(challengeId);
+  const { data: routines = [], isLoading, error } = useGetRoutinesByChallenge(challengeId);
   const { data: completions = [], isLoading: completionsLoading } =
     useGetRoutineCompletionsByChallenge(challengeId);
 
@@ -53,11 +49,11 @@ const RoutineAccordionContentInner = ({
 
   // 루틴 완료 상태 확인 함수들
   const isRoutineCompleted = (routineId: number) => {
-    return completions.some((completion) => completion.routineId === routineId);
+    return completions.some(completion => completion.routineId === routineId);
   };
 
   const getRoutineCompletion = (routineId: number) => {
-    return completions.find((completion) => completion.routineId === routineId);
+    return completions.find(completion => completion.routineId === routineId);
   };
 
   // 이벤트 핸들러
@@ -73,10 +69,7 @@ const RoutineAccordionContentInner = ({
   };
 
   // 루틴 완료 제출
-  const handleCompletionSubmit = async (
-    reviewText: string,
-    photoFile?: File,
-  ) => {
+  const handleCompletionSubmit = async (reviewText: string, photoFile?: File) => {
     if (!selectedRoutine) {
       alert('루틴을 선택해주세요.');
       return;
@@ -100,11 +93,11 @@ const RoutineAccordionContentInner = ({
           closeModal();
           alert('루틴 완료가 제출되었습니다!');
         },
-        onError: (error) => {
+        onError: error => {
           console.error('루틴 완료 생성 오류:', error);
           alert('제출에 실패했습니다. 다시 시도해주세요.');
         },
-      },
+      }
     );
   };
 
@@ -125,33 +118,29 @@ const RoutineAccordionContentInner = ({
 
   if (error) {
     return (
-      <div className="p-4 text-center text-red-500">
-        <p className="mb-2">{UI_MESSAGES.ERROR.LOAD_ROUTINES}</p>
-        <p className="text-sm">{error?.message || UI_MESSAGES.ERROR.UNKNOWN}</p>
+      <div className='p-4 text-center text-red-500'>
+        <p className='mb-2'>{UI_MESSAGES.ERROR.LOAD_ROUTINES}</p>
+        <p className='text-sm'>{error?.message || UI_MESSAGES.ERROR.UNKNOWN}</p>
       </div>
     );
   }
 
   if (routines.length === 0) {
     return (
-      <div className="p-4 text-center text-gray-500">
-        <p className="mb-2">등록된 루틴이 없습니다.</p>
-        <p className="text-sm">
-          "{challengeName}" 챌린지에 루틴을 추가해보세요!
-        </p>
+      <div className='p-4 text-center text-gray-500'>
+        <p className='mb-2'>등록된 루틴이 없습니다.</p>
+        <p className='text-sm'>"{challengeName}" 챌린지에 루틴을 추가해보세요!</p>
       </div>
     );
   }
 
   return (
-    <div ref={contentRef} className="border-t border-gray-200 bg-gray-50">
-      <div className="p-4">
-        <h4 className="text-lg font-semibold text-gray-800 mb-4">
-          📋 오늘의 루틴
-        </h4>
+    <div ref={contentRef} className='border-t border-gray-200 bg-gray-50'>
+      <div className='p-4'>
+        <h4 className='text-lg font-semibold text-gray-800 mb-4'>📋 오늘의 루틴</h4>
 
-        <div className="space-y-3">
-          {routines.map((routine) => {
+        <div className='space-y-3'>
+          {routines.map(routine => {
             const isCompleted = isRoutineCompleted(routine.id);
             const completion = getRoutineCompletion(routine.id);
 
@@ -182,9 +171,7 @@ const RoutineAccordionContentInner = ({
 };
 
 // 에러 바운더리로 감싼 메인 컴포넌트
-export const RoutineAccordionContent = (
-  props: RoutineAccordionContentProps,
-) => {
+export const RoutineAccordionContent = (props: RoutineAccordionContentProps) => {
   return (
     <ErrorBoundary>
       <RoutineAccordionContentInner {...props} />

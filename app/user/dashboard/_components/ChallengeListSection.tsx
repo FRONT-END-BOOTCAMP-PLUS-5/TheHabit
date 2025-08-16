@@ -31,6 +31,7 @@ const ChallengeListSection: React.FC = () => {
   const allChallenges: React.ReactNode = (
     <div className='flex flex-col gap-0.5'>
       <ChallengesAccordion
+        challengeId={1}
         title='매일 팔굽혀펴기'
         totalRoutines={3}
         completedRoutines={2}
@@ -39,6 +40,7 @@ const ChallengeListSection: React.FC = () => {
         category={0}
       />
       <ChallengesAccordion
+        challengeId={2}
         title='매일 영어 스피킹'
         totalRoutines={3}
         completedRoutines={2}
@@ -47,6 +49,7 @@ const ChallengeListSection: React.FC = () => {
         category={1}
       />
       <ChallengesAccordion
+        challengeId={3}
         title='매일 아침 8시 기상'
         totalRoutines={3}
         completedRoutines={2}
@@ -55,6 +58,7 @@ const ChallengeListSection: React.FC = () => {
         category={2}
       />
       <ChallengesAccordion
+        challengeId={4}
         title='여자친구 만들기'
         totalRoutines={3}
         completedRoutines={1}
@@ -71,6 +75,7 @@ const ChallengeListSection: React.FC = () => {
         <div className='text-lg font-bold text-secondary'>건강</div>
         <div className='flex flex-col gap-0.5'>
           <ChallengesAccordion
+            challengeId={5}
             title='매일 팔굽혀펴기'
             totalRoutines={3}
             completedRoutines={2}
@@ -79,6 +84,7 @@ const ChallengeListSection: React.FC = () => {
             category={0}
           />
           <ChallengesAccordion
+            challengeId={6}
             title='매일 팔굽혀펴기'
             totalRoutines={3}
             completedRoutines={2}
@@ -87,6 +93,7 @@ const ChallengeListSection: React.FC = () => {
             category={0}
           />
           <ChallengesAccordion
+            challengeId={7}
             title='매일 팔굽혀펴기'
             totalRoutines={3}
             completedRoutines={2}
@@ -99,6 +106,7 @@ const ChallengeListSection: React.FC = () => {
           <div className='text-lg font-bold text-secondary'>공부</div>
           <div className='flex flex-col gap-0.5'>
             <ChallengesAccordion
+              challengeId={8}
               title='매일 영어 스피킹'
               totalRoutines={3}
               completedRoutines={2}
@@ -107,6 +115,7 @@ const ChallengeListSection: React.FC = () => {
               category={0}
             />
             <ChallengesAccordion
+              challengeId={9}
               title='TOEIC 700점 목표'
               totalRoutines={3}
               completedRoutines={2}
@@ -120,6 +129,7 @@ const ChallengeListSection: React.FC = () => {
           <div className='text-lg font-bold text-secondary'>자기계발</div>
           <div className='flex flex-col gap-0.5'>
             <ChallengesAccordion
+              challengeId={10}
               title='매일 아침 8시 기상'
               totalRoutines={3}
               completedRoutines={2}
@@ -134,6 +144,7 @@ const ChallengeListSection: React.FC = () => {
           <div className='text-lg font-bold text-secondary'>기타</div>
           <div className='flex flex-col gap-0.5'>
             <ChallengesAccordion
+              challengeId={11}
               title='여자친구 만들기'
               totalRoutines={3}
               completedRoutines={1}
@@ -166,7 +177,8 @@ const ChallengeListSection: React.FC = () => {
                 justifyContent: 'center',
               }}
               buttonStyle='solid'
-              className='custom-radio-group w-full max-w-md'>
+              className='custom-radio-group w-full max-w-md'
+            >
               <Radio.Button value='all' className='flex-1 text-center'>
                 전체
               </Radio.Button>

@@ -6,7 +6,7 @@ export interface IChallengeRepository {
 
   // Read
   findById(id: number): Promise<Challenge | null>;
-  findByUserId(userId: string): Promise<Challenge[]>;
+  findByNickname(nickname: string): Promise<Challenge[]>;
   findByCategoryId(categoryId: number): Promise<Challenge[]>;
   findAll(): Promise<Challenge[]>;
   // findAll()은 잠정적으로 보류
