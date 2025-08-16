@@ -9,7 +9,7 @@ export class AddRoutineCompletionUseCase {
 
   async execute(request: CreateRoutineCompletionRequestDto): Promise<RoutineCompletionDto> {
     const completionToCreate = {
-      userId: 'f1c6b5ae-b27e-4ae3-9e30-0cb8653b04fd',
+      userId: request.userId,
       routineId: request.routineId,
       proofImgUrl: request.proofImgUrl,
     };
