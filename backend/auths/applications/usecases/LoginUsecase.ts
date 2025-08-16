@@ -57,7 +57,6 @@ export class LoginUsecase {
           profileImg: user.profileImg,
         },
       };
-
       return successResponse;
     } catch (error) {
       if (error instanceof Error) {

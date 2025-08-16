@@ -1,6 +1,5 @@
 'use client';
 import React, { useEffect, useState } from 'react';
-import { Logo } from '@/app/_components/logos/logo';
 import { Button } from '@/app/_components/buttons/Button';
 import { useUploadProfile } from '@/libs/hooks/signup/useUploadProfile';
 import { ProfileImage } from '@/app/_components/profile-images/ProfileImage';
@@ -10,14 +9,12 @@ import { NicknameComponent } from '@/app/user/profile/edit/components/Nickname';
 import { updateUserProfile, usersApi } from '@/libs/api/users.api';
 import { useRouter } from 'next/navigation';
 import { BackComponent } from '@/app/user/profile/edit/components/Back';
-
-// 나중에 전역관리로 할꺼 같으니까 우선은 final화 시킴 follow 페이지에도 사용할꺼임
-const NICK_NAME = '노석준11';
-const ID = 'a70ecc14-fb02-41ce-8f1d-750a69f5558d';
-const PROFILE_IMG_PATH = '';
+import { CompletionComponent } from '@/app/user/profile/components/Completion';
+import { useGetUserInfo } from '@/libs/hooks/user-hooks/useGetUserInfo';
 
 const UserProfileEditPage = () => {
   const router = useRouter();
+  const { userInfo } = useGetUserInfo();
   const [profilePreview, setProfilePreview] = useState<string | null>('');
 
   const { handleImageClick, fileInputRef } = useUploadProfile();
@@ -123,12 +120,12 @@ const UserProfileEditPage = () => {
             <p className='w-[100%]'>금주 21일째 실천중! 💦</p>
             <p className='w-[100%]'>금주 21일째 실천중! 💦</p>
           </div>
-          <div id='achievement_wrapper'>
-            <div></div>
-          </div>
+          <div id='achievement_wrapper'></div>
         </section>
       </section>
-      <section id='bottom'></section>
+      <section id='bottom'>
+        <CompletionComponent />
+      </section>
     </main>
   );
 };

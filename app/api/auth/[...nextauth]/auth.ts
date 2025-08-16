@@ -49,11 +49,17 @@ export const authOptions = {
             console.log('✅ [NextAuth] 로그인 성공, 사용자 정보:', {
               id: result.user.id,
               email: result.user.email,
+              username: result.user.username,
+              nickname: result.user.nickname,
+              profileImg: result.user.profileImg,
             });
 
             const userData = {
               id: result.user.id,
               email: result.user.email,
+              username: result.user.username,
+              nickname: result.user.nickname,
+              profileImg: result.user.profileImg,
             };
 
             console.log('📤 [NextAuth] authorize에서 반환할 사용자 데이터:', userData);
@@ -110,8 +116,7 @@ export const authOptions = {
 
       if (session.user) {
         console.log('👤 [NextAuth] Session callback - session.user 업데이트 시작');
-
-        session.user.id = token.id as string;
+        session.user.id = token.sub as string;
         session.user.email = token.email as string;
         session.user.username = token.username as string;
         session.user.nickname = token.nickname as string;

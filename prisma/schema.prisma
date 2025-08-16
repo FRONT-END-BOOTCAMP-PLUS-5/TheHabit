@@ -22,6 +22,7 @@ model User {
   followers      Follow[]            @relation("Followers")
   completions    RoutineCompletion[]
   achievements   UserAchievement[]
+  reviews        Review[]
 
   @@map("users")
 }
@@ -73,9 +74,10 @@ model RoutineCompletion {
   userId      String   @map("user_id")
   routineId   Int      @map("routine_id")
   content     String?
-  review      Review?
+  reviews     Review[]
   routine     Routine  @relation(fields: [routineId], references: [id], onDelete: Cascade)
   user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
   @@map("routines_completions")
 }
 
@@ -83,9 +85,12 @@ model Review {
   id                  Int               @id @default(autoincrement())
   reviewContent       String            @map("review_content")
   createdAt           DateTime          @default(now()) @map("created_at")
-  routineCompletionId Int               @unique @map("routine_completion_id")
+  routineCompletionId Int               @map("routine_completion_id")
+  userId              String?           @map("user_id")
   routineCompletion   RoutineCompletion @relation(fields: [routineCompletionId], references: [id], onDelete: Cascade)
+  User                User?             @relation(fields: [userId], references: [id])
 
+  @@unique([reviewContent, routineCompletionId, userId])
   @@map("reviews")
 }
 
