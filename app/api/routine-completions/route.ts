@@ -13,7 +13,6 @@ const routinesRepository = new PrRoutinesRepository();
 // 루틴 완료 생성 (POST)
 export async function POST(
   req: NextRequest,
-  { params }: { params: Promise<{}> }
 ): Promise<NextResponse> {
   try {
     const { routineId, proofImgUrl } = await req.json();
@@ -46,7 +45,6 @@ export async function POST(
 // 루틴 완료 목록 조회 (GET)
 export async function GET(
   req: NextRequest,
-  { params }: { params: Promise<{}> }
 ): Promise<NextResponse> {
   try {
     const { searchParams } = new URL(req.url);
