@@ -8,6 +8,7 @@ import Image from 'next/image';
 import None from '@/app/_components/none/None';
 import { USER_ROUTINE_COMPLETION_BTN } from '@/public/consts/userRoutineCompletionsBtn';
 import { BUTTON_CLASS, CATEGORY_COLOR } from '@/public/consts/userRoutineCompletionsBtnColor';
+
 import { useModalStore } from '@/libs/stores/modalStore';
 import { CreateRoutineCompletionResponseDto } from '@/backend/routine-completions/applications/dtos/RoutineCompletionDto';
 import UserRoutineCompletion from '@/app/user/profile/components/UserRoutineCompletion';
@@ -30,6 +31,7 @@ export const CompletionComponent = ({
     nickname,
     getSelectedCategory,
     userId!
+
   );
 
   const rootRef = useRef<HTMLUListElement>(null);
@@ -132,6 +134,7 @@ export const CompletionComponent = ({
               }}
               disabled={userId === 'edit'}
             >
+
               {item.id !== 'All' && (
                 <Image
                   src={item.icon}
