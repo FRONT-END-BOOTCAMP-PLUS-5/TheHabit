@@ -2,47 +2,59 @@
 // POST /api/challenges - 챌린지 등록
 import { NextRequest, NextResponse } from 'next/server';
 import { PrChallengeRepository } from '@/backend/challenges/infrastructures/repositories/PrChallengeRepository';
-import { GetAllChallengesUsecase } from '@/backend/challenges/applications/usecases/GetAllChallengesUsecase';
+import { GetChallengeByIdUsecase } from '@/backend/challenges/applications/usecases/GetChallengeByIdUsecase';
 import { ChallengeDtoMapper } from '@/backend/challenges/applications/dtos/ChallengeDto';
 import { AddChallengeUseCase } from '@/backend/challenges/applications/usecases/AddChallengeUsecase';
 import { AddChallengeRequestDto } from '@/backend/challenges/applications/dtos/AddChallengeDto';
 import { ChallengeDto } from '@/backend/challenges/applications/dtos/ChallengeDto';
+import { ApiResponse } from '@/backend/shared/types/ApiResponse';
 
 const repository = new PrChallengeRepository();
 
-const createGetAllChallengesUsecase = () => {
-  return new GetAllChallengesUsecase(repository);
+const createGetChallengeByIdUsecase = () => {
+  return new GetChallengeByIdUsecase(repository);
 };
 
 const createAddChallengeUsecase = () => {
   return new AddChallengeUseCase(repository);
 };
 
-// 실제로 서비스에서 사용되는 API는 아닙니다. -승민
-export const GET = async (): Promise<NextResponse<ChallengeDto[] | null>> => {
-  const usecase = createGetAllChallengesUsecase();
-  const challenges = await usecase.execute();
+export const GET = async (
+  request: NextRequest,
+  { params }: { params: Promise<{ challengeId: number }> }
+): Promise<NextResponse<ApiResponse<ChallengeDto | null>>> => {
+  const { challengeId } = await params;
 
-  return NextResponse.json(ChallengeDtoMapper.fromEntities(challenges));
+  const usecase = createGetChallengeByIdUsecase();
+  const challenge = await usecase.execute(challengeId);
+
+  if (!challenge) {
+    return NextResponse.json(
+      {
+        success: false,
+        error: {
+          code: 'NOT_FOUND',
+          message: '챌린지를 찾을 수 없습니다.',
+        },
+      },
+      { status: 404 }
+    );
+  }
+
+  return NextResponse.json({
+    success: true,
+    data: ChallengeDtoMapper.fromEntity(challenge),
+    message: '챌린지 조회에 성공했습니다.',
+  });
 };
 
 // 챌린지 생성 API Post
-export const POST = async (requestBody: NextRequest): Promise<NextResponse> => {
+export const POST = async (requestBody: NextRequest): Promise<NextResponse<ApiResponse<ChallengeDto>>> => {
   const usecase = createAddChallengeUsecase();
-  console.log(requestBody);
   try {
-    // 요청 바디를 콘솔에 출력
-    console.log('=== POST /api/challenges 요청 시작 ===');
-    console.log('요청 URL:', requestBody.url);
-    console.log('요청 메서드:', requestBody.method);
-    console.log('요청 헤더:', Object.fromEntries(requestBody.headers.entries()));
-
     const requestChallenge: AddChallengeRequestDto = await requestBody.json();
-    console.log('요청 바디 (JSON):', JSON.stringify(requestChallenge, null, 2));
-    console.log('=== POST /api/challenges 요청 끝 ===');
 
     const challenge = await usecase.execute(requestChallenge);
-    console.log('생성된 챌린지:', challenge);
 
     return NextResponse.json(
       {
