@@ -17,7 +17,7 @@ export class PrUserRepository implements IUserRepository {
     },
   });
 
-  async create(user: User): Promise<User | undefined> {
+  async create(user: User): Promise<User> {
     try {
       const createdUser = await prisma.user.create({
         data: {
@@ -37,6 +37,7 @@ export class PrUserRepository implements IUserRepository {
       );
     } catch (e) {
       if (e instanceof Error) throw new Error(e.message);
+      throw new Error('사용자 생성에 실패했습니다.'); // 기본 에러 메시지
     }
   }
 
@@ -260,6 +261,30 @@ export class PrUserRepository implements IUserRepository {
     }
   }
 
+  async findByNickname(nickname: string): Promise<User | null> {
+    try {
+      const user = await prisma.user.findUnique({
+        where: { nickname },
+      });
+
+      if (!user) return null;
+
+      return new User(
+        user.username,
+        user.nickname,
+        user.profileImg,
+        null, // profileImgPath
+        user.id,
+        user.password,
+        user.email
+      );
+    } catch (e) {
+      if (e instanceof Error) throw new Error(e.message);
+      return null;
+    }
+  }
+
+
   async findById(id: string): Promise<User | null> {
     try {
       const user = await prisma.user.findUnique({
@@ -271,6 +296,31 @@ export class PrUserRepository implements IUserRepository {
       return new User(user.username, user.nickname, user.profileImg, user.id);
     } catch (e) {
       if (e instanceof Error) throw new Error(e.message);
+      return null;
+    }
+  }
+
+  async update(id: string, user: Partial<User>): Promise<User | null> {
+    try {
+      const updateData: Partial<User> = user;
+
+      const updatedUser = await prisma.user.update({
+        where: { id },
+        data: updateData,
+      });
+
+      return new User(
+        updatedUser.username,
+        updatedUser.nickname,
+        updatedUser.profileImg,
+        null, // profileImgPath
+        updatedUser.id,
+        updatedUser.password,
+        updatedUser.email
+      );
+    } catch (e) {
+      if (e instanceof Error) throw new Error(e.message);
+      return null;
     }
   }
 
@@ -351,6 +401,7 @@ export class PrUserRepository implements IUserRepository {
       return true;
     } catch (e) {
       if (e instanceof Error) throw new Error(e.message);
+      return false;
     }
   }
 
