@@ -74,7 +74,7 @@ model RoutineCompletion {
   userId      String   @map("user_id")
   routineId   Int      @map("routine_id")
   content     String?
-  review      Review[]
+  reviews     Review[]
   routine     Routine  @relation(fields: [routineId], references: [id], onDelete: Cascade)
   user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -86,11 +86,11 @@ model Review {
   reviewContent       String            @map("review_content")
   createdAt           DateTime          @default(now()) @map("created_at")
   routineCompletionId Int               @map("routine_completion_id")
-  user_id             String?
+  userId              String?           @map("user_id")
   routineCompletion   RoutineCompletion @relation(fields: [routineCompletionId], references: [id], onDelete: Cascade)
-  users               User?             @relation(fields: [user_id], references: [id])
+  User                User?             @relation(fields: [userId], references: [id])
 
-  @@unique([reviewContent, routineCompletionId, user_id])
+  @@unique([reviewContent, routineCompletionId, userId])
   @@map("reviews")
 }
 
