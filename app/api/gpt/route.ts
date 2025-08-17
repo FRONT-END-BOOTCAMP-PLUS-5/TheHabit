@@ -4,7 +4,6 @@ import { NextRequest, NextResponse } from 'next/server';
 
 interface GPTRequestBody {
   gptResponseContent: string;
-  enabled: boolean;
 }
 
 export const POST = async (request: NextRequest): Promise<NextResponse> => {
@@ -25,12 +24,12 @@ export const POST = async (request: NextRequest): Promise<NextResponse> => {
     const addGPTResponseUsecase = new AddGPTResponseUsecase(gptRepository);
 
     const result = await addGPTResponseUsecase.execute({
-      gptResponseContent: body.gptResponseContent,
+      gptResponseContent: body.gptResponseContent.split('\n'),
     });
 
     return NextResponse.json({
       success: true,
-      response: result,
+      data: result,
       message: '피드백이 성공적으로 생성되었습니다.',
     });
   } catch (error) {

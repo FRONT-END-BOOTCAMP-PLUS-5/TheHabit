@@ -5,7 +5,7 @@ import { FeedBackStatistics } from '@/app/user/feedback/_components/FeedBackStat
 import { useGetAllChallenges } from '@/libs/hooks';
 import { FeedBackCategoryProgress } from '@/app/user/feedback/_components/FeedBackCategoryProgress';
 import { FeedBackDescription } from '@/app/user/feedback/_components/FeedBackDescription';
-import FeedBackDetail from '@/app/user/feedback/_components/FeedBackDetail';
+import { FeedBackDetail } from '@/app/user/feedback/_components/FeedBackDetail';
 import { FeedBackBarChart } from '@/app/user/feedback/_components/FeedBackBarChart';
 
 const FEEDBACK_CATEGORIES = [
@@ -36,7 +36,8 @@ export const FeedBackList = () => {
                         ? 'border-b-2 border-black'
                         : 'border-b-2 border-transparent'
                     }`}
-                    onClick={() => handleModal(linkItem.name)}>
+                    onClick={() => handleModal(linkItem.name)}
+                  >
                     <p>{linkItem.name}</p>
                   </button>
                 </div>

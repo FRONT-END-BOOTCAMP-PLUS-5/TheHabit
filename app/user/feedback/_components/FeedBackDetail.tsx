@@ -1,39 +1,53 @@
 'use client';
 
+import { useGetDashboardByNickname } from '@/libs/hooks';
 import React from 'react';
-import { useGetAllChallenges } from '@/libs/hooks/challenges-hooks/useGetAllChallenges';
-import Link from 'next/link';
-import { useGetAllRoutines } from '@/libs/hooks/routines-hooks';
+import { FeedBackPostData } from '@/app/user/feedback/_components/FeedBackPostData';
+import { useRouter } from 'next/navigation';
 
-const FeedBackDetail = () => {
-  const { data: UserChallengeData } = useGetAllChallenges();
-  const { data: UserRoutineData } = useGetAllRoutines();
+export const FeedBackDetail = () => {
+  const { data } = useGetDashboardByNickname('masanguy');
+  const router = useRouter();
 
-  const userChallenges = UserChallengeData?.filter(
-    challenge => challenge.userId === 'f1c6b5ae-b27e-4ae3-9e30-0cb8653b04fd'
-  );
-
-  const userRoutineData = UserRoutineData?.data?.filter(item => {
-    return userChallenges?.some(challenge => challenge.id === item.challengeId);
+  //이제 챌린지를 돌면서 그에 맞는 루린틀 가져오기
+  const challenge = data?.challenge.map(challenge => {
+    const routine = data?.routines.filter(routine => routine.challengeId === challenge.id);
+    return {
+      ...challenge,
+      routine: routine,
+    };
   });
 
-  console.log(userRoutineData);
+  const routineCompletion = data?.routineCompletion.map(routineCompletion => {
+    return {
+      ...routineCompletion,
+      routineId: routineCompletion.routineId,
+      createdAt: routineCompletion.createdAt.toString(),
+      proofImgUrl: routineCompletion.proofImgUrl,
+    };
+  });
+  const handleClick = async (challengeId: number) => {
+    await FeedBackPostData(challengeId, routineCompletion || []);
+    router.push(`/user/feedback/${challengeId}`);
+  };
 
   return (
     <div>
-      {userChallenges && userChallenges.length > 0 ? (
-        userChallenges.map(challenge => (
-          <div key={challenge.id}>
-            <Link key={challenge.id} href={`/user/feedback/${challenge.id}`}>
-              {challenge.name}
-            </Link>
-          </div>
-        ))
-      ) : (
-        <p>데이터가 없습니다.</p>
-      )}
+      {challenge?.map(challenge => (
+        <div key={challenge.id}>
+          <h1
+            className='text-2xl font-bold cursor-pointer'
+            onClick={() => handleClick(challenge.id)}
+          >
+            {challenge.name}
+          </h1>
+          {challenge.routine?.map(routine => (
+            <div key={routine.id}>
+              <h2>{routine.routineTitle}</h2>
+            </div>
+          ))}
+        </div>
+      ))}
     </div>
   );
 };
-
-export default FeedBackDetail;

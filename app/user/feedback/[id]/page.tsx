@@ -1,11 +1,14 @@
-import FeedBackDetail from '@/app/login/feedback/_components/FeedBackDetail';
 import React from 'react';
+import { FeedBackById } from '@/app/user/feedback/[id]/_component/FeedBackById';
 
 const FeedbackPage = async ({ params }: { params: Promise<{ id: number }> }) => {
   const { id } = await params;
-  console.log('id', id);
 
-  return <p>hi</p>;
+  return (
+    <div>
+      <FeedBackById id={id} />
+    </div>
+  );
 };
 
 export default FeedbackPage;

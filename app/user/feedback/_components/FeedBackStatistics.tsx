@@ -13,7 +13,7 @@ export const FeedBackStatistics = ({ challenges }: { challenges: ChallengeDto[] 
   //루틴이 어떤 챌린지 인지는 챌린지 ID로 알 수 있고, 또한 created_at으로 그날 챌린지를 했는지 알 수 있다.
   //루틴 ID로 어떤 루틴이 완료되었는지 확인할 수 있다.
 
-  const userFeedback = challenges?.filter(challenge => challenge.userId === userId);
+  const userFeedback = challenges?.filter(challenge => challenge.id === Number(userId));
 
   const userFeedbackByDate = userFeedback?.map(challenge => {
     return {

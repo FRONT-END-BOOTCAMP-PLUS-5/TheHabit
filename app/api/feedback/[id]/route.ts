@@ -9,7 +9,14 @@ export const GET = async (_req: NextRequest, context: { params: Promise<{ id: nu
     const feedBackRepo = new PrFeedBackRepository();
     const feedBackUseCase = new GetFeedBackUsecase(feedBackRepo);
     const result = await feedBackUseCase.execute(Number(id));
-    return NextResponse.json({ result }, { status: 200 });
+    return NextResponse.json(
+      {
+        success: true,
+        data: result,
+        message: '피드백을 성공적으로 조회했습니다.',
+      },
+      { status: 200 }
+    );
   } catch (error) {
     return NextResponse.json({ error: '다시 조회해주세요' }, { status: 400 });
   }
