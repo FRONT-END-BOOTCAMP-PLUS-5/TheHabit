@@ -55,6 +55,7 @@ export class LoginUsecase {
           username: user.username,
           nickname: user.nickname,
           profileImg: user.profileImg,
+          profileImgPath: user.profileImgPath,
         },
       };
       return successResponse;

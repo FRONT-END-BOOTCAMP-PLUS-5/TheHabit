@@ -36,6 +36,7 @@ export async function GET(
       routineId: completion.routineId,
       createdAt: completion.createdAt.toISOString(),
       proofImgUrl: completion.proofImgUrl,
+      content: completion.content,
     }));
 
     return NextResponse.json(

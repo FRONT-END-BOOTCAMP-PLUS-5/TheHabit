@@ -7,6 +7,13 @@ import CredentialsProvider from 'next-auth/providers/credentials';
 // import GoogleProvider from "next-auth/providers/google";
 // import KakaoProvider from "next-auth/providers/kakao";
 
+interface ISessionUser {
+  profileImg?: string | null;
+  profileImgPath?: string | null;
+  nickname?: string;
+  username?: string;
+}
+
 export const authOptions = {
   secret: process.env.NEXTAUTH_SECRET,
   providers: [
@@ -60,6 +67,7 @@ export const authOptions = {
               username: result.user.username,
               nickname: result.user.nickname,
               profileImg: result.user.profileImg,
+              profileImgPath: result.user.profileImgPath,
             };
 
             console.log('📤 [NextAuth] authorize에서 반환할 사용자 데이터:', userData);
@@ -84,9 +92,18 @@ export const authOptions = {
     // }),
   ],
   callbacks: {
-    async jwt({ token, user }: { token: JWT; user?: User }) {
+    async jwt({
+      token,
+      user,
+      trigger,
+      session,
+    }: {
+      token: JWT;
+      user?: User;
+      trigger?: 'signIn' | 'signUp' | 'update';
+      session?: ISessionUser;
+    }) {
       console.log('🔑 [NextAuth] JWT callback 시작');
-
       if (user) {
         console.log('👤 [NextAuth] JWT callback - 사용자 정보 업데이트:', {
           id: user.id,
@@ -106,6 +123,24 @@ export const authOptions = {
         console.log('✅ [NextAuth] JWT token 업데이트 완료');
       } else {
         console.log('🔄 [NextAuth] JWT callback - 기존 token 반환');
+      }
+
+      if (
+        trigger === 'update' &&
+        (session?.profileImg || session?.profileImgPath || session?.nickname || session?.username)
+      ) {
+        if (session.username !== undefined) {
+          token.username = session.username;
+        }
+        if (session.nickname !== undefined) {
+          token.nickname = session.nickname;
+        }
+        if (session.profileImg !== undefined) {
+          token.profileImg = session.profileImg;
+        }
+        if (session.profileImgPath !== undefined) {
+          token.profileImgPath = session.profileImgPath;
+        }
       }
 
       return token;
@@ -130,6 +165,8 @@ export const authOptions = {
           email: session.user.email,
           username: session.user.username,
           nickname: session.user.nickname,
+          profileImg: session.user.profileImg,
+          profileImgPath: session.user.profileImgPath,
         });
       } else {
         console.log('⚠️ [NextAuth] Session callback - session.user가 없음');
