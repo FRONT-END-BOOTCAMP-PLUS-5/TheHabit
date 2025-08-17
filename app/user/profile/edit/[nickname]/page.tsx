@@ -14,8 +14,8 @@ import { useGetUserInfo } from '@/libs/hooks/user-hooks/useGetUserInfo';
 
 const UserProfileEditPage = () => {
   const router = useRouter();
-  const { userInfo } = useGetUserInfo();
-  const [profilePreview, setProfilePreview] = useState<string | null>('');
+  const { userInfo, update } = useGetUserInfo();
+  const [profilePreview, setProfilePreview] = useState<string | null>(userInfo?.profileImg || '');
 
   const { handleImageClick, fileInputRef } = useUploadProfile();
 
@@ -23,29 +23,40 @@ const UserProfileEditPage = () => {
 
   const handleDeleteUserRegister = async () => {
     //나중에 confirm창으로 추가 validation 해야함!
-    const response = await deleteRegister('c9b19711-c2f8-44e0-8f41-087d76d8b63e');
+    const response = await deleteRegister(userInfo?.id || '');
     if (response.data) router.push('/login');
   };
 
   const handleFileChange = async (evt: React.ChangeEvent<HTMLInputElement>) => {
     const file = evt.target.files?.[0];
     if (file) {
-      // 나중에 유저 프로필 받아와서 있으면은 update, 없으면은 created 분기로 처리해야함 로그인 언제됨~?
-      const type = PROFILE_IMG_PATH ? 'update' : 'create';
+      const type = userInfo?.profileImg ? 'update' : 'create';
 
       const formData = new FormData();
-      formData.append('id', ID);
-      formData.append('profile_img_path', PROFILE_IMG_PATH);
+      formData.append('id', userInfo?.id || '');
+      formData.append('profile_img_path', userInfo?.profileImgPath || '');
       formData.append('file', file);
       formData.append('type', type);
 
-      const response = await updateUserProfile(ID, formData);
+      const response = await updateUserProfile(userInfo?.id || '', formData);
       const img = response.data?.profileImg as string;
+      const path = response.data?.profileImgPath as string;
       setProfilePreview(img);
+
+      update({
+        profileImg: img,
+        profileImgPath: path,
+        username: userInfo?.username,
+        nickname: userInfo?.nickname,
+      });
     }
   };
 
-  useEffect(() => {}, []);
+  useEffect(() => {
+    if (userInfo?.profileImg) {
+      setProfilePreview(userInfo.profileImg);
+    }
+  }, [userInfo]);
 
   return (
     <main>
@@ -124,7 +135,7 @@ const UserProfileEditPage = () => {
         </section>
       </section>
       <section id='bottom'>
-        <CompletionComponent />
+        <CompletionComponent profileImg={''} username={''} nickname={''} userId={'edit'} />
       </section>
     </main>
   );

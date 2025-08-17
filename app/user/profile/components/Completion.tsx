@@ -6,8 +6,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Button } from '@/app/user/profile/components/Button';
 import Image from 'next/image';
 import None from '@/app/_components/none/None';
-import { userRoutineCompletionsBtn } from '@/public/consts/userRoutineCompletionsBtn';
-import { BUTTONCLASS, CATEGORYCOLOR } from '@/public/consts/userRoutineCompletionsBtnColor';
+import { USER_ROUTINE_COMPLETION_BTN } from '@/public/consts/userRoutineCompletionsBtn';
+import { BUTTON_CLASS, CATEGORY_COLOR } from '@/public/consts/userRoutineCompletionsBtnColor';
 import { useModalStore } from '@/libs/stores/modalStore';
 import { CreateRoutineCompletionResponseDto } from '@/backend/routine-completions/applications/dtos/RoutineCompletionDto';
 import UserRoutineCompletion from '@/app/user/profile/components/UserRoutineCompletion';
@@ -28,7 +28,8 @@ export const CompletionComponent = ({
 
   const { data, fetchNextPage, hasNextPage, isLoading } = useGetUserCompletion(
     nickname,
-    getSelectedCategory
+    getSelectedCategory,
+    userId!
   );
 
   const rootRef = useRef<HTMLUListElement>(null);
@@ -74,20 +75,21 @@ export const CompletionComponent = ({
 
   let contentToRender = null;
 
-  if (isLoading) {
+  if (isLoading && userId != 'edit') {
     contentToRender = (
       // 임시 ㅋ
       <div className='flex items-center justify-center h-[450px] text-gray-500'>
         <p>데이터를 불러오는 중...</p>
       </div>
     );
-  } else if (allCompletions.length === 0 && getUserClicked) {
-    contentToRender = <None />;
+  } else if ((allCompletions.length === 0 && getUserClicked) || userId === 'edit') {
+    contentToRender = <None userId={userId!} />;
   } else {
     contentToRender = (
       <ul
         className='grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 gap-1 overflow-y-scroll scroll-smooth max-h-[450px]'
-        ref={rootRef}>
+        ref={rootRef}
+      >
         {allCompletions.map((item, idx: number) => {
           const isLastItem = idx === allCompletions.length - 1;
           return (
@@ -95,7 +97,8 @@ export const CompletionComponent = ({
               key={item.id}
               className='relative aspect-square cursor-pointer'
               ref={isLastItem ? ref : null}
-              onClick={() => handleOpenModal(profileImg || null, item)}>
+              onClick={() => handleOpenModal(profileImg || null, item)}
+            >
               <Image
                 src={item.proofImgUrl || ''}
                 alt='유저 컴플리션 인증 사진들'
@@ -114,18 +117,21 @@ export const CompletionComponent = ({
     <>
       <section
         id='btn_section'
-        className='flex justify-center gap-[10px] mb-[10px] font-semibold text-[12px]'>
-        {userRoutineCompletionsBtn.map((item, _) => {
+        className='flex justify-center gap-[10px] mb-[10px] font-semibold text-[12px]'
+      >
+        {USER_ROUTINE_COMPLETION_BTN.map((item, _) => {
           const isSelected = getSelectedCategory === item.id;
-          const selectedClass = isSelected ? CATEGORYCOLOR[item.id] : 'bg-white text-[#333]';
+          const selectedClass = isSelected ? CATEGORY_COLOR[item.id] : 'bg-white text-[#333]';
 
           return (
             <Button
               key={item.id}
-              className={`${BUTTONCLASS} ${selectedClass}`}
+              className={`${BUTTON_CLASS} ${selectedClass}`}
               onClick={() => {
-                selectCategory(item.id);
-              }}>
+                if (userId !== 'edit') selectCategory(item.id);
+              }}
+              disabled={userId === 'edit'}
+            >
               {item.id !== 'All' && (
                 <Image
                   src={item.icon}
