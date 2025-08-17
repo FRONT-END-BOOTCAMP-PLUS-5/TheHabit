@@ -39,15 +39,8 @@ export class PrUserRepository implements IUserRepository {
         createdUser.email
       );
     } catch (e) {
-<<<<<<< HEAD
-      if (e instanceof Error) {
-        throw new Error(e.message);
-      }
-      throw e;
-=======
       if (e instanceof Error) throw new Error(e.message);
       throw new Error('사용자 생성에 실패했습니다.'); // 기본 에러 메시지
->>>>>>> 1f23a37c6fd3f2d3632225fbbb03b455ddddecd6
     }
   }
 
