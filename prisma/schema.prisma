@@ -23,6 +23,7 @@ model User {
   reviews        Review[]
   completions    RoutineCompletion[]
   achievements   UserAchievement[]
+  reviews        Review[]
 
   @@map("users")
 }

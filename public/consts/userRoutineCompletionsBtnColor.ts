@@ -1,4 +1,4 @@
-export const BUTTONCLASS = `w-[80px] 
+export const BUTTON_CLASS = `w-[80px] 
 text-center 
 cursor-pointer 
 text-[#333] 
@@ -10,7 +10,7 @@ items-center
 py-[8px]
 `
 
-export const CATEGORYCOLOR: { [key: string]: string } = {
+export const CATEGORY_COLOR: { [key: string]: string } = {
     'All': 'bg-[#93d50b] text-[#FFF]',
     '0': 'bg-[#FA6A8E] text-[#FFF]',
     '1': 'bg-[#FFC70A] text-[#FFF]',

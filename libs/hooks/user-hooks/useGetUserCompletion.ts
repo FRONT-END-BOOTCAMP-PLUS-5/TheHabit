@@ -40,20 +40,20 @@ const fetchUserCompletions = async ({
   };
 };
 
-/**
- * infinite scroll을 위한 사용자 루틴 완료 커스텀 훅
- * @param nickname 사용자 닉네임
- * @return UseInfiniteQueryResult<InfiniteData<IUserCompletions>, Error> 타입 반환
- */
+
 export const useGetUserCompletion = (
   nickname: string,
-  category: string
+  category: string,
+  userId: string
 ): UseInfiniteQueryResult<InfiniteData<IUserCompletions>, Error> => {
+  const isEnabled = userId !== 'edit';
+
   return useInfiniteQuery<IUserCompletions, Error>({
     queryKey: ['userCompletions', nickname, category],
     queryFn: ({ pageParam = 1 }) =>
       fetchUserCompletions({ pageParam: pageParam as number, nickname, category }),
     initialPageParam: 1,
     getNextPageParam: lastPage => lastPage.nextPage,
+    enabled: isEnabled,
   });
 };
