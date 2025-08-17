@@ -15,7 +15,7 @@ export class PrUserRepository implements IUserRepository {
     },
   });
 
-  async create(user: User): Promise<User | undefined> {
+  async create(user: User): Promise<User> {
     try {
       const createdUser = await prisma.user.create({
         data: {
@@ -37,7 +37,10 @@ export class PrUserRepository implements IUserRepository {
         createdUser.email
       );
     } catch (e) {
-      if (e instanceof Error) throw new Error(e.message);
+      if (e instanceof Error) {
+        throw new Error(e.message);
+      }
+      throw e;
     }
   }
 
