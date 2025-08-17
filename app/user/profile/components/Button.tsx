@@ -14,3 +14,4 @@ export const Button = ({ children, onClick, className, disabled = false }: IButt
     </button>
   );
 };
+

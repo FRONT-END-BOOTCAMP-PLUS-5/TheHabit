@@ -20,6 +20,7 @@ model User {
   challenges     Challenge[]
   following      Follow[]            @relation("Following")
   followers      Follow[]            @relation("Followers")
+  reviews        Review[]
   completions    RoutineCompletion[]
   achievements   UserAchievement[]
   reviews        Review[]

@@ -40,13 +40,7 @@ const fetchUserCompletions = async ({
   };
 };
 
-/**
- * infinite scroll을 위한 사용자 루틴 완료 커스텀 훅
- * @param nickname: string
- * @param category: string
- * @param userId: string
- * @return UseInfiniteQueryResult<InfiniteData<IUserCompletions>, Error> 타입 반환
- */
+
 export const useGetUserCompletion = (
   nickname: string,
   category: string,
