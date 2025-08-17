@@ -55,9 +55,9 @@ export class LoginUsecase {
           username: user.username,
           nickname: user.nickname,
           profileImg: user.profileImg,
+          profileImgPath: user.profileImgPath,
         },
       };
-
       return successResponse;
     } catch (error) {
       if (error instanceof Error) {

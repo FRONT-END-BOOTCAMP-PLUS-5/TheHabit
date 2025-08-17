@@ -7,6 +7,15 @@ export interface CreateRoutineCompletionRequestDto {
   proofImgUrl: string | null;
 }
 
+export interface CreateRoutineCompletionResponseDto {
+  id: number;
+  userId: string;
+  routineId: number;
+  createdAt: Date;
+  proofImgUrl: string | null;
+  content: string | null;
+}
+
 // 루틴 완료 목록 조회
 export interface ReadRoutineCompletionListDto {
   completions: RoutineCompletionDto[];
