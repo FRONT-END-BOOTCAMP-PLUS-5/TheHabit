@@ -97,7 +97,7 @@ export const RoutineCompletionModal = ({
     >
       <div>
         <p className='text-gray-600 mb-3'>
-          "<strong>{selectedRoutine?.routineTitle}</strong>" 루틴을 완료하셨네요! 🎉
+          &quot;<strong>{selectedRoutine?.routineTitle}</strong>&quot; 루틴을 완료하셨네요! 🎉
         </p>
         <p className='text-gray-600 mb-4'>{UI_MESSAGES.MODAL.REVIEW_DESCRIPTION}</p>
 

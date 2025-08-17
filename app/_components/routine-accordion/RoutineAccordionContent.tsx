@@ -129,7 +129,7 @@ const RoutineAccordionContentInner = ({
     return (
       <div className='p-4 text-center text-gray-500'>
         <p className='mb-2'>등록된 루틴이 없습니다.</p>
-        <p className='text-sm'>"{challengeName}" 챌린지에 루틴을 추가해보세요!</p>
+        <p className='text-sm'>&quot;{challengeName}&quot; 챌린지에 루틴을 추가해보세요!</p>
       </div>
     );
   }

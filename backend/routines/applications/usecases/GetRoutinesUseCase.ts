@@ -10,11 +10,11 @@ export class GetRoutinesUseCase {
     return routines.map(routine => ({
       id: routine.id,
       routineTitle: routine.routineTitle,
-      alertTime: routine.alertTime,
+      alertTime: routine.alertTime?.toISOString() ?? null,
       emoji: routine.emoji,
       challengeId: routine.challengeId,
-      createdAt: routine.createdAt,
-      updatedAt: routine.updatedAt,
+      createdAt: routine.createdAt.toISOString(),
+      updatedAt: routine.updatedAt.toISOString(),
     }));
   }
 
@@ -24,11 +24,11 @@ export class GetRoutinesUseCase {
     return routines.map(routine => ({
       id: routine.id,
       routineTitle: routine.routineTitle,
-      alertTime: routine.alertTime,
+      alertTime: routine.alertTime?.toISOString() ?? null,
       emoji: routine.emoji,
       challengeId: routine.challengeId,
-      createdAt: routine.createdAt,
-      updatedAt: routine.updatedAt,
+      createdAt: routine.createdAt.toISOString(),
+      updatedAt: routine.updatedAt.toISOString(),
     }));
   }
 
@@ -38,11 +38,25 @@ export class GetRoutinesUseCase {
     return routines.map(routine => ({
       id: routine.id,
       routineTitle: routine.routineTitle,
-      alertTime: routine.alertTime,
+      alertTime: routine.alertTime?.toISOString() ?? null,
       emoji: routine.emoji,
       challengeId: routine.challengeId,
-      createdAt: routine.createdAt,
-      updatedAt: routine.updatedAt,
+      createdAt: routine.createdAt.toISOString(),
+      updatedAt: routine.updatedAt.toISOString(),
+    }));
+  }
+
+  async getByNickname(nickname: string): Promise<ReadRoutineResponseDto[]> {
+    const routines = await this.routinesRepository.findByNickname(nickname);
+
+    return routines.map(routine => ({
+      id: routine.id,
+      routineTitle: routine.routineTitle,
+      alertTime: routine.alertTime?.toISOString() ?? null,
+      emoji: routine.emoji,
+      challengeId: routine.challengeId,
+      createdAt: routine.createdAt.toISOString(),
+      updatedAt: routine.updatedAt.toISOString(),
     }));
   }
 }

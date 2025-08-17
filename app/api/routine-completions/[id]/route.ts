@@ -7,7 +7,6 @@ import { UpdateRoutineCompletionUseCase } from '@/backend/routine-completions/ap
 import { DeleteRoutineCompletionUseCase } from '@/backend/routine-completions/applications/usecases/DeleteRoutineCompletionUseCase';
 import { RoutineCompletionDtoMapper } from '@/backend/routine-completions/applications/dtos/RoutineCompletionDto';
 import { RoutineCompletionDto } from '@/backend/routine-completions/applications/dtos/RoutineCompletionDto';
-import { getSessionUserIdOrError } from '@/libs/utils/sessionUtils';
 
 const createUpdateRoutineCompletionUseCase = () => {
   const repository = new PrRoutineCompletionsRepository();
@@ -26,9 +25,7 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    // TODO: 추후 논의 - 루틴 완료 조회 시 본인 완료 내역만 조회 권한
-    // const { userId, errorResponse } = await getSessionUserIdOrError();
-    // if (errorResponse) return errorResponse;
+    // 루틴 완료 조회 시 인증 불필요 (공개 조회)
     
     const { id } = await params;
     const completionId = parseInt(id, 10);
@@ -95,12 +92,23 @@ export async function PATCH(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    // 세션 인증 체크
-    const { userId, errorResponse } = await getSessionUserIdOrError();
-    if (errorResponse) return errorResponse;
-    
     const { id } = await params;
     const completionId = parseInt(id, 10);
+    const body = await request.json();
+
+    const { nickname } = body;
+    if (!nickname) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: {
+            code: 'INVALID_PARAMS',
+            message: '필수 파라미터가 누락되었습니다: nickname'
+          }
+        },
+        { status: 400 }
+      );
+    }
 
     // 유효성 검사
     if (isNaN(completionId) || completionId <= 0) {
@@ -155,9 +163,21 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    // 세션 인증 체크
-    const { userId, errorResponse } = await getSessionUserIdOrError();
-    if (errorResponse) return errorResponse;
+    const { searchParams } = new URL(request.url);
+    const nickname = searchParams.get('nickname');
+
+    if (!nickname) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: {
+            code: 'INVALID_PARAMS',
+            message: '필수 파라미터가 누락되었습니다: nickname'
+          }
+        },
+        { status: 400 }
+      );
+    }
     
     const { id } = await params;
     const completionId = parseInt(id, 10);

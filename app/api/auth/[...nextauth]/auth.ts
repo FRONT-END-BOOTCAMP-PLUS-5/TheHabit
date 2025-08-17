@@ -89,6 +89,7 @@ export const authOptions = {
           nickname: user.nickname,
         });
 
+        token.id = user.id;
         token.email = user.email;
         token.username = user.username;
         token.nickname = user.nickname;

@@ -11,7 +11,7 @@ export class GetRoutineCompletionsUseCase {
       id: completion.id,
       userId: completion.userId,
       routineId: completion.routineId,
-      createdAt: completion.createdAt,
+      createdAt: completion.createdAt.toISOString(),
       proofImgUrl: completion.proofImgUrl,
     }));
   }
@@ -23,7 +23,7 @@ export class GetRoutineCompletionsUseCase {
       id: completion.id,
       userId: completion.userId,
       routineId: completion.routineId,
-      createdAt: completion.createdAt,
+      createdAt: completion.createdAt.toISOString(),
       proofImgUrl: completion.proofImgUrl,
     }));
   }
@@ -41,7 +41,25 @@ export class GetRoutineCompletionsUseCase {
       id: completion.id,
       userId: completion.userId,
       routineId: completion.routineId,
-      createdAt: completion.createdAt,
+      createdAt: completion.createdAt.toISOString(),
+      proofImgUrl: completion.proofImgUrl,
+    }));
+  }
+
+  async getByNicknameAndRoutine(
+    nickname: string,
+    routineId: number
+  ): Promise<RoutineCompletionDto[]> {
+    const completions = await this.routineCompletionsRepository.findByNicknameAndRoutineId(
+      nickname,
+      routineId
+    );
+
+    return completions.map(completion => ({
+      id: completion.id,
+      userId: completion.userId,
+      routineId: completion.routineId,
+      createdAt: completion.createdAt.toISOString(),
       proofImgUrl: completion.proofImgUrl,
     }));
   }

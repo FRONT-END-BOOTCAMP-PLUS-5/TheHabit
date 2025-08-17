@@ -63,3 +63,6 @@ You are my pair programming partner, an experienced and pragmatic senior softwar
     routine     Routine   @relation(...)
     proofImgUrl String?
   }
+
+  in addition, when you write commit message, write except with Generated with [Claude Code](https://claude.ai/code) things.
+  

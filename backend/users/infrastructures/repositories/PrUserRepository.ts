@@ -15,7 +15,7 @@ export class PrUserRepository implements IUserRepository {
     },
   });
 
-  async create(user: User): Promise<User | undefined> {
+  async create(user: User): Promise<User> {
     try {
       const createdUser = await prisma.user.create({
         data: {
@@ -35,6 +35,7 @@ export class PrUserRepository implements IUserRepository {
       );
     } catch (e) {
       if (e instanceof Error) throw new Error(e.message);
+      throw new Error('사용자 생성 중 알 수 없는 오류가 발생했습니다.');
     }
   }
 
@@ -152,7 +153,7 @@ export class PrUserRepository implements IUserRepository {
     }
   }
 
-  async findById(id: string): Promise<User | null | undefined> {
+  async findById(id: string): Promise<User | null> {
     try {
       const user = await prisma.user.findUnique({
         where: { id },
@@ -163,6 +164,7 @@ export class PrUserRepository implements IUserRepository {
       return new User(user.username, user.nickname, user.profileImg, user.id);
     } catch (e) {
       if (e instanceof Error) throw new Error(e.message);
+      throw new Error('사용자 조회 중 알 수 없는 오류가 발생했습니다.');
     }
   }
 
@@ -234,7 +236,7 @@ export class PrUserRepository implements IUserRepository {
     }
   }
 
-  async delete(id: string): Promise<boolean | undefined> {
+  async delete(id: string): Promise<boolean> {
     try {
       await prisma.user.delete({
         where: { id },
@@ -243,6 +245,7 @@ export class PrUserRepository implements IUserRepository {
       return true;
     } catch (e) {
       if (e instanceof Error) throw new Error(e.message);
+      throw new Error('사용자 삭제 중 알 수 없는 오류가 발생했습니다.');
     }
   }
 
@@ -265,6 +268,79 @@ export class PrUserRepository implements IUserRepository {
       return true;
     } catch (e) {
       if (e instanceof Error) throw new Error(e.message);
+    }
+  }
+
+  async findByUsername(username: string): Promise<User | null> {
+    try {
+      const user = await prisma.user.findUnique({
+        where: { username },
+      });
+
+      if (!user) return null;
+
+      return new User(
+        user.username,
+        user.nickname,
+        user.profileImg,
+        null, // profileImgPath
+        user.id,
+        user.password,
+        user.email
+      );
+    } catch (e) {
+      if (e instanceof Error) throw new Error(e.message);
+      return null;
+    }
+  }
+
+  async findByNickname(nickname: string): Promise<User | null> {
+    try {
+      const user = await prisma.user.findUnique({
+        where: { nickname },
+      });
+
+      if (!user) return null;
+
+      return new User(
+        user.username,
+        user.nickname,
+        user.profileImg,
+        null, // profileImgPath
+        user.id,
+        user.password,
+        user.email
+      );
+    } catch (e) {
+      if (e instanceof Error) throw new Error(e.message);
+      return null;
+    }
+  }
+
+  async update(id: string, userData: Partial<User>): Promise<User | null> {
+    try {
+      const updatedUser = await prisma.user.update({
+        where: { id },
+        data: {
+          username: userData.username,
+          nickname: userData.nickname,
+          email: userData.email,
+          profileImg: userData.profileImg,
+        },
+      });
+
+      return new User(
+        updatedUser.username,
+        updatedUser.nickname,
+        updatedUser.profileImg,
+        null, // profileImgPath
+        updatedUser.id,
+        updatedUser.password,
+        updatedUser.email
+      );
+    } catch (e) {
+      if (e instanceof Error) throw new Error(e.message);
+      return null;
     }
   }
 }

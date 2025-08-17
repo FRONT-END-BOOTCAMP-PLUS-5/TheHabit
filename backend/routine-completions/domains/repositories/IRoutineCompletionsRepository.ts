@@ -5,12 +5,20 @@ export interface IRoutineCompletionsRepository {
   create(
     routineCompletion: Omit<RoutineCompletion, 'id' | 'createdAt'>
   ): Promise<RoutineCompletion>;
+  
+  createByNickname(request: {
+    nickname: string;
+    routineId: number;
+    proofImgUrl: string | null;
+  }): Promise<RoutineCompletion>;
 
   // 루틴 완료 조회
   findByRoutineId(routineId: number): Promise<RoutineCompletion[]>;
   findByUserId(userId: string): Promise<RoutineCompletion[]>;
+  findByNickname(nickname: string): Promise<RoutineCompletion[]>;
   findById(completionId: number): Promise<RoutineCompletion | null>;
   findByUserIdAndRoutineId(userId: string, routineId: number): Promise<RoutineCompletion[]>;
+  findByNicknameAndRoutineId(nickname: string, routineId: number): Promise<RoutineCompletion[]>;
 
   // 루틴 완료 수정 (인증샷 업데이트)
   update(

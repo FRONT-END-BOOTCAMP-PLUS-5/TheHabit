@@ -18,9 +18,23 @@ export class AddRoutineCompletionUseCase {
 
     return {
       id: createdCompletion.id,
-      userId: createdCompletion.userId,
       routineId: createdCompletion.routineId,
-      createdAt: createdCompletion.createdAt,
+      createdAt: createdCompletion.createdAt.toISOString(),
+      proofImgUrl: createdCompletion.proofImgUrl,
+    };
+  }
+
+  async executeByNickname(request: { nickname: string; routineId: number; proofImgUrl: string | null }): Promise<RoutineCompletionDto> {
+    const createdCompletion = await this.routineCompletionsRepository.createByNickname({
+      nickname: request.nickname,
+      routineId: request.routineId,
+      proofImgUrl: request.proofImgUrl,
+    });
+
+    return {
+      id: createdCompletion.id,
+      routineId: createdCompletion.routineId,
+      createdAt: createdCompletion.createdAt.toISOString(),
       proofImgUrl: createdCompletion.proofImgUrl,
     };
   }

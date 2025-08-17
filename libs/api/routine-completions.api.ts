@@ -10,11 +10,16 @@ export const createRoutineCompletion = async (
   data: CreateRoutineCompletionRequestDto
 ): Promise<RoutineCompletionDto> => {
   try {
-    const response = await axiosInstance.post<RoutineCompletionDto>(
+    const response = await axiosInstance.post<ApiResponse<RoutineCompletionDto>>(
       '/api/routine-completions',
       data
     );
-    return response.data;
+    
+    if (!response.data.data) {
+      throw new Error('서버에서 반환된 데이터가 없습니다');
+    }
+    
+    return response.data.data;
   } catch (error) {
     console.error('루틴 완료 생성 실패:', error);
     throw error;
@@ -26,10 +31,15 @@ export const getRoutineCompletionsByChallenge = async (
   challengeId: number
 ): Promise<RoutineCompletionDto[]> => {
   try {
-    const response = await axiosInstance.get<RoutineCompletionDto[]>(
+    const response = await axiosInstance.get<ApiResponse<RoutineCompletionDto[]>>(
       `/api/routine-completions?challengeId=${challengeId}`
     );
-    return response.data;
+    
+    if (!response.data.data) {
+      throw new Error('서버에서 반환된 데이터가 없습니다');
+    }
+    
+    return response.data.data;
   } catch (error) {
     console.error('챌린지별 루틴 완료 조회 실패:', error);
     throw error;
