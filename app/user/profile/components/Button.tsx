@@ -1,16 +1,16 @@
 'use client';
 
-interface IButton {
+
+interface IButton{
   children: React.ReactNode;
   onClick: () => void;
-  className?: string;
-  disabled?: boolean;
+  className?: string
 }
 
-export const Button = ({ children, onClick, className, disabled = false }: IButton) => {
+export const Button = ({ children, onClick, className }: IButton) => {
   return (
-    <button onClick={onClick} className={className} disabled={disabled}>
+    <button onClick={onClick} className={className}>
       {children}
     </button>
-  );
-};
+  )
+}

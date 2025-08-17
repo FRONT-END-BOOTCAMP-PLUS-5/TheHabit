@@ -13,11 +13,11 @@ import { CreateRoutineCompletionResponseDto } from '@/backend/routine-completion
 import UserRoutineCompletion from '@/app/user/profile/components/UserRoutineCompletion';
 
 export const CompletionComponent = ({
-  profileImg,
-  username,
-  nickname,
-  userId,
-}: {
+                                      profileImg,
+                                      username,
+                                      nickname,
+                                      userId,
+                                    }: {
   profileImg?: string | null;
   username: string;
   nickname: string;
