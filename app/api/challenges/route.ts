@@ -20,13 +20,26 @@ const createAddChallengeUsecase = () => {
 };
 
 export const GET = async (
-  request: NextRequest,
-  { params }: { params: Promise<{ challengeId: number }> }
+  request: NextRequest
 ): Promise<NextResponse<ApiResponse<ChallengeDto | null>>> => {
-  const { challengeId } = await params;
+  const { searchParams } = new URL(request.url);
+  const challengeId = searchParams.get('id');
+
+  if (!challengeId) {
+    return NextResponse.json(
+      {
+        success: false,
+        error: {
+          code: 'MISSING_PARAMETER',
+          message: '챌린지 ID가 필요합니다.',
+        },
+      },
+      { status: 400 }
+    );
+  }
 
   const usecase = createGetChallengeByIdUsecase();
-  const challenge = await usecase.execute(challengeId);
+  const challenge = await usecase.execute(Number(challengeId));
 
   if (!challenge) {
     return NextResponse.json(
