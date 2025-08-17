@@ -10,7 +10,7 @@ export class UserReviewEntity {
       nickname: string;
     } | null,
     readonly count?: number,
-    readonly userIds?: string[] | null,
+    readonly userIds?: string[],
     readonly usernames?: string[] | null,
     readonly nicknames?: string[] | null
   ) {}

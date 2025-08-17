@@ -3,6 +3,8 @@ import { CreateUserReviewUsecase } from '@/backend/users/applications/usecases/C
 import { PrUserRepository } from '@/backend/users/infrastructures/repositories/PrUserRepository';
 import { GetUserReviewUsecase } from '@/backend/users/applications/usecases/GetUserReviewUsecase';
 import { DeleteReviewEmotionByUserUsecase } from '@/backend/users/applications/usecases/DeleteReviewByUserUsecase';
+import { ApiResponse } from '@/backend/shared/types/ApiResponse';
+import { UserReviewDto } from '@/backend/users/applications/dtos/UserReviewDto';
 
 const repository = new PrUserRepository();
 
@@ -18,7 +20,10 @@ const createDeleteReviewEmotionByUser = () => {
   return new DeleteReviewEmotionByUserUsecase(repository);
 };
 
-export async function GET(request: NextRequest): Promise<NextResponse | undefined> {
+type UserReviews = ApiResponse<UserReviewDto[]>;
+type UserReview = ApiResponse<UserReviewDto>;
+
+export async function GET(request: NextRequest): Promise<NextResponse<UserReviews> | undefined> {
   try {
     const routineCompletionId = request.nextUrl.searchParams.get('routineCompletionId');
     const formatRoutineCompletionId = Number(routineCompletionId);
@@ -28,21 +33,26 @@ export async function GET(request: NextRequest): Promise<NextResponse | undefine
     const usecase = createGetUserReview();
     const userRoutineCompletionReview = await usecase.execute(formatRoutineCompletionId);
 
+    const processedReviews = userRoutineCompletionReview.map(review => ({
+      ...review,
+      createdAt: review.createdAt.toISOString(),
+    }));
+
     return NextResponse.json(
       {
         success: true,
-        data: userRoutineCompletionReview,
+        data: processedReviews,
         message: 'success',
       },
       { status: 201 }
     );
-  } catch (err) {
-    if (err instanceof Error)
+  } catch (error) {
+    if (error instanceof Error)
       return NextResponse.json(
         {
           success: false,
           error: {
-            code: err.message || 'GET_FAILED',
+            code: error.message || 'GET_FAILED',
             message: 'fail',
           },
         },
@@ -51,36 +61,57 @@ export async function GET(request: NextRequest): Promise<NextResponse | undefine
   }
 }
 
-export async function POST(request: NextRequest): Promise<NextResponse | undefined> {
+export async function POST(request: NextRequest): Promise<NextResponse<UserReview> | undefined> {
   try {
     const { explain: reviewContent, routineCompletionId, userId } = await request.json();
     const formatRoutineCompletionId = Number(routineCompletionId);
 
-    if (!reviewContent) throw new Error('잘못된 리뷰 아이콘입니다!');
+    if (!reviewContent) {
+      throw new Error('잘못된 리뷰 아이콘입니다!');
+    }
 
     const usecase = createReviewByUserNickname();
     const review = await usecase.execute(reviewContent, formatRoutineCompletionId, userId!);
 
-    return NextResponse.json(
-      {
-        success: true,
-        data: review,
-        message: 'success',
-      },
-      { status: 201 }
-    );
-  } catch (err) {
-    if (err instanceof Error)
+    if (!review) {
       return NextResponse.json(
         {
           success: false,
           error: {
-            code: err.message || 'POST_FAILED',
+            code: 'REVIEW_CREATION_FAILED',
+            message: '유저 감정표현 생성 실패',
+          },
+        },
+        { status: 500 }
+      );
+    }
+
+    const processedReview = {
+      ...review,
+      createdAt: review.createdAt.toISOString(),
+    };
+
+    return NextResponse.json(
+      {
+        success: true,
+        data: processedReview,
+        message: 'success',
+      },
+      { status: 201 }
+    );
+  } catch (error) {
+    if (error instanceof Error) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: {
+            code: error.message || 'POST_FAILED',
             message: 'fail',
           },
         },
         { status: 500 }
       );
+    }
   }
 }
 
@@ -106,13 +137,13 @@ export async function DELETE(request: NextRequest): Promise<NextResponse | undef
       },
       { status: 201 }
     );
-  } catch (err) {
-    if (err instanceof Error)
+  } catch (error) {
+    if (error instanceof Error)
       return NextResponse.json(
         {
           success: false,
           error: {
-            code: err.message || 'DELETE_FAILED',
+            code: error.message || 'DELETE_FAILED',
             message: 'fail',
           },
         },

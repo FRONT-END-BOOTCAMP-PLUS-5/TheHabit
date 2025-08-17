@@ -2,8 +2,8 @@ export interface UserReviewDto {
   readonly id: number;
   readonly reviewContent: string;
   readonly createdAt: string;
-  readonly routineCompletionId: string;
-  readonly userId: string;
+  readonly routineCompletionId: number;
+  readonly userId: string | null;
   readonly User?: {
     username: string;
     nickname: string;

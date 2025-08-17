@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { GetUserRoutineCompletion } from '@/backend/users/applications/usecases/GetUserRoutineCompletion';
 import { PrUserRepository } from '@/backend/users/infrastructures/repositories/PrUserRepository';
+import { ApiResponse } from '@/backend/shared/types/ApiResponse';
+import { RoutineCompletionDto } from '@/backend/routine-completions/applications/dtos/RoutineCompletionDto';
 
 const repository = new PrUserRepository();
 
@@ -8,7 +10,11 @@ const createGetUserRoutineCompletion = () => {
   return new GetUserRoutineCompletion(repository);
 };
 
-export async function GET(request: NextRequest): Promise<NextResponse | undefined> {
+type RoutineCompletions = ApiResponse<RoutineCompletionDto[]>;
+
+export async function GET(
+  request: NextRequest
+): Promise<NextResponse<RoutineCompletions> | undefined> {
   try {
     const nickname = request.nextUrl.searchParams.get('nickname');
     const pageParam = request.nextUrl.searchParams.get('pageParam');
@@ -25,21 +31,28 @@ export async function GET(request: NextRequest): Promise<NextResponse | undefine
       categoryid || 'All'
     );
 
+    const processedCompletions = (userRoutineCompletion || []).map(completion => ({
+      id: completion.id,
+      routineId: completion.routineId,
+      createdAt: completion.createdAt.toISOString(),
+      proofImgUrl: completion.proofImgUrl,
+    }));
+
     return NextResponse.json(
       {
         success: true,
-        data: userRoutineCompletion,
+        data: processedCompletions,
         message: 'success',
       },
       { status: 201 }
     );
-  } catch (err) {
-    if (err instanceof Error)
+  } catch (error) {
+    if (error instanceof Error)
       return NextResponse.json(
         {
           success: false,
           error: {
-            code: err.message || 'GET_FAILED',
+            code: error.message || 'GET_FAILED',
             message: 'fail',
           },
         },

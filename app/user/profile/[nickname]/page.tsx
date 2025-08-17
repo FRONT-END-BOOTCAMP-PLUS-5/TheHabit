@@ -1,5 +1,5 @@
 'use client';
-import { Button } from '../../../_components/buttons/Button';
+import { Button } from '@/app/_components/buttons/Button';
 import { CompletionComponent } from '@/app/user/profile/components/Completion';
 import { useRouter } from 'next/navigation';
 import { ProfileImage } from '@/app/_components/profile-images/ProfileImage';
@@ -32,7 +32,8 @@ const UserProfilePage = () => {
                   t: 'follower',
                 }).toString();
                 router.push(`/user/follow?${query}`);
-              }}>
+              }}
+            >
               <span className='font-bold'>99</span>
               <br />
               <span>팔로워</span>
@@ -45,7 +46,8 @@ const UserProfilePage = () => {
                   t: 'following',
                 }).toString();
                 router.push(`/user/follow?${query}`);
-              }}>
+              }}
+            >
               <span className='font-bold'>99</span>
               <br />
               <span>팔로잉</span>
@@ -58,7 +60,8 @@ const UserProfilePage = () => {
               className='w-[200px]'
               onClick={() => {
                 router.push('/challenges');
-              }}>
+              }}
+            >
               챌린지 보러가기
             </Button>
             <Button
@@ -67,7 +70,8 @@ const UserProfilePage = () => {
               className='w-[200px]'
               onClick={() => {
                 router.push(`/user/profile/edit/${userInfo?.nickname}`);
-              }}>
+              }}
+            >
               프로필 편집
             </Button>
           </div>
