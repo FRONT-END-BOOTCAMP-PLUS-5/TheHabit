@@ -14,7 +14,7 @@ export interface IUserRepository {
 
   // Read
   findById(id: string): Promise<User | null>;
-  findByUsername(username: string): Promise<User | null>; // username으로 조회 추가
+  findByNickname(nickname: string): Promise<User | null>; 
   findByEmail(email: string): Promise<User | null>;
   findAll(): Promise<User[] | undefined>;
   findByUserNicknameRoutineCompletion(
