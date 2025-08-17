@@ -266,29 +266,6 @@ export class PrUserRepository implements IUserRepository {
     }
   }
 
-  async findByNickname(nickname: string): Promise<User | null> {
-    try {
-      const user = await prisma.user.findUnique({
-        where: { nickname },
-      });
-
-      if (!user) return null;
-
-      return new User(
-        user.username,
-        user.nickname,
-        user.profileImg,
-        null, // profileImgPath
-        user.id,
-        user.password,
-        user.email
-      );
-    } catch (e) {
-      if (e instanceof Error) throw new Error(e.message);
-      return null;
-    }
-  }
-
 
   async findById(id: string): Promise<User | null> {
     try {

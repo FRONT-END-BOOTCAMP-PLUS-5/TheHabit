@@ -1,10 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { usersApi } from '@/libs/api/users.api';
+import { useGetUserInfo } from '@/libs/hooks/user-hooks/useGetUserInfo';
 
 export const NameComponent = () => {
+  const { userInfo, update } = useGetUserInfo();
   const [getState, setState] = useState<boolean>(false);
   const [getValue, setValue] = useState<string>('');
-  const [getName, setName] = useState<string>('노석준');
+  const [getName, setName] = useState<string>(userInfo?.username || '');
 
   const { updateUsername } = usersApi;
 
@@ -13,19 +15,34 @@ export const NameComponent = () => {
   };
 
   const handleUpdateUserName = async () => {
-    //임시 id
-    const response = await updateUsername('a70ecc14-fb02-41ce-8f1d-750a69f5558d', getValue);
-    const name = response.data?.username as string;
-    setName(name);
-    setState(prev => !prev);
+    if (getValue) {
+      const response = await updateUsername(userInfo?.id || '', getValue);
+      const name = response.data?.username as string;
+      update({
+        profileImg: userInfo?.profileImg,
+        profileImgPath: userInfo?.profileImgPath,
+        nickname: userInfo?.nickname,
+        username: name,
+      });
+      setName(name);
+      setState(prev => !prev);
+    } else {
+      setState(prev => !prev);
+      return;
+    }
   };
+
+  useEffect(() => {
+    if (userInfo?.username) {
+      setName(userInfo.username);
+    }
+  }, [userInfo]);
 
   return (
     <div className='flex flex-col w-[180px] relative'>
       <span className='text-[12px] text-[#2A2A2A80] '>이름</span>
       {getState ? (
         <div className='mb-10 z-[99999]'>
-          {/*나중에 api 호출로 이름값 넣어야함!*/}
           <input
             className='border-[#ebebeb] border-b-1 focus:outline-none focus:border-[#222] w-[146px]'
             defaultValue={getName}

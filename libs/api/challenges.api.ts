@@ -54,7 +54,7 @@ export const createChallenge = async (
 // 3. 특정 챌린지 상세 조회
 export const getChallengeById = async (id: number): Promise<ApiResponse<ChallengeDto>> => {
   try {
-    const response = await axiosInstance.get<ApiResponse<ChallengeDto>>(`/api/challenges/${id}`);
+    const response = await axiosInstance.get<ApiResponse<ChallengeDto>>(`/api/challenges?id=${id}`);
     return response.data;
   } catch (error) {
     console.error('챌린지 상세 조회 실패:', error);

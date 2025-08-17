@@ -1,10 +1,12 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { usersApi } from '@/libs/api/users.api';
+import { useGetUserInfo } from '@/libs/hooks/user-hooks/useGetUserInfo';
 
 export const NicknameComponent = () => {
+  const { userInfo, update } = useGetUserInfo();
   const [getState, setState] = useState<boolean>(false);
   const [getValue, setValue] = useState<string>('');
-  const [getNickname, setNickname] = useState<string>('참치마요');
+  const [getNickname, setNickname] = useState<string>(userInfo?.nickname || '');
 
   const { updateNickname } = usersApi;
 
@@ -13,24 +15,39 @@ export const NicknameComponent = () => {
   };
 
   const handleUpdateUserNickname = async () => {
-    //임시 id
-    const response = await updateNickname('a70ecc14-fb02-41ce-8f1d-750a69f5558d', getValue);
-    if (response.success) {
-      const nickname = response.data?.nickname as string;
-      setNickname(nickname);
-      setState(prev => !prev);
+    if (getValue) {
+      const response = await updateNickname(userInfo?.id || '', getValue);
+      if (response.success) {
+        const nickname = response.data?.nickname as string;
+        update({
+          profileImg: userInfo?.profileImg,
+          profileImgPath: userInfo?.profileImgPath,
+          nickname: nickname,
+          username: userInfo?.username,
+        });
+        setNickname(nickname);
+        setState(prev => !prev);
+      } else {
+        alert(response.message);
+        return;
+      }
     } else {
-      alert(response.message);
+      setState(prev => !prev);
       return;
     }
   };
+
+  useEffect(() => {
+    if (userInfo?.username) {
+      setNickname(userInfo.nickname);
+    }
+  }, [userInfo]);
 
   return (
     <div className='flex flex-col w-[180px] relative'>
       <span className='text-[12px] text-[#2A2A2A80] '>닉네임</span>
       {getState ? (
         <div className='mb-10 z-[99999]'>
-          {/*나중에 api 호출로 닉네임값 넣어야함!*/}
           <input
             className='border-[#ebebeb] border-b-1 focus:outline-none focus:border-[#222] w-[146px]'
             defaultValue={getNickname}
