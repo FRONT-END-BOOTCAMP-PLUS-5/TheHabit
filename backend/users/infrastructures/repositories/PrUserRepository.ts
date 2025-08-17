@@ -68,7 +68,7 @@ export class PrUserRepository implements IUserRepository {
 
       this.s3.send(command);
 
-      const signedUrl:string = `https://${process.env.AMPLIFY_BUCKET}.s3.${process.env.AWS_REGION}.amazonaws.com/${key}`;;
+      const signedUrl:string = `https://${process.env.AMPLIFY_BUCKET}.s3.${process.env.AWS_REGION}.amazonaws.com/${key}`;
 
 
       return [signedUrl, key];
