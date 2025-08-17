@@ -2,22 +2,22 @@
 import Input from '@/app/_components/inputs/Input';
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { debounce } from 'lodash';
+
 import { followsApi } from '@/libs/api/follows.api';
 import { FollowerDto } from '@/backend/follows/applications/dtos/FollowerDto';
 import { FollowingDto } from '@/backend/follows/applications/dtos/FollowingDto';
 import { BackComponent } from '@/app/user/follow/components/Back';
 import { CategoryComponent } from '@/app/user/follow/components/Category';
 import { ContentComponent } from '@/app/user/follow/components/Content';
-
-// 나중에 전역관리로 할꺼 같으니까 우선은 final화
-const NICK_NAME = '이게 도파민이지...';
-const ID = '88b3e620-52d9-4a5c-bb2b-1dfc9a2d1a10';
+import { useGetUserInfo } from '@/libs/hooks/user-hooks/useGetUserInfo';
+import { debounce } from 'lodash';
 
 const FollowPage = () => {
   const searchParams = useSearchParams();
   const nickname = searchParams.get('nickname');
   const type = searchParams.get('t');
+
+  const { userInfo } = useGetUserInfo();
 
   const [getFollows, setFollows] = useState<FollowerDto | FollowingDto>();
   const [getInputText, setInputText] = useState<string>('');
@@ -33,7 +33,9 @@ const FollowPage = () => {
   const getFollow = useCallback(
     async (type: 'follower' | 'following', keyword: string = '') => {
       const response =
-        type === 'follower' ? await follower(ID, keyword) : await following(ID, keyword);
+        type === 'follower'
+          ? await follower(userInfo?.nickname || '', keyword)
+          : await following(userInfo?.nickname || '', keyword);
       if (isMounted.current) {
         setFollows(response?.data);
       }
