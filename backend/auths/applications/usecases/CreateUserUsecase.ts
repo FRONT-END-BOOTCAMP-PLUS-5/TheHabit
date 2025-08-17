@@ -1,7 +1,7 @@
-import { SignUpRequestDto } from "@/backend/auths/applications/dtos/SignUpRequestDto";
-import { SignUpResponseDto } from "@/backend/auths/applications/dtos/SignUpResponseDto";
-import { IUserRepository } from "@/backend/users/domains/repositories/IUserRepository";
-import bcrypt from "bcryptjs";
+import { SignUpRequestDto } from '@/backend/auths/applications/dtos/SignUpRequestDto';
+import { SignUpResponseDto } from '@/backend/auths/applications/dtos/SignUpResponseDto';
+import { IUserRepository } from '@/backend/users/domains/repositories/IUserRepository';
+import bcrypt from 'bcryptjs';
 
 export class CreateUserUsecase {
   constructor(private readonly userRepository: IUserRepository) {}
@@ -11,12 +11,12 @@ export class CreateUserUsecase {
       const { email, password, username, nickname } = signUpRequest;
       // 필수 입력란 검증
       if (!email || !password || !username || !nickname) {
-        throw new Error("필수 입력값입니다.");
+        throw new Error('필수 입력값입니다.');
       }
       // 이메일 중복 확인
       const emailExists = await this.userRepository.checkEmailExists(email);
       if (emailExists) {
-        throw new Error("이미 존재하는 이메일입니다.");
+        throw new Error('이미 존재하는 이메일입니다.');
       }
 
       // 비밀번호 해싱
@@ -35,12 +35,12 @@ export class CreateUserUsecase {
       // 성공 응답
       return {
         success: true,
-        message: "회원가입이 성공적으로 완료되었습니다.",
+        message: '회원가입이 성공적으로 완료되었습니다.',
         user: {
-          id: user?.id ?? "",
-          email: user?.email ?? "",
-          username: user?.username ?? "",
-          nickname: user?.nickname ?? "",
+          id: user?.id ?? '',
+          email: user?.email ?? '',
+          username: user?.username ?? '',
+          nickname: user?.nickname ?? '',
           profileImg: user?.profileImg ?? null,
           profileImgPath: user?.profileImgPath ?? null,
         },

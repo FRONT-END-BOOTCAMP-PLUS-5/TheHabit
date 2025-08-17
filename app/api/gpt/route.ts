@@ -1,5 +1,7 @@
+import { GPTRequestDto } from '@/backend/gpt/applications/dtos/GPTRequestDto';
 import { AddGPTResponseUsecase } from '@/backend/gpt/applications/usecases/AddGPTResponseUsecase';
 import { GPTRepository } from '@/backend/gpt/infrastructures/repositories/GPTRepository';
+import { ApiResponse } from '@/backend/shared/types/ApiResponse';
 import { NextRequest, NextResponse } from 'next/server';
 
 interface GPTRequestBody {
@@ -11,13 +13,14 @@ export const POST = async (request: NextRequest): Promise<NextResponse> => {
     const body: GPTRequestBody = await request.json();
 
     if (!body || !body.gptResponseContent || typeof body.gptResponseContent !== 'string') {
-      return NextResponse.json(
-        {
-          success: false,
-          error: 'gptRequestContent 필드가 필요합니다.',
+      const errorResponse: ApiResponse<null> = {
+        success: false,
+        error: {
+          code: 'INVALID_REQUEST',
+          message: 'gptRequestContent 필드가 필요합니다.',
         },
-        { status: 400 }
-      );
+      };
+      return NextResponse.json(errorResponse, { status: 400 });
     }
 
     const gptRepository = new GPTRepository();
@@ -27,18 +30,26 @@ export const POST = async (request: NextRequest): Promise<NextResponse> => {
       gptResponseContent: body.gptResponseContent.split('\n'),
     });
 
-    return NextResponse.json({
+    const successResponse: ApiResponse<GPTRequestDto> = {
       success: true,
-      data: result,
-      message: '피드백이 성공적으로 생성되었습니다.',
-    });
-  } catch (error) {
-    return NextResponse.json(
-      {
-        success: false,
-        error: error instanceof Error ? error.message : '서버 오류가 발생했습니다.',
+      data: {
+        gptResponseContent: [result.gptResponseContent],
       },
-      { status: 500 }
-    );
+      message: 'gptResponseContent 저장에 성공했습니다.',
+    };
+    return NextResponse.json(successResponse);
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      return NextResponse.json(error.message, { status: 500 });
+    }
+
+    const errorResponse: ApiResponse<null> = {
+      success: false,
+      error: {
+        code: 'INTERNAL_SERVER_ERROR',
+        message: 'gptResponseContent 저장에 실패했습니다.',
+      },
+    };
+    return NextResponse.json(errorResponse, { status: 500 });
   }
 };
