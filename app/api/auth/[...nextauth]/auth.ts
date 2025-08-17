@@ -4,8 +4,8 @@ import { LoginRequestDto } from '@/backend/auths/applications/dtos/LoginRequestD
 import { Session, User } from 'next-auth';
 import { JWT } from 'next-auth/jwt';
 import CredentialsProvider from 'next-auth/providers/credentials';
-// import GoogleProvider from "next-auth/providers/google";
-// import KakaoProvider from "next-auth/providers/kakao";
+import GoogleProvider from "next-auth/providers/google";
+import KakaoProvider from "next-auth/providers/kakao";
 
 export const authOptions = {
   secret: process.env.NEXTAUTH_SECRET,
@@ -68,14 +68,14 @@ export const authOptions = {
         }
       },
     }),
-    // GoogleProvider({
-    //   clientId: process.env.GOOGLE_CLIENT_ID!,
-    //   clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
-    // }),
-    // KakaoProvider({
-    //   clientId: process.env.KAKAO_CLIENT_ID!,
-    //   clientSecret: process.env.KAKAO_CLIENT_SECRET!,
-    // }),
+    GoogleProvider({
+      clientId: process.env.GOOGLE_CLIENT_ID!,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+    }),
+    KakaoProvider({
+      clientId: process.env.KAKAO_CLIENT_ID!,
+      clientSecret: process.env.KAKAO_CLIENT_SECRET!,
+    }),
   ],
   callbacks: {
     async jwt({ token, user }: { token: JWT; user?: User }) {
