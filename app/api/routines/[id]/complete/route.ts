@@ -8,7 +8,7 @@ import { RoutineCompletionDto } from '@/backend/routine-completions/applications
 // Repository 인스턴스 생성
 const routineCompletionsRepository = new PrRoutineCompletionsRepository();
 
-// 루틴 완료 처리 - 승민님 패턴 적용
+// 루틴 완료 처리
 export async function POST(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params;
@@ -63,7 +63,7 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
   }
 }
 
-// 루틴 완료 목록 조회 - 승민님 패턴 적용
+// 루틴 완료 목록 조회
 export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { searchParams } = new URL(request.url);
