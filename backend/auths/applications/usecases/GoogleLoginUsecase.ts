@@ -1,5 +1,5 @@
 import { User } from '@/backend/users/domains/entities/UserEntity';
-import { IUserRepository } from '../../../users/domains/repositories/IUserRepository';
+import { IUserRepository } from '@/backend/users/domains/repositories/IUserRepository';
 
 export interface GoogleUserInfo {
   email: string;
@@ -103,7 +103,6 @@ export class GoogleLoginUsecase {
   }
 
   private createNewUser(googleUserInfo: GoogleUserInfo): User {
-    // 구글 정보를 바탕으로 새로운 User 엔티티 생성
     const username = googleUserInfo.name;
     const nickname = this.generateNickname(googleUserInfo.name);
     const profileImg = googleUserInfo.picture || null;
@@ -120,34 +119,11 @@ export class GoogleLoginUsecase {
     );
   }
 
-  private async generateNickname(name: string): Promise<string> {
-  let nickname = `${name}_${Date.now().toString().slice(-6)}`;
-  let counter = 1;
-  
-  // 닉네임 중복 검사 및 재생성
-  while (await this.isNicknameExists(nickname)) {
-    nickname = `${name}_${Date.now().toString().slice(-6)}_${counter}`;
-    counter++;
-    
-    // 무한 루프 방지
-    if (counter > 100) {
-      nickname = `${name}_${Date.now().toString().slice(-6)}_${Math.random().toString(36).substr(2, 5)}`;
-      break;
-    }
+    private generateNickname(name: string): string {
+    const timestamp = Date.now().toString().slice(-6);
+    const randomStr = Math.random().toString(36).substr(2, 5);
+    return `${name}_${timestamp}_${randomStr}`;
   }
-  
-  return nickname;
-}
-
-private async isNicknameExists(nickname: string): Promise<boolean> {
-  try {
-    const existingUser = await this.userRepository.findByNickname(nickname);
-    return existingUser !== null;
-  } catch (error) {
-    console.error('닉네임 중복 검사 중 오류:', error);
-    return false; // 에러 발생 시 중복이 아닌 것으로 처리
-  }
-}
 
   private async saveUser(user: User): Promise<User | null> {
     try {
