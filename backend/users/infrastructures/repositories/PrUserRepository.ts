@@ -148,8 +148,8 @@ export class PrUserRepository implements IUserRepository {
       });
 
       return completedRoutines;
-    } catch (e) {
-      if (e instanceof Error) throw new Error(e.message);
+    } catch (error) {
+      if (error instanceof Error) throw new Error(error.message);
     }
   }
 
@@ -165,8 +165,8 @@ export class PrUserRepository implements IUserRepository {
       return users.map(
         user => new User(user.username, user.nickname, user.profileImg || '', user.id || '')
       );
-    } catch (e) {
-      if (e instanceof Error) throw new Error(e.message);
+    } catch (error) {
+      if (error instanceof Error) throw new Error(error.message);
     }
   }
 
@@ -216,9 +216,9 @@ export class PrUserRepository implements IUserRepository {
       });
 
       return userEntity;
-    } catch (e) {
-      console.error('💥 PrUserRepository.findByEmail 오류:', e);
-      throw e; // 에러를 다시 던져서 상위에서 처리하도록 함
+    } catch (error) {
+      console.error('💥 PrUserRepository.findByEmail 오류:', error);
+      throw error; // 에러를 다시 던져서 상위에서 처리하도록 함
     }
   }
 
@@ -246,8 +246,8 @@ export class PrUserRepository implements IUserRepository {
       });
 
       return userRoutineCompletionReview;
-    } catch (e) {
-      if (e instanceof Error) throw new Error(e.message);
+    } catch (error) {
+      if (error instanceof Error) throw new Error(error.message);
     }
   }
 
@@ -258,9 +258,9 @@ export class PrUserRepository implements IUserRepository {
         where: { email },
       });
       return !!user; // 사용자가 존재하면 true, 없으면 false
-    } catch (e) {
-      console.error('이메일 존재 여부 확인 중 오류:', e);
-      throw e;
+    } catch (error) {
+      console.error('이메일 존재 여부 확인 중 오류:', error);
+      throw error;
     }
   }
 
@@ -281,8 +281,8 @@ export class PrUserRepository implements IUserRepository {
         user.password,
         user.email
       );
-    } catch (e) {
-      if (e instanceof Error) throw new Error(e.message);
+    } catch (error) {
+      if (error instanceof Error) throw new Error(error.message);
       return null;
     }
   }
@@ -297,8 +297,8 @@ export class PrUserRepository implements IUserRepository {
       if (!user) return null;
 
       return new User(user.username, user.nickname, user.profileImg, user.id);
-    } catch (e) {
-      if (e instanceof Error) throw new Error(e.message);
+    } catch (error) {
+      if (error instanceof Error) throw new Error(error.message);
       return null;
     }
   }
@@ -326,8 +326,8 @@ export class PrUserRepository implements IUserRepository {
         updatedUser.password,
         updatedUser.email
       );
-    } catch (e) {
-      if (e instanceof Error) throw new Error(e.message);
+    } catch (error) {
+      if (error instanceof Error) throw new Error(error.message);
       return null;
     }
   }
@@ -358,8 +358,8 @@ export class PrUserRepository implements IUserRepository {
       });
 
       return updatedUserName;
-    } catch (e) {
-      if (e instanceof Error) throw new Error(e.message);
+    } catch (error) {
+      if (error instanceof Error) throw new Error(error.message);
     }
   }
 
@@ -370,8 +370,8 @@ export class PrUserRepository implements IUserRepository {
       });
 
       return true;
-    } catch (e) {
-      if (e instanceof Error) throw new Error(e.message);
+    } catch (error) {
+      if (error instanceof Error) throw new Error(error.message);
       return false;
     }
   }
@@ -390,11 +390,11 @@ export class PrUserRepository implements IUserRepository {
         Key: userProfile,
       });
 
-      this.s3.send(deleteCommand);
+      await this.s3.send(deleteCommand);
 
       return true;
-    } catch (e) {
-      if (e instanceof Error) throw new Error(e.message);
+    } catch (error) {
+      if (error instanceof Error) throw new Error(error.message);
     }
   }
 
@@ -422,8 +422,8 @@ export class PrUserRepository implements IUserRepository {
       });
 
       return true;
-    } catch (e) {
-      if (e instanceof Error) throw new Error(e.message);
+    } catch (error) {
+      if (error instanceof Error) throw new Error(error.message);
     }
   }
 }
