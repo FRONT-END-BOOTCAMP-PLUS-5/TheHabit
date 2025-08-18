@@ -4,8 +4,6 @@ import { User } from '@/backend/users/domains/entities/UserEntity';
 import { DeleteObjectCommand, PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
 import { RoutineCompletion } from '@/backend/routine-completions/domains/entities/routine-completion/routineCompletion';
 import { v4 as uuidv4 } from 'uuid';
-
-// import { Prisma } from '@prisma/client';
 import { UserReviewEntity } from '@/backend/users/domains/entities/UserReviewEntity';
 
 export class PrUserRepository implements IUserRepository {
