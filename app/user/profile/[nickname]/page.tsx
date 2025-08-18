@@ -4,11 +4,21 @@ import { CompletionComponent } from '@/app/user/profile/components/Completion';
 import { useRouter } from 'next/navigation';
 import { ProfileImage } from '@/app/_components/profile-images/ProfileImage';
 import { useGetUserInfo } from '@/libs/hooks/user-hooks/useGetUserInfo';
+import { usersApi } from '@/libs/api/users.api';
+import { useEffect } from 'react';
 
 const UserProfilePage = () => {
   const router = useRouter();
   const { userInfo } = useGetUserInfo();
+  const { getUserAllData } = usersApi;
 
+  const findUserAllData = async () => {
+    const response = await getUserAllData(userInfo?.nickname || '');
+    console.log(response, 'response');
+  };
+  useEffect(() => {
+    if (userInfo?.nickname) findUserAllData();
+  }, [userInfo]);
   return (
     <main>
       <section id='top' className='flex mt-10 justify-center items-center px-5'>

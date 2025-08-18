@@ -15,6 +15,29 @@ interface ApiResponse<T> {
 }
 
 /**
+ * 해당 함수는 user nickname으로 해당 유저 필요한 컬럼만 가져오는 챌린저 + 루틴 + 팔로우 + 컴플리션 테이블 Join
+ * @param nickname: string
+ * @return Promise<ApiResponse<User>>
+ * */
+export const getUserChallengeAndRoutineAndFollowAndCompletion = async (
+  nickname: string
+): Promise<ApiResponse<CreateRoutineCompletionResponseDto[]>> => {
+  try {
+    const response = await axiosInstance.get<ApiResponse<CreateRoutineCompletionResponseDto[]>>(
+      `/api/users/${nickname}`,
+      {
+        params: {
+          nickname,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+/**
  * 해당 함수는 user nickname으로 해당 유저 완료 루틴 가져오기
  * @param id: string
  * @param nickname: string
@@ -222,6 +245,7 @@ export const deleteUserRoutineCompletionEmotion = async (
 };
 
 export const usersApi = {
+  getUserAllData: getUserChallengeAndRoutineAndFollowAndCompletion,
   getUserRoutineCompletion,
   getUserRoutineCompletionReview,
   createUserRoutineCompletionEmotion,

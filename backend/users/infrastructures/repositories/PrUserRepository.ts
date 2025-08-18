@@ -5,6 +5,7 @@ import { DeleteObjectCommand, PutObjectCommand, S3Client } from '@aws-sdk/client
 import { RoutineCompletion } from '@/backend/routine-completions/domains/entities/routine-completion/routineCompletion';
 import { v4 as uuidv4 } from 'uuid';
 import { UserReviewEntity } from '@/backend/users/domains/entities/UserReviewEntity';
+import { Prisma } from '@prisma/client';
 
 export class PrUserRepository implements IUserRepository {
   private s3 = new S3Client({
@@ -49,8 +50,8 @@ export class PrUserRepository implements IUserRepository {
    * @return string
    * */
   async createProfileImg(file: File): Promise<string[] | undefined> {
-    try{
-      const { name, type } = file
+    try {
+      const { name, type } = file;
 
       const key = `${uuidv4()}-${name}`;
 
@@ -66,13 +67,11 @@ export class PrUserRepository implements IUserRepository {
 
       await this.s3.send(command);
 
-      const signedUrl:string = `https://${process.env.AMPLIFY_BUCKET}.s3.${process.env.AWS_REGION}.amazonaws.com/${key}`;
-
+      const signedUrl: string = `https://${process.env.AMPLIFY_BUCKET}.s3.${process.env.AWS_REGION}.amazonaws.com/${key}`;
 
       return [signedUrl, key];
-
-    }catch(error){
-      if(error instanceof  Error) throw new Error(error.message)
+    } catch (error) {
+      if (error instanceof Error) throw new Error(error.message);
     }
   }
 
@@ -100,6 +99,63 @@ export class PrUserRepository implements IUserRepository {
       return createdReview;
     } catch (error) {
       if (error instanceof Error) throw new Error(error.message);
+    }
+  }
+
+  /**
+   * 해당 메소드는 challenges, routines, routines_completions 테이블을 inner 조인하여 가져옴
+   * 예시) 21일 챌린지 도전중 or 66일 챌린지 도전중 or 연속 챌린지 도전중
+   * 그러면 그 챌린지에 맞는 루틴을 가져오면서 해당 루틴이 실패했는지 안했는지도 completion으로 판단하면됨 아님말고~
+   * @param nickname: string
+   * @return UserChallengesAndRoutinesAndFollowAndCompletion
+   * */
+  async findByUserChallengesAndRoutinesAndFollowAndCompletion(nickname: string) {
+    try {
+      const result = await prisma.user.findUnique({
+        where: {
+          nickname,
+        },
+        select: {
+          challenges: {
+            select: {
+              createdAt: true,
+              endAt: true,
+              active: true,
+              routines: {
+                select: {
+                  id: true,
+                  routineTitle: true,
+                  emoji: true,
+                  completions: {
+                    where: {
+                      userId: 'user.id',
+                    },
+                    select: {
+                      id: true,
+                      createdAt: true,
+                    },
+                  },
+                },
+              },
+            },
+          },
+          following: {
+            select: {
+              toUserId: true,
+            },
+          },
+          followers: {
+            select: {
+              fromUserId: true,
+            },
+          },
+        },
+      });
+
+      return result;
+    } catch (error) {
+      console.error('Error fetching data:', error);
+      throw error;
     }
   }
 
@@ -287,7 +343,6 @@ export class PrUserRepository implements IUserRepository {
     }
   }
 
-
   async findById(id: string): Promise<User | null> {
     try {
       const user = await prisma.user.findUnique({
@@ -303,13 +358,12 @@ export class PrUserRepository implements IUserRepository {
     }
   }
 
-  async update(nickname: string, user: Partial<User>): Promise<User | null> {
+  async update(nickname: string, user: Partial<User>): Promise<User | { message: string } | null> {
     try {
-
       if (user.nickname && user.nickname !== nickname) {
         throw new Error('닉네임은 변경할 수 없습니다.');
       }
-      
+
       const updateData: Partial<User> = { ...user };
 
       const updatedUser = await prisma.user.update({
@@ -327,6 +381,12 @@ export class PrUserRepository implements IUserRepository {
         updatedUser.email
       );
     } catch (error) {
+      if (error instanceof Prisma.PrismaClientKnownRequestError) {
+        if (error.code === 'P2002') {
+          return { message: '해당 닉네임은 이미 사용 중입니다.' };
+        }
+      }
+
       if (error instanceof Error) throw new Error(error.message);
       return null;
     }
