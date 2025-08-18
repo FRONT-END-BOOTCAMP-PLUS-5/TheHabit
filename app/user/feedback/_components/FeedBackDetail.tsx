@@ -26,7 +26,6 @@ export const FeedBackDetail = () => {
       proofImgUrl: routineCompletion.proofImgUrl,
     };
   });
-
   const handleClick = async (challengeId: number) => {
     await FeedBackPostData(challengeId, routineCompletion || []);
     router.push(`/user/feedback/${challengeId}`);
