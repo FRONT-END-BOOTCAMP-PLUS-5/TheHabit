@@ -5,7 +5,7 @@ import { Rex } from '@/public/consts/Rex';
 import bcrypt from 'bcryptjs';
 
 export class LoginUsecase {
-  constructor(private readonly userRepository: IUserRepository) {}
+  constructor(private readonly userRepository: IUserRepository) { }
 
   async execute(loginRequest: LoginRequestDto): Promise<LoginResponseDto> {
     try {
@@ -19,11 +19,13 @@ export class LoginUsecase {
       const isEmailValid = Rex.email.standard.test(loginRequest.email);
 
       if (!isEmailValid) {
+        // console.log("❌ [LoginUsecase] 이메일 형식 검증 실패:", loginRequest.email);
         return {
           success: false,
-          message: '올바른 이메일 형식을 입력해주세요.',
+          message: "올바른 이메일 형식을 입력해주세요."
         };
       }
+      // console.log("✅ [LoginUsecase] 이메일 형식 검증 통과:", loginRequest.email);
 
       const user = await this.userRepository.findByEmail(loginRequest.email);
 

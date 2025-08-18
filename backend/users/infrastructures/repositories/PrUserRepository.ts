@@ -26,14 +26,17 @@ export class PrUserRepository implements IUserRepository {
           password: user.password || '',
           username: user.username,
           profileImg: user.profileImg,
+          profileImgPath: user.profileImgPath, // 추가
         },
       });
       return new User(
         createdUser.username,
         createdUser.nickname,
         createdUser.profileImg,
+        createdUser.profileImgPath, // profileImgPath 전달
         createdUser.id,
-        createdUser.password
+        createdUser.password,
+        createdUser.email
       );
     } catch (error) {
       if (error instanceof Error) throw new Error(error.message);
@@ -48,8 +51,8 @@ export class PrUserRepository implements IUserRepository {
    * @return string
    * */
   async createProfileImg(file: File): Promise<string[] | undefined> {
-    try {
-      const { name, type } = file;
+    try{
+      const { name, type } = file
 
       const key = `${uuidv4()}-${name}`;
 
@@ -65,11 +68,12 @@ export class PrUserRepository implements IUserRepository {
 
       await this.s3.send(command);
 
-      const signedUrl: string = `https://${process.env.AMPLIFY_BUCKET}.s3.${process.env.AWS_REGION}.amazonaws.com/${key}`;
+      const signedUrl:string = `https://${process.env.AMPLIFY_BUCKET}.s3.${process.env.AWS_REGION}.amazonaws.com/${key}`;
+
 
       return [signedUrl, key];
-    } catch (error) {
-      if (error instanceof Error) throw new Error(error.message);
+    }catch(error){
+      if(error instanceof  Error) throw new Error(error.message)
     }
   }
 
