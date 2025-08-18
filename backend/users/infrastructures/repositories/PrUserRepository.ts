@@ -38,8 +38,8 @@ export class PrUserRepository implements IUserRepository {
         createdUser.password,
         createdUser.email
       );
-    } catch (e) {
-      if (e instanceof Error) throw new Error(e.message);
+    } catch (error) {
+      if (error instanceof Error) throw new Error(error.message);
       throw new Error('사용자 생성에 실패했습니다.'); // 기본 에러 메시지
     }
   }
@@ -66,15 +66,14 @@ export class PrUserRepository implements IUserRepository {
         Body: buffer,
       });
 
-      this.s3.send(command);
+      await this.s3.send(command);
 
       const signedUrl:string = `https://${process.env.AMPLIFY_BUCKET}.s3.${process.env.AWS_REGION}.amazonaws.com/${key}`;
 
 
       return [signedUrl, key];
-
-    }catch(e){
-      if(e instanceof  Error) throw new Error(e.message)
+    }catch(error){
+      if(error instanceof  Error) throw new Error(error.message)
     }
   }
 
@@ -100,8 +99,8 @@ export class PrUserRepository implements IUserRepository {
       });
 
       return createdReview;
-    } catch (e) {
-      if (e instanceof Error) throw new Error(e.message);
+    } catch (error) {
+      if (error instanceof Error) throw new Error(error.message);
     }
   }
 
@@ -150,8 +149,8 @@ export class PrUserRepository implements IUserRepository {
       });
 
       return completedRoutines;
-    } catch (e) {
-      if (e instanceof Error) throw new Error(e.message);
+    } catch (error) {
+      if (error instanceof Error) throw new Error(error.message);
     }
   }
 
@@ -167,8 +166,8 @@ export class PrUserRepository implements IUserRepository {
       return users.map(
         user => new User(user.username, user.nickname, user.profileImg || '', user.id || '')
       );
-    } catch (e) {
-      if (e instanceof Error) throw new Error(e.message);
+    } catch (error) {
+      if (error instanceof Error) throw new Error(error.message);
     }
   }
 
@@ -218,9 +217,9 @@ export class PrUserRepository implements IUserRepository {
       });
 
       return userEntity;
-    } catch (e) {
-      console.error('💥 PrUserRepository.findByEmail 오류:', e);
-      throw e; // 에러를 다시 던져서 상위에서 처리하도록 함
+    } catch (error) {
+      console.error('💥 PrUserRepository.findByEmail 오류:', error);
+      throw error; // 에러를 다시 던져서 상위에서 처리하도록 함
     }
   }
 
@@ -248,8 +247,8 @@ export class PrUserRepository implements IUserRepository {
       });
 
       return userRoutineCompletionReview;
-    } catch (e) {
-      if (e instanceof Error) throw new Error(e.message);
+    } catch (error) {
+      if (error instanceof Error) throw new Error(error.message);
     }
   }
 
@@ -260,9 +259,9 @@ export class PrUserRepository implements IUserRepository {
         where: { email },
       });
       return !!user; // 사용자가 존재하면 true, 없으면 false
-    } catch (e) {
-      console.error('이메일 존재 여부 확인 중 오류:', e);
-      throw e;
+    } catch (error) {
+      console.error('이메일 존재 여부 확인 중 오류:', error);
+      throw error;
     }
   }
 
@@ -283,8 +282,8 @@ export class PrUserRepository implements IUserRepository {
         user.password,
         user.email
       );
-    } catch (e) {
-      if (e instanceof Error) throw new Error(e.message);
+    } catch (error) {
+      if (error instanceof Error) throw new Error(error.message);
       return null;
     }
   }
@@ -299,8 +298,8 @@ export class PrUserRepository implements IUserRepository {
       if (!user) return null;
 
       return new User(user.username, user.nickname, user.profileImg, user.id);
-    } catch (e) {
-      if (e instanceof Error) throw new Error(e.message);
+    } catch (error) {
+      if (error instanceof Error) throw new Error(error.message);
       return null;
     }
   }
@@ -328,12 +327,52 @@ export class PrUserRepository implements IUserRepository {
         updatedUser.password,
         updatedUser.email
       );
-    } catch (e) {
-      if (e instanceof Error) throw new Error(e.message);
+    } catch (error) {
+      if (error instanceof Error) throw new Error(error.message);
       return null;
     }
   }
 
+<<<<<<< HEAD
+=======
+  async updateUserName(id: string, username: string): Promise<User | undefined> {
+    try {
+      const updatedUserName = await prisma.user.update({
+        where: { id },
+        data: { username },
+      });
+
+      return updatedUserName;
+    } catch (error) {
+      if (error instanceof Error) throw new Error(error.message);
+    }
+  }
+
+  async updateUserNickname(
+    id: string,
+    nickname: string
+  ): Promise<User | { message: string } | undefined> {
+    try {
+      const updatedUserNickname = await prisma.user.update({
+        where: { id },
+        data: { nickname },
+      });
+
+      return updatedUserNickname;
+    } catch (error) {
+      if (e instanceof Prisma.PrismaClientKnownRequestError) {
+        if (error.code === 'P2002') {
+          return { message: '해당 닉네임은 이미 사용 중입니다.' };
+        }
+      }
+
+      if (error instanceof Error) {
+        throw new Error(error.message);
+      }
+    }
+  }
+
+>>>>>>> a862d02f14201f602fa4142d5600688a25ebcfd7
   /**
    * 해당 메소드는 s3 이미지 업데이트
    * @param fromUserId: string
@@ -360,8 +399,8 @@ export class PrUserRepository implements IUserRepository {
       });
 
       return updatedUserName;
-    } catch (e) {
-      if (e instanceof Error) throw new Error(e.message);
+    } catch (error) {
+      if (error instanceof Error) throw new Error(error.message);
     }
   }
 
@@ -372,8 +411,8 @@ export class PrUserRepository implements IUserRepository {
       });
 
       return true;
-    } catch (e) {
-      if (e instanceof Error) throw new Error(e.message);
+    } catch (error) {
+      if (error instanceof Error) throw new Error(error.message);
       return false;
     }
   }
@@ -392,11 +431,11 @@ export class PrUserRepository implements IUserRepository {
         Key: userProfile,
       });
 
-      this.s3.send(deleteCommand);
+      await this.s3.send(deleteCommand);
 
       return true;
-    } catch (e) {
-      if (e instanceof Error) throw new Error(e.message);
+    } catch (error) {
+      if (error instanceof Error) throw new Error(error.message);
     }
   }
 
@@ -424,8 +463,8 @@ export class PrUserRepository implements IUserRepository {
       });
 
       return true;
-    } catch (e) {
-      if (e instanceof Error) throw new Error(e.message);
+    } catch (error) {
+      if (error instanceof Error) throw new Error(error.message);
     }
   }
 }
