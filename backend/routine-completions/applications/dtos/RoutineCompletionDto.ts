@@ -9,7 +9,6 @@ export interface CreateRoutineCompletionRequestDto {
 
 export interface CreateRoutineCompletionResponseDto {
   id: number;
-  userId: string;
   routineId: number;
   createdAt: Date;
   proofImgUrl: string | null;

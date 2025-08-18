@@ -170,8 +170,7 @@ export async function GET(request: NextRequest): Promise<NextResponse<ApiRespons
 
     const getRoutinesUseCase = new GetRoutinesUseCase(routinesRepository);
     const getRoutineCompletionsUseCase = new GetRoutineCompletionsUseCase(
-      routineCompletionsRepository,
-      userRepository as any
+      routineCompletionsRepository
     );
 
     // 1. 해당 챌린지의 루틴 목록 조회

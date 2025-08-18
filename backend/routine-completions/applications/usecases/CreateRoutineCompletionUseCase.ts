@@ -1,5 +1,4 @@
 import { IRoutineCompletionsRepository } from '@/backend/routine-completions/domains/repositories/IRoutineCompletionsRepository';
-import { IUserRepository } from '@/backend/users/domains/repositories/IUserRepository';
 import {
   CreateRoutineCompletionRequestDto,
   RoutineCompletionDto,
@@ -7,27 +6,19 @@ import {
 
 export class CreateRoutineCompletionUseCase {
   constructor(
-    private readonly routineCompletionsRepository: IRoutineCompletionsRepository,
-    private readonly userRepository: IUserRepository
+    private readonly routineCompletionsRepository: IRoutineCompletionsRepository
   ) {}
 
   async execute(
     request: CreateRoutineCompletionRequestDto
   ): Promise<RoutineCompletionDto> {
-    // nickname으로 user 찾기 (Challenge 패턴과 동일)
-    const user = await this.userRepository.findByNickname(request.nickname);
-    if (!user) {
-      throw new Error(`사용자를 찾을 수 없습니다: ${request.nickname}`);
-    }
-
-    const completionToCreate = {
-      userId: user.id as string,
+    // Repository에서 nickname으로 직접 생성
+    const createdCompletion = await this.routineCompletionsRepository.createByNickname({
+      nickname: request.nickname,
       routineId: request.routineId,
       proofImgUrl: request.proofImgUrl,
       content: request.content,
-    };
-
-    const createdCompletion = await this.routineCompletionsRepository.create(completionToCreate);
+    });
 
     return {
       id: createdCompletion.id,

@@ -1,14 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { PrRoutineCompletionsRepository } from '@/backend/routine-completions/infrastructures/repositories/PrRoutineCompletionsRepository';
-import { UpdateRoutineCompletionUseCase } from '@/backend/routine-completions/applications/usecases/UpdateRoutineCompletionUseCase';
 import { DeleteRoutineCompletionUseCase } from '@/backend/routine-completions/applications/usecases/DeleteRoutineCompletionUseCase';
-import { RoutineCompletionDtoMapper, RoutineCompletionDto } from '@/backend/routine-completions/applications/dtos/RoutineCompletionDto';
+import {
+  RoutineCompletionDtoMapper,
+  RoutineCompletionDto,
+} from '@/backend/routine-completions/applications/dtos/RoutineCompletionDto';
 import { ApiResponse } from '@/backend/shared/types/ApiResponse';
-
-const createUpdateRoutineCompletionUseCase = () => {
-  const repository = new PrRoutineCompletionsRepository();
-  return new UpdateRoutineCompletionUseCase(repository);
-};
 
 const createDeleteRoutineCompletionUseCase = () => {
   const repository = new PrRoutineCompletionsRepository();
@@ -119,7 +116,10 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
 }
 
 // 루틴 완료 삭제
-export async function DELETE(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+export async function DELETE(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
   try {
     const { id } = await params;
     const completionId = Number(id);

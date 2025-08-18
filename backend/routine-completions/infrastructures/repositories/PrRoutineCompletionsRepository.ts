@@ -31,9 +31,8 @@ export class PrRoutineCompletionsRepository implements IRoutineCompletionsReposi
     content: string;
     proofImgUrl: string | null;
   }): Promise<RoutineCompletion> {
-    // 닉네임으로 사용자 찾기
     const user = await prisma.user.findUnique({
-      where: { nickname: request.nickname },
+      where: { nickname: request.nickname }
     });
 
     if (!user) {
@@ -44,8 +43,8 @@ export class PrRoutineCompletionsRepository implements IRoutineCompletionsReposi
       data: {
         userId: user.id,
         routineId: request.routineId,
-        proofImgUrl: request.proofImgUrl,
         content: request.content,
+        proofImgUrl: request.proofImgUrl,
       },
     });
 
@@ -64,7 +63,7 @@ export class PrRoutineCompletionsRepository implements IRoutineCompletionsReposi
       where: { routineId },
     });
 
-    return completions.map((completion: RoutineCompletion) => ({
+    return completions.map((completion: any) => ({
       id: completion.id,
       userId: completion.userId,
       routineId: completion.routineId,
@@ -74,12 +73,17 @@ export class PrRoutineCompletionsRepository implements IRoutineCompletionsReposi
     }));
   }
 
-  async findByUserId(userId: string): Promise<RoutineCompletion[]> {
+
+  async findByNickname(nickname: string): Promise<RoutineCompletion[]> {
     const completions = await prisma.routineCompletion.findMany({
-      where: { userId },
+      where: { 
+        user: { 
+          nickname: nickname 
+        } 
+      },
     });
 
-    return completions.map((completion: RoutineCompletion) => ({
+    return completions.map((completion: any) => ({
       id: completion.id,
       userId: completion.userId,
       routineId: completion.routineId,
@@ -106,42 +110,18 @@ export class PrRoutineCompletionsRepository implements IRoutineCompletionsReposi
     };
   }
 
-  async findByUserIdAndRoutineId(userId: string, routineId: number): Promise<RoutineCompletion[]> {
-    const completions = await prisma.routineCompletion.findMany({
-      where: {
-        userId,
-        routineId,
-      },
-    });
-
-    return completions.map((completion: RoutineCompletion) => ({
-      id: completion.id,
-      userId: completion.userId,
-      routineId: completion.routineId,
-      createdAt: completion.createdAt,
-      proofImgUrl: completion.proofImgUrl,
-      content: completion.content,
-    }));
-  }
 
   async findByNicknameAndRoutineId(nickname: string, routineId: number): Promise<RoutineCompletion[]> {
-    // 닉네임으로 사용자 찾기
-    const user = await prisma.user.findUnique({
-      where: { nickname },
-    });
-
-    if (!user) {
-      return [];
-    }
-
     const completions = await prisma.routineCompletion.findMany({
       where: {
-        userId: user.id,
-        routineId,
+        user: {
+          nickname: nickname
+        },
+        routineId: routineId,
       },
     });
 
-    return completions.map((completion: RoutineCompletion) => ({
+    return completions.map((completion: any) => ({
       id: completion.id,
       userId: completion.userId,
       routineId: completion.routineId,

@@ -1,11 +1,9 @@
 import { IRoutineCompletionsRepository } from '@/backend/routine-completions/domains/repositories/IRoutineCompletionsRepository';
-import { IUserRepository } from '@/backend/users/domains/repositories/IUserRepository';
 import { RoutineCompletionDto } from '@/backend/routine-completions/applications/dtos/RoutineCompletionDto';
 
 export class GetRoutineCompletionsUseCase {
   constructor(
-    private readonly routineCompletionsRepository: IRoutineCompletionsRepository,
-    private readonly userRepository: IUserRepository
+    private readonly routineCompletionsRepository: IRoutineCompletionsRepository
   ) {}
 
   async getByRoutineId(routineId: number): Promise<RoutineCompletionDto[]> {
@@ -20,26 +18,11 @@ export class GetRoutineCompletionsUseCase {
     }));
   }
 
-  async getByUserId(userId: string): Promise<RoutineCompletionDto[]> {
-    const completions = await this.routineCompletionsRepository.findByUserId(userId);
-
-    return completions.map(completion => ({
-      id: completion.id,
-      routineId: completion.routineId,
-      createdAt: completion.createdAt.toISOString(),
-      proofImgUrl: completion.proofImgUrl,
-      content: completion.content,
-    }));
-  }
+  // 이 메서드는 getByNickname으로 대체됨 (제거 예정)
 
   async getByNickname(nickname: string): Promise<RoutineCompletionDto[]> {
-    // nickname으로 user 찾기 (Challenge 패턴과 동일)
-    const user = await this.userRepository.findByNickname(nickname);
-    if (!user) {
-      throw new Error(`사용자를 찾을 수 없습니다: ${nickname}`);
-    }
-
-    const completions = await this.routineCompletionsRepository.findByUserId(user.id as string);
+    // Repository에서 nickname으로 직접 조회
+    const completions = await this.routineCompletionsRepository.findByNickname(nickname);
 
     return completions.map(completion => ({
       id: completion.id,
@@ -50,23 +33,7 @@ export class GetRoutineCompletionsUseCase {
     }));
   }
 
-  async getByUserAndRoutine(
-    userId: string,
-    routineId: number
-  ): Promise<RoutineCompletionDto[]> {
-    const completions = await this.routineCompletionsRepository.findByUserIdAndRoutineId(
-      userId,
-      routineId
-    );
-
-    return completions.map(completion => ({
-      id: completion.id,
-      routineId: completion.routineId,
-      createdAt: completion.createdAt.toISOString(),
-      proofImgUrl: completion.proofImgUrl,
-      content: completion.content,
-    }));
-  }
+  // 이 메서드는 getByNicknameAndRoutine으로 대체됨 (제거 예정)
 
   async getByNicknameAndRoutine(
     nickname: string,
