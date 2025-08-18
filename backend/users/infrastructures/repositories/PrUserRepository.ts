@@ -36,8 +36,8 @@ export class PrUserRepository implements IUserRepository {
         createdUser.password,
         createdUser.email
       );
-    } catch (e) {
-      if (e instanceof Error) throw new Error(e.message);
+    } catch (error) {
+      if (error instanceof Error) throw new Error(error.message);
       throw new Error('사용자 생성에 실패했습니다.'); // 기본 에러 메시지
     }
   }
@@ -64,15 +64,15 @@ export class PrUserRepository implements IUserRepository {
         Body: buffer,
       });
 
-      this.s3.send(command);
+      await this.s3.send(command);
 
       const signedUrl:string = `https://${process.env.AMPLIFY_BUCKET}.s3.${process.env.AWS_REGION}.amazonaws.com/${key}`;
 
 
       return [signedUrl, key];
 
-    }catch(e){
-      if(e instanceof  Error) throw new Error(e.message)
+    }catch(error){
+      if(error instanceof  Error) throw new Error(error.message)
     }
   }
 
@@ -98,8 +98,8 @@ export class PrUserRepository implements IUserRepository {
       });
 
       return createdReview;
-    } catch (e) {
-      if (e instanceof Error) throw new Error(e.message);
+    } catch (error) {
+      if (error instanceof Error) throw new Error(error.message);
     }
   }
 
