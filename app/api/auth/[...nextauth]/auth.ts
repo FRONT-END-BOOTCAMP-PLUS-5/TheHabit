@@ -5,6 +5,7 @@ import { Session, User } from 'next-auth';
 import { JWT } from 'next-auth/jwt';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import GoogleProvider from "next-auth/providers/google";
+import { GoogleLoginUsecase } from '@/backend/auths/applications/usecases/GoogleLoginUsecase';
 // import KakaoProvider from "next-auth/providers/kakao";
 
 interface ISessionUser {
@@ -85,11 +86,11 @@ export const authOptions = {
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID!,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
-        authorization: {
-          params: {
-            prompt: 'consent',
-            access_type: 'offline',
-            response_type: 'code',
+      authorization: {
+        params: {
+          prompt: 'consent',
+          access_type: 'offline',
+          response_type: 'code',
         },
       },
     }),
@@ -151,6 +152,22 @@ export const authOptions = {
       }
 
       return token;
+    },
+
+    async signIn({ user, account, profile }) {
+      if (account?.provider === 'google') {
+        // 여기서 우리의 GoogleLoginUsecase 사용
+        const googleLoginUsecase = new GoogleLoginUsecase(userRepository);
+        const result = await googleLoginUsecase.execute({
+          email: user.email!,
+          name: user.name!,
+          picture: user.image,
+          sub: profile.sub,
+        });
+
+        return result.success;
+      }
+      return true;
     },
 
     async session({ session, token }: { session: Session; token: JWT }) {
