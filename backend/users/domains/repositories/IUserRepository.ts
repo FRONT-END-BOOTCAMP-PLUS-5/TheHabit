@@ -14,7 +14,7 @@ export interface IUserRepository {
 
   // Read
   findById(id: string): Promise<User | null>;
-  findByNickname(nickname: string): Promise<User | null>; 
+  findByNickname(nickname: string): Promise<User | null>;
   findByEmail(email: string): Promise<User | null>;
   findAll(): Promise<User[] | undefined>;
   findByUserNicknameRoutineCompletion(
@@ -30,11 +30,9 @@ export interface IUserRepository {
   checkEmailExists(email: string): Promise<boolean>;
 
   // Update
-  update(id: string, user: Partial<User>): Promise<User | null>;
-  updateUserNickname(id: string, nickname: string): Promise<User | { message: string } | undefined>;
-  updateUserName(id: string, username: string): Promise<User | undefined>;
+  update(nickname: string, user: Partial<User>): Promise<User | null>;
   updateProfileImg(
-    id: string,
+    nickname: string,
     userProfilePath: string,
     file: File,
     type: 'create' | 'update'
