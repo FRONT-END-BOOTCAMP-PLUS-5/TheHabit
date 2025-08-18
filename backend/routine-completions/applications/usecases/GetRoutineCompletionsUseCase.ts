@@ -1,4 +1,4 @@
-import { IRoutineCompletionsRepository } from '../../domains/repositories/IRoutineCompletionsRepository';
+import { IRoutineCompletionsRepository } from '@/backend/routine-completions/domains/repositories/IRoutineCompletionsRepository';
 import { RoutineCompletionDto } from '@/backend/routine-completions/applications/dtos/RoutineCompletionDto';
 
 export class GetRoutineCompletionsUseCase {

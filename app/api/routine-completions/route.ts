@@ -5,12 +5,14 @@ import { GetRoutinesUseCase } from '@/backend/routines/applications/usecases/Get
 import { PrRoutineCompletionsRepository } from '@/backend/routine-completions/infrastructures/repositories/PrRoutineCompletionsRepository';
 import { PrRoutinesRepository } from '@/backend/routines/infrastructures/repositories/PrRoutinesRepository';
 import { s3Service } from '@/backend/shared/services/s3.service';
+import { RoutineCompletionDto } from '@/backend/routine-completions/applications/dtos/RoutineCompletionDto';
+import { ApiResponse } from '@/backend/shared/types/ApiResponse';
 
 const routineCompletionsRepository = new PrRoutineCompletionsRepository();
 const routinesRepository = new PrRoutinesRepository();
 
 // 루틴 완료 생성 (POST) - 이미지 업로드 포함
-export async function POST(request: NextRequest): Promise<NextResponse> {
+export async function POST(request: NextRequest): Promise<NextResponse<ApiResponse<RoutineCompletionDto>>> {
   try {
     console.log('=== POST /api/routine-completions 요청 시작 ===');
 
@@ -100,7 +102,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 }
 
 // 루틴 완료 목록 조회 (GET)
-export async function GET(request: NextRequest): Promise<NextResponse> {
+export async function GET(request: NextRequest): Promise<NextResponse<ApiResponse<RoutineCompletionDto[]>>> {
   try {
     const { searchParams } = new URL(request.url);
     const challengeId = searchParams.get('challengeId');

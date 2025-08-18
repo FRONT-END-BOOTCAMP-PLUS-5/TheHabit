@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useSession } from 'next-auth/react';
 import { LoadingSpinner } from '@/app/_components/loading/LoadingSpinner';
 import { RoutineItem } from './RoutineItem';
 import { RoutineCompletionModal } from './RoutineCompletionModal';
@@ -24,6 +25,8 @@ const RoutineAccordionContentInner = ({
   challengeName,
   contentRef,
 }: RoutineAccordionContentProps) => {
+  // 세션에서 사용자 정보 가져오기
+  const { data: session } = useSession();
   // 데이터 페칭
   const { data: routines = [], isLoading, error } = useGetRoutinesByChallenge(challengeId);
   const { data: completions = [], isLoading: completionsLoading } =
@@ -75,11 +78,16 @@ const RoutineAccordionContentInner = ({
       return;
     }
 
+    if (!session?.user?.nickname) {
+      alert('로그인이 필요합니다.');
+      return;
+    }
+
     createCompletionMutation.mutate(
       {
-        userId: 'f1c6b5ae-b27e-4ae3-9e30-0cb8653b04fd', // TODO: 실제 사용자 ID 사용
+        nickname: session.user.nickname,
         routineId: selectedRoutine.id,
-        review: reviewText,
+        content: reviewText,
         photoFile,
       },
       {

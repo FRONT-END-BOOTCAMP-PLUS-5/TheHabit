@@ -1,4 +1,4 @@
-import { RoutineCompletion } from '../entities/routine-completion/routineCompletion';
+import { RoutineCompletion } from '@/backend/routine-completions/domains/entities/routine-completion/routineCompletion';
 
 export interface IRoutineCompletionsRepository {
   // 루틴 완료 생성
