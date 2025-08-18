@@ -20,4 +20,7 @@ export interface IRoutineCompletionsRepository {
 
   // 루틴 완료 삭제
   delete(completionId: number): Promise<boolean>;
+
+  // 이미지 업로드
+  uploadImage(file: File): Promise<{ imageUrl: string; key: string }>;
 }
