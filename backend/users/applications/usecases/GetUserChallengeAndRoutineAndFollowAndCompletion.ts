@@ -1,12 +1,9 @@
 import { IUserRepository } from '@/backend/users/domains/repositories/IUserRepository';
 import { UserChallengeAndRoutineAndFollowAndCompletion } from '@/backend/users/domains/entities/UserChallengeAndRoutineAndFollowAndCompletion';
 
-// 유저 닉네임으로 challenges, follow, routine, routine_completion left join Get 유스케이스
 export class GetUserChallengeAndRoutineAndFollowAndCompletion {
-  // 리포지토리 주입
   constructor(private readonly userRepo: IUserRepository) {}
 
-  //유저 challenges, follow, routine, routine_completion left join Get 실행
   async execute(nickname: string): Promise<UserChallengeAndRoutineAndFollowAndCompletion | null> {
     try {
       const joinResult =
@@ -14,11 +11,21 @@ export class GetUserChallengeAndRoutineAndFollowAndCompletion {
 
       if (!joinResult) return null;
 
-      const challenges = joinResult.challenges.filter(challenge => !challenge.active);
+      const challengesWithDuration = joinResult.challenges
+        .filter(challenge => !challenge.active)
+        .map(challenge => {
+          const diffInMilliseconds = challenge.endAt.getTime() - challenge.createdAt.getTime();
+          const durationInDays = Math.floor(diffInMilliseconds / (1000 * 60 * 60 * 24));
+
+          return {
+            ...challenge,
+            durationInDays,
+          };
+        });
 
       const newResult: UserChallengeAndRoutineAndFollowAndCompletion = {
         ...joinResult,
-        challenges,
+        challenges: challengesWithDuration,
       };
 
       return newResult;

@@ -13,6 +13,7 @@ export class UserChallengeAndRoutineAndFollowAndCompletion {
         emoji: number;
         routineTitle: string;
       }[];
+      durationInDays?: number;
     }[],
     public readonly following: {
       toUserId: string;

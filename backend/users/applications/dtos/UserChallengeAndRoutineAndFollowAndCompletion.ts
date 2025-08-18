@@ -5,6 +5,7 @@ export interface UserChallengeAndRoutineAndFollowAndCompletionDto {
     createdAt: string;
     endAt: string;
     active: boolean;
+    durationInDays: number;
     routines: {
       id: number;
       completions: {
@@ -30,6 +31,10 @@ export class UserChallengeAndRoutineAndFollowAndCompletionDtoMapper {
     entity: UserChallengeAndRoutineAndFollowAndCompletion
   ): UserChallengeAndRoutineAndFollowAndCompletionDto {
     const challengesDto = entity.challenges.map(challenge => {
+      const durationInDays = Math.floor(
+        (challenge.endAt.getTime() - challenge.createdAt.getTime()) / (1000 * 60 * 60 * 24)
+      );
+
       const routinesDto = challenge.routines.map(routine => ({
         id: routine.id,
         emoji: routine.emoji,
@@ -41,6 +46,7 @@ export class UserChallengeAndRoutineAndFollowAndCompletionDtoMapper {
       }));
 
       return {
+        durationInDays,
         createdAt: challenge.createdAt.toISOString(),
         endAt: challenge.endAt.toISOString(),
         active: challenge.active,
