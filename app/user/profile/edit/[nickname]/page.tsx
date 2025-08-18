@@ -1,6 +1,5 @@
 'use client';
 import React, { useEffect, useState } from 'react';
-import { Logo } from '@/app/_components/logos/logo';
 import { Button } from '@/app/_components/buttons/Button';
 import { useUploadProfile } from '@/libs/hooks/signup/useUploadProfile';
 import { ProfileImage } from '@/app/_components/profile-images/ProfileImage';
@@ -10,15 +9,13 @@ import { NicknameComponent } from '@/app/user/profile/edit/components/Nickname';
 import { updateUserProfile, usersApi } from '@/libs/api/users.api';
 import { useRouter } from 'next/navigation';
 import { BackComponent } from '@/app/user/profile/edit/components/Back';
-
-// 나중에 전역관리로 할꺼 같으니까 우선은 final화 시킴 follow 페이지에도 사용할꺼임
-const NICK_NAME = '노석준11';
-const ID = 'a70ecc14-fb02-41ce-8f1d-750a69f5558d';
-const PROFILE_IMG_PATH = '';
+import { CompletionComponent } from '@/app/user/profile/components/Completion';
+import { useGetUserInfo } from '@/libs/hooks/user-hooks/useGetUserInfo';
 
 const UserProfileEditPage = () => {
   const router = useRouter();
-  const [profilePreview, setProfilePreview] = useState<string | null>('');
+  const { userInfo, update } = useGetUserInfo();
+  const [profilePreview, setProfilePreview] = useState<string | null>(userInfo?.profileImg || '');
 
   const { handleImageClick, fileInputRef } = useUploadProfile();
 
@@ -26,29 +23,40 @@ const UserProfileEditPage = () => {
 
   const handleDeleteUserRegister = async () => {
     //나중에 confirm창으로 추가 validation 해야함!
-    const response = await deleteRegister('c9b19711-c2f8-44e0-8f41-087d76d8b63e');
+    const response = await deleteRegister(userInfo?.id || '');
     if (response.data) router.push('/login');
   };
 
   const handleFileChange = async (evt: React.ChangeEvent<HTMLInputElement>) => {
     const file = evt.target.files?.[0];
     if (file) {
-      // 나중에 유저 프로필 받아와서 있으면은 update, 없으면은 created 분기로 처리해야함 로그인 언제됨~?
-      const type = PROFILE_IMG_PATH ? 'update' : 'create';
+      const type = userInfo?.profileImg ? 'update' : 'create';
 
       const formData = new FormData();
-      formData.append('id', ID);
-      formData.append('profile_img_path', PROFILE_IMG_PATH);
+      formData.append('id', userInfo?.id || '');
+      formData.append('profile_img_path', userInfo?.profileImgPath || '');
       formData.append('file', file);
       formData.append('type', type);
 
-      const response = await updateUserProfile(ID, formData);
+      const response = await updateUserProfile(userInfo?.id || '', formData);
       const img = response.data?.profileImg as string;
+      const path = response.data?.profileImgPath as string;
       setProfilePreview(img);
+
+      update({
+        profileImg: img,
+        profileImgPath: path,
+        username: userInfo?.username,
+        nickname: userInfo?.nickname,
+      });
     }
   };
 
-  useEffect(() => {}, []);
+  useEffect(() => {
+    if (userInfo?.profileImg) {
+      setProfilePreview(userInfo.profileImg);
+    }
+  }, [userInfo]);
 
   return (
     <main>
@@ -123,12 +131,12 @@ const UserProfileEditPage = () => {
             <p className='w-[100%]'>금주 21일째 실천중! 💦</p>
             <p className='w-[100%]'>금주 21일째 실천중! 💦</p>
           </div>
-          <div id='achievement_wrapper'>
-            <div></div>
-          </div>
+          <div id='achievement_wrapper'></div>
         </section>
       </section>
-      <section id='bottom'></section>
+      <section id='bottom'>
+        <CompletionComponent profileImg={''} username={''} nickname={''} userId={'edit'} />
+      </section>
     </main>
   );
 };

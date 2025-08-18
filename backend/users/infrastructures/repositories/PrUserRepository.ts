@@ -2,9 +2,11 @@ import prisma from '@/public/utils/prismaClient';
 import { IUserRepository } from '@/backend/users/domains/repositories/IUserRepository';
 import { User } from '@/backend/users/domains/entities/UserEntity';
 import { DeleteObjectCommand, PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
+import { RoutineCompletion } from '@/backend/routine-completions/domains/entities/routine-completion/routineCompletion';
 import { v4 as uuidv4 } from 'uuid';
 
 import { Prisma } from '@prisma/client';
+import { UserReviewEntity } from '@/backend/users/domains/entities/UserReviewEntity';
 
 export class PrUserRepository implements IUserRepository {
   private s3 = new S3Client({
@@ -15,7 +17,7 @@ export class PrUserRepository implements IUserRepository {
     },
   });
 
-  async create(user: User): Promise<User | undefined> {
+  async create(user: User): Promise<User> {
     try {
       const createdUser = await prisma.user.create({
         data: {
@@ -35,6 +37,7 @@ export class PrUserRepository implements IUserRepository {
       );
     } catch (error) {
       if (error instanceof Error) throw new Error(error.message);
+      throw new Error('사용자 생성에 실패했습니다.'); // 기본 에러 메시지
     }
   }
 
@@ -65,6 +68,83 @@ export class PrUserRepository implements IUserRepository {
       const signedUrl: string = `https://${process.env.AMPLIFY_BUCKET}.s3.${process.env.AWS_REGION}.amazonaws.com/${key}`;
 
       return [signedUrl, key];
+    } catch (error) {
+      if (error instanceof Error) throw new Error(error.message);
+    }
+  }
+
+  /**
+   * 해당 메소드는 reviews 테이블에 감정표현을 생성
+   * @param reviewContent: string
+   * @param routineCompletionId: number
+   * @param userId: string
+   * @return string
+   * */
+  async createUserReview(
+    reviewContent: string,
+    routineCompletionId: number,
+    userId: string
+  ): Promise<UserReviewEntity | undefined> {
+    try {
+      const createdReview = await prisma.review.create({
+        data: {
+          reviewContent,
+          routineCompletionId,
+          userId,
+        },
+      });
+
+      return createdReview;
+    } catch (error) {
+      if (error instanceof Error) throw new Error(error.message);
+    }
+  }
+
+  /**
+   * 해당 메소드는 유저 닉네임으로 컴플리션 데이터 가져오는
+   * @param nickname: string
+   * @return RoutineCompletion[]
+   * */
+  async findByUserNicknameRoutineCompletion(
+    nickname: string,
+    page: number,
+    pageSize: number,
+    categoryId: string
+  ): Promise<RoutineCompletion[] | undefined> {
+    try {
+      let query;
+      const check = categoryId === 'All';
+      if (check) {
+        query = {
+          user: {
+            nickname,
+          },
+        };
+      } else {
+        query = {
+          user: {
+            nickname,
+          },
+          categoryId: Number(categoryId),
+        };
+      }
+      const completedRoutines = await prisma.routineCompletion.findMany({
+        where: {
+          routine: {
+            challenge: query,
+          },
+        },
+        skip: (page - 1) * pageSize,
+        take: pageSize,
+        include: {
+          routine: true,
+        },
+        orderBy: {
+          createdAt: 'desc',
+        },
+      });
+
+      return completedRoutines;
     } catch (error) {
       if (error instanceof Error) throw new Error(error.message);
     }
@@ -139,6 +219,35 @@ export class PrUserRepository implements IUserRepository {
     }
   }
 
+  /**
+   * 해당 메소드는 유저의 루틴 완료에 전체 감정표현을 가져오는 메소드
+   * @param nickname: string
+   * @return RoutineCompletion[]
+   * */
+  async findUserRoutineCompletionReview(
+    routineCompletionId: number
+  ): Promise<UserReviewEntity[] | undefined> {
+    try {
+      const userRoutineCompletionReview = await prisma.review.findMany({
+        where: {
+          routineCompletionId,
+        },
+        include: {
+          User: {
+            select: {
+              username: true,
+              nickname: true,
+            },
+          },
+        },
+      });
+
+      return userRoutineCompletionReview;
+    } catch (error) {
+      if (error instanceof Error) throw new Error(error.message);
+    }
+  }
+
   // 회원가입용 이메일 중복 체크
   async checkEmailExists(email: string): Promise<boolean> {
     try {
@@ -152,7 +261,31 @@ export class PrUserRepository implements IUserRepository {
     }
   }
 
-  async findById(id: string): Promise<User | null | undefined> {
+  async findByNickname(nickname: string): Promise<User | null> {
+    try {
+      const user = await prisma.user.findUnique({
+        where: { nickname },
+      });
+
+      if (!user) return null;
+
+      return new User(
+        user.username,
+        user.nickname,
+        user.profileImg,
+        null, // profileImgPath
+        user.id,
+        user.password,
+        user.email
+      );
+    } catch (error) {
+      if (error instanceof Error) throw new Error(error.message);
+      return null;
+    }
+  }
+
+
+  async findById(id: string): Promise<User | null> {
     try {
       const user = await prisma.user.findUnique({
         where: { id },
@@ -163,6 +296,31 @@ export class PrUserRepository implements IUserRepository {
       return new User(user.username, user.nickname, user.profileImg, user.id);
     } catch (error) {
       if (error instanceof Error) throw new Error(error.message);
+      return null;
+    }
+  }
+
+  async update(id: string, user: Partial<User>): Promise<User | null> {
+    try {
+      const updateData: Partial<User> = user;
+
+      const updatedUser = await prisma.user.update({
+        where: { id },
+        data: updateData,
+      });
+
+      return new User(
+        updatedUser.username,
+        updatedUser.nickname,
+        updatedUser.profileImg,
+        null, // profileImgPath
+        updatedUser.id,
+        updatedUser.password,
+        updatedUser.email
+      );
+    } catch (error) {
+      if (error instanceof Error) throw new Error(error.message);
+      return null;
     }
   }
 
@@ -234,7 +392,7 @@ export class PrUserRepository implements IUserRepository {
     }
   }
 
-  async delete(id: string): Promise<boolean | undefined> {
+  async delete(id: string): Promise<boolean> {
     try {
       await prisma.user.delete({
         where: { id },
@@ -243,6 +401,7 @@ export class PrUserRepository implements IUserRepository {
       return true;
     } catch (error) {
       if (error instanceof Error) throw new Error(error.message);
+      return false;
     }
   }
 
@@ -261,6 +420,35 @@ export class PrUserRepository implements IUserRepository {
       });
 
       await this.s3.send(deleteCommand);
+
+      return true;
+    } catch (error) {
+      if (error instanceof Error) throw new Error(error.message);
+    }
+  }
+
+  /**
+   * 해당 메소드는 유저의 루틴 완료에 해당 감정표현을 제거하는 메소드
+   * @param reviewContent: string
+   * @param routineCompletionId: number
+   * @param userId: string
+   * @return true
+   * */
+  async deleteUserRoutineCompletionReview(
+    reviewContent: string,
+    routineCompletionId: number,
+    userId: string
+  ): Promise<boolean | undefined> {
+    try {
+      await prisma.review.delete({
+        where: {
+          reviewContent_routineCompletionId_userId: {
+            reviewContent,
+            routineCompletionId,
+            userId,
+          },
+        },
+      });
 
       return true;
     } catch (error) {

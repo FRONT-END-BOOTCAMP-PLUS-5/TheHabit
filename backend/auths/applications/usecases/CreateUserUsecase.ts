@@ -42,6 +42,7 @@ export class CreateUserUsecase {
           username: user?.username ?? '',
           nickname: user?.nickname ?? '',
           profileImg: user?.profileImg ?? null,
+          profileImgPath: user?.profileImgPath ?? null,
         },
       };
     } catch (error) {
