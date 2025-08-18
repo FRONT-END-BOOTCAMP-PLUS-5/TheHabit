@@ -1,3 +1,3 @@
 export interface GPTRequestDto {
-  readonly gptResponseContent: string;
+  readonly gptResponseContent: string[];
 }

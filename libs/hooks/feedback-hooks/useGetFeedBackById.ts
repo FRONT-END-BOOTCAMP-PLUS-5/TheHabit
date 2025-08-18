@@ -1,13 +1,13 @@
-import { FeedBackEntity } from '@/backend/feedbacks/domains/entities/FeedBackEntity';
-import { getFeedBackById } from '@/libs/api/feedback.api';
 import { useQuery } from '@tanstack/react-query';
+import { getFeedBackByChallengeId } from '@/libs/api/feedback.api';
+import { ApiResponse } from '@/backend/shared/types/ApiResponse';
+import { AddFeedbackDto } from '@/backend/feedbacks/applications/dtos/AddfeedbackDto';
 
 export const useGetFeedBackById = (id: number) => {
-  const { data, isLoading, error } = useQuery<FeedBackEntity>({
+  return useQuery<ApiResponse<AddFeedbackDto>>({
     queryKey: ['feedBack', id],
-    queryFn: () => getFeedBackById(id),
-    enabled: Number.isFinite(id) && id > 0,
+    queryFn: () => getFeedBackByChallengeId(id),
+    staleTime: 5 * 60 * 1000, // 5분간 데이터를 fresh로 유지
+    gcTime: 10 * 60 * 1000, // 10분간 캐시 유지
   });
-
-  return { data, isLoading, error };
 };

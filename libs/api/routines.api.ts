@@ -22,9 +22,9 @@ export const getAllRoutines = async (): Promise<ApiResponse<ReadRoutineResponseD
 // Get routines by challenge ID
 export const getRoutinesByChallenge = async (
   challengeId: number
-): Promise<ReadRoutineResponseDto[]> => {
+): Promise<ApiResponse<ReadRoutineResponseDto[]>> => {
   try {
-    const response = await axiosInstance.get<ReadRoutineResponseDto[]>(
+    const response = await axiosInstance.get<ApiResponse<ReadRoutineResponseDto[]>>(
       `/api/routines?challengeId=${challengeId}`
     );
     return response.data;
