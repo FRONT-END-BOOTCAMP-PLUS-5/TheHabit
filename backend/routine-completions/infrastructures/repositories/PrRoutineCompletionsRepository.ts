@@ -1,6 +1,7 @@
 import prisma from '@/public/utils/prismaClient';
 import { IRoutineCompletionsRepository } from '../../domains/repositories/IRoutineCompletionsRepository';
 import { RoutineCompletion } from '../../domains/entities/routine-completion/routineCompletion';
+import { s3Service } from '@/backend/shared/services/s3.service';
 
 export class PrRoutineCompletionsRepository implements IRoutineCompletionsRepository {
   async create(
@@ -22,6 +23,7 @@ export class PrRoutineCompletionsRepository implements IRoutineCompletionsReposi
       createdAt: createdCompletion.createdAt,
       proofImgUrl: createdCompletion.proofImgUrl,
       content: createdCompletion.content,
+<<<<<<< HEAD
     };
   }
 
@@ -56,6 +58,8 @@ export class PrRoutineCompletionsRepository implements IRoutineCompletionsReposi
       createdAt: createdCompletion.createdAt,
       proofImgUrl: createdCompletion.proofImgUrl,
       content: createdCompletion.content,
+=======
+>>>>>>> ff16980c4d61a2d1904673772bc92bd71c7b9150
     };
   }
 
@@ -215,5 +219,9 @@ export class PrRoutineCompletionsRepository implements IRoutineCompletionsReposi
     } catch (error) {
       return false;
     }
+  }
+
+  async uploadImage(file: File): Promise<{ imageUrl: string; key: string }> {
+    return s3Service.uploadImage(file, 'routine-completions');
   }
 }

@@ -3,6 +3,7 @@ import { RoutineCompletion } from '@/backend/routine-completions/domains/entitie
 export interface CreateRoutineCompletionRequestDto {
   nickname: string;
   routineId: number;
+  review: string;
   proofImgUrl: string | null;
   content: string | null;
 }

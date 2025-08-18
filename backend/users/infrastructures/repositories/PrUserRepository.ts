@@ -4,8 +4,6 @@ import { User } from '@/backend/users/domains/entities/UserEntity';
 import { DeleteObjectCommand, PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
 import { RoutineCompletion } from '@/backend/routine-completions/domains/entities/routine-completion/routineCompletion';
 import { v4 as uuidv4 } from 'uuid';
-
-import { Prisma } from '@prisma/client';
 import { UserReviewEntity } from '@/backend/users/domains/entities/UserReviewEntity';
 
 export class PrUserRepository implements IUserRepository {
@@ -72,6 +70,7 @@ export class PrUserRepository implements IUserRepository {
 
 
       return [signedUrl, key];
+
     }catch(error){
       if(error instanceof  Error) throw new Error(error.message)
     }
@@ -304,12 +303,17 @@ export class PrUserRepository implements IUserRepository {
     }
   }
 
-  async update(id: string, user: Partial<User>): Promise<User | null> {
+  async update(nickname: string, user: Partial<User>): Promise<User | null> {
     try {
-      const updateData: Partial<User> = user;
+
+      if (user.nickname && user.nickname !== nickname) {
+        throw new Error('닉네임은 변경할 수 없습니다.');
+      }
+      
+      const updateData: Partial<User> = { ...user };
 
       const updatedUser = await prisma.user.update({
-        where: { id },
+        where: { nickname },
         data: updateData,
       });
 
@@ -328,43 +332,6 @@ export class PrUserRepository implements IUserRepository {
     }
   }
 
-  async updateUserName(id: string, username: string): Promise<User | undefined> {
-    try {
-      const updatedUserName = await prisma.user.update({
-        where: { id },
-        data: { username },
-      });
-
-      return updatedUserName;
-    } catch (error) {
-      if (error instanceof Error) throw new Error(error.message);
-    }
-  }
-
-  async updateUserNickname(
-    id: string,
-    nickname: string
-  ): Promise<User | { message: string } | undefined> {
-    try {
-      const updatedUserNickname = await prisma.user.update({
-        where: { id },
-        data: { nickname },
-      });
-
-      return updatedUserNickname;
-    } catch (error) {
-      if (e instanceof Prisma.PrismaClientKnownRequestError) {
-        if (error.code === 'P2002') {
-          return { message: '해당 닉네임은 이미 사용 중입니다.' };
-        }
-      }
-
-      if (error instanceof Error) {
-        throw new Error(error.message);
-      }
-    }
-  }
-
   /**
    * 해당 메소드는 s3 이미지 업데이트
    * @param fromUserId: string
@@ -373,7 +340,7 @@ export class PrUserRepository implements IUserRepository {
    * */
 
   async updateProfileImg(
-    id: string,
+    nickname: string,
     userProfilePath: string,
     file: File,
     type: 'create' | 'update'
@@ -386,7 +353,7 @@ export class PrUserRepository implements IUserRepository {
       const path = (signedUrl?.length && signedUrl[1]) || '';
 
       const updatedUserName = await prisma.user.update({
-        where: { id },
+        where: { nickname },
         data: { profileImg: img, profileImgPath: path },
       });
 
@@ -396,10 +363,10 @@ export class PrUserRepository implements IUserRepository {
     }
   }
 
-  async delete(id: string): Promise<boolean> {
+  async delete(nickname: string): Promise<boolean> {
     try {
       await prisma.user.delete({
-        where: { id },
+        where: { nickname },
       });
 
       return true;
