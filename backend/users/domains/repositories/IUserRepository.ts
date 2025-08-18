@@ -1,4 +1,5 @@
 import { User } from '@/backend/users/domains/entities/UserEntity';
+import { UserChallengeAndRoutineAndFollowAndCompletion } from '@/backend/users/domains/entities/UserChallengeAndRoutineAndFollowAndCompletion';
 import { RoutineCompletion } from '@prisma/client';
 import { UserReviewEntity } from '@/backend/users/domains/entities/UserReviewEntity';
 
@@ -17,6 +18,9 @@ export interface IUserRepository {
   findByNickname(nickname: string): Promise<User | null>;
   findByEmail(email: string): Promise<User | null>;
   findAll(): Promise<User[] | undefined>;
+  findByUserChallengesAndRoutinesAndFollowAndCompletion(
+    nickname: string
+  ): Promise<UserChallengeAndRoutineAndFollowAndCompletion | null>;
   findByUserNicknameRoutineCompletion(
     nickname: string,
     page: number,
@@ -30,7 +34,7 @@ export interface IUserRepository {
   checkEmailExists(email: string): Promise<boolean>;
 
   // Update
-  update(nickname: string, user: Partial<User>): Promise<User | null>;
+  update(nickname: string, user: Partial<User>): Promise<User |{ message: string }| null>;
   updateProfileImg(
     nickname: string,
     userProfilePath: string,

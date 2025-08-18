@@ -43,7 +43,7 @@ model Challenge {
   color      String
   userId     String            @map("user_id")
   categoryId Int               @map("category_id")
-  active     Boolean           @default(false)
+  active     Boolean           @default(false) @map("active")
   feedbacks  Feedback[]
   category   ChallengeCategory @relation(fields: [categoryId], references: [id])
   user       User              @relation(fields: [userId], references: [id], onDelete: Cascade)
