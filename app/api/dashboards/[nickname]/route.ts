@@ -3,6 +3,9 @@ import { GetDashboardByNicknameUsecase } from '@/backend/dashboards/application/
 import { PrDashboardRepository } from '@/backend/dashboards/infrastructure/repository/PrDashboardRepository';
 import { ApiResponse } from '@/backend/shared/types/ApiResponse';
 import { DashboardDto } from '@/backend/dashboards/application/dtos/DashboardDto';
+import { ChallengeDto } from '@/backend/challenges/applications/dtos/ChallengeDto';
+import { RoutineCompletionDto } from '@/backend/routine-completions/applications/dtos/RoutineCompletionDto';
+
 
 const repository = new PrDashboardRepository();
 const usecase = new GetDashboardByNicknameUsecase(repository);
@@ -40,15 +43,13 @@ export async function GET(
 
     // 엔터티 -> DTO 변환 (userId 제외, 날짜는 문자열)
     const dto: DashboardDto = {
-      challenge: dashboard.challenge.map(challenge => ({
+      challenge: dashboard.challenge.map((challenge) => ({
         id: challenge.id,
         name: challenge.name,
         createdAt: challenge.createdAt.toISOString(),
         endAt: challenge.endAt.toISOString(),
-        startTime: challenge.startTime ? challenge.startTime.toISOString() : null,
-        endTime: challenge.endTime ? challenge.endTime.toISOString() : null,
         color: challenge.color,
-        userId: challenge.userId,
+        active: challenge.active,
         categoryId: challenge.categoryId,
       })),
       routines: dashboard.routines.map(routine => ({
@@ -61,11 +62,12 @@ export async function GET(
         updatedAt: routine.updatedAt.toISOString(),
       })),
       routineCount: dashboard.routineCount,
-      routineCompletion: dashboard.routineCompletion.map(rc => ({
-        id: rc.id,
-        routineId: rc.routineId,
-        createdAt: rc.createdAt.toISOString(),
-        proofImgUrl: rc.proofImgUrl,
+      routineCompletion: dashboard.routineCompletion.map((routineCompletion) => ({
+        id: routineCompletion.id,
+        routineId: routineCompletion.routineId,
+        createdAt: routineCompletion.createdAt.toISOString(),
+        proofImgUrl: routineCompletion.proofImgUrl,
+        content: routineCompletion.content,
       })),
     };
 
@@ -83,6 +85,10 @@ export async function GET(
         message: '대시보드 조회에 실패했습니다.',
       },
     };
-    return NextResponse.json(errorResponse, { status: 500 });
+
+    if (error instanceof Error) {
+      return NextResponse.json(errorResponse, { status: 500 });
+    }
+
   }
 }

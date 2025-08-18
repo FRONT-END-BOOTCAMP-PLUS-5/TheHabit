@@ -6,5 +6,5 @@ export class RoutineCompletion {
     public readonly createdAt: Date,
     public readonly proofImgUrl: string | null,
     public readonly content: string | null
-  ) {}
+  ) { }
 }

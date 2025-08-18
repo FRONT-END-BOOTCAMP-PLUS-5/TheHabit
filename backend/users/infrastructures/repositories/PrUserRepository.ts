@@ -50,7 +50,7 @@ export class PrUserRepository implements IUserRepository {
    * */
   async createProfileImg(file: File): Promise<string[] | undefined> {
     try {
-      const { name, type } = file
+      const { name, type } = file;
 
       const key = `${uuidv4()}-${name}`;
 
@@ -71,10 +71,8 @@ export class PrUserRepository implements IUserRepository {
 
       return [signedUrl, key];
     } catch (error) {
-      if (error instanceof Error) throw new Error(error.message)
-
-    }catch(error){
-      if(error instanceof  Error) throw new Error(error.message)
+      if (error instanceof Error) throw new Error(error.message);
+      return undefined;
     }
   }
 
@@ -311,7 +309,7 @@ export class PrUserRepository implements IUserRepository {
       if (user.nickname && user.nickname !== nickname) {
         throw new Error('닉네임은 변경할 수 없습니다.');
       }
-      
+
       const updateData: Partial<User> = { ...user };
 
       const updatedUser = await prisma.user.update({
