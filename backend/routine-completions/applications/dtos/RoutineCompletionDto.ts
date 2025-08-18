@@ -1,7 +1,7 @@
 import { RoutineCompletion } from '@/backend/routine-completions/domains/entities/routine-completion/routineCompletion';
 
 export interface CreateRoutineCompletionRequestDto {
-  userId: string;
+  nickname: string;
   routineId: number;
   proofImgUrl: string | null;
 }

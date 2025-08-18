@@ -1,5 +1,5 @@
-import { IRoutinesRepository } from '../../domains/repositories/IRoutinesRepository';
-import { ReadRoutineResponseDto } from '../dtos/RoutineDto';
+import { IRoutinesRepository } from '@/backend/routines/domains/repositories/IRoutinesRepository';
+import { ReadRoutineResponseDto } from '@/backend/routines/applications/dtos/RoutineDto';
 
 export class GetRoutinesUseCase {
   constructor(private readonly routinesRepository: IRoutinesRepository) {}

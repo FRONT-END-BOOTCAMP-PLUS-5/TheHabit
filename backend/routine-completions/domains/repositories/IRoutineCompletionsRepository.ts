@@ -5,7 +5,7 @@ export interface IRoutineCompletionsRepository {
   create(
     routineCompletion: Omit<RoutineCompletion, 'id' | 'createdAt'>
   ): Promise<RoutineCompletion>;
-  
+
   createByNickname(request: {
     nickname: string;
     routineId: number;

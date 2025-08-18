@@ -1,5 +1,5 @@
-import { IRoutinesRepository } from '../../domains/repositories/IRoutinesRepository';
-import { CreateRoutineRequestDto, ReadRoutineResponseDto } from '../dtos/RoutineDto';
+import { IRoutinesRepository } from '@/backend/routines/domains/repositories/IRoutinesRepository';
+import { CreateRoutineRequestDto, ReadRoutineResponseDto } from '@/backend/routines/applications/dtos/RoutineDto';
 
 export class AddRoutineUseCase {
   constructor(private readonly routinesRepository: IRoutinesRepository) {}
@@ -26,7 +26,9 @@ export class AddRoutineUseCase {
     };
   }
 
-  async executeByNickname(request: CreateRoutineRequestDto & { nickname: string }): Promise<ReadRoutineResponseDto> {
+  async executeByNickname(
+    request: CreateRoutineRequestDto & { nickname: string }
+  ): Promise<ReadRoutineResponseDto> {
     const createdRoutine = await this.routinesRepository.createByNickname({
       routineTitle: request.routineTitle,
       alertTime: request.alertTime,

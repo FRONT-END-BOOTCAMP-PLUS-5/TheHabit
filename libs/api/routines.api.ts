@@ -7,19 +7,14 @@ import {
   DashboardRoutineDto,
 } from '@/backend/routines/applications/dtos/RoutineDto';
 
-<<<<<<< HEAD
 // 1. 닉네임으로 모든 루틴 조회
-export const getAllRoutines = async (nickname: string): Promise<ApiResponse<ReadRoutineResponseDto[]>> => {
+export const getAllRoutines = async (
+  nickname: string
+): Promise<ApiResponse<ReadRoutineResponseDto[]>> => {
   try {
-    const response =
-      await axiosInstance.get<ApiResponse<ReadRoutineResponseDto[]>>(`/api/routines?nickname=${nickname}`);
-=======
-// 1. Get all routines
-export const getAllRoutines = async (): Promise<ApiResponse<ReadRoutineResponseDto[]>> => {
-  try {
-    const response =
-      await axiosInstance.get<ApiResponse<ReadRoutineResponseDto[]>>('/api/routines');
->>>>>>> b9770f4b8d1e5bfe14a78b59758ef31282c71ff0
+    const response = await axiosInstance.get<ApiResponse<ReadRoutineResponseDto[]>>(
+      `/api/routines?nickname=${nickname}`
+    );
     return response.data;
   } catch (error) {
     console.error('전체 루틴 조회 실패:', error);
@@ -29,20 +24,12 @@ export const getAllRoutines = async (): Promise<ApiResponse<ReadRoutineResponseD
 
 // 2. 챌린지 ID로 루틴 조회
 export const getRoutinesByChallenge = async (
-<<<<<<< HEAD
   challengeId: number,
   nickname: string
 ): Promise<ApiResponse<ReadRoutineResponseDto[]>> => {
   try {
     const response = await axiosInstance.get<ApiResponse<ReadRoutineResponseDto[]>>(
-      `/api/routines?challengeId=${challengeId}&nickname=${nickname}`,
-=======
-  challengeId: number
-): Promise<ReadRoutineResponseDto[]> => {
-  try {
-    const response = await axiosInstance.get<ReadRoutineResponseDto[]>(
-      `/api/routines?challengeId=${challengeId}`
->>>>>>> b9770f4b8d1e5bfe14a78b59758ef31282c71ff0
+      `/api/routines?challengeId=${challengeId}&nickname=${nickname}`
     );
     return response.data;
   } catch (error) {
@@ -53,19 +40,11 @@ export const getRoutinesByChallenge = async (
 
 // 3. 닉네임으로 사용자 루틴 조회
 export const getRoutinesByUser = async (
-<<<<<<< HEAD
   nickname: string
 ): Promise<ApiResponse<ReadRoutineResponseDto[]>> => {
   try {
     const response = await axiosInstance.get<ApiResponse<ReadRoutineResponseDto[]>>(
       `/api/routines?nickname=${nickname}`
-=======
-  userId: string
-): Promise<ApiResponse<ReadRoutineResponseDto[]>> => {
-  try {
-    const response = await axiosInstance.get<ApiResponse<ReadRoutineResponseDto[]>>(
-      `/api/routines?userId=${userId}`
->>>>>>> b9770f4b8d1e5bfe14a78b59758ef31282c71ff0
     );
     return response.data;
   } catch (error) {
@@ -74,11 +53,7 @@ export const getRoutinesByUser = async (
   }
 };
 
-<<<<<<< HEAD
 // 4. ID로 루틴 상세 조회
-=======
-// 4. Get routine by ID
->>>>>>> b9770f4b8d1e5bfe14a78b59758ef31282c71ff0
 export const getRoutineById = async (id: number): Promise<ApiResponse<ReadRoutineResponseDto>> => {
   try {
     const response = await axiosInstance.get<ApiResponse<ReadRoutineResponseDto>>(
@@ -124,11 +99,7 @@ export const updateRoutine = async (
   }
 };
 
-<<<<<<< HEAD
 // 7. 루틴 삭제
-=======
-// 7. Delete routine
->>>>>>> b9770f4b8d1e5bfe14a78b59758ef31282c71ff0
 export const deleteRoutine = async (id: number): Promise<ApiResponse<void>> => {
   try {
     const response = await axiosInstance.delete<ApiResponse<void>>(`/api/routines/${id}`);
@@ -141,13 +112,8 @@ export const deleteRoutine = async (id: number): Promise<ApiResponse<void>> => {
 
 // 8. 대시보드 루틴 조회 (완료 상태 포함)
 export const getDashboardRoutines = async (
-<<<<<<< HEAD
   nickname: string,
   challengeId?: number
-=======
-  challengeId?: number,
-  userId?: string
->>>>>>> b9770f4b8d1e5bfe14a78b59758ef31282c71ff0
 ): Promise<ApiResponse<DashboardRoutineDto[]>> => {
   try {
     let url = '/api/routines/dashboard';

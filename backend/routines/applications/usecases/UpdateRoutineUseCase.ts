@@ -1,5 +1,5 @@
-import { IRoutinesRepository } from '../../domains/repositories/IRoutinesRepository';
-import { UpdateRoutineRequestDto, ReadRoutineResponseDto } from '../dtos/RoutineDto';
+import { IRoutinesRepository } from '@/backend/routines/domains/repositories/IRoutinesRepository';
+import { UpdateRoutineRequestDto, ReadRoutineResponseDto } from '@/backend/routines/applications/dtos/RoutineDto';
 
 export class UpdateRoutineUseCase {
   constructor(private readonly IRoutinesRepository: IRoutinesRepository) {}
@@ -24,11 +24,11 @@ export class UpdateRoutineUseCase {
     return {
       id: updatedRoutine.id,
       routineTitle: updatedRoutine.routineTitle,
-      alertTime: updatedRoutine.alertTime,
+      alertTime: updatedRoutine.alertTime ? updatedRoutine.alertTime.toISOString() : null,
       emoji: updatedRoutine.emoji,
       challengeId: updatedRoutine.challengeId,
-      createdAt: updatedRoutine.createdAt,
-      updatedAt: updatedRoutine.updatedAt,
+      createdAt: updatedRoutine.createdAt.toISOString(),
+      updatedAt: updatedRoutine.updatedAt.toISOString(),
     };
   }
 }
