@@ -42,6 +42,16 @@ export interface IUserRepository {
     type: 'create' | 'update'
   ): Promise<User | undefined>;
 
+  // Update
+  updateUserNickname(id: string, nickname: string): Promise<User | { message: string } | undefined>;
+  updateUserName(id: string, username: string): Promise<User | undefined>;
+  updateProfileImg(
+    id: string,
+    userProfilePath: string,
+    file: File,
+    type: 'create' | 'update'
+  ): Promise<User | undefined>;
+
   // Delete
   delete(id: string): Promise<boolean>;
   deleteProfileImg(key: string): Promise<boolean | undefined>;

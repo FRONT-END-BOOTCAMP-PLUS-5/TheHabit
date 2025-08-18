@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { getRoutinesByChallenge } from '@/libs/api/routines.api';
 import { ReadRoutineResponseDto } from '@/backend/routines/applications/dtos/RoutineDto';
+import { ApiResponse } from '@/backend/shared/types/ApiResponse';
 
 /**
  * 특정 챌린지의 루틴 목록을 조회하는 훅
@@ -13,7 +14,10 @@ export const useGetRoutinesByChallenge = (challengeId: number, enabled: boolean 
     queryKey: ['routines', 'challenge', challengeId],
     queryFn: async () => {
       const response = await getRoutinesByChallenge(challengeId);
-      return response.data || []; // 새로운 응답 구조에서 data 필드 추출
+      if (response.success && response.data) {
+        return response.data;
+      }
+      return [];
     },
     enabled: enabled && challengeId > 0, // challengeId가 유효하고 enabled가 true일 때만 실행
     staleTime: 3 * 60 * 1000, // 3분간 데이터를 fresh로 유지

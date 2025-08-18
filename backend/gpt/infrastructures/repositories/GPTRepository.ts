@@ -4,9 +4,13 @@ import { GPTEntity } from '@/backend/gpt/domains/entities/GPTEntity';
 import { GPT_PROMPT } from '@/public/consts/gptPrompt';
 
 export class GPTRepository implements IGPTRepository {
-  client = new OpenAI({
-    apiKey: process.env.OPEN_AI_KEY,
-  });
+  private readonly client: OpenAI;
+
+  constructor() {
+    this.client = new OpenAI({
+      apiKey: process.env.OPEN_AI_KEY,
+    });
+  }
 
   async create(gptRequestContent: GPTEntity): Promise<GPTEntity> {
     try {
