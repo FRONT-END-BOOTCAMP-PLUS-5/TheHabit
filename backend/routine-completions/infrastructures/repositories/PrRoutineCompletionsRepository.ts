@@ -1,6 +1,7 @@
 import prisma from '@/public/utils/prismaClient';
 import { IRoutineCompletionsRepository } from '../../domains/repositories/IRoutineCompletionsRepository';
 import { RoutineCompletion } from '../../domains/entities/routine-completion/routineCompletion';
+import { s3Service } from '@/backend/shared/services/s3.service';
 
 export class PrRoutineCompletionsRepository implements IRoutineCompletionsRepository {
   async create(
@@ -11,6 +12,7 @@ export class PrRoutineCompletionsRepository implements IRoutineCompletionsReposi
         userId: routineCompletion.userId,
         routineId: routineCompletion.routineId,
         proofImgUrl: routineCompletion.proofImgUrl,
+        content: routineCompletion.content,
       },
     });
 
@@ -20,6 +22,7 @@ export class PrRoutineCompletionsRepository implements IRoutineCompletionsReposi
       routineId: createdCompletion.routineId,
       createdAt: createdCompletion.createdAt,
       proofImgUrl: createdCompletion.proofImgUrl,
+      content: createdCompletion.content,
     };
   }
 
@@ -34,6 +37,7 @@ export class PrRoutineCompletionsRepository implements IRoutineCompletionsReposi
       routineId: completion.routineId,
       createdAt: completion.createdAt,
       proofImgUrl: completion.proofImgUrl,
+      content: completion.content,
     }));
   }
 
@@ -48,6 +52,7 @@ export class PrRoutineCompletionsRepository implements IRoutineCompletionsReposi
       routineId: completion.routineId,
       createdAt: completion.createdAt,
       proofImgUrl: completion.proofImgUrl,
+      content: completion.content,
     }));
   }
 
@@ -64,6 +69,7 @@ export class PrRoutineCompletionsRepository implements IRoutineCompletionsReposi
       routineId: completion.routineId,
       createdAt: completion.createdAt,
       proofImgUrl: completion.proofImgUrl,
+      content: completion.content,
     };
   }
 
@@ -81,6 +87,7 @@ export class PrRoutineCompletionsRepository implements IRoutineCompletionsReposi
       routineId: completion.routineId,
       createdAt: completion.createdAt,
       proofImgUrl: completion.proofImgUrl,
+      content: completion.content,
     }));
   }
 
@@ -103,6 +110,7 @@ export class PrRoutineCompletionsRepository implements IRoutineCompletionsReposi
       routineId: updatedCompletion.routineId,
       createdAt: updatedCompletion.createdAt,
       proofImgUrl: updatedCompletion.proofImgUrl,
+      content: updatedCompletion.content,
     };
   }
 
@@ -115,5 +123,9 @@ export class PrRoutineCompletionsRepository implements IRoutineCompletionsReposi
     } catch (error) {
       return false;
     }
+  }
+
+  async uploadImage(file: File): Promise<{ imageUrl: string; key: string }> {
+    return s3Service.uploadImage(file, 'routine-completions');
   }
 }

@@ -75,18 +75,12 @@ const RoutineAccordionContentInner = ({
       return;
     }
 
-    // TODO: 사진 파일이 있으면 먼저 업로드하고 URL 받아오기
-    let proofImgUrl: string | null = null;
-    if (photoFile) {
-      // 임시로 파일명 사용 (실제 환경에서는 실제 URL로 대체해야 함)
-      proofImgUrl = `uploaded_${Date.now()}_${photoFile.name}`;
-    }
-
     createCompletionMutation.mutate(
       {
         userId: 'f1c6b5ae-b27e-4ae3-9e30-0cb8653b04fd', // TODO: 실제 사용자 ID 사용
         routineId: selectedRoutine.id,
-        proofImgUrl,
+        review: reviewText,
+        photoFile,
       },
       {
         onSuccess: () => {
@@ -129,7 +123,7 @@ const RoutineAccordionContentInner = ({
     return (
       <div className='p-4 text-center text-gray-500'>
         <p className='mb-2'>등록된 루틴이 없습니다.</p>
-        <p className='text-sm'>"{challengeName}" 챌린지에 루틴을 추가해보세요!</p>
+        <p className='text-sm'>&quot;{challengeName}&quot; 챌린지에 루틴을 추가해보세요!</p>
       </div>
     );
   }
