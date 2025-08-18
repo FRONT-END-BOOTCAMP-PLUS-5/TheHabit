@@ -79,11 +79,10 @@ export class PrDashboardRepository implements IDashboardRepository {
       name: string;
       createdAt: Date;
       endAt: Date;
-      startTime: Date | null;
-      endTime: Date | null;
       color: string;
       userId: string;
       categoryId: number;
+      active: boolean;
       routines: Array<{
         id: number;
         routineTitle: string;
@@ -108,15 +107,14 @@ export class PrDashboardRepository implements IDashboardRepository {
     if (challenges.length === 0) {
       // 챌린지가 없는 경우 기본 Challenge 객체로 Dashboard 생성
       const defaultChallenge = new Challenge(
-        0, // 기본 ID
-        '챌린지 없음', // 기본 이름
-        new Date(), // 기본 생성일
-        new Date(), // 기본 종료일
-        null, // 기본 시작 시간
-        null, // 기본 종료 시간
-        '#CCCCCC', // 기본 색상
+        '챌린지 없음', // 이름
+        new Date(), // 생성일
+        new Date(), // 종료일
+        '#CCCCCC', // 색상
         userData.id, // 사용자 ID
-        0 // 기본 카테고리 ID
+        0, // 카테고리 ID
+        false, // active
+        0 // ID (옵션)
       );
 
       return new Dashboard(
@@ -128,19 +126,17 @@ export class PrDashboardRepository implements IDashboardRepository {
     }
 
     // 모든 챌린지들을 Challenge 엔티티로 변환
-    const challengeEntities = challenges.map(
-      challengeData =>
-        new Challenge(
-          challengeData.id,
-          challengeData.name,
-          challengeData.createdAt,
-          challengeData.endAt,
-          challengeData.startTime,
-          challengeData.endTime,
-          challengeData.color,
-          challengeData.userId,
-          challengeData.categoryId
-        )
+    const challengeEntities = challenges.map(challengeData =>
+      new Challenge(
+        challengeData.name,
+        challengeData.createdAt,
+        challengeData.endAt,
+        challengeData.color,
+        challengeData.userId,
+        challengeData.categoryId,
+        challengeData.active,
+        challengeData.id
+      )
     );
 
     // 모든 챌린지의 루틴들을 수집
@@ -191,7 +187,8 @@ export class PrDashboardRepository implements IDashboardRepository {
             completionData.userId,
             completionData.routineId,
             completionData.createdAt,
-            completionData.proofImgUrl
+            completionData.proofImgUrl,
+            completionData.content
           );
           allCompletions.push(completion);
         });
