@@ -1,10 +1,18 @@
-import { IRoutinesRepository } from '../../domains/repositories/IRoutinesRepository';
-import { DeleteRoutineRequestDto, DeleteRoutineResponseDto } from '../dtos/RoutineDto';
+import { IRoutinesRepository } from '@/backend/routines/domains/repositories/IRoutinesRepository';
+// 삭제 요청을 위한 간단한 인터페이스
+interface DeleteRoutineRequest {
+  routineId: number;
+}
+
+interface DeleteRoutineResponse {
+  success: boolean;
+  message: string;
+}
 
 export class DeleteRoutineUseCase {
   constructor(private readonly routinesRepository: IRoutinesRepository) {}
 
-  async execute(request: DeleteRoutineRequestDto): Promise<DeleteRoutineResponseDto> {
+  async execute(request: DeleteRoutineRequest): Promise<DeleteRoutineResponse> {
     const { routineId } = request;
 
     // 루틴 존재여부 확인
