@@ -95,7 +95,6 @@ export class PrDashboardRepository implements IDashboardRepository {
           id: number;
           createdAt: Date;
           proofImgUrl: string | null;
-          userId: string;
           routineId: number;
           content: string | null;
         }>;
@@ -111,7 +110,7 @@ export class PrDashboardRepository implements IDashboardRepository {
         new Date(), // 생성일
         new Date(), // 종료일
         '#CCCCCC', // 색상
-        userData.id, // 사용자 ID
+        "", // 사용자 ID
         0, // 카테고리 ID
         false, // active
         0 // ID (옵션)
@@ -155,7 +154,6 @@ export class PrDashboardRepository implements IDashboardRepository {
             id: number;
             createdAt: Date;
             proofImgUrl: string | null;
-            userId: string;
             routineId: number;
             content: string | null;
           }>;
@@ -184,7 +182,7 @@ export class PrDashboardRepository implements IDashboardRepository {
         routineData.completions.forEach(completionData => {
           const completion = new RoutineCompletion(
             completionData.id,
-            completionData.userId,
+            "",
             completionData.routineId,
             completionData.createdAt,
             completionData.proofImgUrl,
