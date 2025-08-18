@@ -42,6 +42,7 @@ export async function POST(
 
     const addRoutineCompletionUseCase = new AddRoutineCompletionUseCase(
       routineCompletionsRepository
+      routineCompletionsRepository
     );
 
     const result = await addRoutineCompletionUseCase.executeByNickname({
@@ -103,6 +104,7 @@ export async function GET(
 
     const getRoutinesUseCase = new GetRoutinesUseCase(routinesRepository);
     const getRoutineCompletionsUseCase = new GetRoutineCompletionsUseCase(
+      routineCompletionsRepository
       routineCompletionsRepository
     );
 

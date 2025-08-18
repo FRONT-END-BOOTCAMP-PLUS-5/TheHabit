@@ -18,15 +18,11 @@ const createDeleteRoutineCompletionUseCase = () => {
   return new DeleteRoutineCompletionUseCase(repository);
 };
 
-
 // 루틴 완료 조회
-export async function GET(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     // 루틴 완료 조회 시 인증 불필요 (공개 조회)
-    
+
     const { id } = await params;
     const completionId = parseInt(id, 10);
 
@@ -42,8 +38,22 @@ export async function GET(
         },
         { status: 400 }
       );
+      return NextResponse.json(
+        {
+          success: false,
+          error: {
+            code: 'INVALID_COMPLETION_ID',
+            message: '유효하지 않은 완료 ID입니다.',
+          },
+        },
+        { status: 400 }
+      );
     }
 
+    console.log('=== GET /api/routine-completions/[id] 요청 시작 ===');
+    console.log('완료 ID:', completionId);
+    console.log('요청 URL:', request.url);
+    console.log('=== GET /api/routine-completions/[id] 요청 끝 ===');
     console.log('=== GET /api/routine-completions/[id] 요청 시작 ===');
     console.log('완료 ID:', completionId);
     console.log('요청 URL:', request.url);
@@ -64,14 +74,36 @@ export async function GET(
         },
         { status: 404 }
       );
+      return NextResponse.json(
+        {
+          success: false,
+          error: {
+            code: 'COMPLETION_NOT_FOUND',
+            message: '루틴 완료를 찾을 수 없습니다.',
+          },
+        },
+        { status: 404 }
+      );
     }
 
     return NextResponse.json({
       success: true,
       data: RoutineCompletionDtoMapper.fromEntity(completion),
       message: '루틴 완료를 성공적으로 조회했습니다.',
+      message: '루틴 완료를 성공적으로 조회했습니다.',
     });
   } catch (error) {
+    console.error('루틴 완료 조회 중 오류 발생:', error);
+    return NextResponse.json(
+      {
+        success: false,
+        error: {
+          code: 'FETCH_FAILED',
+          message: error instanceof Error ? error.message : '루틴 완료 조회에 실패했습니다.',
+        },
+      },
+      { status: 500 }
+    );
     console.error('루틴 완료 조회 중 오류 발생:', error);
     return NextResponse.json(
       {
@@ -87,10 +119,7 @@ export async function GET(
 }
 
 // 루틴 완료 수정
-export async function PATCH(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function PATCH(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params;
     const completionId = parseInt(id, 10);
@@ -103,8 +132,8 @@ export async function PATCH(
           success: false,
           error: {
             code: 'INVALID_PARAMS',
-            message: '필수 파라미터가 누락되었습니다: nickname'
-          }
+            message: '필수 파라미터가 누락되었습니다: nickname',
+          },
         },
         { status: 400 }
       );
@@ -122,8 +151,21 @@ export async function PATCH(
         },
         { status: 400 }
       );
+      return NextResponse.json(
+        {
+          success: false,
+          error: {
+            code: 'INVALID_COMPLETION_ID',
+            message: '유효하지 않은 완료 ID입니다.',
+          },
+        },
+        { status: 400 }
+      );
     }
 
+    console.log('=== PATCH /api/routine-completions/[id] 요청 시작 ===');
+    console.log('완료 ID:', completionId);
+    console.log('요청 URL:', request.url);
     console.log('=== PATCH /api/routine-completions/[id] 요청 시작 ===');
     console.log('완료 ID:', completionId);
     console.log('요청 URL:', request.url);
@@ -131,9 +173,12 @@ export async function PATCH(
     const requestData: { proofImgUrl: string | null } = await request.json();
     console.log('요청 바디:', JSON.stringify(requestData, null, 2));
     console.log('=== PATCH /api/routine-completions/[id] 요청 끝 ===');
+    console.log('요청 바디:', JSON.stringify(requestData, null, 2));
+    console.log('=== PATCH /api/routine-completions/[id] 요청 끝 ===');
 
     const usecase = createUpdateRoutineCompletionUseCase();
     const updatedCompletion = await usecase.execute(completionId, {
+      proofImgUrl: requestData.proofImgUrl,
       proofImgUrl: requestData.proofImgUrl,
     });
 
@@ -141,8 +186,20 @@ export async function PATCH(
       success: true,
       data: RoutineCompletionDtoMapper.fromEntity(updatedCompletion),
       message: '루틴 완료가 성공적으로 수정되었습니다.',
+      message: '루틴 완료가 성공적으로 수정되었습니다.',
     });
   } catch (error) {
+    console.error('루틴 완료 수정 중 오류 발생:', error);
+    return NextResponse.json(
+      {
+        success: false,
+        error: {
+          code: 'UPDATE_FAILED',
+          message: error instanceof Error ? error.message : '루틴 완료 수정에 실패했습니다.',
+        },
+      },
+      { status: 500 }
+    );
     console.error('루틴 완료 수정 중 오류 발생:', error);
     return NextResponse.json(
       {
@@ -172,13 +229,13 @@ export async function DELETE(
           success: false,
           error: {
             code: 'INVALID_PARAMS',
-            message: '필수 파라미터가 누락되었습니다: nickname'
-          }
+            message: '필수 파라미터가 누락되었습니다: nickname',
+          },
         },
         { status: 400 }
       );
     }
-    
+
     const { id } = await params;
     const completionId = parseInt(id, 10);
 
@@ -194,8 +251,22 @@ export async function DELETE(
         },
         { status: 400 }
       );
+      return NextResponse.json(
+        {
+          success: false,
+          error: {
+            code: 'INVALID_COMPLETION_ID',
+            message: '유효하지 않은 완료 ID입니다.',
+          },
+        },
+        { status: 400 }
+      );
     }
 
+    console.log('=== DELETE /api/routine-completions/[id] 요청 시작 ===');
+    console.log('완료 ID:', completionId);
+    console.log('요청 URL:', request.url);
+    console.log('=== DELETE /api/routine-completions/[id] 요청 끝 ===');
     console.log('=== DELETE /api/routine-completions/[id] 요청 시작 ===');
     console.log('완료 ID:', completionId);
     console.log('요청 URL:', request.url);
@@ -216,6 +287,16 @@ export async function DELETE(
         },
         { status: 404 }
       );
+      return NextResponse.json(
+        {
+          success: false,
+          error: {
+            code: 'COMPLETION_NOT_FOUND',
+            message: '루틴 완료를 찾을 수 없습니다.',
+          },
+        },
+        { status: 404 }
+      );
     }
 
     const usecase = createDeleteRoutineCompletionUseCase();
@@ -224,8 +305,20 @@ export async function DELETE(
     return NextResponse.json({
       success: true,
       message: '루틴 완료가 성공적으로 삭제되었습니다.',
+      message: '루틴 완료가 성공적으로 삭제되었습니다.',
     });
   } catch (error) {
+    console.error('루틴 완료 삭제 중 오류 발생:', error);
+    return NextResponse.json(
+      {
+        success: false,
+        error: {
+          code: 'DELETE_FAILED',
+          message: error instanceof Error ? error.message : '루틴 완료 삭제에 실패했습니다.',
+        },
+      },
+      { status: 500 }
+    );
     console.error('루틴 완료 삭제 중 오류 발생:', error);
     return NextResponse.json(
       {

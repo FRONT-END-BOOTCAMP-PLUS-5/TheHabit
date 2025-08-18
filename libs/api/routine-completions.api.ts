@@ -10,6 +10,7 @@ export const createRoutineCompletion = async (
   data: CreateRoutineCompletionRequestDto
 ): Promise<RoutineCompletionDto> => {
   try {
+<<<<<<< HEAD
     const response = await axiosInstance.post<ApiResponse<RoutineCompletionDto>>(
       '/api/routine-completions',
       data
@@ -20,6 +21,13 @@ export const createRoutineCompletion = async (
     }
     
     return response.data.data;
+=======
+    const response = await axiosInstance.post<RoutineCompletionDto>(
+      '/api/routine-completions',
+      data
+    );
+    return response.data;
+>>>>>>> b9770f4b8d1e5bfe14a78b59758ef31282c71ff0
   } catch (error) {
     console.error('루틴 완료 생성 실패:', error);
     throw error;
@@ -28,6 +36,7 @@ export const createRoutineCompletion = async (
 
 // 챌린지별 루틴 완료 조회
 export const getRoutineCompletionsByChallenge = async (
+<<<<<<< HEAD
   challengeId: number,
   nickname: string
 ): Promise<RoutineCompletionDto[]> => {
@@ -41,6 +50,15 @@ export const getRoutineCompletionsByChallenge = async (
     }
     
     return response.data.data;
+=======
+  challengeId: number
+): Promise<RoutineCompletionDto[]> => {
+  try {
+    const response = await axiosInstance.get<RoutineCompletionDto[]>(
+      `/api/routine-completions?challengeId=${challengeId}`
+    );
+    return response.data;
+>>>>>>> b9770f4b8d1e5bfe14a78b59758ef31282c71ff0
   } catch (error) {
     console.error('챌린지별 루틴 완료 조회 실패:', error);
     throw error;
@@ -49,6 +67,7 @@ export const getRoutineCompletionsByChallenge = async (
 
 // 닉네임으로 루틴 완료 조회
 export const getRoutineCompletionsByUser = async (
+<<<<<<< HEAD
   nickname: string
 ): Promise<RoutineCompletionDto[]> => {
   try {
@@ -61,6 +80,15 @@ export const getRoutineCompletionsByUser = async (
     }
     
     return response.data.data;
+=======
+  userId: string
+): Promise<RoutineCompletionDto[]> => {
+  try {
+    const response = await axiosInstance.get<RoutineCompletionDto[]>(
+      `/api/routine-completions?userId=${userId}`
+    );
+    return response.data;
+>>>>>>> b9770f4b8d1e5bfe14a78b59758ef31282c71ff0
   } catch (error) {
     console.error('루틴 완료 조회 실패:', error);
     throw error;
@@ -89,7 +117,11 @@ export const updateRoutineCompletion = async (
   }
 };
 
+<<<<<<< HEAD
 // ID로 루틴 완료 상세 조회
+=======
+// Get routine completion by ID
+>>>>>>> b9770f4b8d1e5bfe14a78b59758ef31282c71ff0
 export const getRoutineCompletionById = async (id: number): Promise<RoutineCompletionDto> => {
   try {
     const response = await axiosInstance.get<ApiResponse<RoutineCompletionDto>>(

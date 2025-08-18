@@ -7,5 +7,6 @@ export interface SignUpResponseDto {
     readonly username: string; // 사용자명
     readonly nickname: string; // 닉네임
     readonly profileImg?: string | null; // 프로필 이미지 URL (선택)
+    readonly profileImgPath?: string | null; // 프로필 이미지 제목 (선택)
   };
 }
