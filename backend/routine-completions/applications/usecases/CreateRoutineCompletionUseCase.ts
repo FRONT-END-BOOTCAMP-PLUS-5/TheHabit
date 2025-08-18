@@ -11,10 +11,10 @@ export class CreateRoutineCompletionUseCase {
     request: CreateRoutineCompletionRequestDto
   ): Promise<RoutineCompletionDto> {
     const completionToCreate = {
-      userId: 'f1c6b5ae-b27e-4ae3-9e30-0cb8653b04fd',
+      userId: request.userId,
       routineId: request.routineId,
       proofImgUrl: request.proofImgUrl,
-      content: request.review,
+      content: request.content,
     };
 
     const createdCompletion = await this.routineCompletionsRepository.create(completionToCreate);
@@ -24,6 +24,7 @@ export class CreateRoutineCompletionUseCase {
       routineId: createdCompletion.routineId,
       createdAt: createdCompletion.createdAt.toISOString(),
       proofImgUrl: createdCompletion.proofImgUrl,
+      content: createdCompletion.content,
     };
   }
 }

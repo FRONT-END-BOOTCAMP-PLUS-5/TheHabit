@@ -1,7 +1,6 @@
 import prisma from '@/public/utils/prismaClient';
 import { IRoutineCompletionsRepository } from '../../domains/repositories/IRoutineCompletionsRepository';
 import { RoutineCompletion } from '../../domains/entities/routine-completion/routineCompletion';
-import { s3Service } from '@/backend/shared/services/s3.service';
 
 export class PrRoutineCompletionsRepository implements IRoutineCompletionsRepository {
   async create(
@@ -13,6 +12,40 @@ export class PrRoutineCompletionsRepository implements IRoutineCompletionsReposi
         routineId: routineCompletion.routineId,
         proofImgUrl: routineCompletion.proofImgUrl,
         content: routineCompletion.content,
+      },
+    });
+
+    return {
+      id: createdCompletion.id,
+      userId: createdCompletion.userId,
+      routineId: createdCompletion.routineId,
+      createdAt: createdCompletion.createdAt,
+      proofImgUrl: createdCompletion.proofImgUrl,
+      content: createdCompletion.content,
+    };
+  }
+
+  async createByNickname(request: {
+    nickname: string;
+    routineId: number;
+    content: string;
+    proofImgUrl: string | null;
+  }): Promise<RoutineCompletion> {
+    // 닉네임으로 사용자 찾기
+    const user = await prisma.user.findUnique({
+      where: { nickname: request.nickname },
+    });
+
+    if (!user) {
+      throw new Error(`사용자를 찾을 수 없습니다: ${request.nickname}`);
+    }
+
+    const createdCompletion = await prisma.routineCompletion.create({
+      data: {
+        userId: user.id,
+        routineId: request.routineId,
+        proofImgUrl: request.proofImgUrl,
+        content: request.content,
       },
     });
 
@@ -91,6 +124,33 @@ export class PrRoutineCompletionsRepository implements IRoutineCompletionsReposi
     }));
   }
 
+  async findByNicknameAndRoutineId(nickname: string, routineId: number): Promise<RoutineCompletion[]> {
+    // 닉네임으로 사용자 찾기
+    const user = await prisma.user.findUnique({
+      where: { nickname },
+    });
+
+    if (!user) {
+      return [];
+    }
+
+    const completions = await prisma.routineCompletion.findMany({
+      where: {
+        userId: user.id,
+        routineId,
+      },
+    });
+
+    return completions.map((completion: RoutineCompletion) => ({
+      id: completion.id,
+      userId: completion.userId,
+      routineId: completion.routineId,
+      createdAt: completion.createdAt,
+      proofImgUrl: completion.proofImgUrl,
+      content: completion.content,
+    }));
+  }
+
   async update(
     completionId: number,
     routineCompletion: Partial<RoutineCompletion>
@@ -125,7 +185,4 @@ export class PrRoutineCompletionsRepository implements IRoutineCompletionsReposi
     }
   }
 
-  async uploadImage(file: File): Promise<{ imageUrl: string; key: string }> {
-    return s3Service.uploadImage(file, 'routine-completions');
-  }
 }

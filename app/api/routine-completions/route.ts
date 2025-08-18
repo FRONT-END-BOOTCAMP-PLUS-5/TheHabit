@@ -1,6 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth/next';
-import { authOptions } from '@/app/api/auth/[...nextauth]/auth';
 import { AddRoutineCompletionUseCase } from '@/backend/routine-completions/applications/usecases/AddRoutineCompletionUseCase';
 import { GetRoutineCompletionsUseCase } from '@/backend/routine-completions/applications/usecases/GetRoutineCompletionsUseCase';
 import { GetRoutinesUseCase } from '@/backend/routines/applications/usecases/GetRoutinesUseCase';
@@ -16,56 +14,38 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
   try {
     console.log('=== POST /api/routine-completions 요청 시작 ===');
 
-    // 세션 확인
-    const session = await getServerSession(authOptions);
-    if (!session?.user?.id) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: {
-            code: 'UNAUTHORIZED',
-            message: '인증이 필요합니다.',
-          },
-        },
-        { status: 401 }
-      );
-    }
-
     // FormData 파싱
     const formData = await request.formData();
     const file = formData.get('file');
     const routineIdValue = formData.get('routineId');
-    const reviewValue = formData.get('review');
+    const contentValue = formData.get('content');
+    const nicknameValue = formData.get('nickname');
 
     console.log('요청 데이터:', { 
       hasFile: !!file,
       routineId: routineIdValue,
-      review: reviewValue 
+      content: contentValue,
+      nickname: nicknameValue
     });
 
     // 필수 필드 검증
-    if (!routineIdValue) {
+    if (!nicknameValue || typeof nicknameValue !== 'string' || nicknameValue.trim() === '') {
       return NextResponse.json(
-        {
-          success: false,
-          error: {
-            code: 'MISSING_ROUTINE_ID',
-            message: '루틴 ID가 필요합니다.',
-          },
-        },
+        { success: false, error: { code: 'MISSING_NICKNAME', message: '닉네임이 필요합니다.' } },
         { status: 400 }
       );
     }
 
-    if (!reviewValue || typeof reviewValue !== 'string' || reviewValue.trim() === '') {
+    if (!routineIdValue) {
       return NextResponse.json(
-        {
-          success: false,
-          error: {
-            code: 'MISSING_REVIEW',
-            message: '리뷰 내용이 필요합니다.',
-          },
-        },
+        { success: false, error: { code: 'MISSING_ROUTINE_ID', message: '루틴 ID가 필요합니다.' } },
+        { status: 400 }
+      );
+    }
+
+    if (!contentValue || typeof contentValue !== 'string' || contentValue.trim() === '') {
+      return NextResponse.json(
+        { success: false, error: { code: 'MISSING_CONTENT', message: '콘텐츠 내용이 필요합니다.' } },
         { status: 400 }
       );
     }
@@ -74,13 +54,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     const routineIdNumber = Number(routineIdValue);
     if (isNaN(routineIdNumber)) {
       return NextResponse.json(
-        {
-          success: false,
-          error: {
-            code: 'INVALID_ROUTINE_ID',
-            message: '올바른 루틴 ID가 필요합니다.',
-          },
-        },
+        { success: false, error: { code: 'INVALID_ROUTINE_ID', message: '올바른 루틴 ID가 필요합니다.' } },
         { status: 400 }
       );
     }
@@ -95,13 +69,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       } catch (uploadError) {
         console.error('이미지 업로드 실패:', uploadError);
         return NextResponse.json(
-          {
-            success: false,
-            error: {
-              code: 'IMAGE_UPLOAD_FAILED',
-              message: '이미지 업로드에 실패했습니다.',
-            },
-          },
+          { success: false, error: { code: 'IMAGE_UPLOAD_FAILED', message: '이미지 업로드에 실패했습니다.' } },
           { status: 500 }
         );
       }
@@ -112,26 +80,20 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       routineCompletionsRepository
     );
 
-    const result = await addRoutineCompletionUseCase.execute({
-      userId: session.user.id,
+    const result = await addRoutineCompletionUseCase.executeByNickname({
+      nickname: nicknameValue.trim(),
       routineId: routineIdNumber,
-      review: reviewValue.trim(),
+      content: contentValue.trim(),
       proofImgUrl,
     });
 
     console.log('루틴 완료 생성 성공:', result);
-    return NextResponse.json(result, { status: 201 });
+    return NextResponse.json({ success: true, data: result }, { status: 201 });
 
   } catch (error) {
     console.error('루틴 완료 생성 오류:', error);
     return NextResponse.json(
-      {
-        success: false,
-        error: {
-          code: 'CREATION_FAILED',
-          message: '루틴 완료 생성에 실패했습니다.',
-        },
-      },
+      { success: false, error: { code: 'CREATION_FAILED', message: '루틴 완료 생성에 실패했습니다.' } },
       { status: 500 }
     );
   }
@@ -140,22 +102,21 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 // 루틴 완료 목록 조회 (GET)
 export async function GET(request: NextRequest): Promise<NextResponse> {
   try {
-    // 세션 확인
-    const session = await getServerSession(authOptions);
-    if (!session?.user?.id) {
+    const { searchParams } = new URL(request.url);
+    const challengeId = searchParams.get('challengeId');
+    const nickname = searchParams.get('nickname');
+
+    // 필수 파라미터 검증
+    if (!nickname) {
       return NextResponse.json(
-        { error: '로그인이 필요합니다.' },
-        { status: 401 }
+        { success: false, error: { code: 'MISSING_NICKNAME', message: '닉네임이 필요합니다.' } },
+        { status: 400 }
       );
     }
 
-    const { searchParams } = new URL(request.url);
-    const challengeId = searchParams.get('challengeId');
-
-    // 필수 파라미터 검증
     if (!challengeId) {
       return NextResponse.json(
-        { error: '필수 파라미터가 누락되었습니다: challengeId' },
+        { success: false, error: { code: 'MISSING_CHALLENGE_ID', message: '챌린지 ID가 필요합니다.' } },
         { status: 400 }
       );
     }
@@ -163,7 +124,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     const challengeIdNumber = Number(challengeId);
     if (isNaN(challengeIdNumber)) {
       return NextResponse.json(
-        { error: '올바른 챌린지 ID가 필요합니다.' },
+        { success: false, error: { code: 'INVALID_CHALLENGE_ID', message: '올바른 챌린지 ID가 필요합니다.' } },
         { status: 400 }
       );
     }
@@ -178,15 +139,18 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
 
     // 2. 각 루틴에 대한 사용자의 완료 상태 조회 (병렬 처리로 성능 개선)
     const completionPromises = routines.map(routine =>
-      getRoutineCompletionsUseCase.getByUserAndRoutine(session.user.id, routine.id)
+      getRoutineCompletionsUseCase.getByNicknameAndRoutine(nickname, routine.id)
     );
 
     const completionResults = await Promise.all(completionPromises);
     const completions = completionResults.flat();
 
-    return NextResponse.json(completions);
+    return NextResponse.json({ success: true, data: completions });
   } catch (error) {
     console.error('루틴 완료 목록 조회 오류:', error);
-    return NextResponse.json({ error: '루틴 완료 목록 조회에 실패했습니다.' }, { status: 500 });
+    return NextResponse.json(
+      { success: false, error: { code: 'FETCH_FAILED', message: '루틴 완료 목록 조회에 실패했습니다.' } },
+      { status: 500 }
+    );
   }
 }

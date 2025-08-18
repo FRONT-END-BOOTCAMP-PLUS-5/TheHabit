@@ -13,6 +13,7 @@ export class GetRoutineCompletionsUseCase {
       routineId: completion.routineId,
       createdAt: completion.createdAt,
       proofImgUrl: completion.proofImgUrl,
+      content: completion.content,
     }));
   }
 
@@ -25,6 +26,7 @@ export class GetRoutineCompletionsUseCase {
       routineId: completion.routineId,
       createdAt: completion.createdAt,
       proofImgUrl: completion.proofImgUrl,
+      content: completion.content,
     }));
   }
 
@@ -43,6 +45,26 @@ export class GetRoutineCompletionsUseCase {
       routineId: completion.routineId,
       createdAt: completion.createdAt,
       proofImgUrl: completion.proofImgUrl,
+      content: completion.content,
+    }));
+  }
+
+  async getByNicknameAndRoutine(
+    nickname: string,
+    routineId: number
+  ): Promise<CreateRoutineCompletionResponseDto[]> {
+    const completions = await this.routineCompletionsRepository.findByNicknameAndRoutineId(
+      nickname,
+      routineId
+    );
+
+    return completions.map(completion => ({
+      id: completion.id,
+      userId: completion.userId,
+      routineId: completion.routineId,
+      createdAt: completion.createdAt,
+      proofImgUrl: completion.proofImgUrl,
+      content: completion.content,
     }));
   }
 }
