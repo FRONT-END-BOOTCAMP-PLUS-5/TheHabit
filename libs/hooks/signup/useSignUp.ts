@@ -31,8 +31,8 @@ export function useSignUp() {
           ? (err as { response?: { data?: { error?: string } } }).response?.data?.error ||
             '회원가입 실패'
           : err instanceof Error
-            ? err.message
-            : '회원가입 실패';
+          ? err.message
+          : '회원가입 실패';
       setError(errorMessage);
       throw new Error(errorMessage);
     } finally {
