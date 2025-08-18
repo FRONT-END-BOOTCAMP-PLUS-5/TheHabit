@@ -16,6 +16,8 @@ interface ISignupForm {
   passwordConfirm: string;
   nickname: string;
   profileImage: string | null;
+  profileImagePath: string | null;
+  profileFile: File | null;
 }
 
 export const SignUpForm = () => {
@@ -28,6 +30,8 @@ export const SignUpForm = () => {
       passwordConfirm: '',
       nickname: '',
       profileImage: null,
+      profileImagePath: null,
+      profileFile: null,
     },
   });
 
@@ -42,7 +46,18 @@ export const SignUpForm = () => {
 
   const onSubmit = async (data: ISignupForm) => {
     try {
-      await signUp(data);
+      // FormData로 데이터 전송
+      const formData = new FormData();
+      formData.append('email', data.email);
+      formData.append('password', data.password);
+      formData.append('username', data.username);
+      formData.append('nickname', data.nickname);
+      
+      if (data.profileFile) {
+        formData.append('profileImage', data.profileFile);
+      }
+
+      await signUp(formData);
     } catch (err) {
       console.error(err);
     }
