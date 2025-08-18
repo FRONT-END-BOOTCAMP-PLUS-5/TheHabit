@@ -184,5 +184,4 @@ export class PrRoutineCompletionsRepository implements IRoutineCompletionsReposi
       return false;
     }
   }
-
 }

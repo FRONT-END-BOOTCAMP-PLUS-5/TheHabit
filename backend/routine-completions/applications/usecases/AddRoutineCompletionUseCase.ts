@@ -8,22 +8,12 @@ export class AddRoutineCompletionUseCase {
   constructor(private readonly routineCompletionsRepository: IRoutineCompletionsRepository) {}
 
   async execute(request: CreateRoutineCompletionRequestDto): Promise<RoutineCompletionDto> {
-    const completionToCreate = {
-      userId: request.userId,
+    return this.executeByNickname({
+      nickname: request.nickname,
       routineId: request.routineId,
       proofImgUrl: request.proofImgUrl,
       content: request.content,
-    };
-
-    const createdCompletion = await this.routineCompletionsRepository.create(completionToCreate);
-
-    return {
-      id: createdCompletion.id,
-      routineId: createdCompletion.routineId,
-      createdAt: createdCompletion.createdAt.toISOString(),
-      proofImgUrl: createdCompletion.proofImgUrl,
-      content: createdCompletion.content,
-    };
+    });
   }
 
   async executeByNickname(request: {

@@ -2,6 +2,7 @@
 // POST /api/challenges - 챌린지 등록
 import { NextRequest, NextResponse } from 'next/server';
 import { PrChallengeRepository } from '@/backend/challenges/infrastructures/repositories/PrChallengeRepository';
+import { PrUserRepository } from '@/backend/users/infrastructures/repositories/PrUserRepository';
 import { GetChallengeByIdUsecase } from '@/backend/challenges/applications/usecases/GetChallengeByIdUsecase';
 import { ChallengeDtoMapper } from '@/backend/challenges/applications/dtos/ChallengeDto';
 import { AddChallengeUseCase } from '@/backend/challenges/applications/usecases/AddChallengeUsecase';
@@ -9,14 +10,15 @@ import { AddChallengeRequestDto } from '@/backend/challenges/applications/dtos/A
 import { ChallengeDto } from '@/backend/challenges/applications/dtos/ChallengeDto';
 import { ApiResponse } from '@/backend/shared/types/ApiResponse';
 
-const repository = new PrChallengeRepository();
+const challengeRepository = new PrChallengeRepository();
+const userRepository = new PrUserRepository();
 
 const createGetChallengeByIdUsecase = () => {
-  return new GetChallengeByIdUsecase(repository);
+  return new GetChallengeByIdUsecase(challengeRepository);
 };
 
 const createAddChallengeUsecase = () => {
-  return new AddChallengeUseCase(repository);
+  return new AddChallengeUseCase(challengeRepository, userRepository);
 };
 
 export const GET = async (

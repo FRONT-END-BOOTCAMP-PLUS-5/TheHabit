@@ -1,30 +1,28 @@
 import { IRoutineCompletionsRepository } from '../../domains/repositories/IRoutineCompletionsRepository';
-import { CreateRoutineCompletionResponseDto } from '../dtos/RoutineCompletionDto';
+import { RoutineCompletionDto } from '@/backend/routine-completions/applications/dtos/RoutineCompletionDto';
 
 export class GetRoutineCompletionsUseCase {
   constructor(private readonly routineCompletionsRepository: IRoutineCompletionsRepository) {}
 
-  async getByRoutineId(routineId: number): Promise<CreateRoutineCompletionResponseDto[]> {
+  async getByRoutineId(routineId: number): Promise<RoutineCompletionDto[]> {
     const completions = await this.routineCompletionsRepository.findByRoutineId(routineId);
 
     return completions.map(completion => ({
       id: completion.id,
-      userId: completion.userId,
       routineId: completion.routineId,
-      createdAt: completion.createdAt,
+      createdAt: completion.createdAt.toISOString(),
       proofImgUrl: completion.proofImgUrl,
       content: completion.content,
     }));
   }
 
-  async getByUserId(userId: string): Promise<CreateRoutineCompletionResponseDto[]> {
+  async getByUserId(userId: string): Promise<RoutineCompletionDto[]> {
     const completions = await this.routineCompletionsRepository.findByUserId(userId);
 
     return completions.map(completion => ({
       id: completion.id,
-      userId: completion.userId,
       routineId: completion.routineId,
-      createdAt: completion.createdAt,
+      createdAt: completion.createdAt.toISOString(),
       proofImgUrl: completion.proofImgUrl,
       content: completion.content,
     }));
@@ -33,7 +31,7 @@ export class GetRoutineCompletionsUseCase {
   async getByUserAndRoutine(
     userId: string,
     routineId: number
-  ): Promise<CreateRoutineCompletionResponseDto[]> {
+  ): Promise<RoutineCompletionDto[]> {
     const completions = await this.routineCompletionsRepository.findByUserIdAndRoutineId(
       userId,
       routineId
@@ -41,9 +39,8 @@ export class GetRoutineCompletionsUseCase {
 
     return completions.map(completion => ({
       id: completion.id,
-      userId: completion.userId,
       routineId: completion.routineId,
-      createdAt: completion.createdAt,
+      createdAt: completion.createdAt.toISOString(),
       proofImgUrl: completion.proofImgUrl,
       content: completion.content,
     }));
@@ -52,7 +49,7 @@ export class GetRoutineCompletionsUseCase {
   async getByNicknameAndRoutine(
     nickname: string,
     routineId: number
-  ): Promise<CreateRoutineCompletionResponseDto[]> {
+  ): Promise<RoutineCompletionDto[]> {
     const completions = await this.routineCompletionsRepository.findByNicknameAndRoutineId(
       nickname,
       routineId
@@ -60,9 +57,8 @@ export class GetRoutineCompletionsUseCase {
 
     return completions.map(completion => ({
       id: completion.id,
-      userId: completion.userId,
       routineId: completion.routineId,
-      createdAt: completion.createdAt,
+      createdAt: completion.createdAt.toISOString(),
       proofImgUrl: completion.proofImgUrl,
       content: completion.content,
     }));

@@ -65,8 +65,7 @@ const RootLayout = ({
         <meta name='theme-color' content='#000000' />
       </head>
       <body
-        className={`${pretendard.variable} ${pretendard.variable} antialiased mobile-container`}
-      >
+        className={`${pretendard.variable} ${pretendard.variable} antialiased mobile-container`}>
         <div className='mobile-wrapper'>
           <NextAuthSessionProvider>
             <Header />

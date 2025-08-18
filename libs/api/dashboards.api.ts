@@ -1,9 +1,11 @@
 import { axiosInstance } from '@/libs/axios/axiosInstance';
 import { ApiResponse } from '@/backend/shared/types/ApiResponse';
 import { Dashboard } from '@/backend/dashboards/domain/entity/Dashboard';
+import { Challenge } from '@/backend/challenges/domains/entities/Challenge';
 
 // Dashboard API 응답 타입
 interface DashboardListResponse {
+  challenges: Challenge[];
   dashboards: Dashboard[];
   totalCount: number;
 }
