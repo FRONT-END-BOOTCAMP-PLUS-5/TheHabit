@@ -1,8 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import { useSession } from 'next-auth/react';
-import { LoadingSpinner } from '@/app/_components/loading/LoadingSpinner';
 import { RoutineItem } from './RoutineItem';
 import { RoutineCompletionModal } from './RoutineCompletionModal';
 import { ErrorBoundary } from './ErrorBoundary';
@@ -17,16 +15,16 @@ import {
 // 타입과 상수 import
 import { RoutineAccordionContentProps } from './types';
 import { ReadRoutineResponseDto } from '@/backend/routines/applications/dtos/RoutineDto';
-import { RoutineCompletionDto } from '@/backend/routine-completions/applications/dtos/RoutineCompletionDto';
 import { UI_MESSAGES } from '@/public/consts/routineItem';
+import { useGetUserInfo } from '@/libs/hooks/user-hooks/useGetUserInfo';
 
 const RoutineAccordionContentInner = ({
   challengeId,
   challengeName,
   contentRef,
 }: RoutineAccordionContentProps) => {
-  // 세션에서 사용자 정보 가져오기
-  const { data: session } = useSession();
+  // 사용자 정보 가져오기
+  const { userInfo } = useGetUserInfo();
   // 데이터 페칭
   const { data: routines = [], isLoading, error } = useGetRoutinesByChallenge(challengeId);
   const { data: completions = [], isLoading: completionsLoading } =
@@ -78,14 +76,14 @@ const RoutineAccordionContentInner = ({
       return;
     }
 
-    if (!session?.user?.nickname) {
+    if (!userInfo?.nickname) {
       alert('로그인이 필요합니다.');
       return;
     }
 
     createCompletionMutation.mutate(
       {
-        nickname: session.user.nickname,
+        nickname: userInfo.nickname,
         routineId: selectedRoutine.id,
         content: reviewText,
         photoFile,
