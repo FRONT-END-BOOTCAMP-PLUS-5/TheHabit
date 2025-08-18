@@ -33,6 +33,7 @@ export interface IUserRepository {
   update(id: string, user: Partial<User>): Promise<User | null>;
   updateUserNickname(id: string, nickname: string): Promise<User | { message: string } | undefined>;
   updateUserName(id: string, username: string): Promise<User | undefined>;
+
   updateProfileImg(
     id: string,
     userProfilePath: string,

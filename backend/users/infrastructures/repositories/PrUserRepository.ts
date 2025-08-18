@@ -51,7 +51,7 @@ export class PrUserRepository implements IUserRepository {
    * @return string
    * */
   async createProfileImg(file: File): Promise<string[] | undefined> {
-    try{
+    try {
       const { name, type } = file
 
       const key = `${uuidv4()}-${name}`;
@@ -68,12 +68,12 @@ export class PrUserRepository implements IUserRepository {
 
       await this.s3.send(command);
 
-      const signedUrl:string = `https://${process.env.AMPLIFY_BUCKET}.s3.${process.env.AWS_REGION}.amazonaws.com/${key}`;
+      const signedUrl: string = `https://${process.env.AMPLIFY_BUCKET}.s3.${process.env.AWS_REGION}.amazonaws.com/${key}`;
 
 
       return [signedUrl, key];
-    }catch(error){
-      if(error instanceof  Error) throw new Error(error.message)
+    } catch (error) {
+      if (error instanceof Error) throw new Error(error.message)
     }
   }
 
@@ -353,7 +353,7 @@ export class PrUserRepository implements IUserRepository {
 
       return updatedUserNickname;
     } catch (error) {
-      if (e instanceof Prisma.PrismaClientKnownRequestError) {
+      if (error instanceof Prisma.PrismaClientKnownRequestError) {
         if (error.code === 'P2002') {
           return { message: '해당 닉네임은 이미 사용 중입니다.' };
         }
