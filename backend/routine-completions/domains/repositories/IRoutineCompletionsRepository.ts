@@ -10,6 +10,7 @@ export interface IRoutineCompletionsRepository {
     nickname: string;
     routineId: number;
     proofImgUrl: string | null;
+    content: string | null;
   }): Promise<RoutineCompletion>;
 
   // 루틴 완료 조회

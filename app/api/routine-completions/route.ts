@@ -15,7 +15,7 @@ export async function POST(
   req: NextRequest
 ): Promise<NextResponse> {
   try {
-    const { nickname, routineId, proofImgUrl } = await req.json();
+    const { nickname, routineId, proofImgUrl, content } = await req.json();
 
     if (!nickname || nickname.trim() === '') {
       const errorResponse: ApiResponse<null> = {
@@ -48,6 +48,7 @@ export async function POST(
       nickname: nickname.trim(),
       routineId: parseInt(routineId),
       proofImgUrl: proofImgUrl || null,
+      content: content || null,
     });
 
     const successResponse: ApiResponse<RoutineCompletionDto> = {

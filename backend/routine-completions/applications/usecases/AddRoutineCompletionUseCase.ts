@@ -12,14 +12,16 @@ export class AddRoutineCompletionUseCase {
       nickname: request.nickname,
       routineId: request.routineId,
       proofImgUrl: request.proofImgUrl,
+      content: request.content,
     });
   }
 
-  async executeByNickname(request: { nickname: string; routineId: number; proofImgUrl: string | null }): Promise<RoutineCompletionDto> {
+  async executeByNickname(request: { nickname: string; routineId: number; proofImgUrl: string | null; content: string | null }): Promise<RoutineCompletionDto> {
     const createdCompletion = await this.routineCompletionsRepository.createByNickname({
       nickname: request.nickname,
       routineId: request.routineId,
       proofImgUrl: request.proofImgUrl,
+      content: request.content,
     });
 
     return {
@@ -27,6 +29,7 @@ export class AddRoutineCompletionUseCase {
       routineId: createdCompletion.routineId,
       createdAt: createdCompletion.createdAt.toISOString(),
       proofImgUrl: createdCompletion.proofImgUrl,
+      content: createdCompletion.content,
     };
   }
 }

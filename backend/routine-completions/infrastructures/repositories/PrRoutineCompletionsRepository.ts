@@ -11,6 +11,7 @@ export class PrRoutineCompletionsRepository implements IRoutineCompletionsReposi
         userId: routineCompletion.userId,
         routineId: routineCompletion.routineId,
         proofImgUrl: routineCompletion.proofImgUrl,
+        content: routineCompletion.content,
       },
     });
 
@@ -20,6 +21,7 @@ export class PrRoutineCompletionsRepository implements IRoutineCompletionsReposi
       routineId: createdCompletion.routineId,
       createdAt: createdCompletion.createdAt,
       proofImgUrl: createdCompletion.proofImgUrl,
+      content: createdCompletion.content,
     };
   }
 
@@ -27,6 +29,7 @@ export class PrRoutineCompletionsRepository implements IRoutineCompletionsReposi
     nickname: string;
     routineId: number;
     proofImgUrl: string | null;
+    content: string | null;
   }): Promise<RoutineCompletion> {
     // 먼저 nickname으로 user를 찾아서 userId 가져오기
     const user = await prisma.user.findUnique({
@@ -42,6 +45,7 @@ export class PrRoutineCompletionsRepository implements IRoutineCompletionsReposi
         userId: user.id,
         routineId: request.routineId,
         proofImgUrl: request.proofImgUrl,
+        content: request.content,
       },
     });
 
@@ -51,6 +55,7 @@ export class PrRoutineCompletionsRepository implements IRoutineCompletionsReposi
       routineId: createdCompletion.routineId,
       createdAt: createdCompletion.createdAt,
       proofImgUrl: createdCompletion.proofImgUrl,
+      content: createdCompletion.content,
     };
   }
 
@@ -65,6 +70,7 @@ export class PrRoutineCompletionsRepository implements IRoutineCompletionsReposi
       routineId: completion.routineId,
       createdAt: completion.createdAt,
       proofImgUrl: completion.proofImgUrl,
+      content: completion.content,
     }));
   }
 
@@ -79,6 +85,7 @@ export class PrRoutineCompletionsRepository implements IRoutineCompletionsReposi
       routineId: completion.routineId,
       createdAt: completion.createdAt,
       proofImgUrl: completion.proofImgUrl,
+      content: completion.content,
     }));
   }
 
@@ -95,6 +102,7 @@ export class PrRoutineCompletionsRepository implements IRoutineCompletionsReposi
       routineId: completion.routineId,
       createdAt: completion.createdAt,
       proofImgUrl: completion.proofImgUrl,
+      content: completion.content,
     };
   }
 
@@ -118,6 +126,7 @@ export class PrRoutineCompletionsRepository implements IRoutineCompletionsReposi
         routineId: completion.routineId,
         createdAt: completion.createdAt,
         proofImgUrl: completion.proofImgUrl,
+        content: completion.content,
       }));
     } catch (error) {
       console.error('닉네임으로 루틴 완료 조회 중 오류:', error);
@@ -139,6 +148,7 @@ export class PrRoutineCompletionsRepository implements IRoutineCompletionsReposi
       routineId: completion.routineId,
       createdAt: completion.createdAt,
       proofImgUrl: completion.proofImgUrl,
+      content: completion.content,
     }));
   }
 
@@ -165,6 +175,7 @@ export class PrRoutineCompletionsRepository implements IRoutineCompletionsReposi
         routineId: completion.routineId,
         createdAt: completion.createdAt,
         proofImgUrl: completion.proofImgUrl,
+        content: completion.content,
       }));
     } catch (error) {
       console.error('닉네임과 루틴ID로 완료 조회 중 오류:', error);
@@ -191,6 +202,7 @@ export class PrRoutineCompletionsRepository implements IRoutineCompletionsReposi
       routineId: updatedCompletion.routineId,
       createdAt: updatedCompletion.createdAt,
       proofImgUrl: updatedCompletion.proofImgUrl,
+      content: updatedCompletion.content,
     };
   }
 

@@ -4,6 +4,7 @@ export interface CreateRoutineCompletionRequestDto {
   nickname: string;
   routineId: number;
   proofImgUrl: string | null;
+  content: string | null;
 }
 
 export interface CreateRoutineCompletionResponseDto {
@@ -40,6 +41,7 @@ export interface RoutineCompletionDto {
   routineId: number;
   createdAt: string;
   proofImgUrl: string | null;
+  content: string | null;
 }
 
 // DTO Mapper
@@ -51,6 +53,7 @@ export class RoutineCompletionDtoMapper {
       routineId: entity.routineId,
       createdAt: entity.createdAt.toISOString(),
       proofImgUrl: entity.proofImgUrl,
+      content: entity.content,
     };
   }
 
