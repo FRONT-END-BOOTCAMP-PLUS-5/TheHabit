@@ -8,7 +8,7 @@ import { EmojiDisplay } from '@/app/_components/emoji/EmojiDisplay';
 import { FileUpload } from '@/app/_components/file-upload/FileUpload';
 import { ReadRoutineResponseDto } from '@/backend/routines/applications/dtos/RoutineDto';
 import { UI_MESSAGES, FORM_LIMITS } from '@/public/consts/routineItem';
-import { showError, showSuccess, ROUTINE_ERRORS } from '@/public/utils/errorUtils';
+import { showError, ROUTINE_ERRORS } from '@/public/utils/errorUtils';
 
 interface RoutineCompletionModalProps {
   isOpen: boolean;
@@ -29,12 +29,10 @@ export const RoutineCompletionModal = ({
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
-  // 파일 선택 핸들러
   const handleFileSelect = useCallback((file: File) => {
     setSelectedFile(file);
   }, []);
 
-  // 모달 닫기
   const handleClose = useCallback(() => {
     setReviewText('');
     setSelectedFile(null);
@@ -42,7 +40,6 @@ export const RoutineCompletionModal = ({
     onClose();
   }, [onClose]);
 
-  // 완료 제출
   const handleSubmit = useCallback(async () => {
     if (!reviewText.trim()) {
       showError(ROUTINE_ERRORS.NO_REVIEW_TEXT);
@@ -77,7 +74,7 @@ export const RoutineCompletionModal = ({
       open={isOpen}
       onCancel={handleClose}
       footer={[
-        <Button key='cancel' onClick={handleClose} disabled={isSubmitting}>
+        <Button key='cancel' onClick={handleClose} disabled={isSubmitting || loading}>
           취소
         </Button>,
         <Button
@@ -87,7 +84,7 @@ export const RoutineCompletionModal = ({
           style={{ opacity: isSubmitting || loading ? 0.6 : 1 }}
           disabled={isSubmitting || loading}
         >
-          {isSubmitting ? '저장 중...' : '완료'}
+          {isSubmitting || loading ? '저장 중...' : '완료'}
         </Button>,
       ]}
       width={450}
@@ -96,9 +93,7 @@ export const RoutineCompletionModal = ({
       }}
     >
       <div>
-        <p className='text-gray-600 mb-3'>
-          "<strong>{selectedRoutine?.routineTitle}</strong>" 루틴을 완료하셨네요! 🎉
-        </p>
+                <p className='text-gray-600 mb-3'>&ldquo;<strong>{selectedRoutine?.routineTitle}</strong>&rdquo; 루틴을 완료하셨네요! 🎉</p>
         <p className='text-gray-600 mb-4'>{UI_MESSAGES.MODAL.REVIEW_DESCRIPTION}</p>
 
         {/* 소감 작성 영역 */}

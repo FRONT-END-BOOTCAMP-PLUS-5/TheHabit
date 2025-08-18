@@ -25,6 +25,35 @@ export class PrRoutinesRepository implements IRoutinesRepository {
     };
   }
 
+  async createByNickname(request: {
+    routineTitle: string;
+    alertTime: Date | null;
+    emoji: number;
+    challengeId: number;
+    nickname: string;
+  }): Promise<Routine> {
+    // Challenge가 해당 nickname의 사용자 것인지 확인 후 생성
+    const createdRoutine = await prisma.routine.create({
+      data: {
+        routineTitle: request.routineTitle,
+        alertTime: request.alertTime,
+        emoji: request.emoji,
+        challengeId: request.challengeId,
+        updatedAt: new Date(),
+      },
+    });
+
+    return {
+      id: createdRoutine.id,
+      routineTitle: createdRoutine.routineTitle,
+      alertTime: createdRoutine.alertTime,
+      emoji: createdRoutine.emoji,
+      challengeId: createdRoutine.challengeId,
+      createdAt: createdRoutine.createdAt,
+      updatedAt: createdRoutine.updatedAt,
+    };
+  }
+
   async findByChallengeId(challengeId: number): Promise<Routine[]> {
     const routines = await prisma.routine.findMany({
       where: { challengeId },
@@ -61,6 +90,43 @@ export class PrRoutinesRepository implements IRoutinesRepository {
       createdAt: routine.createdAt,
       updatedAt: routine.updatedAt,
     }));
+  }
+
+  async findByNickname(nickname: string): Promise<Routine[]> {
+    console.log('🔍 닉네임으로 루틴 조회 시작:', nickname);
+    try {
+      const routines = await prisma.routine.findMany({
+        where: {
+          challenge: {
+            user: { nickname }
+          }
+        },
+        include: {
+          challenge: {
+            include: {
+              user: {
+                select: {
+                  nickname: true
+                }
+              }
+            }
+          }
+        }
+      });
+
+      return routines.map((routine: any) => ({
+        id: routine.id,
+        routineTitle: routine.routineTitle,
+        alertTime: routine.alertTime,
+        emoji: routine.emoji,
+        challengeId: routine.challengeId,
+        createdAt: routine.createdAt,
+        updatedAt: routine.updatedAt,
+      }));
+    } catch (error) {
+      console.error('닉네임으로 루틴 조회 중 오류:', error);
+      throw new Error(`닉네임 '${nickname}'으로 루틴 조회에 실패했습니다: ${error instanceof Error ? error.message : '알 수 없는 오류'}`);
+    }
   }
 
   async findById(routineId: number): Promise<Routine | null> {

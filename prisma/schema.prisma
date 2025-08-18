@@ -40,11 +40,10 @@ model Challenge {
   name       String
   createdAt  DateTime          @map("created_at")
   endAt      DateTime          @map("end_at")
-  startTime  DateTime?         @map("start_time")
-  endTime    DateTime?         @map("end_time")
   color      String
   userId     String            @map("user_id")
   categoryId Int               @map("category_id")
+  active     Boolean           @default(false)
   feedbacks  Feedback[]
   category   ChallengeCategory @relation(fields: [categoryId], references: [id])
   user       User              @relation(fields: [userId], references: [id], onDelete: Cascade)

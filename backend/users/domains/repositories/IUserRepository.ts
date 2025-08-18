@@ -30,7 +30,15 @@ export interface IUserRepository {
   checkEmailExists(email: string): Promise<boolean>;
 
   // Update
-  update(id: string, user: Partial<User>): Promise<User | null>;
+  update(nickname: string, user: Partial<User>): Promise<User | null>;
+  updateProfileImg(
+    nickname: string,
+    userProfilePath: string,
+    file: File,
+    type: 'create' | 'update'
+  ): Promise<User | undefined>;
+
+  // Update
   updateUserNickname(id: string, nickname: string): Promise<User | { message: string } | undefined>;
   updateUserName(id: string, username: string): Promise<User | undefined>;
   updateProfileImg(

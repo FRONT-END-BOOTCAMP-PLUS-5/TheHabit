@@ -4,8 +4,6 @@ import { User } from '@/backend/users/domains/entities/UserEntity';
 import { DeleteObjectCommand, PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
 import { RoutineCompletion } from '@/backend/routine-completions/domains/entities/routine-completion/routineCompletion';
 import { v4 as uuidv4 } from 'uuid';
-
-import { Prisma } from '@prisma/client';
 import { UserReviewEntity } from '@/backend/users/domains/entities/UserReviewEntity';
 
 export class PrUserRepository implements IUserRepository {
@@ -26,17 +24,20 @@ export class PrUserRepository implements IUserRepository {
           password: user.password || '',
           username: user.username,
           profileImg: user.profileImg,
+          profileImgPath: user.profileImgPath, // 추가
         },
       });
       return new User(
         createdUser.username,
         createdUser.nickname,
         createdUser.profileImg,
+        createdUser.profileImgPath, // profileImgPath 전달
         createdUser.id,
-        createdUser.password
+        createdUser.password,
+        createdUser.email
       );
-    } catch (e) {
-      if (e instanceof Error) throw new Error(e.message);
+    } catch (error) {
+      if (error instanceof Error) throw new Error(error.message);
       throw new Error('사용자 생성에 실패했습니다.'); // 기본 에러 메시지
     }
   }
@@ -49,7 +50,7 @@ export class PrUserRepository implements IUserRepository {
    * */
   async createProfileImg(file: File): Promise<string[] | undefined> {
     try {
-      const { name, type } = file;
+      const { name, type } = file
 
       const key = `${uuidv4()}-${name}`;
 
@@ -63,13 +64,17 @@ export class PrUserRepository implements IUserRepository {
         Body: buffer,
       });
 
-      this.s3.send(command);
+      await this.s3.send(command);
 
       const signedUrl: string = `https://${process.env.AMPLIFY_BUCKET}.s3.${process.env.AWS_REGION}.amazonaws.com/${key}`;
 
+
       return [signedUrl, key];
-    } catch (e) {
-      if (e instanceof Error) throw new Error(e.message);
+    } catch (error) {
+      if (error instanceof Error) throw new Error(error.message)
+
+    }catch(error){
+      if(error instanceof  Error) throw new Error(error.message)
     }
   }
 
@@ -95,8 +100,8 @@ export class PrUserRepository implements IUserRepository {
       });
 
       return createdReview;
-    } catch (e) {
-      if (e instanceof Error) throw new Error(e.message);
+    } catch (error) {
+      if (error instanceof Error) throw new Error(error.message);
     }
   }
 
@@ -145,8 +150,8 @@ export class PrUserRepository implements IUserRepository {
       });
 
       return completedRoutines;
-    } catch (e) {
-      if (e instanceof Error) throw new Error(e.message);
+    } catch (error) {
+      if (error instanceof Error) throw new Error(error.message);
     }
   }
 
@@ -162,8 +167,8 @@ export class PrUserRepository implements IUserRepository {
       return users.map(
         user => new User(user.username, user.nickname, user.profileImg || '', user.id || '')
       );
-    } catch (e) {
-      if (e instanceof Error) throw new Error(e.message);
+    } catch (error) {
+      if (error instanceof Error) throw new Error(error.message);
     }
   }
 
@@ -213,9 +218,9 @@ export class PrUserRepository implements IUserRepository {
       });
 
       return userEntity;
-    } catch (e) {
-      console.error('💥 PrUserRepository.findByEmail 오류:', e);
-      throw e; // 에러를 다시 던져서 상위에서 처리하도록 함
+    } catch (error) {
+      console.error('💥 PrUserRepository.findByEmail 오류:', error);
+      throw error; // 에러를 다시 던져서 상위에서 처리하도록 함
     }
   }
 
@@ -243,8 +248,8 @@ export class PrUserRepository implements IUserRepository {
       });
 
       return userRoutineCompletionReview;
-    } catch (e) {
-      if (e instanceof Error) throw new Error(e.message);
+    } catch (error) {
+      if (error instanceof Error) throw new Error(error.message);
     }
   }
 
@@ -255,9 +260,9 @@ export class PrUserRepository implements IUserRepository {
         where: { email },
       });
       return !!user; // 사용자가 존재하면 true, 없으면 false
-    } catch (e) {
-      console.error('이메일 존재 여부 확인 중 오류:', e);
-      throw e;
+    } catch (error) {
+      console.error('이메일 존재 여부 확인 중 오류:', error);
+      throw error;
     }
   }
 
@@ -278,8 +283,8 @@ export class PrUserRepository implements IUserRepository {
         user.password,
         user.email
       );
-    } catch (e) {
-      if (e instanceof Error) throw new Error(e.message);
+    } catch (error) {
+      if (error instanceof Error) throw new Error(error.message);
       return null;
     }
   }
@@ -294,18 +299,23 @@ export class PrUserRepository implements IUserRepository {
       if (!user) return null;
 
       return new User(user.username, user.nickname, user.profileImg, user.id);
-    } catch (e) {
-      if (e instanceof Error) throw new Error(e.message);
+    } catch (error) {
+      if (error instanceof Error) throw new Error(error.message);
       return null;
     }
   }
 
-  async update(id: string, user: Partial<User>): Promise<User | null> {
+  async update(nickname: string, user: Partial<User>): Promise<User | null> {
     try {
-      const updateData: Partial<User> = user;
+
+      if (user.nickname && user.nickname !== nickname) {
+        throw new Error('닉네임은 변경할 수 없습니다.');
+      }
+      
+      const updateData: Partial<User> = { ...user };
 
       const updatedUser = await prisma.user.update({
-        where: { id },
+        where: { nickname },
         data: updateData,
       });
 
@@ -318,46 +328,9 @@ export class PrUserRepository implements IUserRepository {
         updatedUser.password,
         updatedUser.email
       );
-    } catch (e) {
-      if (e instanceof Error) throw new Error(e.message);
+    } catch (error) {
+      if (error instanceof Error) throw new Error(error.message);
       return null;
-    }
-  }
-
-  async updateUserName(id: string, username: string): Promise<User | undefined> {
-    try {
-      const updatedUserName = await prisma.user.update({
-        where: { id },
-        data: { username },
-      });
-
-      return updatedUserName;
-    } catch (e) {
-      if (e instanceof Error) throw new Error(e.message);
-    }
-  }
-
-  async updateUserNickname(
-    id: string,
-    nickname: string
-  ): Promise<User | { message: string } | undefined> {
-    try {
-      const updatedUserNickname = await prisma.user.update({
-        where: { id },
-        data: { nickname },
-      });
-
-      return updatedUserNickname;
-    } catch (e) {
-      if (e instanceof Prisma.PrismaClientKnownRequestError) {
-        if (e.code === 'P2002') {
-          return { message: '해당 닉네임은 이미 사용 중입니다.' };
-        }
-      }
-
-      if (e instanceof Error) {
-        throw new Error(e.message);
-      }
     }
   }
 
@@ -369,7 +342,7 @@ export class PrUserRepository implements IUserRepository {
    * */
 
   async updateProfileImg(
-    id: string,
+    nickname: string,
     userProfilePath: string,
     file: File,
     type: 'create' | 'update'
@@ -382,25 +355,25 @@ export class PrUserRepository implements IUserRepository {
       const path = (signedUrl?.length && signedUrl[1]) || '';
 
       const updatedUserName = await prisma.user.update({
-        where: { id },
+        where: { nickname },
         data: { profileImg: img, profileImgPath: path },
       });
 
       return updatedUserName;
-    } catch (e) {
-      if (e instanceof Error) throw new Error(e.message);
+    } catch (error) {
+      if (error instanceof Error) throw new Error(error.message);
     }
   }
 
-  async delete(id: string): Promise<boolean> {
+  async delete(nickname: string): Promise<boolean> {
     try {
       await prisma.user.delete({
-        where: { id },
+        where: { nickname },
       });
 
       return true;
-    } catch (e) {
-      if (e instanceof Error) throw new Error(e.message);
+    } catch (error) {
+      if (error instanceof Error) throw new Error(error.message);
       return false;
     }
   }
@@ -419,11 +392,11 @@ export class PrUserRepository implements IUserRepository {
         Key: userProfile,
       });
 
-      this.s3.send(deleteCommand);
+      await this.s3.send(deleteCommand);
 
       return true;
-    } catch (e) {
-      if (e instanceof Error) throw new Error(e.message);
+    } catch (error) {
+      if (error instanceof Error) throw new Error(error.message);
     }
   }
 
@@ -451,8 +424,8 @@ export class PrUserRepository implements IUserRepository {
       });
 
       return true;
-    } catch (e) {
-      if (e instanceof Error) throw new Error(e.message);
+    } catch (error) {
+      if (error instanceof Error) throw new Error(error.message);
     }
   }
 }

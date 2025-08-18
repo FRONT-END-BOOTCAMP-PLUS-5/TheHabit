@@ -1,8 +1,8 @@
-import { IRoutinesRepository } from '../../domains/repositories/IRoutinesRepository';
-import { CreateRoutineRequestDto, ReadRoutineResponseDto } from '../dtos/RoutineDto';
+import { IRoutinesRepository } from '@/backend/routines/domains/repositories/IRoutinesRepository';
+import { CreateRoutineRequestDto, ReadRoutineResponseDto } from '@/backend/routines/applications/dtos/RoutineDto';
 
 export class AddRoutineUseCase {
-  constructor(private readonly IRoutinesRepository: IRoutinesRepository) {}
+  constructor(private readonly routinesRepository: IRoutinesRepository) {}
 
   async execute(request: CreateRoutineRequestDto): Promise<ReadRoutineResponseDto> {
     const routineToCreate = {
@@ -13,16 +13,38 @@ export class AddRoutineUseCase {
       updatedAt: new Date(),
     };
 
-    const createdRoutine = await this.IRoutinesRepository.create(routineToCreate);
+    const createdRoutine = await this.routinesRepository.create(routineToCreate);
 
     return {
       id: createdRoutine.id,
       routineTitle: createdRoutine.routineTitle,
-      alertTime: createdRoutine.alertTime,
+      alertTime: createdRoutine.alertTime ? createdRoutine.alertTime.toISOString() : null,
       emoji: createdRoutine.emoji,
       challengeId: createdRoutine.challengeId,
-      createdAt: createdRoutine.createdAt,
-      updatedAt: createdRoutine.updatedAt,
+      createdAt: createdRoutine.createdAt.toISOString(),
+      updatedAt: createdRoutine.updatedAt.toISOString(),
+    };
+  }
+
+  async executeByNickname(
+    request: CreateRoutineRequestDto & { nickname: string }
+  ): Promise<ReadRoutineResponseDto> {
+    const createdRoutine = await this.routinesRepository.createByNickname({
+      routineTitle: request.routineTitle,
+      alertTime: request.alertTime,
+      emoji: request.emoji,
+      challengeId: request.challengeId,
+      nickname: request.nickname,
+    });
+
+    return {
+      id: createdRoutine.id,
+      routineTitle: createdRoutine.routineTitle,
+      alertTime: createdRoutine.alertTime ? createdRoutine.alertTime.toISOString() : null,
+      emoji: createdRoutine.emoji,
+      challengeId: createdRoutine.challengeId,
+      createdAt: createdRoutine.createdAt.toISOString(),
+      updatedAt: createdRoutine.updatedAt.toISOString(),
     };
   }
 }
