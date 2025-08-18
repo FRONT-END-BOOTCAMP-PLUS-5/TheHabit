@@ -12,6 +12,7 @@ export class GetRoutineCompletionsUseCase {
       routineId: completion.routineId,
       createdAt: completion.createdAt.toISOString(),
       proofImgUrl: completion.proofImgUrl,
+      content: completion.content,
     }));
   }
 
@@ -23,6 +24,7 @@ export class GetRoutineCompletionsUseCase {
       routineId: completion.routineId,
       createdAt: completion.createdAt.toISOString(),
       proofImgUrl: completion.proofImgUrl,
+      content: completion.content,
     }));
   }
 
@@ -40,6 +42,7 @@ export class GetRoutineCompletionsUseCase {
       routineId: completion.routineId,
       createdAt: completion.createdAt.toISOString(),
       proofImgUrl: completion.proofImgUrl,
+      content: completion.content,
     }));
   }
 
@@ -57,6 +60,7 @@ export class GetRoutineCompletionsUseCase {
       routineId: completion.routineId,
       createdAt: completion.createdAt.toISOString(),
       proofImgUrl: completion.proofImgUrl,
+      content: completion.content,
     }));
   }
 }

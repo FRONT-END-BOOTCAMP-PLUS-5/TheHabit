@@ -1,15 +1,15 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { createRoutineCompletion } from '@/libs/api/routine-completions.api';
 import {
   CreateRoutineCompletionRequestDto,
   RoutineCompletionDto,
 } from '@/backend/routine-completions/applications/dtos/RoutineCompletionDto';
+import { ApiResponse } from '@/backend/shared/types/ApiResponse';
 import axios from 'axios';
 
 interface CreateRoutineCompletionParams {
-  userId: string;
+  nickname: string;
   routineId: number;
-  review: string;
+  content: string;
   photoFile?: File;
 }
 
@@ -21,26 +21,32 @@ export const useCreateRoutineCompletion = () => {
   const queryClient = useQueryClient();
 
   return useMutation<RoutineCompletionDto, Error, CreateRoutineCompletionParams>({
-    mutationFn: async ({ photoFile, ...rest }) => {
-      let proofImgUrl: string | null = null;
-
+    mutationFn: async ({ nickname, routineId, content, photoFile }) => {
+      // FormData로 직접 API 요청
+      const formData = new FormData();
+      formData.append('nickname', nickname);
+      formData.append('routineId', routineId.toString());
+      formData.append('content', content);
+      
       if (photoFile) {
-        const formData = new FormData();
         formData.append('file', photoFile);
-
-        const { data: uploadData } = await axios.post(
-          '/api/routine-completions/image',
-          formData,
-        );
-        proofImgUrl = uploadData.imageUrl;
       }
 
-      const completionData: CreateRoutineCompletionRequestDto = {
-        ...rest,
-        proofImgUrl,
-      };
+      const response = await axios.post<ApiResponse<RoutineCompletionDto>>(
+        '/api/routine-completions',
+        formData,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        }
+      );
 
-      return createRoutineCompletion(completionData);
+      if (!response.data.data) {
+        throw new Error('서버에서 반환된 데이터가 없습니다');
+      }
+
+      return response.data.data;
     },
     onSuccess: (data, variables) => {
       // 루틴 완료 생성 성공 시 관련 캐시 무효화

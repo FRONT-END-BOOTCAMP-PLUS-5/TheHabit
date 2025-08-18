@@ -41,7 +41,7 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
     const result = await addRoutineCompletionUseCase.executeByNickname({
       nickname: nickname.trim(),
       routineId,
-      review: '', // 기본값으로 빈 문자열 설정
+      content: '', // 기본값으로 빈 문자열 설정
       proofImgUrl: proofImgUrl || null,
     });
 

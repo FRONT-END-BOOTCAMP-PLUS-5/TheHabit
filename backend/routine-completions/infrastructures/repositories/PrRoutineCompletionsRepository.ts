@@ -1,7 +1,6 @@
 import prisma from '@/public/utils/prismaClient';
-import { IRoutineCompletionsRepository } from '../../domains/repositories/IRoutineCompletionsRepository';
-import { RoutineCompletion } from '../../domains/entities/routine-completion/routineCompletion';
-import { s3Service } from '@/backend/shared/services/s3.service';
+import { IRoutineCompletionsRepository } from '@/backend/routine-completions/domains/repositories/IRoutineCompletionsRepository';
+import { RoutineCompletion } from '@/backend/routine-completions/domains/entities/routine-completion/routineCompletion';
 
 export class PrRoutineCompletionsRepository implements IRoutineCompletionsRepository {
   async create(
@@ -23,23 +22,22 @@ export class PrRoutineCompletionsRepository implements IRoutineCompletionsReposi
       createdAt: createdCompletion.createdAt,
       proofImgUrl: createdCompletion.proofImgUrl,
       content: createdCompletion.content,
-<<<<<<< HEAD
     };
   }
 
   async createByNickname(request: {
     nickname: string;
     routineId: number;
+    content: string;
     proofImgUrl: string | null;
-    content: string | null;
   }): Promise<RoutineCompletion> {
-    // 먼저 nickname으로 user를 찾아서 userId 가져오기
+    // 닉네임으로 사용자 찾기
     const user = await prisma.user.findUnique({
-      where: { nickname: request.nickname }
+      where: { nickname: request.nickname },
     });
-    
+
     if (!user) {
-      throw new Error(`User with nickname '${request.nickname}' not found`);
+      throw new Error(`사용자를 찾을 수 없습니다: ${request.nickname}`);
     }
 
     const createdCompletion = await prisma.routineCompletion.create({
@@ -58,8 +56,6 @@ export class PrRoutineCompletionsRepository implements IRoutineCompletionsReposi
       createdAt: createdCompletion.createdAt,
       proofImgUrl: createdCompletion.proofImgUrl,
       content: createdCompletion.content,
-=======
->>>>>>> ff16980c4d61a2d1904673772bc92bd71c7b9150
     };
   }
 
@@ -110,34 +106,6 @@ export class PrRoutineCompletionsRepository implements IRoutineCompletionsReposi
     };
   }
 
-  async findByNickname(nickname: string): Promise<RoutineCompletion[]> {
-    console.log('🔍 닉네임으로 루틴 완료 조회 시작:', nickname);
-    try {
-      const completions = await prisma.routineCompletion.findMany({
-        where: { user: { nickname } },
-        include: {
-          user: {
-            select: {
-              nickname: true
-            }
-          }
-        }
-      });
-
-      return completions.map((completion: any) => ({
-        id: completion.id,
-        userId: completion.userId,
-        routineId: completion.routineId,
-        createdAt: completion.createdAt,
-        proofImgUrl: completion.proofImgUrl,
-        content: completion.content,
-      }));
-    } catch (error) {
-      console.error('닉네임으로 루틴 완료 조회 중 오류:', error);
-      throw new Error(`닉네임 '${nickname}'으로 루틴 완료 조회에 실패했습니다: ${error instanceof Error ? error.message : '알 수 없는 오류'}`);
-    }
-  }
-
   async findByUserIdAndRoutineId(userId: string, routineId: number): Promise<RoutineCompletion[]> {
     const completions = await prisma.routineCompletion.findMany({
       where: {
@@ -157,34 +125,30 @@ export class PrRoutineCompletionsRepository implements IRoutineCompletionsReposi
   }
 
   async findByNicknameAndRoutineId(nickname: string, routineId: number): Promise<RoutineCompletion[]> {
-    console.log('🔍 닉네임과 루틴ID로 완료 조회 시작:', nickname, routineId);
-    try {
-      const completions = await prisma.routineCompletion.findMany({
-        where: {
-          user: { nickname },
-          routineId
-        },
-        include: {
-          user: {
-            select: {
-              nickname: true
-            }
-          }
-        }
-      });
+    // 닉네임으로 사용자 찾기
+    const user = await prisma.user.findUnique({
+      where: { nickname },
+    });
 
-      return completions.map((completion: any) => ({
-        id: completion.id,
-        userId: completion.userId,
-        routineId: completion.routineId,
-        createdAt: completion.createdAt,
-        proofImgUrl: completion.proofImgUrl,
-        content: completion.content,
-      }));
-    } catch (error) {
-      console.error('닉네임과 루틴ID로 완료 조회 중 오류:', error);
-      throw new Error(`닉네임 '${nickname}'과 루틴ID '${routineId}'로 조회에 실패했습니다: ${error instanceof Error ? error.message : '알 수 없는 오류'}`);
+    if (!user) {
+      return [];
     }
+
+    const completions = await prisma.routineCompletion.findMany({
+      where: {
+        userId: user.id,
+        routineId,
+      },
+    });
+
+    return completions.map((completion: RoutineCompletion) => ({
+      id: completion.id,
+      userId: completion.userId,
+      routineId: completion.routineId,
+      createdAt: completion.createdAt,
+      proofImgUrl: completion.proofImgUrl,
+      content: completion.content,
+    }));
   }
 
   async update(
@@ -219,9 +183,5 @@ export class PrRoutineCompletionsRepository implements IRoutineCompletionsReposi
     } catch (error) {
       return false;
     }
-  }
-
-  async uploadImage(file: File): Promise<{ imageUrl: string; key: string }> {
-    return s3Service.uploadImage(file, 'routine-completions');
   }
 }
