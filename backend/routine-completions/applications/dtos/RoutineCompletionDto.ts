@@ -1,10 +1,11 @@
 import { RoutineCompletion } from '@/backend/routine-completions/domains/entities/routine-completion/routineCompletion';
 
 export interface CreateRoutineCompletionRequestDto {
-  userId: string;
+  nickname: string;
   routineId: number;
   review: string;
   proofImgUrl: string | null;
+  content: string | null;
 }
 
 export interface CreateRoutineCompletionResponseDto {
@@ -41,6 +42,7 @@ export interface RoutineCompletionDto {
   routineId: number;
   createdAt: string;
   proofImgUrl: string | null;
+  content: string | null;
 }
 
 // DTO Mapper
@@ -52,6 +54,7 @@ export class RoutineCompletionDtoMapper {
       routineId: entity.routineId,
       createdAt: entity.createdAt.toISOString(),
       proofImgUrl: entity.proofImgUrl,
+      content: entity.content,
     };
   }
 

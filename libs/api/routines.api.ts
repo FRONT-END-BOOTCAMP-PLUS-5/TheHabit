@@ -7,11 +7,14 @@ import {
   DashboardRoutineDto,
 } from '@/backend/routines/applications/dtos/RoutineDto';
 
-// 1. Get all routines
-export const getAllRoutines = async (): Promise<ApiResponse<ReadRoutineResponseDto[]>> => {
+// 1. 닉네임으로 모든 루틴 조회
+export const getAllRoutines = async (
+  nickname: string
+): Promise<ApiResponse<ReadRoutineResponseDto[]>> => {
   try {
-    const response =
-      await axiosInstance.get<ApiResponse<ReadRoutineResponseDto[]>>('/api/routines');
+    const response = await axiosInstance.get<ApiResponse<ReadRoutineResponseDto[]>>(
+      `/api/routines?nickname=${nickname}`
+    );
     return response.data;
   } catch (error) {
     console.error('전체 루틴 조회 실패:', error);
@@ -19,13 +22,14 @@ export const getAllRoutines = async (): Promise<ApiResponse<ReadRoutineResponseD
   }
 };
 
-// Get routines by challenge ID
+// 2. 챌린지 ID로 루틴 조회
 export const getRoutinesByChallenge = async (
-  challengeId: number
+  challengeId: number,
+  nickname: string
 ): Promise<ApiResponse<ReadRoutineResponseDto[]>> => {
   try {
     const response = await axiosInstance.get<ApiResponse<ReadRoutineResponseDto[]>>(
-      `/api/routines?challengeId=${challengeId}`
+      `/api/routines?challengeId=${challengeId}&nickname=${nickname}`
     );
     return response.data;
   } catch (error) {
@@ -34,13 +38,13 @@ export const getRoutinesByChallenge = async (
   }
 };
 
-// 3. Get routines by user
+// 3. 닉네임으로 사용자 루틴 조회
 export const getRoutinesByUser = async (
-  userId: string
+  nickname: string
 ): Promise<ApiResponse<ReadRoutineResponseDto[]>> => {
   try {
     const response = await axiosInstance.get<ApiResponse<ReadRoutineResponseDto[]>>(
-      `/api/routines?userId=${userId}`
+      `/api/routines?nickname=${nickname}`
     );
     return response.data;
   } catch (error) {
@@ -49,7 +53,7 @@ export const getRoutinesByUser = async (
   }
 };
 
-// 4. Get routine by ID
+// 4. ID로 루틴 상세 조회
 export const getRoutineById = async (id: number): Promise<ApiResponse<ReadRoutineResponseDto>> => {
   try {
     const response = await axiosInstance.get<ApiResponse<ReadRoutineResponseDto>>(
@@ -62,7 +66,7 @@ export const getRoutineById = async (id: number): Promise<ApiResponse<ReadRoutin
   }
 };
 
-// 5. Create routine
+// 5. 루틴 생성
 export const createRoutine = async (
   routineData: CreateRoutineRequestDto
 ): Promise<ApiResponse<ReadRoutineResponseDto>> => {
@@ -78,7 +82,7 @@ export const createRoutine = async (
   }
 };
 
-// 6. Update routine
+// 6. 루틴 수정
 export const updateRoutine = async (
   id: number,
   routineData: UpdateRoutineRequestDto
@@ -95,7 +99,7 @@ export const updateRoutine = async (
   }
 };
 
-// 7. Delete routine
+// 7. 루틴 삭제
 export const deleteRoutine = async (id: number): Promise<ApiResponse<void>> => {
   try {
     const response = await axiosInstance.delete<ApiResponse<void>>(`/api/routines/${id}`);
@@ -106,21 +110,19 @@ export const deleteRoutine = async (id: number): Promise<ApiResponse<void>> => {
   }
 };
 
-// 8. Get dashboard routines (with completion status)
+// 8. 대시보드 루틴 조회 (완료 상태 포함)
 export const getDashboardRoutines = async (
-  challengeId?: number,
-  userId?: string
+  nickname: string,
+  challengeId?: number
 ): Promise<ApiResponse<DashboardRoutineDto[]>> => {
   try {
     let url = '/api/routines/dashboard';
     const params = new URLSearchParams();
 
+    params.append('nickname', nickname);
     if (challengeId) params.append('challengeId', challengeId.toString());
-    if (userId) params.append('userId', userId);
 
-    if (params.toString()) {
-      url += `?${params.toString()}`;
-    }
+    url += `?${params.toString()}`;
 
     const response = await axiosInstance.get<ApiResponse<DashboardRoutineDto[]>>(url);
     return response.data;
@@ -130,11 +132,11 @@ export const getDashboardRoutines = async (
   }
 };
 
-// Convenience API object
+// API 편의 객체
 export const routinesApi = {
   getAll: getAllRoutines,
   getByChallenge: getRoutinesByChallenge,
-  getByUser: getRoutinesByUser,
+  getByNickname: getRoutinesByUser,
   getById: getRoutineById,
   getDashboard: getDashboardRoutines,
   create: createRoutine,
