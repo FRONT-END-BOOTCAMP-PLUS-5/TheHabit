@@ -2,11 +2,11 @@
 
 import { useState } from 'react';
 import { FeedBackStatistics } from '@/app/user/feedback/_components/FeedBackStatistics';
-import { useGetAllChallenges } from '@/libs/hooks';
 import { FeedBackCategoryProgress } from '@/app/user/feedback/_components/FeedBackCategoryProgress';
 import { FeedBackDescription } from '@/app/user/feedback/_components/FeedBackDescription';
 import { FeedBackDetail } from '@/app/user/feedback/_components/FeedBackDetail';
 import { FeedBackBarChart } from '@/app/user/feedback/_components/FeedBackBarChart';
+import { useGetAllChallenges } from '@/libs/hooks/challenges-hooks/useGetAllChallenges';
 
 const FEEDBACK_CATEGORIES = [
   { id: 1, name: '통계' },
@@ -15,6 +15,7 @@ const FEEDBACK_CATEGORIES = [
 
 export const FeedBackList = () => {
   const { data: challenges } = useGetAllChallenges();
+  console.log(challenges);
 
   const [selectedCategoryName, setSelectedCategoryName] = useState<string>('통계');
 

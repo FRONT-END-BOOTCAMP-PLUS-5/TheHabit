@@ -17,6 +17,8 @@ export const FeedBackPostData = async (
       return feedBackData.data.gptResponseContent;
     }
 
+    console.log('routineCompletion', routineCompletion);
+
     // 피드백이 없으면 새로 생성
     const routineStatusMessagesGPTResponse = await ValidateFeedBackGPTResponse(
       challengeId,

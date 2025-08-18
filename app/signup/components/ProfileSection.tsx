@@ -6,6 +6,7 @@ import { Controller, useFormContext } from 'react-hook-form';
 import { ProfileImage } from '@/app/_components/profile-images/ProfileImage';
 import { useUploadProfile } from '@/libs/hooks/signup/useUploadProfile';
 import { useEffect } from 'react';
+import { Rex } from '@/public/consts/Rex';
 
 export const ProfileSection = () => {
   const {
@@ -14,14 +15,15 @@ export const ProfileSection = () => {
     setValue,
   } = useFormContext();
 
-  const { profilePreview, handleImageClick, handleFileChange, fileInputRef, profileFile } =
-    useUploadProfile();
+  const { profilePreview, handleImageClick, fileInputRef, profileFile, handleFileChange } = useUploadProfile();
 
   useEffect(() => {
     if (profileFile) {
-      setValue('profileImage', profileFile);
+      setValue('profileImage', profileFile.name);
+      setValue('profileImagePath', profileFile.name); // 임시로 파일명을 경로로 사용
+      setValue('profileFile', profileFile); // profileFile 객체 자체를 폼에 설정
     }
-  }, [profileFile]);
+  }, [profileFile, setValue]);
 
   return (
     <section className='grid grid-cols-[1fr_3fr] items-center gap-5 w-full'>
@@ -50,7 +52,7 @@ export const ProfileSection = () => {
         rules={{
           required: '닉네임을 입력해주세요',
           pattern: {
-            value: /^[ㄱ-ㅎ|가-힣|a-z|A-Z|0-9|]{2,10}$/,
+            value: Rex.nickname.standard,
             message: '닉네임은 한글, 영문, 숫자를 포함해 2자 이상 10자여야 합니다',
           },
         }}

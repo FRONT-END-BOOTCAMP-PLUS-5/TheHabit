@@ -1,7 +1,6 @@
-'use client';
-import '@ant-design/v5-patch-for-react-19';
-
-import { Button as AntdButton } from 'antd';
+"use client";
+import "@ant-design/v5-patch-for-react-19";
+import { Button as AntdButton } from "antd";
 
 //차후 tailwind css 사용할때 상수화
 
