@@ -45,6 +45,11 @@ export default function Home() {
             rel='noopener noreferrer'>
             Read our docs
           </a>
+          <a
+            className='rounded-full border border-solid border-blue-600 bg-blue-600 text-white transition-colors flex items-center justify-center hover:bg-blue-700 font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto'
+            href='/test-auth'>
+            🔐 인증 테스트
+          </a>
         </div>
       </main>
       <footer className='row-start-3 flex gap-[24px] flex-wrap items-center justify-center'>
