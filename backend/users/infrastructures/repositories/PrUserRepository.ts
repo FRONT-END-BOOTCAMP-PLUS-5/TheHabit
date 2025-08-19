@@ -69,9 +69,11 @@ export class PrUserRepository implements IUserRepository {
 
       const signedUrl: string = `https://${process.env.AMPLIFY_BUCKET}.s3.${process.env.AWS_REGION}.amazonaws.com/${key}`;
 
+
       return [signedUrl, key];
     } catch (error) {
       if (error instanceof Error) throw new Error(error.message);
+      return undefined;
     }
   }
 
@@ -345,6 +347,7 @@ export class PrUserRepository implements IUserRepository {
     }
   }
 
+
   async findById(id: string): Promise<User | null> {
     try {
       const user = await prisma.user.findUnique({
@@ -362,6 +365,7 @@ export class PrUserRepository implements IUserRepository {
 
   async update(nickname: string, user: Partial<User>): Promise<User | { message: string } | null> {
     try {
+
       if (user.nickname && user.nickname !== nickname) {
         throw new Error('닉네임은 변경할 수 없습니다.');
       }
