@@ -1,6 +1,5 @@
 'use client';
 
-import ChallengesAccordion from '@/app/_components/challenges-accordion/ChallengesAccordion';
 import WeeklySlide from '@/app/_components/weekly-slides/WeeklySlide';
 import { getKoreanDateFromDate } from '@/public/utils/dateUtils';
 import { useState } from 'react';
@@ -12,6 +11,8 @@ import AddChallengeForm from './AddChallengeForm';
 import { useGetDashboardByNickname } from '@/libs/hooks';
 import { useParams } from 'next/navigation';
 import { ChallengeDto } from '@/backend/challenges/applications/dtos/ChallengeDto';
+import AllChallengeList from './AllChallengeList';
+import CategoryChallengeList from './CategoryChallengeList';
 
 const ChallengeListSection: React.FC = () => {
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
@@ -64,152 +65,6 @@ const ChallengeListSection: React.FC = () => {
     setSelectedSort(e.target.value);
   };
 
-  const allChallenges: React.ReactNode = (
-    <div className='flex flex-col gap-0.5'>
-      {getChallengesForSelectedDate().length > 0 ? (
-        getChallengesForSelectedDate().map(challenge => (
-          <ChallengesAccordion
-            key={challenge.id}
-            challenge={challenge}
-            routines={dashboard?.routines || []}
-            routineCompletions={dashboard?.routineCompletions || []}
-          />
-        ))
-      ) : (
-        <div className='text-center py-8 text-gray-500'>
-          {selectedDate.toLocaleDateString()}에 해당하는 챌린지가 없습니다
-        </div>
-      )}
-    </div>
-  );
-
-  const categoryChallenges: React.ReactNode = (
-    <div className='flex flex-col gap-2'>
-      <div className='text-2xl font-bold text-secondary mb-3'>
-        <h2>건강</h2>
-      </div>
-      <div className='flex flex-col gap-0.5'>
-        {!dashboard ? (
-          <div className='text-center py-4 text-gray-500 text-sm'>
-            챌린지 데이터를 불러오는 중...
-          </div>
-        ) : dashboard.challenge && dashboard.challenge.length > 0 ? (
-          getChallengesForSelectedDate().filter(challenge => challenge.categoryId === 0).length >
-          0 ? (
-            getChallengesForSelectedDate()
-              .filter(challenge => challenge.categoryId === 0)
-              .map(challenge => (
-                <ChallengesAccordion
-                  key={challenge.id}
-                  challenge={challenge}
-                  routines={dashboard?.routines || []}
-                  routineCompletions={dashboard?.routineCompletions || []}
-                />
-              ))
-          ) : (
-            <div className='text-center py-4 text-gray-500 text-sm'>
-              {selectedDate.toLocaleDateString()}에 건강 카테고리의 챌린지가 없습니다
-            </div>
-          )
-        ) : (
-          <div className='text-center py-4 text-gray-500 text-sm'>챌린지가 없습니다</div>
-        )}
-        <div className='text-2xl font-bold text-secondary'>
-          <h2>공부</h2>
-        </div>
-        <div className='flex flex-col gap-0.5'>
-          {!dashboard ? (
-            <div className='text-center py-4 text-gray-500 text-sm'>
-              챌린지 데이터를 불러오는 중...
-            </div>
-          ) : dashboard.challenge && dashboard.challenge.length > 0 ? (
-            getChallengesForSelectedDate().filter(challenge => challenge.categoryId === 1).length >
-            0 ? (
-              getChallengesForSelectedDate()
-                .filter(challenge => challenge.categoryId === 1)
-                .map(challenge => (
-                  <ChallengesAccordion
-                    key={challenge.id}
-                    challenge={challenge}
-                    routines={dashboard?.routines || []}
-                    routineCompletions={dashboard?.routineCompletions || []}
-                  />
-                ))
-            ) : (
-              <div className='text-center py-4 text-gray-500 text-sm'>
-                {selectedDate.toLocaleDateString()}에 공부 카테고리의 챌린지가 없습니다
-              </div>
-            )
-          ) : (
-            <div className='text-center py-4 text-gray-500 text-sm'>챌린지가 없습니다</div>
-          )}
-        </div>
-      </div>
-      <div className='flex flex-col gap-0.5'>
-        <div className='text-2xl font-bold text-secondary'>
-          <h2>자기개발</h2>
-        </div>
-        <div className='flex flex-col gap-0.5'>
-          {!dashboard ? (
-            <div className='text-center py-4 text-gray-500 text-sm'>
-              챌린지 데이터를 불러오는 중...
-            </div>
-          ) : dashboard.challenge && dashboard.challenge.length > 0 ? (
-            getChallengesForSelectedDate().filter(challenge => challenge.categoryId === 2).length >
-            0 ? (
-              getChallengesForSelectedDate()
-                .filter(challenge => challenge.categoryId === 2)
-                .map(challenge => (
-                  <ChallengesAccordion
-                    key={challenge.id}
-                    challenge={challenge}
-                    routines={dashboard?.routines || []}
-                    routineCompletions={dashboard?.routineCompletions || []}
-                  />
-                ))
-            ) : (
-              <div className='text-center py-4 text-gray-500 text-sm'>
-                {selectedDate.toLocaleDateString()}에 자기개발 카테고리의 챌린지가 없습니다
-              </div>
-            )
-          ) : (
-            <div className='text-center py-4 text-gray-500 text-sm'>챌린지가 없습니다</div>
-          )}
-        </div>
-      </div>
-      <div className='text-2xl font-bold text-secondary'>
-        <h2>기타</h2>
-      </div>
-      <div className='flex flex-col gap-0.5'>
-        {!dashboard ? (
-          <div className='text-center py-4 text-gray-500 text-sm'>
-            챌린지 데이터를 불러오는 중...
-          </div>
-        ) : dashboard.challenge && dashboard.challenge.length > 0 ? (
-          getChallengesForSelectedDate().filter(challenge => challenge.categoryId === 3).length >
-          0 ? (
-            getChallengesForSelectedDate()
-              .filter(challenge => challenge.categoryId === 3)
-              .map(challenge => (
-                <ChallengesAccordion
-                  key={challenge.id}
-                  challenge={challenge}
-                  routines={dashboard?.routines || []}
-                  routineCompletions={dashboard?.routineCompletions || []}
-                />
-              ))
-          ) : (
-            <div className='text-center py-4 text-gray-500 text-sm'>
-              {selectedDate.toLocaleDateString()}에 기타 카테고리의 챌린지가 없습니다
-            </div>
-          )
-        ) : (
-          <div className='text-center py-4 text-gray-500 text-sm'>챌린지가 없습니다</div>
-        )}
-      </div>
-    </div>
-  );
-
   return (
     <section className='flex flex-col gap-2 px-3 py-2 w-full relative mb-10'>
       <WeeklySlide onDateSelect={handleDateSelect} />
@@ -240,7 +95,24 @@ const ChallengeListSection: React.FC = () => {
             </Radio.Group>
           </div>
         </div>
-        {selectedSort === 'all' ? allChallenges : categoryChallenges}
+        {selectedSort === 'all' ? (
+          <AllChallengeList
+            challenges={getChallengesForSelectedDate()}
+            routines={dashboard?.routines || []}
+            routineCompletions={dashboard?.routineCompletions || []}
+            selectedDate={selectedDate}
+          />
+        ) : (
+          dashboard && (
+            <CategoryChallengeList
+              dashboard={dashboard}
+              challenges={getChallengesForSelectedDate()}
+              routines={dashboard?.routines || []}
+              routineCompletions={dashboard?.routineCompletions || []}
+              selectedDate={selectedDate}
+            />
+          )
+        )}
       </div>
       <AddChallengeButton onClick={handleOpenModal} />
     </section>
