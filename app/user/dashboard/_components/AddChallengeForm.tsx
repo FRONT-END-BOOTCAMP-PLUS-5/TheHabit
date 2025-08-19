@@ -9,6 +9,9 @@ import DevelopIcon from '@/public/icons/icon_develop.png';
 import GuitarIcon from '@/public/icons/icon_guitar.png';
 import CustomInput from '@/app/_components/inputs/CustomInput';
 import { CHALLENGE_COLORS } from '@/public/consts/challengeColors';
+import { useCreateChallenge } from '@/libs/hooks/challenges-hooks/useCreateChallenge';
+import { useSession } from 'next-auth/react';
+import { useModalStore } from '@/libs/stores/modalStore';
 
 const AddChallengeForm: React.FC = () => {
   const {
@@ -21,6 +24,13 @@ const AddChallengeForm: React.FC = () => {
 
   const watchCreatedAt = watch('createdAt');
   const watchCategoryId = watch('categoryId');
+  const userNickname = useSession().data?.user.nickname;
+
+  // 챌린지 생성 훅 사용
+  const createChallengeMutation = useCreateChallenge();
+
+  // 모달 닫기 함수
+  const { closeModal } = useModalStore();
 
   // 시작 날짜가 변경될 때마다 종료 날짜를 21일 후로 자동 설정
   useEffect(() => {
@@ -47,7 +57,33 @@ const AddChallengeForm: React.FC = () => {
   }, [watchCategoryId, setValue]);
 
   const onSubmitHandler = (data: AddChallengeRequestDto) => {
-    alert(JSON.stringify(data));
+    // categoryId를 숫자로 변환
+    const formData = {
+      ...data,
+      categoryId: Number(data.categoryId),
+      nickname: userNickname || '',
+    };
+
+    createChallengeMutation.mutate(formData, {
+      onSuccess: response => {
+        if (response.success) {
+          console.log('챌린지 생성 성공:', response.message);
+          // 챌린지 생성 성공 시 alert 표시 후 1초 뒤 모달 닫기
+          alert('챌린지 생성에 성공했습니다.');
+
+          setTimeout(() => {
+            closeModal();
+          }, 500);
+        } else {
+          console.error('챌린지 생성 실패:', response.error?.message);
+          alert('챌린지 생성에 실패했습니다: ' + response.error?.message);
+        }
+      },
+      onError: (error: Error) => {
+        console.error('챌린지 생성 중 오류 발생:', error);
+        alert('챌린지 생성 중 오류가 발생했습니다: ' + error.message);
+      },
+    });
   };
 
   return (
