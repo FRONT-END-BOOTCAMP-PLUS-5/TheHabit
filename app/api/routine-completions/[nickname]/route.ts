@@ -9,7 +9,7 @@ const createGetRoutineCompletionsUseCase = () => {
   return new GetRoutineCompletionsUseCase(repository);
 };
 
-export async function GET(request: NextRequest, { params }: { params: Promise<{ nickname: string }> }) {
+export async function GET(request: NextRequest, { params }: { params: Promise<{ nickname: string }> }): Promise<NextResponse<ApiResponse<RoutineCompletionDto[] | null>>> {
   try {
     const { nickname } = await params;
 

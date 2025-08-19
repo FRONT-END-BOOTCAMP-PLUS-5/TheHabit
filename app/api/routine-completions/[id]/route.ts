@@ -25,7 +25,7 @@ const createDeleteRoutineCompletionUseCase = () => {
 };
 
 // 루틴 완료 조회
-export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }): Promise<NextResponse<ApiResponse<RoutineCompletionDto | null>>> {
   try {
     const { id } = await params;
     const completionId = Number(id);
@@ -75,7 +75,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
 }
 
 // 루틴 완료 수정
-export async function PATCH(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+export async function PATCH(request: NextRequest, { params }: { params: Promise<{ id: string }> }): Promise<NextResponse<ApiResponse<RoutineCompletionDto | null>>> {
   try {
     const { id } = await params;
     const completionId = Number(id);
@@ -131,7 +131,7 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
 export async function DELETE(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
-) {
+): Promise<NextResponse<ApiResponse<null>>> {
   try {
     const { id } = await params;
     const completionId = Number(id);
