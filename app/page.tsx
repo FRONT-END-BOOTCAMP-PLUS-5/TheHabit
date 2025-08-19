@@ -1,9 +1,9 @@
-import OnBoardingPage from './(onboarding)/page';
+import OnBoardingPage from '@/app/(onboarding)/page';
 
 export default function Home() {
   return (
-    <main>
+    <div>
       <OnBoardingPage />
-    </main>
+    </div>
   );
 }
