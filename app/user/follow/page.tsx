@@ -34,11 +34,9 @@ const FollowPage = () => {
     async (type: 'follower' | 'following', keyword: string = '') => {
       const response =
         type === 'follower'
-          ? await follower(userInfo?.nickname || '', keyword)
-          : await following(userInfo?.nickname || '', keyword);
-      if (isMounted.current) {
-        setFollows(response?.data);
-      }
+          ? await follower(userInfo?.id || '', keyword)
+          : await following(userInfo?.id || '', keyword);
+      if (isMounted.current) setFollows(response?.data);
     },
     [follower, following]
   );
@@ -54,9 +52,7 @@ const FollowPage = () => {
     isMounted.current = true;
 
     (async function () {
-      if (type === 'follower' || type === 'following') {
-        await getFollow(type);
-      }
+      if (type === 'follower' || type === 'following') await getFollow(type);
     })();
 
     return () => {
@@ -69,12 +65,16 @@ const FollowPage = () => {
     <main className='px-5'>
       <section id='head'>
         <div id='follow_wrapper' className='flex items-center gap-[5.8rem]'>
-          <BackComponent />
+          <BackComponent nickname={userInfo?.nickname || ''} />
           <p className='pt-2 font-bold text-[20px] w-[200] text-center whitespace-nowrap overflow-hidden text-ellipsis'>
             {nickname}
           </p>
         </div>
-        <CategoryComponent init={init} type={type as 'follower' | 'following'} />
+        <CategoryComponent
+          init={init}
+          type={type as 'follower' | 'following'}
+          nickname={userInfo?.nickname || ''}
+        />
         <Input
           placeholder='Search'
           onChange={evt => {

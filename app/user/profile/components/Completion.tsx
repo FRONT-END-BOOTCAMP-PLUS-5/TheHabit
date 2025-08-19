@@ -12,6 +12,7 @@ import { BUTTON_CLASS, CATEGORY_COLOR } from '@/public/consts/userRoutineComplet
 import { useModalStore } from '@/libs/stores/modalStore';
 import { CreateRoutineCompletionResponseDto } from '@/backend/routine-completions/applications/dtos/RoutineCompletionDto';
 import UserRoutineCompletion from '@/app/user/profile/components/UserRoutineCompletion';
+import NoneImg from '@/app/_components/none/NoneImg';
 
 export const CompletionComponent = ({
   profileImg,
@@ -83,7 +84,11 @@ export const CompletionComponent = ({
         <p>데이터를 불러오는 중...</p>
       </div>
     );
-  } else if ((allCompletions.length === 0 && getUserClicked) || userId === 'edit') {
+  } else if (
+    (allCompletions.length === 0 && getUserClicked) ||
+    allCompletions.length === 0 ||
+    userId === 'edit'
+  ) {
     contentToRender = <None userId={userId!} />;
   } else {
     contentToRender = (
@@ -93,7 +98,6 @@ export const CompletionComponent = ({
       >
         {allCompletions.map((item, idx: number) => {
           const isLastItem = idx === allCompletions.length - 1;
-          console.log(item, 'item');
           return (
             <li
               key={item.id}
@@ -101,13 +105,17 @@ export const CompletionComponent = ({
               ref={isLastItem ? ref : null}
               onClick={() => handleOpenModal(profileImg || null, item)}
             >
-              <Image
-                src={item.proofImgUrl || ''}
-                alt='유저 컴플리션 인증 사진들'
-                fill
-                className='object-cover rounded-sm'
-                sizes='(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 33vw'
-              />
+              {item.proofImgUrl ? (
+                <Image
+                  src={item.proofImgUrl}
+                  alt='유저 컴플리션 인증 사진들'
+                  fill
+                  className='object-cover rounded-sm'
+                  sizes='(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 33vw'
+                />
+              ) : (
+                <NoneImg rounded={'12px'} />
+              )}
             </li>
           );
         })}

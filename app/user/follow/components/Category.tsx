@@ -1,20 +1,19 @@
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import { SELECTED } from '@/public/consts/userFollowSelected';
 
 interface ICategory {
   init: () => void;
   type: 'follower' | 'following';
+  nickname: string;
 }
 
-const SELECTED = 'border-b-4 border-black';
-const NICK_NAME = '이게 도파민이지...';
-
-export const CategoryComponent = ({ init, type }: ICategory) => {
+export const CategoryComponent = ({ init, type, nickname }: ICategory) => {
   const router = useRouter();
   const [getCategory, setCategory] = useState<'follower' | 'following'>(type);
   const handlerSelected = (category: 'follower' | 'following') => {
     init();
-    router.push(`/user/follow?nickname=${NICK_NAME}&t=${category}`);
+    router.push(`/user/follow?nickname=${nickname}&t=${category}`);
     setCategory(category);
   };
 
