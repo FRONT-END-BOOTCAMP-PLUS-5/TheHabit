@@ -2,6 +2,7 @@ import { axiosInstance } from '@/libs/axios/axiosInstance';
 import { UserDto } from '@/backend/users/applications/dtos/UserDto';
 import { CreateRoutineCompletionResponseDto } from '@/backend/routine-completions/applications/dtos/RoutineCompletionDto';
 import { UserReviewDto } from '@/backend/users/applications/dtos/UserReviewDto';
+import { UserChallengeAndRoutineAndFollowAndCompletionDto } from '@/backend/users/applications/dtos/UserChallengeAndRoutineAndFollowAndCompletion';
 
 // API 응답 타입 정의
 interface ApiResponse<T> {
@@ -20,17 +21,18 @@ interface ApiResponse<T> {
  * @return Promise<ApiResponse<User>>
  * */
 export const getUserChallengeAndRoutineAndFollowAndCompletion = async (
-  nickname: string
-): Promise<ApiResponse<CreateRoutineCompletionResponseDto[]>> => {
+  nickname: string,
+  id: string
+): Promise<ApiResponse<UserChallengeAndRoutineAndFollowAndCompletionDto>> => {
   try {
-    const response = await axiosInstance.get<ApiResponse<CreateRoutineCompletionResponseDto[]>>(
-      `/api/users/${nickname}`,
-      {
-        params: {
-          nickname,
-        },
-      }
-    );
+    const response = await axiosInstance.get<
+      ApiResponse<UserChallengeAndRoutineAndFollowAndCompletionDto>
+    >(`/api/users/${nickname}`, {
+      params: {
+        nickname,
+        id,
+      },
+    });
     return response.data;
   } catch (error) {
     throw error;

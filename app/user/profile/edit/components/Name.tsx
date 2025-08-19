@@ -8,28 +8,28 @@ export const NameComponent = () => {
   const [getValue, setValue] = useState<string>('');
   const [getName, setName] = useState<string>(userInfo?.username || '');
 
-  const { updateUsername } = usersApi;
+  // const { updateUsername } = usersApi;
 
   const handleChangeState = () => {
     setState(prev => !prev);
   };
 
   const handleUpdateUserName = async () => {
-    if (getValue) {
-      const response = await updateUsername(userInfo?.id || '', getValue);
-      const name = response.data?.username as string;
-      update({
-        profileImg: userInfo?.profileImg,
-        profileImgPath: userInfo?.profileImgPath,
-        nickname: userInfo?.nickname,
-        username: name,
-      });
-      setName(name);
-      setState(prev => !prev);
-    } else {
-      setState(prev => !prev);
-      return;
-    }
+    // if (getValue) {
+    //   const response = await updateUsername(userInfo?.id || '', getValue);
+    //   const name = response.data?.username as string;
+    //   update({
+    //     profileImg: userInfo?.profileImg,
+    //     profileImgPath: userInfo?.profileImgPath,
+    //     nickname: userInfo?.nickname,
+    //     username: name,
+    //   });
+    //   setName(name);
+    //   setState(prev => !prev);
+    // } else {
+    //   setState(prev => !prev);
+    //   return;
+    // }
   };
 
   useEffect(() => {

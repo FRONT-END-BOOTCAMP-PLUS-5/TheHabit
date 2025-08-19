@@ -15,26 +15,26 @@ export const NicknameComponent = () => {
   };
 
   const handleUpdateUserNickname = async () => {
-    if (getValue) {
-      const response = await updateNickname(userInfo?.id || '', getValue);
-      if (response.success) {
-        const nickname = response.data?.nickname as string;
-        update({
-          profileImg: userInfo?.profileImg,
-          profileImgPath: userInfo?.profileImgPath,
-          nickname: nickname,
-          username: userInfo?.username,
-        });
-        setNickname(nickname);
-        setState(prev => !prev);
-      } else {
-        alert(response.message);
-        return;
-      }
-    } else {
-      setState(prev => !prev);
-      return;
-    }
+    // if (getValue) {
+    //   const response = await updateNickname(userInfo?.id || '', getValue);
+    //   if (response.success) {
+    //     const nickname = response.data?.nickname as string;
+    //     update({
+    //       profileImg: userInfo?.profileImg,
+    //       profileImgPath: userInfo?.profileImgPath,
+    //       nickname: nickname,
+    //       username: userInfo?.username,
+    //     });
+    //     setNickname(nickname);
+    //     setState(prev => !prev);
+    //   } else {
+    //     alert(response.message);
+    //     return;
+    //   }
+    // } else {
+    //   setState(prev => !prev);
+    //   return;
+    // }
   };
 
   useEffect(() => {

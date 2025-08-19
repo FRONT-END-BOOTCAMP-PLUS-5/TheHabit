@@ -1,6 +1,8 @@
 export class UserChallengeAndRoutineAndFollowAndCompletion {
   constructor(
     public readonly challenges: {
+      id: number;
+      name: string;
       createdAt: Date;
       endAt: Date;
       active: boolean;
@@ -10,6 +12,7 @@ export class UserChallengeAndRoutineAndFollowAndCompletion {
           id: number;
           createdAt: Date;
         }[];
+        createdAt: Date;
         emoji: number;
         routineTitle: string;
       }[];

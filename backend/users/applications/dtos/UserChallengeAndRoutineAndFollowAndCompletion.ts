@@ -2,6 +2,8 @@ import { UserChallengeAndRoutineAndFollowAndCompletion } from '@/backend/users/d
 
 export interface UserChallengeAndRoutineAndFollowAndCompletionDto {
   readonly challenges: {
+    id: number;
+    name: string;
     createdAt: string;
     endAt: string;
     active: boolean;
@@ -12,6 +14,7 @@ export interface UserChallengeAndRoutineAndFollowAndCompletionDto {
         id: number;
         createdAt: string;
       }[];
+      createdAt: string;
       emoji: number;
       routineTitle: string;
     }[];
@@ -37,6 +40,7 @@ export class UserChallengeAndRoutineAndFollowAndCompletionDtoMapper {
 
       const routinesDto = challenge.routines.map(routine => ({
         id: routine.id,
+        createdAt: routine.createdAt.toISOString(),
         emoji: routine.emoji,
         routineTitle: routine.routineTitle,
         completions: routine.completions.map(completion => ({
@@ -47,6 +51,8 @@ export class UserChallengeAndRoutineAndFollowAndCompletionDtoMapper {
 
       return {
         durationInDays,
+        id: challenge.id,
+        name: challenge.name,
         createdAt: challenge.createdAt.toISOString(),
         endAt: challenge.endAt.toISOString(),
         active: challenge.active,

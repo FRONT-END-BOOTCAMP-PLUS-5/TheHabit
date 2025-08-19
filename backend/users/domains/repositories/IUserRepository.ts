@@ -19,8 +19,9 @@ export interface IUserRepository {
   findByEmail(email: string): Promise<User | null>;
   findAll(): Promise<User[] | undefined>;
   findByUserChallengesAndRoutinesAndFollowAndCompletion(
-    nickname: string
-  ): Promise<UserChallengeAndRoutineAndFollowAndCompletion | null>;
+    nickname: string,
+    userId: string
+  ): Promise<UserChallengeAndRoutineAndFollowAndCompletion | null | undefined>;
   findByUserNicknameRoutineCompletion(
     nickname: string,
     page: number,
@@ -34,7 +35,7 @@ export interface IUserRepository {
   checkEmailExists(email: string): Promise<boolean>;
 
   // Update
-  update(nickname: string, user: Partial<User>): Promise<User |{ message: string }| null>;
+  update(nickname: string, user: Partial<User>): Promise<User | { message: string } | null>;
   updateProfileImg(
     nickname: string,
     userProfilePath: string,
@@ -42,9 +43,6 @@ export interface IUserRepository {
     type: 'create' | 'update'
   ): Promise<User | undefined>;
 
-  // Update
-  updateUserNickname(id: string, nickname: string): Promise<User | { message: string } | undefined>;
-  updateUserName(id: string, username: string): Promise<User | undefined>;
   updateProfileImg(
     id: string,
     userProfilePath: string,

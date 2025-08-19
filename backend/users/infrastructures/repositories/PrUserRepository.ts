@@ -51,7 +51,7 @@ export class PrUserRepository implements IUserRepository {
    * */
   async createProfileImg(file: File): Promise<string[] | undefined> {
     try {
-      const { name, type } = file
+      const { name, type } = file;
 
       const key = `${uuidv4()}-${name}`;
 
@@ -69,11 +69,9 @@ export class PrUserRepository implements IUserRepository {
 
       const signedUrl: string = `https://${process.env.AMPLIFY_BUCKET}.s3.${process.env.AWS_REGION}.amazonaws.com/${key}`;
 
-
       return [signedUrl, key];
-
-    }catch(error){
-      if(error instanceof  Error) throw new Error(error.message)
+    } catch (error) {
+      if (error instanceof Error) throw new Error(error.message);
     }
   }
 
@@ -111,7 +109,7 @@ export class PrUserRepository implements IUserRepository {
    * @param nickname: string
    * @return UserChallengesAndRoutinesAndFollowAndCompletion
    * */
-  async findByUserChallengesAndRoutinesAndFollowAndCompletion(nickname: string) {
+  async findByUserChallengesAndRoutinesAndFollowAndCompletion(nickname: string, userId: string) {
     try {
       const result = await prisma.user.findUnique({
         where: {
@@ -120,6 +118,8 @@ export class PrUserRepository implements IUserRepository {
         select: {
           challenges: {
             select: {
+              id: true,
+              name: true,
               createdAt: true,
               endAt: true,
               active: true,
@@ -128,9 +128,10 @@ export class PrUserRepository implements IUserRepository {
                   id: true,
                   routineTitle: true,
                   emoji: true,
+                  createdAt: true,
                   completions: {
                     where: {
-                      userId: 'user.id',
+                      userId,
                     },
                     select: {
                       id: true,
@@ -156,8 +157,7 @@ export class PrUserRepository implements IUserRepository {
 
       return result;
     } catch (error) {
-      console.error('Error fetching data:', error);
-      throw error;
+      if (error instanceof Error) throw new Error(error.message);
     }
   }
 
@@ -345,7 +345,6 @@ export class PrUserRepository implements IUserRepository {
     }
   }
 
-
   async findById(id: string): Promise<User | null> {
     try {
       const user = await prisma.user.findUnique({
@@ -363,11 +362,10 @@ export class PrUserRepository implements IUserRepository {
 
   async update(nickname: string, user: Partial<User>): Promise<User | { message: string } | null> {
     try {
-
       if (user.nickname && user.nickname !== nickname) {
         throw new Error('닉네임은 변경할 수 없습니다.');
       }
-      
+
       const updateData: Partial<User> = { ...user };
 
       const updatedUser = await prisma.user.update({
