@@ -20,7 +20,6 @@ const ChallengeListSection: React.FC = () => {
   const params = useParams();
   const nickname = params.nickname as string;
   const { data: dashboard } = useGetDashboardByNickname(nickname);
-  const hasAnyChallenge = Array.isArray(dashboard?.challenge) && dashboard.challenge.length > 0;
 
   // 선택된 날짜가 챌린지 기간 내에 있는지 확인하는 함수
   const isDateInChallengePeriod = (challenge: ChallengeDto, date: Date): boolean => {
