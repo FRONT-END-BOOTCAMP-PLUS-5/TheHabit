@@ -17,7 +17,7 @@ export class GetUserChallengeAndRoutineAndFollowAndCompletion {
       if (!joinResult) return null;
 
       const challengesWithDuration = joinResult.challenges
-        .filter(challenge => !challenge.active)
+        .filter(challenge => challenge.active)
         .map(challenge => {
           const diffInMilliseconds = challenge.endAt.getTime() - challenge.createdAt.getTime();
           const durationInDays = Math.floor(diffInMilliseconds / (1000 * 60 * 60 * 24));
