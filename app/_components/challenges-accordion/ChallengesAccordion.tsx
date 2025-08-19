@@ -107,8 +107,13 @@ const ChallengesAccordion: React.FC<ChallengesAccordionProps> = ({
         <div ref={contentRef}>
           <ChallengesAccordionContent
             challenge={challenge}
-            routines={routines}
-            routineCompletions={routineCompletions}
+            routines={routines.filter(routine => routine.challengeId === challenge.id)}
+            routineCompletions={routineCompletions.filter(completion =>
+              routines.some(
+                routine =>
+                  routine.id === completion.routineId && routine.challengeId === challenge.id
+              )
+            )}
           />
         </div>
       </div>
