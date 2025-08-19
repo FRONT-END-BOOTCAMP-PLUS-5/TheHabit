@@ -32,7 +32,39 @@ export class PrRoutinesRepository implements IRoutinesRepository {
     challengeId: number;
     nickname: string;
   }): Promise<Routine> {
-    // Challenge가 해당 nickname의 사용자 것인지 확인 후 생성
+    console.log('🔍 createByNickname 요청:', request);
+
+    // Challenge가 해당 nickname의 사용자 것인지 확인
+    const challenge = await prisma.challenge.findFirst({
+      where: {
+        id: request.challengeId,
+        user: {
+          nickname: request.nickname,
+        },
+      },
+      include: {
+        user: {
+          select: {
+            nickname: true,
+          },
+        },
+      },
+    });
+
+    if (!challenge) {
+      console.log(
+        '❌ 챌린지 검증 실패 - challengeId:',
+        request.challengeId,
+        'nickname:',
+        request.nickname
+      );
+      throw new Error(
+        `챌린지 ID ${request.challengeId}는 사용자 '${request.nickname}'의 챌린지가 아닙니다.`
+      );
+    }
+
+    console.log('✅ 챌린지 검증 성공:', challenge);
+
     const createdRoutine = await prisma.routine.create({
       data: {
         routineTitle: request.routineTitle,
@@ -42,6 +74,8 @@ export class PrRoutinesRepository implements IRoutinesRepository {
         updatedAt: new Date(),
       },
     });
+
+    console.log('✅ 루틴 생성 완료:', createdRoutine);
 
     return {
       id: createdRoutine.id,
@@ -98,20 +132,20 @@ export class PrRoutinesRepository implements IRoutinesRepository {
       const routines = await prisma.routine.findMany({
         where: {
           challenge: {
-            user: { nickname }
-          }
+            user: { nickname },
+          },
         },
         include: {
           challenge: {
             include: {
               user: {
                 select: {
-                  nickname: true
-                }
-              }
-            }
-          }
-        }
+                  nickname: true,
+                },
+              },
+            },
+          },
+        },
       });
 
       return routines.map((routine: any) => ({
@@ -125,7 +159,9 @@ export class PrRoutinesRepository implements IRoutinesRepository {
       }));
     } catch (error) {
       console.error('닉네임으로 루틴 조회 중 오류:', error);
-      throw new Error(`닉네임 '${nickname}'으로 루틴 조회에 실패했습니다: ${error instanceof Error ? error.message : '알 수 없는 오류'}`);
+      throw new Error(
+        `닉네임 '${nickname}'으로 루틴 조회에 실패했습니다: ${error instanceof Error ? error.message : '알 수 없는 오류'}`
+      );
     }
   }
 
