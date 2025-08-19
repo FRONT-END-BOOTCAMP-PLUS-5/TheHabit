@@ -173,7 +173,7 @@ const UserProfilePage = () => {
       </section>
       <section id='bottom' className='px-5 h-[550px]'>
         <CompletionComponent
-          profileImg={userInfo?.profileImg}
+          profileImg={userInfo?.profileImg || null}
           username={userInfo?.username || ''}
           nickname={userInfo?.nickname || ''}
           userId={userInfo?.id || ''}

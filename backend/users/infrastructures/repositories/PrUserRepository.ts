@@ -69,11 +69,9 @@ export class PrUserRepository implements IUserRepository {
 
       const signedUrl: string = `https://${process.env.AMPLIFY_BUCKET}.s3.${process.env.AWS_REGION}.amazonaws.com/${key}`;
 
-
       return [signedUrl, key];
     } catch (error) {
       if (error instanceof Error) throw new Error(error.message);
-      return undefined;
     }
   }
 
@@ -347,7 +345,6 @@ export class PrUserRepository implements IUserRepository {
     }
   }
 
-
   async findById(id: string): Promise<User | null> {
     try {
       const user = await prisma.user.findUnique({
@@ -363,9 +360,8 @@ export class PrUserRepository implements IUserRepository {
     }
   }
 
-  async update(nickname: string, user: Partial<User>): Promise<User | { message: string } | null> {
+  async update(nickname: string, user: Partial<User>): Promise<User | null> {
     try {
-
       if (user.nickname && user.nickname !== nickname) {
         throw new Error('닉네임은 변경할 수 없습니다.');
       }
@@ -387,12 +383,6 @@ export class PrUserRepository implements IUserRepository {
         updatedUser.email
       );
     } catch (error) {
-      if (error instanceof Prisma.PrismaClientKnownRequestError) {
-        if (error.code === 'P2002') {
-          return { message: '해당 닉네임은 이미 사용 중입니다.' };
-        }
-      }
-
       if (error instanceof Error) throw new Error(error.message);
       return null;
     }

@@ -14,11 +14,11 @@ import { CreateRoutineCompletionResponseDto } from '@/backend/routine-completion
 import UserRoutineCompletion from '@/app/user/profile/components/UserRoutineCompletion';
 
 export const CompletionComponent = ({
-                                      profileImg,
-                                      username,
-                                      nickname,
-                                      userId,
-                                    }: {
+  profileImg,
+  username,
+  nickname,
+  userId,
+}: {
   profileImg?: string | null;
   username: string;
   nickname: string;
@@ -31,7 +31,6 @@ export const CompletionComponent = ({
     nickname,
     getSelectedCategory,
     userId!
-
   );
 
   const rootRef = useRef<HTMLUListElement>(null);
@@ -50,7 +49,7 @@ export const CompletionComponent = ({
 
   const handleOpenModal = (
     profileImg: string | null,
-    { proofImgUrl, content, createdAt, routineId }: CreateRoutineCompletionResponseDto
+    { proofImgUrl, content, createdAt, id }: CreateRoutineCompletionResponseDto
   ) => {
     openModal(
       <UserRoutineCompletion
@@ -60,7 +59,7 @@ export const CompletionComponent = ({
         profileImg={profileImg}
         username={username}
         nickname={nickname}
-        routineCompletionId={routineId.toString()}
+        routineCompletionId={id.toString()}
         userId={userId}
       />,
       'floating'
@@ -94,6 +93,7 @@ export const CompletionComponent = ({
       >
         {allCompletions.map((item, idx: number) => {
           const isLastItem = idx === allCompletions.length - 1;
+          console.log(item, 'item');
           return (
             <li
               key={item.id}
@@ -134,7 +134,6 @@ export const CompletionComponent = ({
               }}
               disabled={userId === 'edit'}
             >
-
               {item.id !== 'All' && (
                 <Image
                   src={item.icon}
