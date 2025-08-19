@@ -1,5 +1,5 @@
 'use client';
-import { Button } from '@/app/_components/buttons/Button';
+import { Button } from '@/app/user/profile/components/Button';
 import { CompletionComponent } from '@/app/user/profile/components/Completion';
 import { useRouter } from 'next/navigation';
 import { ProfileImage } from '@/app/_components/profile-images/ProfileImage';
@@ -146,9 +146,9 @@ const UserProfilePage = () => {
           </div>
           <div id='button_wrapper' className='flex justify-center gap-10 mt-10 px-5'>
             <Button
-              type='default'
-              color='default'
-              className='w-[200px]'
+              className={
+                'w-[200px] z-20 bg-primary text-white px-4 py-2 rounded-full text-lg font-bold shadow-lg cursor-pointer hover:animate-float transition-all duration-300 hover:scale-110'
+              }
               onClick={() => {
                 router.push('/user/dashboard');
               }}
@@ -156,9 +156,9 @@ const UserProfilePage = () => {
               대시보드 보러가기
             </Button>
             <Button
-              type='default'
-              color='default'
-              className='w-[200px]'
+              className={
+                'w-[200px] z-20 bg-primary text-white px-4 py-2 rounded-full text-lg font-bold shadow-lg cursor-pointer hover:animate-float transition-all duration-300 hover:scale-110'
+              }
               onClick={() => {
                 router.push(`/user/profile/edit/${userInfo?.nickname}`);
               }}
