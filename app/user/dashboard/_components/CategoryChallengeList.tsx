@@ -58,10 +58,10 @@ const CategoryChallengeList: React.FC<CategoryChallengeListProps> = ({
 
   return (
     <div className='flex flex-col gap-2'>
-      {renderCategory(0, '건강')}
-      {renderCategory(1, '공부')}
-      {renderCategory(2, '자기개발')}
-      {renderCategory(3, '기타')}
+      {renderCategory(1, '건강')}
+      {renderCategory(2, '공부')}
+      {renderCategory(3, '자기개발')}
+      {renderCategory(4, '기타')}
     </div>
   );
 };
