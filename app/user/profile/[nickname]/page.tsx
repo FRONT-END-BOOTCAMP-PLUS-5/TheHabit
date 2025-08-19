@@ -150,10 +150,10 @@ const UserProfilePage = () => {
               color='default'
               className='w-[200px]'
               onClick={() => {
-                router.push('/challenges');
+                router.push('/user/dashboard');
               }}
             >
-              챌린지 보러가기
+              대시보드 보러가기
             </Button>
             <Button
               type='default'
