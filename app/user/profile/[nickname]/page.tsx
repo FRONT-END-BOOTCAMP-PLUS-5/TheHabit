@@ -9,6 +9,7 @@ import { useEffect, useState, useRef, useMemo } from 'react';
 import { RoutineComponent } from '@/app/user/profile/components/Routine';
 import { UserChallengeAndRoutineAndFollowAndCompletionDto } from '@/backend/users/applications/dtos/UserChallengeAndRoutineAndFollowAndCompletion';
 import { SelectComponent } from '@/app/user/profile/components/Select';
+import NoneProfile from '@/app/_components/none/NoneProfile';
 
 const UserProfilePage = () => {
   const router = useRouter();
@@ -71,7 +72,13 @@ const UserProfilePage = () => {
       <section id='top' className='flex mt-10 justify-center items-center px-5'>
         <section id='top_wrapper' className='flex flex-col  w-[100%]'>
           <div id='user_wrapper' className='flex text-center items-end justify-between px-5'>
-            <ProfileImage imageSrc={userInfo?.profileImg} wrapperWidth={30} wrapperHeight={30} />
+            {userInfo?.profileImg ? (
+              <ProfileImage imageSrc={userInfo?.profileImg} wrapperWidth={30} wrapperHeight={30} />
+            ) : (
+              <NoneProfile
+                className={`w-[120] h-[120] rounded-full overflow-hidden border-primary border-2`}
+              />
+            )}
             <div id='challenge' className='relative' ref={selectWrapperRef}>
               <p className='font-bold text-[19px]'>{userInfo?.username}</p>
               <p className='font-semibold mb-5 text-[13px] text-[#CCC] text-left'>{`${userInfo?.nickname ? '(' + userInfo?.nickname + ')' : ''}`}</p>
@@ -80,10 +87,6 @@ const UserProfilePage = () => {
                   <div
                     onClick={() => {
                       setShow(prev => !prev);
-                      // ㅋㅋ~
-                      // 이거하는데 하루종일 걸림~ ㄹㅈㄷ~
-                      //접고 싶네~
-                      // 아진짜 userRepository 건드니까 뭐가 또 안되냐... 진짜 런칠까 런 마렵네
                     }}
                   >
                     <span className='font-bold'>
@@ -96,7 +99,7 @@ const UserProfilePage = () => {
                   <>
                     <span className='font-bold'>아직 챌린지가</span>
                     <br />
-                    <span className='font-bold'>없어용ㅋ</span>
+                    <span className='font-bold'>없어요</span>
                   </>
                 )}
               </div>
