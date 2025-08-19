@@ -9,24 +9,22 @@ export class PrChallengeRepository implements IChallengeRepository {
         name: challenge.name,
         createdAt: challenge.createdAt,
         endAt: challenge.endAt,
-        startTime: challenge.startTime,
-        endTime: challenge.endTime,
         color: challenge.color,
         userId: challenge.userId,
         categoryId: challenge.categoryId,
+        active: challenge.active,
       },
     });
 
     return new Challenge(
-      createdChallenge.id,
       createdChallenge.name,
       createdChallenge.createdAt,
       createdChallenge.endAt,
-      createdChallenge.startTime,
-      createdChallenge.endTime,
       createdChallenge.color,
       createdChallenge.userId,
-      createdChallenge.categoryId
+      createdChallenge.categoryId,
+      createdChallenge.active,
+      createdChallenge.id
     );
   }
 
@@ -35,15 +33,14 @@ export class PrChallengeRepository implements IChallengeRepository {
     return challenges.map(
       challenge =>
         new Challenge(
-          challenge.id,
           challenge.name,
           challenge.createdAt,
           challenge.endAt,
-          challenge.startTime,
-          challenge.endTime,
           challenge.color,
           challenge.userId,
-          challenge.categoryId
+          challenge.categoryId,
+          challenge.active,
+          challenge.id
         )
     );
   }
@@ -56,15 +53,14 @@ export class PrChallengeRepository implements IChallengeRepository {
     if (!challenge) return null;
 
     return new Challenge(
-      challenge.id,
       challenge.name,
       challenge.createdAt,
       challenge.endAt,
-      challenge.startTime,
-      challenge.endTime,
       challenge.color,
       challenge.userId,
-      challenge.categoryId
+      challenge.categoryId,
+      challenge.active,
+      challenge.id
     );
   }
 
@@ -85,15 +81,14 @@ export class PrChallengeRepository implements IChallengeRepository {
       return challenges.map(
         challenge =>
           new Challenge(
-            challenge.id,
             challenge.name,
             challenge.createdAt,
             challenge.endAt,
-            challenge.startTime,
-            challenge.endTime,
             challenge.color,
             challenge.userId,
-            challenge.categoryId
+            challenge.categoryId,
+            challenge.active,
+            challenge.id
           )
       );
     } catch (error) {
@@ -110,15 +105,14 @@ export class PrChallengeRepository implements IChallengeRepository {
     return challenges.map(
       challenge =>
         new Challenge(
-          challenge.id,
           challenge.name,
           challenge.createdAt,
           challenge.endAt,
-          challenge.startTime,
-          challenge.endTime,
           challenge.color,
           challenge.userId,
-          challenge.categoryId
+          challenge.categoryId,
+          challenge.active,
+          challenge.id
         )
     );
   }
@@ -128,21 +122,19 @@ export class PrChallengeRepository implements IChallengeRepository {
       name?: string;
       createdAt?: Date;
       endAt?: Date;
-      startTime?: Date | null;
-      endTime?: Date | null;
       color?: string;
       userId?: string;
       categoryId?: number;
+      active?: boolean;
     } = {};
 
     if (challenge.name !== undefined) updateData.name = challenge.name;
     if (challenge.createdAt !== undefined) updateData.createdAt = challenge.createdAt;
     if (challenge.endAt !== undefined) updateData.endAt = challenge.endAt;
-    if (challenge.startTime !== undefined) updateData.startTime = challenge.startTime;
-    if (challenge.endTime !== undefined) updateData.endTime = challenge.endTime;
     if (challenge.color !== undefined) updateData.color = challenge.color;
     if (challenge.userId !== undefined) updateData.userId = challenge.userId;
     if (challenge.categoryId !== undefined) updateData.categoryId = challenge.categoryId;
+    if (challenge.active !== undefined) updateData.active = challenge.active;
 
     const updatedChallenge = await prisma.challenge.update({
       where: { id },
@@ -150,15 +142,14 @@ export class PrChallengeRepository implements IChallengeRepository {
     });
 
     return new Challenge(
-      updatedChallenge.id,
       updatedChallenge.name,
       updatedChallenge.createdAt,
       updatedChallenge.endAt,
-      updatedChallenge.startTime,
-      updatedChallenge.endTime,
       updatedChallenge.color,
       updatedChallenge.userId,
-      updatedChallenge.categoryId
+      updatedChallenge.categoryId,
+      updatedChallenge.active,
+      updatedChallenge.id
     );
   }
 
