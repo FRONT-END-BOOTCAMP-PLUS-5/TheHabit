@@ -3,10 +3,12 @@ import { getRoutinesByChallenge } from '@/libs/api/routines.api';
 
 export const ValidateFeedBackGPTResponse = async (
   challengeId: number,
-  routineCompletion: RoutineCompletionDto[]
+  routineCompletion: RoutineCompletionDto[],
+  nickname: string
 ) => {
   try {
-    const response = await getRoutinesByChallenge(challengeId);
+    const response = await getRoutinesByChallenge(challengeId, nickname);
+
     const routines = response.data || [];
 
     const routineWithCompletion = routines.map(routine => {
@@ -23,7 +25,8 @@ export const ValidateFeedBackGPTResponse = async (
     }
 
     const routineStatusMessages = routineWithCompletion?.map(routine => {
-      const isSuccess = routine.content !== null && routine.content !== undefined; // 콘텐츠가 없으면? 실패
+      const isSuccess =
+        routine.content !== null && routine.content !== undefined && routine.content !== ''; // 콘텐츠가 없으면? 실패
       const status = isSuccess ? '성공' : '실패';
       return `${routine.routineTitle}: ${status}`;
     });
@@ -31,6 +34,6 @@ export const ValidateFeedBackGPTResponse = async (
     return routineStatusMessages;
   } catch (error) {
     console.error('루틴 상태 메시지 생성 중 오류:', error);
-    return [];
+    return;
   }
 };
