@@ -1,7 +1,8 @@
 'use client';
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { useForm } from 'react-hook-form';
 import { AddChallengeRequestDto } from '@/backend/challenges/applications/dtos/AddChallengeDto';
+import { ChallengeDto } from '@/backend/challenges/applications/dtos/ChallengeDto';
 import Image from 'next/image';
 import HealthIcon from '@/public/icons/icon_health.png';
 import BookIcon from '@/public/icons/icon_study.svg';
@@ -10,6 +11,7 @@ import GuitarIcon from '@/public/icons/icon_guitar.png';
 import CustomInput from '@/app/_components/inputs/CustomInput';
 import { CHALLENGE_COLORS } from '@/public/consts/challengeColors';
 import { useCreateChallenge } from '@/libs/hooks/challenges-hooks/useCreateChallenge';
+import { useGetChallengesByNickname } from '@/libs/hooks/challenges-hooks/useGetChallengesByNickname';
 import { useSession } from 'next-auth/react';
 import { useModalStore } from '@/libs/stores/modalStore';
 
@@ -31,6 +33,21 @@ const AddChallengeForm: React.FC = () => {
 
   // 모달 닫기 함수
   const { closeModal } = useModalStore();
+
+  // 사용자 전체 챌린지를 불러와 카테고리별 개수 계산
+  const { data: userChallenges } = useGetChallengesByNickname(userNickname || '');
+
+  // 카테고리별 챌린지 제한 (3개)
+  const MAX_CHALLENGES_PER_CATEGORY = 3;
+
+  const categoryCounts = useMemo(() => {
+    const counts: Record<number, number> = { 0: 0, 1: 0, 2: 0, 3: 0 };
+    (userChallenges || []).forEach((challenge: ChallengeDto) => {
+      const cid = Number(challenge.categoryId);
+      if (!Number.isNaN(cid)) counts[cid] = (counts[cid] || 0) + 1;
+    });
+    return counts;
+  }, [userChallenges]);
 
   // 시작 날짜가 변경될 때마다 종료 날짜를 21일 후로 자동 설정
   useEffect(() => {
@@ -57,6 +74,16 @@ const AddChallengeForm: React.FC = () => {
   }, [watchCategoryId, setValue]);
 
   const onSubmitHandler = (data: AddChallengeRequestDto) => {
+    // 카테고리별 챌린지 개수 제한 확인 (선택된 카테고리 기준)
+    const selectedCategoryId = Number(data.categoryId);
+    const selectedCategoryCount = categoryCounts[selectedCategoryId] || 0;
+    if (selectedCategoryCount >= MAX_CHALLENGES_PER_CATEGORY) {
+      alert(
+        `한 카테고리에서는 최대 ${MAX_CHALLENGES_PER_CATEGORY}개까지만 챌린지를 만들 수 있습니다.`
+      );
+      return;
+    }
+
     // categoryId를 숫자로 변환
     const formData = {
       ...data,
@@ -162,36 +189,51 @@ const AddChallengeForm: React.FC = () => {
             { id: 1, icon: BookIcon, label: '학습', alt: '학습' },
             { id: 2, icon: DevelopIcon, label: '자기개발', alt: '자기개발' },
             { id: 3, icon: GuitarIcon, label: '기타', alt: '기타' },
-          ].map(category => (
-            <div key={category.id}>
-              <input
-                {...register('categoryId', {
-                  required: '카테고리를 선택해주세요',
-                })}
-                type='radio'
-                value={category.id}
-                id={`category-${category.id}`}
-                className='sr-only'
-              />
-              <label
-                htmlFor={`category-${category.id}`}
-                className={`flex flex-col items-center gap-2 p-4 border-2 rounded-lg cursor-pointer transition-all duration-200 hover:shadow-md ${
-                  Number(watchCategoryId) === category.id
-                    ? 'border-primary bg-primary/5'
-                    : 'border-gray-200 hover:border-primary'
-                }`}
-              >
-                <Image
-                  src={category.icon}
-                  alt={category.alt}
-                  width={32}
-                  height={32}
-                  className='opacity-80'
+          ].map(category => {
+            const categoryChallengeCount = categoryCounts[category.id] || 0;
+            const isCategoryFull = categoryChallengeCount >= MAX_CHALLENGES_PER_CATEGORY;
+
+            return (
+              <div key={category.id}>
+                <input
+                  {...register('categoryId', {
+                    required: '카테고리를 선택해주세요',
+                  })}
+                  type='radio'
+                  value={category.id}
+                  id={`category-${category.id}`}
+                  className='sr-only'
+                  disabled={isCategoryFull}
                 />
-                <span className='text-sm font-medium text-gray-700'>{category.label}</span>
-              </label>
-            </div>
-          ))}
+                <label
+                  htmlFor={`category-${category.id}`}
+                  className={`flex flex-col items-center gap-2 p-4 border-2 rounded-lg transition-all duration-200 ${
+                    isCategoryFull
+                      ? 'border-gray-300 bg-gray-100 cursor-not-allowed opacity-50'
+                      : Number(watchCategoryId) === category.id
+                        ? 'border-primary bg-primary/5 cursor-pointer hover:shadow-md'
+                        : 'border-gray-200 cursor-pointer hover:border-primary hover:shadow-md'
+                  }`}
+                >
+                  <Image
+                    src={category.icon}
+                    alt={category.alt}
+                    width={32}
+                    height={32}
+                    className='opacity-80'
+                  />
+                  <span className='text-sm font-medium text-gray-700'>{category.label}</span>
+                  <span
+                    className={`text-xs px-2 py-1 rounded-full ${
+                      isCategoryFull ? 'bg-red-100 text-red-600' : 'bg-blue-100 text-blue-600'
+                    }`}
+                  >
+                    {categoryChallengeCount}/{MAX_CHALLENGES_PER_CATEGORY}
+                  </span>
+                </label>
+              </div>
+            );
+          })}
         </div>
         {errors.categoryId && (
           <span className='text-red-500 text-sm'>{errors.categoryId.message}</span>
