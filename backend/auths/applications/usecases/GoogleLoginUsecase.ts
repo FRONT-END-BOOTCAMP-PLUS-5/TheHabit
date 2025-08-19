@@ -5,7 +5,7 @@ export interface GoogleUserInfo {
   email: string;
   name: string;
   picture?: string;
-  sub: string;
+  sub?: string;
 }
 
 export interface GoogleLoginResult {
