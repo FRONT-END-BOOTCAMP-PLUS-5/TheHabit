@@ -20,6 +20,7 @@ const ChallengeListSection: React.FC = () => {
   const params = useParams();
   const nickname = params.nickname as string;
   const { data: dashboard } = useGetDashboardByNickname(nickname);
+  const hasAnyChallenge = Array.isArray(dashboard?.challenge) && dashboard.challenge.length > 0;
 
   // 선택된 날짜가 챌린지 기간 내에 있는지 확인하는 함수
   const isDateInChallengePeriod = (challenge: ChallengeDto, date: Date): boolean => {
@@ -89,7 +90,11 @@ const ChallengeListSection: React.FC = () => {
         <h2>건강</h2>
       </div>
       <div className='flex flex-col gap-0.5'>
-        {dashboard?.challenge && dashboard.challenge.length > 0 ? (
+        {!dashboard ? (
+          <div className='text-center py-4 text-gray-500 text-sm'>
+            챌린지 데이터를 불러오는 중...
+          </div>
+        ) : dashboard.challenge && dashboard.challenge.length > 0 ? (
           getChallengesForSelectedDate().filter(challenge => challenge.categoryId === 0).length >
           0 ? (
             getChallengesForSelectedDate()
@@ -108,15 +113,17 @@ const ChallengeListSection: React.FC = () => {
             </div>
           )
         ) : (
-          <div className='text-center py-4 text-gray-500 text-sm'>
-            챌린지 데이터를 불러오는 중...
-          </div>
+          <div className='text-center py-4 text-gray-500 text-sm'>챌린지가 없습니다</div>
         )}
         <div className='text-2xl font-bold text-secondary'>
           <h2>공부</h2>
         </div>
         <div className='flex flex-col gap-0.5'>
-          {dashboard?.challenge && dashboard.challenge.length > 0 ? (
+          {!dashboard ? (
+            <div className='text-center py-4 text-gray-500 text-sm'>
+              챌린지 데이터를 불러오는 중...
+            </div>
+          ) : dashboard.challenge && dashboard.challenge.length > 0 ? (
             getChallengesForSelectedDate().filter(challenge => challenge.categoryId === 1).length >
             0 ? (
               getChallengesForSelectedDate()
@@ -135,9 +142,7 @@ const ChallengeListSection: React.FC = () => {
               </div>
             )
           ) : (
-            <div className='text-center py-4 text-gray-500 text-sm'>
-              챌린지 데이터를 불러오는 중...
-            </div>
+            <div className='text-center py-4 text-gray-500 text-sm'>챌린지가 없습니다</div>
           )}
         </div>
       </div>
@@ -146,7 +151,11 @@ const ChallengeListSection: React.FC = () => {
           <h2>자기개발</h2>
         </div>
         <div className='flex flex-col gap-0.5'>
-          {dashboard?.challenge && dashboard.challenge.length > 0 ? (
+          {!dashboard ? (
+            <div className='text-center py-4 text-gray-500 text-sm'>
+              챌린지 데이터를 불러오는 중...
+            </div>
+          ) : dashboard.challenge && dashboard.challenge.length > 0 ? (
             getChallengesForSelectedDate().filter(challenge => challenge.categoryId === 2).length >
             0 ? (
               getChallengesForSelectedDate()
@@ -165,9 +174,7 @@ const ChallengeListSection: React.FC = () => {
               </div>
             )
           ) : (
-            <div className='text-center py-4 text-gray-500 text-sm'>
-              챌린지 데이터를 불러오는 중...
-            </div>
+            <div className='text-center py-4 text-gray-500 text-sm'>챌린지가 없습니다</div>
           )}
         </div>
       </div>
@@ -175,7 +182,11 @@ const ChallengeListSection: React.FC = () => {
         <h2>기타</h2>
       </div>
       <div className='flex flex-col gap-0.5'>
-        {dashboard?.challenge && dashboard.challenge.length > 0 ? (
+        {!dashboard ? (
+          <div className='text-center py-4 text-gray-500 text-sm'>
+            챌린지 데이터를 불러오는 중...
+          </div>
+        ) : dashboard.challenge && dashboard.challenge.length > 0 ? (
           getChallengesForSelectedDate().filter(challenge => challenge.categoryId === 3).length >
           0 ? (
             getChallengesForSelectedDate()
@@ -194,9 +205,7 @@ const ChallengeListSection: React.FC = () => {
             </div>
           )
         ) : (
-          <div className='text-center py-4 text-gray-500 text-sm'>
-            챌린지 데이터를 불러오는 중...
-          </div>
+          <div className='text-center py-4 text-gray-500 text-sm'>챌린지가 없습니다</div>
         )}
       </div>
     </div>
