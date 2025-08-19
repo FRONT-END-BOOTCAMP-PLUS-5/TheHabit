@@ -74,6 +74,17 @@ const AddChallengeForm: React.FC = () => {
   }, [watchCategoryId, setValue]);
 
   const onSubmitHandler = (data: AddChallengeRequestDto) => {
+    // 디버깅 로그 추가
+    console.log('=== 챌린지 생성 디버깅 ===');
+    console.log('제출 데이터:', data);
+    console.log('카테고리 ID (원본):', data.categoryId);
+    console.log('카테고리 ID (숫자 변환):', Number(data.categoryId));
+    console.log('전체 카테고리 개수:', categoryCounts);
+    console.log('사용자 닉네임:', userNickname);
+    console.log('현재 선택된 카테고리 개수:', categoryCounts[Number(data.categoryId)]);
+    console.log('최대 허용 개수:', MAX_CHALLENGES_PER_CATEGORY);
+    console.log('========================');
+
     // 카테고리별 챌린지 개수 제한 확인 (선택된 카테고리 기준)
     const selectedCategoryId = Number(data.categoryId);
     const selectedCategoryCount = categoryCounts[selectedCategoryId] || 0;
@@ -185,10 +196,10 @@ const AddChallengeForm: React.FC = () => {
         </label>
         <div className='grid grid-cols-2 gap-3 w-full'>
           {[
-            { id: 0, icon: HealthIcon, label: '건강', alt: '건강' },
-            { id: 1, icon: BookIcon, label: '학습', alt: '학습' },
-            { id: 2, icon: DevelopIcon, label: '자기개발', alt: '자기개발' },
-            { id: 3, icon: GuitarIcon, label: '기타', alt: '기타' },
+            { id: 1, icon: HealthIcon, label: '건강', alt: '건강' },
+            { id: 2, icon: BookIcon, label: '학습', alt: '학습' },
+            { id: 3, icon: DevelopIcon, label: '자기개발', alt: '자기개발' },
+            { id: 4, icon: GuitarIcon, label: '기타', alt: '기타' },
           ].map(category => {
             const categoryChallengeCount = categoryCounts[category.id] || 0;
             const isCategoryFull = categoryChallengeCount >= MAX_CHALLENGES_PER_CATEGORY;
@@ -225,7 +236,7 @@ const AddChallengeForm: React.FC = () => {
                   <span className='text-sm font-medium text-gray-700'>{category.label}</span>
                   <span
                     className={`text-xs px-2 py-1 rounded-full ${
-                      isCategoryFull ? 'bg-red-100 text-red-600' : 'bg-blue-100 text-blue-600'
+                      isCategoryFull ? 'bg-red-100 text-red-600' : 'bg-primary/10 text-primary'
                     }`}
                   >
                     {categoryChallengeCount}/{MAX_CHALLENGES_PER_CATEGORY}

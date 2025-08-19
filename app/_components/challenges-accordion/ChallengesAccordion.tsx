@@ -65,16 +65,16 @@ const ChallengesAccordion: React.FC<ChallengesAccordionProps> = ({
           <div className='flex flex-col gap-1 p-2'>
             <div className='flex items-center gap-2'>
               <div className='flex justify-center items-center rounded-full bg-white p-1 w-10 h-10 border-primary border-2'>
-                {challenge.categoryId === 0 && (
+                {challenge.categoryId === 1 && (
                   <Image src={HealthIcon} alt='health' width={24} height={24} />
                 )}
-                {challenge.categoryId === 1 && (
+                {challenge.categoryId === 2 && (
                   <Image src={BookIcon} alt='book' width={24} height={24} />
                 )}
-                {challenge.categoryId === 2 && (
+                {challenge.categoryId === 3 && (
                   <Image src={DevelopIcon} alt='develop' width={24} height={24} />
                 )}
-                {challenge.categoryId === 3 && (
+                {challenge.categoryId === 4 && (
                   <Image src={GuitarIcon} alt='guitar' width={24} height={24} />
                 )}
               </div>
