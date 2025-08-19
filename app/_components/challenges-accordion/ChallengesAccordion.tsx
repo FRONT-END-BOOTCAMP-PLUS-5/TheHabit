@@ -97,14 +97,19 @@ const ChallengesAccordion: React.FC<ChallengesAccordionProps> = ({
 
       {/* 아코디언 내용 영역 */}
       <div
-        className={`bg-white rounded-lg mt-1 overflow-hidden transition-all duration-300 ease-in-out border-2`}
+        className='bg-white rounded-xl mt-3 overflow-hidden transition-all duration-300 ease-in-out border-2'
         style={{
           height: isOpen ? `${contentHeight}px` : '0px',
           opacity: isOpen ? 1 : 0,
+          borderColor: CHALLENGE_COLORS[challenge.categoryId].background,
         }}
       >
         <div ref={contentRef}>
-          <ChallengesAccordionContent challenge={challenge} />
+          <ChallengesAccordionContent
+            challenge={challenge}
+            routines={routines}
+            routineCompletions={routineCompletions}
+          />
         </div>
       </div>
     </div>
