@@ -45,8 +45,7 @@ export const useRoutineCompletion = ({
         await createCompletionMutation.mutateAsync({
           nickname: nickname,
           routineId: routine.id,
-          content: '', // Added content as it's required by the DTO
-          proofImgUrl: null,
+          content: '',
         });
         onSuccess?.();
       } catch (error) {

@@ -32,7 +32,7 @@ export class PrRoutineCompletionsRepository implements IRoutineCompletionsReposi
     proofImgUrl: string | null;
   }): Promise<RoutineCompletion> {
     const user = await prisma.user.findUnique({
-      where: { nickname: request.nickname }
+      where: { nickname: request.nickname },
     });
 
     if (!user) {
@@ -63,7 +63,7 @@ export class PrRoutineCompletionsRepository implements IRoutineCompletionsReposi
       where: { routineId },
     });
 
-    return completions.map((completion: any) => ({
+    return completions.map(completion => ({
       id: completion.id,
       userId: completion.userId,
       routineId: completion.routineId,
@@ -73,17 +73,14 @@ export class PrRoutineCompletionsRepository implements IRoutineCompletionsReposi
     }));
   }
 
-
   async findByNickname(nickname: string): Promise<RoutineCompletion[]> {
     const completions = await prisma.routineCompletion.findMany({
-      where: { 
-        user: { 
-          nickname: nickname 
-        } 
+      where: {
+        user: { nickname },
       },
     });
 
-    return completions.map((completion: any) => ({
+    return completions.map(completion => ({
       id: completion.id,
       userId: completion.userId,
       routineId: completion.routineId,
@@ -110,18 +107,18 @@ export class PrRoutineCompletionsRepository implements IRoutineCompletionsReposi
     };
   }
 
-
-  async findByNicknameAndRoutineId(nickname: string, routineId: number): Promise<RoutineCompletion[]> {
+  async findByNicknameAndRoutineId(
+    nickname: string,
+    routineId: number
+  ): Promise<RoutineCompletion[]> {
     const completions = await prisma.routineCompletion.findMany({
       where: {
-        user: {
-          nickname: nickname
-        },
-        routineId: routineId,
+        user: { nickname },
+        routineId,
       },
     });
 
-    return completions.map((completion: any) => ({
+    return completions.map(completion => ({
       id: completion.id,
       userId: completion.userId,
       routineId: completion.routineId,

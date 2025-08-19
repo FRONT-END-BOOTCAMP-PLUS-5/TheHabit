@@ -4,7 +4,10 @@ import { PrRoutineCompletionsRepository } from '@/backend/routine-completions/in
 import { ApiResponse } from '@/backend/shared/types/ApiResponse';
 import { RoutineCompletionDto } from '@/backend/routine-completions/applications/dtos/RoutineCompletionDto';
 
-const routineCompletionsRepository = new PrRoutineCompletionsRepository();
+const createGetRoutineCompletionsUseCase = () => {
+  const repository = new PrRoutineCompletionsRepository();
+  return new GetRoutineCompletionsUseCase(repository);
+};
 
 export async function GET(request: NextRequest, { params }: { params: Promise<{ nickname: string }> }) {
   try {
@@ -21,11 +24,9 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
       return NextResponse.json(errorResponse, { status: 400 });
     }
 
-    const getRoutineCompletionsUseCase = new GetRoutineCompletionsUseCase(
-      routineCompletionsRepository
-    );
+    const getRoutineCompletionsUseCase = createGetRoutineCompletionsUseCase();
 
-    // Get all routine completions for the given nickname, across all routines/challenges
+    // 해당 닉네임의 모든 루틴 완료 조회
     const completions = await getRoutineCompletionsUseCase.getByNickname(nickname.trim());
 
     const successResponse: ApiResponse<RoutineCompletionDto[]> = {

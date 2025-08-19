@@ -2,9 +2,23 @@ import { IRoutineCompletionsRepository } from '@/backend/routine-completions/dom
 import { RoutineCompletionDto } from '@/backend/routine-completions/applications/dtos/RoutineCompletionDto';
 
 export class GetRoutineCompletionsUseCase {
-  constructor(
-    private readonly routineCompletionsRepository: IRoutineCompletionsRepository
-  ) {}
+  constructor(private readonly routineCompletionsRepository: IRoutineCompletionsRepository) {}
+
+  async getById(completionId: number): Promise<RoutineCompletionDto | null> {
+    const completion = await this.routineCompletionsRepository.findById(completionId);
+
+    if (!completion) {
+      return null;
+    }
+
+    return {
+      id: completion.id,
+      routineId: completion.routineId,
+      createdAt: completion.createdAt.toISOString(),
+      proofImgUrl: completion.proofImgUrl,
+      content: completion.content,
+    };
+  }
 
   async getByRoutineId(routineId: number): Promise<RoutineCompletionDto[]> {
     const completions = await this.routineCompletionsRepository.findByRoutineId(routineId);
@@ -18,8 +32,6 @@ export class GetRoutineCompletionsUseCase {
     }));
   }
 
-  // 이 메서드는 getByNickname으로 대체됨 (제거 예정)
-
   async getByNickname(nickname: string): Promise<RoutineCompletionDto[]> {
     // Repository에서 nickname으로 직접 조회
     const completions = await this.routineCompletionsRepository.findByNickname(nickname);
@@ -32,8 +44,6 @@ export class GetRoutineCompletionsUseCase {
       content: completion.content,
     }));
   }
-
-  // 이 메서드는 getByNicknameAndRoutine으로 대체됨 (제거 예정)
 
   async getByNicknameAndRoutine(
     nickname: string,

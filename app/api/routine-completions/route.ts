@@ -4,14 +4,24 @@ import { GetRoutineCompletionsUseCase } from '@/backend/routine-completions/appl
 import { GetRoutinesUseCase } from '@/backend/routines/applications/usecases/GetRoutinesUseCase';
 import { PrRoutineCompletionsRepository } from '@/backend/routine-completions/infrastructures/repositories/PrRoutineCompletionsRepository';
 import { PrRoutinesRepository } from '@/backend/routines/infrastructures/repositories/PrRoutinesRepository';
-import { PrUserRepository } from '@/backend/users/infrastructures/repositories/PrUserRepository';
 import { s3Service } from '@/backend/shared/services/s3.service';
 import { RoutineCompletionDto } from '@/backend/routine-completions/applications/dtos/RoutineCompletionDto';
 import { ApiResponse } from '@/backend/shared/types/ApiResponse';
 
-const routineCompletionsRepository = new PrRoutineCompletionsRepository();
-const routinesRepository = new PrRoutinesRepository();
-const userRepository = new PrUserRepository();
+const createAddRoutineCompletionUseCase = () => {
+  const repository = new PrRoutineCompletionsRepository();
+  return new AddRoutineCompletionUseCase(repository);
+};
+
+const createGetRoutineCompletionsUseCase = () => {
+  const repository = new PrRoutineCompletionsRepository();
+  return new GetRoutineCompletionsUseCase(repository);
+};
+
+const createGetRoutinesUseCase = () => {
+  const repository = new PrRoutinesRepository();
+  return new GetRoutinesUseCase(repository);
+};
 
 // 루틴 완료 생성 (POST) - 이미지 업로드 포함
 export async function POST(request: NextRequest): Promise<NextResponse<ApiResponse<RoutineCompletionDto | null>>> {
@@ -100,11 +110,9 @@ export async function POST(request: NextRequest): Promise<NextResponse<ApiRespon
     }
 
     // 루틴 완료 데이터 생성
-    const addRoutineCompletionUseCase = new AddRoutineCompletionUseCase(
-      routineCompletionsRepository
-    );
+    const addRoutineCompletionUseCase = createAddRoutineCompletionUseCase();
 
-    const result = await addRoutineCompletionUseCase.executeByNickname({
+    const result = await addRoutineCompletionUseCase.execute({
       nickname: nicknameValue.trim(),
       routineId: routineIdNumber,
       content: contentValue.trim(),
@@ -168,10 +176,8 @@ export async function GET(request: NextRequest): Promise<NextResponse<ApiRespons
       return NextResponse.json(errorResponse, { status: 400 });
     }
 
-    const getRoutinesUseCase = new GetRoutinesUseCase(routinesRepository);
-    const getRoutineCompletionsUseCase = new GetRoutineCompletionsUseCase(
-      routineCompletionsRepository
-    );
+    const getRoutinesUseCase = createGetRoutinesUseCase();
+    const getRoutineCompletionsUseCase = createGetRoutineCompletionsUseCase();
 
     // 1. 해당 챌린지의 루틴 목록 조회
     const routines = await getRoutinesUseCase.getByChallengeId(challengeIdNumber);

@@ -1,11 +1,23 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { PrRoutineCompletionsRepository } from '@/backend/routine-completions/infrastructures/repositories/PrRoutineCompletionsRepository';
+import { UpdateRoutineCompletionUseCase } from '@/backend/routine-completions/applications/usecases/UpdateRoutineCompletionUseCase';
 import { DeleteRoutineCompletionUseCase } from '@/backend/routine-completions/applications/usecases/DeleteRoutineCompletionUseCase';
+import { GetRoutineCompletionsUseCase } from '@/backend/routine-completions/applications/usecases/GetRoutineCompletionsUseCase';
 import {
   RoutineCompletionDtoMapper,
   RoutineCompletionDto,
 } from '@/backend/routine-completions/applications/dtos/RoutineCompletionDto';
 import { ApiResponse } from '@/backend/shared/types/ApiResponse';
+
+const createGetRoutineCompletionsUseCase = () => {
+  const repository = new PrRoutineCompletionsRepository();
+  return new GetRoutineCompletionsUseCase(repository);
+};
+
+const createUpdateRoutineCompletionUseCase = () => {
+  const repository = new PrRoutineCompletionsRepository();
+  return new UpdateRoutineCompletionUseCase(repository);
+};
 
 const createDeleteRoutineCompletionUseCase = () => {
   const repository = new PrRoutineCompletionsRepository();
@@ -29,8 +41,8 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
       return NextResponse.json(errorResponse, { status: 400 });
     }
 
-    const repository = new PrRoutineCompletionsRepository();
-    const completion = await repository.findById(completionId);
+    const getRoutineCompletionsUseCase = createGetRoutineCompletionsUseCase();
+    const completion = await getRoutineCompletionsUseCase.getById(completionId);
 
     if (!completion) {
       const errorResponse: ApiResponse<null> = {
@@ -45,7 +57,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
 
     const successResponse: ApiResponse<RoutineCompletionDto> = {
       success: true,
-      data: RoutineCompletionDtoMapper.fromEntity(completion),
+      data: completion,
       message: '루틴 완료를 성공적으로 조회했습니다.',
     };
     return NextResponse.json(successResponse);
@@ -136,8 +148,8 @@ export async function DELETE(
     }
 
     // 기존 루틴 완료 조회
-    const repository = new PrRoutineCompletionsRepository();
-    const existingCompletion = await repository.findById(completionId);
+    const getRoutineCompletionsUseCase = createGetRoutineCompletionsUseCase();
+    const existingCompletion = await getRoutineCompletionsUseCase.getById(completionId);
 
     if (!existingCompletion) {
       const errorResponse: ApiResponse<null> = {
@@ -151,7 +163,7 @@ export async function DELETE(
     }
 
     const usecase = createDeleteRoutineCompletionUseCase();
-    await usecase.execute(existingCompletion);
+    await usecase.execute(completionId);
 
     const successResponse: ApiResponse<null> = {
       success: true,
