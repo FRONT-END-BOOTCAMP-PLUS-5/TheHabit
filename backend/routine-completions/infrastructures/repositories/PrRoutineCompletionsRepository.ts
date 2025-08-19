@@ -23,7 +23,6 @@ export class PrRoutineCompletionsRepository implements IRoutineCompletionsReposi
       createdAt: createdCompletion.createdAt,
       proofImgUrl: createdCompletion.proofImgUrl,
       content: createdCompletion.content,
-<<<<<<< HEAD
     };
   }
 
@@ -37,7 +36,7 @@ export class PrRoutineCompletionsRepository implements IRoutineCompletionsReposi
     const user = await prisma.user.findUnique({
       where: { nickname: request.nickname }
     });
-    
+
     if (!user) {
       throw new Error(`User with nickname '${request.nickname}' not found`);
     }
@@ -58,8 +57,6 @@ export class PrRoutineCompletionsRepository implements IRoutineCompletionsReposi
       createdAt: createdCompletion.createdAt,
       proofImgUrl: createdCompletion.proofImgUrl,
       content: createdCompletion.content,
-=======
->>>>>>> ff16980c4d61a2d1904673772bc92bd71c7b9150
     };
   }
 
@@ -124,7 +121,7 @@ export class PrRoutineCompletionsRepository implements IRoutineCompletionsReposi
         }
       });
 
-      return completions.map((completion: any) => ({
+      return completions.map((completion: RoutineCompletion) => ({
         id: completion.id,
         userId: completion.userId,
         routineId: completion.routineId,
@@ -173,7 +170,7 @@ export class PrRoutineCompletionsRepository implements IRoutineCompletionsReposi
         }
       });
 
-      return completions.map((completion: any) => ({
+      return completions.map((completion: RoutineCompletion) => ({
         id: completion.id,
         userId: completion.userId,
         routineId: completion.routineId,
@@ -217,7 +214,8 @@ export class PrRoutineCompletionsRepository implements IRoutineCompletionsReposi
       });
       return true;
     } catch (error) {
-      return false;
+      if (error instanceof Error) throw new Error(error.message);
+      throw new Error('Failed to delete routine completion');
     }
   }
 
