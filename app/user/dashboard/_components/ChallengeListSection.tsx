@@ -41,15 +41,6 @@ const ChallengeListSection: React.FC = () => {
     // 선택된 날짜를 날짜만으로 변환 (시간 제거)
     const selectedDateOnly = new Date(date.getFullYear(), date.getMonth(), date.getDate());
 
-    // 디버깅을 위한 로그
-    console.log('날짜 비교:', {
-      challengeName: challenge.name,
-      challengeStart: challengeStartDate.toISOString().split('T')[0],
-      challengeEnd: challengeEndDate.toISOString().split('T')[0],
-      selectedDate: selectedDateOnly.toISOString().split('T')[0],
-      isInPeriod: selectedDateOnly >= challengeStartDate && selectedDateOnly <= challengeEndDate,
-    });
-
     return selectedDateOnly >= challengeStartDate && selectedDateOnly <= challengeEndDate;
   };
 
