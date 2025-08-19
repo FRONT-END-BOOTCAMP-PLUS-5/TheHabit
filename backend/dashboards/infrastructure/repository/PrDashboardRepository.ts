@@ -104,24 +104,8 @@ export class PrDashboardRepository implements IDashboardRepository {
     const challenges = userData.challenges || [];
 
     if (challenges.length === 0) {
-      // 챌린지가 없는 경우 기본 Challenge 객체로 Dashboard 생성
-      const defaultChallenge = new Challenge(
-        '챌린지 없음', // 이름
-        new Date(), // 생성일
-        new Date(), // 종료일
-        '#CCCCCC', // 색상
-        "", // 사용자 ID
-        0, // 카테고리 ID
-        false, // active
-        0 // ID (옵션)
-      );
-
-      return new Dashboard(
-        [defaultChallenge],
-        [],
-        0,
-        [] // 챌린지가 없는 경우 빈 completions 배열
-      );
+      // 챌린지가 없는 경우 빈 배열로 대시보드를 구성
+      return new Dashboard([], [], 0, []);
     }
 
     // 모든 챌린지들을 Challenge 엔티티로 변환
