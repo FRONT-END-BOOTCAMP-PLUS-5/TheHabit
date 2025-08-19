@@ -7,29 +7,26 @@ import DevelopIcon from '@/public/icons/icon_develop.png';
 import GuitarIcon from '@/public/icons/icon_guitar.png';
 import UpArrow from '@/public/icons/icon_up_arrow.png';
 import DownArrow from '@/public/icons/icon_down_arrow.svg';
+import { ChallengeDto } from '@/backend/challenges/applications/dtos/ChallengeDto';
+import { ReadRoutineResponseDto } from '@/backend/routines/applications/dtos/RoutineDto';
+import { RoutineCompletionDto } from '@/backend/routine-completions/applications/dtos/RoutineCompletionDto';
+import { CHALLENGE_COLORS } from '@/public/consts/challengeColors';
 
 //props 임시임 -승민
 interface ChallengesAccordionProps {
-  challengeId: number;
-  title: string;
-  totalRoutines: number;
-  completedRoutines: number;
-  backgroundColor: string;
-  completedColor: string;
-  category: number;
+  challenge: ChallengeDto;
+  routines: ReadRoutineResponseDto[];
+  routineCompletions: RoutineCompletionDto[];
 }
 
 const ChallengesAccordion: React.FC<ChallengesAccordionProps> = ({
-  challengeId,
-  title,
-  totalRoutines,
-  completedRoutines,
-  backgroundColor,
-  completedColor,
-  category,
+  challenge,
+  routines,
+  routineCompletions,
 }) => {
   // 완료된 루틴 비율에 따라 동적으로 너비 계산
-  const completedRatio = totalRoutines > 0 ? (completedRoutines / totalRoutines) * 100 : 0;
+  const completedRatio =
+    routines.length > 0 ? (routineCompletions.length / routines.length) * 100 : 0;
 
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const contentRef = useRef<HTMLDivElement>(null);
@@ -50,13 +47,13 @@ const ChallengesAccordion: React.FC<ChallengesAccordionProps> = ({
     <div className='px-1 py-0.5 w-full rounded-lg'>
       <div
         className='w-full rounded-full relative overflow-hidden duration-300'
-        style={{ backgroundColor: completedColor }}
+        style={{ backgroundColor: CHALLENGE_COLORS[challenge.categoryId].completed }}
       >
         <div
           className='absolute top-0 left-0 h-full rounded-full transition-all duration-1000 ease-out'
           style={
             {
-              backgroundColor: backgroundColor,
+              backgroundColor: CHALLENGE_COLORS[challenge.categoryId].background,
               width: `${completedRatio}%`,
               animation: 'progressFill 1s ease-out forwards',
               '--progress-width': `${completedRatio}%`,
@@ -68,12 +65,20 @@ const ChallengesAccordion: React.FC<ChallengesAccordionProps> = ({
           <div className='flex flex-col gap-1 p-2'>
             <div className='flex items-center gap-2'>
               <div className='flex justify-center items-center rounded-full bg-white p-1 w-10 h-10 border-primary border-2'>
-                {category === 0 && <Image src={HealthIcon} alt='health' width={24} height={24} />}
-                {category === 1 && <Image src={BookIcon} alt='book' width={24} height={24} />}
-                {category === 2 && <Image src={DevelopIcon} alt='develop' width={24} height={24} />}
-                {category === 3 && <Image src={GuitarIcon} alt='guitar' width={24} height={24} />}
+                {challenge.categoryId === 0 && (
+                  <Image src={HealthIcon} alt='health' width={24} height={24} />
+                )}
+                {challenge.categoryId === 1 && (
+                  <Image src={BookIcon} alt='book' width={24} height={24} />
+                )}
+                {challenge.categoryId === 2 && (
+                  <Image src={DevelopIcon} alt='develop' width={24} height={24} />
+                )}
+                {challenge.categoryId === 3 && (
+                  <Image src={GuitarIcon} alt='guitar' width={24} height={24} />
+                )}
               </div>
-              <div className='text-xl font-bold text-white'>{title}</div>
+              <div className='text-xl font-bold text-white'>{challenge.name}</div>
             </div>
           </div>
           <button
@@ -101,7 +106,7 @@ const ChallengesAccordion: React.FC<ChallengesAccordionProps> = ({
           {/* 완료된 루틴 표시 */}
           <div className='flex items-center gap-3 mb-4'>
             <div
-              className={`w-8 h-8 rounded-full ${backgroundColor} flex items-center justify-center`}
+              className={`w-8 h-8 rounded-full ${CHALLENGE_COLORS[challenge.categoryId].background} flex items-center justify-center`}
             >
               <div className='text-white text-sm'>✓</div>
             </div>

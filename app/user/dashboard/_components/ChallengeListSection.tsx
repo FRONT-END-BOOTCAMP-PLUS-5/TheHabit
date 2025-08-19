@@ -9,12 +9,16 @@ import AddChallengeButton from './AddChallengeButton';
 import '@ant-design/v5-patch-for-react-19';
 import { useModalStore } from '@/libs/stores/modalStore';
 import AddChallengeForm from './AddChallengeForm';
-import { CHALLENGE_COLORS } from '@/public/consts/challengeColors';
+import { useGetDashboardByNickname } from '@/libs/hooks';
+import { useParams } from 'next/navigation';
 
 const ChallengeListSection: React.FC = () => {
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [selectedSort, setSelectedSort] = useState<string>('all');
   const { openModal } = useModalStore();
+  const params = useParams();
+  const nickname = params.nickname as string;
+  const { data: dashboard } = useGetDashboardByNickname(nickname);
 
   const handleOpenModal = () => {
     openModal(<AddChallengeForm />, 'toast');
@@ -30,131 +34,14 @@ const ChallengeListSection: React.FC = () => {
 
   const allChallenges: React.ReactNode = (
     <div className='flex flex-col gap-0.5'>
-      <ChallengesAccordion
-        challengeId={1}
-        title='매일 팔굽혀펴기'
-        totalRoutines={3}
-        completedRoutines={2}
-        backgroundColor={CHALLENGE_COLORS[0].background}
-        completedColor={CHALLENGE_COLORS[0].completed}
-        category={0}
-      />
-      <ChallengesAccordion
-        challengeId={2}
-        title='매일 영어 스피킹'
-        totalRoutines={3}
-        completedRoutines={2}
-        backgroundColor={CHALLENGE_COLORS[1].background}
-        completedColor={CHALLENGE_COLORS[1].completed}
-        category={1}
-      />
-      <ChallengesAccordion
-        challengeId={3}
-        title='매일 아침 8시 기상'
-        totalRoutines={3}
-        completedRoutines={2}
-        backgroundColor={CHALLENGE_COLORS[2].background}
-        completedColor={CHALLENGE_COLORS[2].completed}
-        category={2}
-      />
-      <ChallengesAccordion
-        challengeId={4}
-        title='여자친구 만들기'
-        totalRoutines={3}
-        completedRoutines={1}
-        backgroundColor={CHALLENGE_COLORS[3].background}
-        completedColor={CHALLENGE_COLORS[3].completed}
-        category={3}
-      />
-    </div>
-  );
-
-  const categoryChallenges: React.ReactNode = (
-    <div className='flex flex-col gap-0.5'>
-      <div className='flex flex-col gap-0.5'>
-        <div className='text-lg font-bold text-secondary'>건강</div>
-        <div className='flex flex-col gap-0.5'>
-          <ChallengesAccordion
-            challengeId={5}
-            title='매일 팔굽혀펴기'
-            totalRoutines={3}
-            completedRoutines={2}
-            backgroundColor={CHALLENGE_COLORS[0].background}
-            completedColor={CHALLENGE_COLORS[0].completed}
-            category={0}
-          />
-          <ChallengesAccordion
-            challengeId={6}
-            title='매일 팔굽혀펴기'
-            totalRoutines={3}
-            completedRoutines={2}
-            backgroundColor={CHALLENGE_COLORS[0].background}
-            completedColor={CHALLENGE_COLORS[0].completed}
-            category={0}
-          />
-          <ChallengesAccordion
-            challengeId={7}
-            title='매일 팔굽혀펴기'
-            totalRoutines={3}
-            completedRoutines={2}
-            backgroundColor={CHALLENGE_COLORS[0].background}
-            completedColor={CHALLENGE_COLORS[0].completed}
-            category={0}
-          />
-        </div>
-        <div className='flex flex-col gap-0.5'>
-          <div className='text-lg font-bold text-secondary'>공부</div>
-          <div className='flex flex-col gap-0.5'>
-            <ChallengesAccordion
-              challengeId={8}
-              title='매일 영어 스피킹'
-              totalRoutines={3}
-              completedRoutines={2}
-              backgroundColor={CHALLENGE_COLORS[1].background}
-              completedColor={CHALLENGE_COLORS[1].completed}
-              category={0}
-            />
-            <ChallengesAccordion
-              challengeId={9}
-              title='TOEIC 700점 목표'
-              totalRoutines={3}
-              completedRoutines={2}
-              backgroundColor={CHALLENGE_COLORS[1].background}
-              completedColor={CHALLENGE_COLORS[1].completed}
-              category={1}
-            />
-          </div>
-        </div>
-        <div className='flex flex-col gap-0.5'>
-          <div className='text-lg font-bold text-secondary'>자기계발</div>
-          <div className='flex flex-col gap-0.5'>
-            <ChallengesAccordion
-              challengeId={10}
-              title='매일 아침 8시 기상'
-              totalRoutines={3}
-              completedRoutines={2}
-              backgroundColor={CHALLENGE_COLORS[2].background}
-              completedColor={CHALLENGE_COLORS[2].completed}
-              category={2}
-            />
-          </div>
-        </div>
-
-        <div className='flex flex-col gap-0.5'>
-          <div className='text-lg font-bold text-secondary'>기타</div>
-          <div className='flex flex-col gap-0.5'>
-            <ChallengesAccordion
-              challengeId={11}
-              title='여자친구 만들기'
-              totalRoutines={3}
-              completedRoutines={1}
-              backgroundColor={CHALLENGE_COLORS[3].background}
-              completedColor={CHALLENGE_COLORS[3].completed}
-              category={3}
-            />
-          </div>
-        </div>
-      </div>
+      {dashboard?.challenge.map(challenge => (
+        <ChallengesAccordion
+          key={challenge.id}
+          challenge={challenge}
+          routines={dashboard?.routines || []}
+          routineCompletions={dashboard?.routineCompletions || []}
+        />
+      ))}
     </div>
   );
 
@@ -188,7 +75,7 @@ const ChallengeListSection: React.FC = () => {
             </Radio.Group>
           </div>
         </div>
-        {selectedSort === 'all' ? allChallenges : categoryChallenges}
+        {selectedSort === 'all' ? allChallenges : <div />}
       </div>
       <AddChallengeButton onClick={handleOpenModal} />
     </section>
