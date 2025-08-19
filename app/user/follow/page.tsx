@@ -1,16 +1,16 @@
 'use client';
 import Input from '@/app/_components/inputs/Input';
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
 
-import { followsApi } from '@/libs/api/follows.api';
-import { FollowerDto } from '@/backend/follows/applications/dtos/FollowerDto';
-import { FollowingDto } from '@/backend/follows/applications/dtos/FollowingDto';
 import { BackComponent } from '@/app/user/follow/components/Back';
 import { CategoryComponent } from '@/app/user/follow/components/Category';
 import { ContentComponent } from '@/app/user/follow/components/Content';
 import { useGetUserInfo } from '@/libs/hooks/user-hooks/useGetUserInfo';
-import { debounce } from 'lodash';
+import { useGetFollowing } from '@/libs/hooks/user-hooks/useGetFollowing';
+import { useGetFollower } from '@/libs/hooks/user-hooks/useGetFollower';
+import { useFollowMutation } from '@/libs/hooks/user-hooks/useCreateFollow';
+import { useUnfollowMutation } from '@/libs/hooks/user-hooks/useDeleteFollow';
 
 const FollowPage = () => {
   const searchParams = useSearchParams();
@@ -19,47 +19,44 @@ const FollowPage = () => {
 
   const { userInfo } = useGetUserInfo();
 
-  const [getFollows, setFollows] = useState<FollowerDto | FollowingDto>();
-  const [getInputText, setInputText] = useState<string>('');
-
-  const { follower, following } = followsApi;
-
-  const isMounted = useRef(false);
-
-  const init = () => {
-    setInputText('');
-  };
-
-  const getFollow = useCallback(
-    async (type: 'follower' | 'following', keyword: string = '') => {
-      const response =
-        type === 'follower'
-          ? await follower(userInfo?.id || '', keyword)
-          : await following(userInfo?.id || '', keyword);
-      if (isMounted.current) setFollows(response?.data);
-    },
-    [follower, following]
-  );
-
-  const handleSearch = useCallback(
-    debounce(async (value: string) => {
-      if (type === 'follower' || type === 'following') await getFollow(type, value);
-    }, 500),
-    [type, getFollow]
-  );
+  const [searchTerm, setSearchTerm] = useState<string>('');
+  const [getValue, setValue] = useState<string>('');
 
   useEffect(() => {
-    isMounted.current = true;
-
-    (async function () {
-      if (type === 'follower' || type === 'following') await getFollow(type);
-    })();
+    const handler = setTimeout(() => {
+      setValue(searchTerm);
+    }, 500);
 
     return () => {
-      isMounted.current = false;
-      handleSearch.cancel();
+      clearTimeout(handler);
     };
-  }, [type, getFollow, handleSearch]);
+  }, [searchTerm]);
+
+  const { data: followerData, isLoading: isFollowerLoading } = useGetFollower(
+    userInfo?.id || '',
+    getValue
+  );
+  const { data: followingData, isLoading: isFollowingLoading } = useGetFollowing(
+    userInfo?.id || '',
+    getValue
+  );
+  const followMutation = useFollowMutation();
+  const unfollowMutation = useUnfollowMutation();
+
+  const handleToggleFollow = (targetUserId: string, isFollowing: boolean | undefined) => {
+    if (!userInfo?.id) return;
+
+    if (isFollowing)
+      unfollowMutation.mutate({ fromUserId: userInfo?.id || '', toUserId: targetUserId });
+    else followMutation.mutate({ fromUserId: userInfo?.id || '', toUserId: targetUserId });
+  };
+
+  const followData = type === 'follower' ? followerData?.data : followingData?.data;
+  const isLoading = type === 'follower' ? isFollowerLoading : isFollowingLoading;
+
+  const init = () => {
+    setSearchTerm('');
+  };
 
   return (
     <main className='px-5'>
@@ -77,18 +74,19 @@ const FollowPage = () => {
         />
         <Input
           placeholder='Search'
-          onChange={evt => {
-            setInputText(evt.target.value);
-            handleSearch(evt.target.value);
-          }}
-          value={getInputText}
+          onChange={evt => setSearchTerm(evt.target.value)}
+          value={searchTerm}
         />
         <p className='mt-10 font-semibold'>
           {type === 'follower' ? '나를 팔로워한 사람들' : '내가 팔로잉한 사람들'}
         </p>
       </section>
       <section id='content'>
-        <ContentComponent data={getFollows} />
+        {isLoading ? (
+          <p>나중에 스켈레톤이나 스피너 해주겠지</p>
+        ) : (
+          <ContentComponent data={followData} onToggleFollow={handleToggleFollow} />
+        )}
       </section>
     </main>
   );

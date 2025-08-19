@@ -1,7 +1,8 @@
 'use client';
 import { Button } from '@/app/_components/buttons/Button';
-import { followsApi } from '@/libs/api/follows.api';
-import { useState } from 'react';
+// import { followsApi } from '@/libs/api/follows.api'; // ⬅️ 제거
+// import { useState } from 'react'; // ⬅️ 제거
+// import { useGetUserInfo } from '@/libs/hooks/user-hooks/useGetUserInfo'; // ⬅️ 제거
 
 interface User {
   id: string;
@@ -13,33 +14,10 @@ interface User {
 
 interface IList {
   data: User;
-  type: 'follower' | 'following';
+  onToggleFollow: (targetUserId: string, isFollowing: boolean | undefined) => void;
 }
 
-const ID = '88b3e620-52d9-4a5c-bb2b-1dfc9a2d1a10';
-
-export const ListComponent = ({ data, type }: IList) => {
-  const { add, unfollow } = followsApi;
-  const [getDisabled, setDisabled] = useState<boolean>(false);
-  const [getFollow, setFollow] = useState<boolean | undefined>(data.isFollowing);
-
-  const handleToggleFollow = async () => {
-    setDisabled(true);
-    if (data.isFollowing) {
-      const result = await unfollow(ID, data.id);
-      if (result.message === 'unfollow') {
-        setFollow(false);
-        data.isFollowing = false;
-      }
-    } else {
-      const result = await add(ID, data.id);
-      if (result.message === 'follow') {
-        setFollow(true);
-        data.isFollowing = true;
-      }
-    }
-    setDisabled(false);
-  };
+export const ListComponent = ({ data, onToggleFollow }: IList) => {
   return (
     <li key={data.id} className='flex justify-between items-center mb-8'>
       <div id='follower_users' className='flex items-center gap-2'>
@@ -53,12 +31,9 @@ export const ListComponent = ({ data, type }: IList) => {
         type='default'
         color='default'
         className='w-[76px]'
-        disabled={getDisabled}
-        onClick={() => {
-          handleToggleFollow();
-        }}
+        onClick={() => onToggleFollow(data.id, data.isFollowing)}
       >
-        {getFollow ? 'Unfollow' : 'Follow'}
+        {data.isFollowing ? 'Unfollow' : 'Follow'}
       </Button>
     </li>
   );
