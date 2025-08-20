@@ -9,7 +9,8 @@ import '@ant-design/v5-patch-for-react-19';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { SocialLogin } from '@/app/login/components/SocialLogin';
-import { signIn, useSession } from 'next-auth/react';
+import { signIn } from 'next-auth/react';
+import { useGetUserInfo } from '@/libs/hooks/user-hooks/useGetUserInfo';
 
 interface ILoginForm {
   email: string;
@@ -18,11 +19,11 @@ interface ILoginForm {
 
 export const LoginForm = () => {
   const router = useRouter();
-  const { data: session } = useSession();
+  const { userInfo, isLoading: isUserInfoLoading } = useGetUserInfo();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  console.log('🔍 LoginForm 렌더링 - 현재 세션:', session);
+  console.log('🔍 LoginForm 렌더링 - 현재 사용자 정보:', userInfo);
 
   const {
     control,
@@ -45,12 +46,12 @@ export const LoginForm = () => {
 
   // 이미 로그인된 경우 메인 페이지로 리다이렉트
   React.useEffect(() => {
-    console.log('🔄 useEffect 실행 - 세션 변경 감지:', session);
-    if (session) {
+    console.log('🔄 useEffect 실행 - 사용자 정보 변경 감지:', userInfo);
+    if (userInfo && !isUserInfoLoading) {
       console.log('🚀 이미 로그인됨, 메인 페이지로 리다이렉트');
       router.push('/');
     }
-  }, [session, router]);
+  }, [userInfo, isUserInfoLoading, router]);
 
   const onSubmit = async (data: ILoginForm) => {
     console.log('🚀 로그인 시도 시작');
