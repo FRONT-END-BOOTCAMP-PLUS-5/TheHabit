@@ -1,6 +1,6 @@
 'use client';
 
-import { useGetFeedBackById } from '@/libs/hooks/feedback-hooks/useGetFeedBackByid';
+import { useGetFeedBackById } from '@/libs/hooks/feedback-hooks/useGetFeedBackById';
 import React from 'react';
 
 export const FeedBackById = ({ id }: { id: number }) => {

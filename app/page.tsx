@@ -1,7 +1,9 @@
-import Image from 'next/image';
+import OnBoardingPage from '@/app/(onboarding)/page';
 
 export default function Home() {
   return (
+    <div>
+      <OnBoardingPage />
     <div className='font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20'>
       <main className='flex flex-col gap-[32px] row-start-2 items-center sm:items-start'>
         <Image
@@ -44,6 +46,11 @@ export default function Home() {
             target='_blank'
             rel='noopener noreferrer'>
             Read our docs
+          </a>
+          <a
+            className='rounded-full border border-solid border-blue-600 bg-blue-600 text-white transition-colors flex items-center justify-center hover:bg-blue-700 font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto'
+            href='/test-auth'>
+            🔐 인증 테스트
           </a>
         </div>
       </main>

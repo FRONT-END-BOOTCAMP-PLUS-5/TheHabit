@@ -17,10 +17,8 @@ export async function GET() {
         name: challenge.name,
         createdAt: challenge.createdAt.toISOString(),
         endAt: challenge.endAt.toISOString(),
-        startTime: challenge.startTime ? challenge.startTime.toISOString() : null,
-        endTime: challenge.endTime ? challenge.endTime.toISOString() : null,
         color: challenge.color,
-        userId: challenge.userId,
+        active: challenge.active,
         categoryId: challenge.categoryId,
       })),
       routines: dashboard.routines.map(routine => ({
@@ -38,6 +36,7 @@ export async function GET() {
         routineId: rc.routineId,
         createdAt: rc.createdAt.toISOString(),
         proofImgUrl: rc.proofImgUrl,
+        content: rc.content,
       })),
     }));
 

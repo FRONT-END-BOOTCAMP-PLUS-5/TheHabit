@@ -105,7 +105,7 @@ export class PrRoutineCompletionsRepository implements IRoutineCompletionsReposi
         }
       });
 
-      return completions.map((completion: any) => ({
+      return completions.map((completion: RoutineCompletion) => ({
         id: completion.id,
         userId: completion.userId,
         routineId: completion.routineId,
@@ -154,7 +154,7 @@ export class PrRoutineCompletionsRepository implements IRoutineCompletionsReposi
         }
       });
 
-      return completions.map((completion: any) => ({
+      return completions.map((completion: RoutineCompletion) => ({
         id: completion.id,
         userId: completion.userId,
         routineId: completion.routineId,
@@ -198,7 +198,8 @@ export class PrRoutineCompletionsRepository implements IRoutineCompletionsReposi
       });
       return true;
     } catch (error) {
-      return false;
+      if (error instanceof Error) throw new Error(error.message);
+      throw new Error('Failed to delete routine completion');
     }
   }
 }
