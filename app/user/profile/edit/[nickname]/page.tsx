@@ -11,6 +11,7 @@ import { useRouter } from 'next/navigation';
 import { BackComponent } from '@/app/user/profile/edit/components/Back';
 import { CompletionComponent } from '@/app/user/profile/components/Completion';
 import { useGetUserInfo } from '@/libs/hooks/user-hooks/useGetUserInfo';
+import LogOut from '@/app/user/profile/edit/components/LogOut';
 
 const UserProfileEditPage = () => {
   const router = useRouter();
@@ -115,6 +116,7 @@ const UserProfileEditPage = () => {
             </div>
           </div>
           <div id='button_wrapper' className='flex justify-end gap-10 mt-10 px-5'>
+            <LogOut />
             <Button
               type='default'
               color='default'
