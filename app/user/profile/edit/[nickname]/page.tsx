@@ -6,12 +6,12 @@ import { ProfileImage } from '@/app/_components/profile-images/ProfileImage';
 import Image from 'next/image';
 import { NameComponent } from '@/app/user/profile/edit/components/Name';
 import { NicknameComponent } from '@/app/user/profile/edit/components/Nickname';
-import { updateUserProfile, usersApi } from '@/libs/api/users.api';
+import { usersApi } from '@/libs/api/users.api';
 import { useRouter } from 'next/navigation';
 import { BackComponent } from '@/app/user/profile/edit/components/Back';
 import { CompletionComponent } from '@/app/user/profile/components/Completion';
 import { useGetUserInfo } from '@/libs/hooks/user-hooks/useGetUserInfo';
-import LogOut from '@/app/user/profile/edit/components/LogOut';
+import { RoutineComponent } from '@/app/user/profile/components/Routine';
 
 const UserProfileEditPage = () => {
   const router = useRouter();
@@ -20,7 +20,7 @@ const UserProfileEditPage = () => {
 
   const { handleImageClick, fileInputRef } = useUploadProfile();
 
-  const { deleteRegister } = usersApi;
+  const { updateUser, deleteRegister } = usersApi;
 
   const handleDeleteUserRegister = async () => {
     //나중에 confirm창으로 추가 validation 해야함!
@@ -34,12 +34,15 @@ const UserProfileEditPage = () => {
       const type = userInfo?.profileImg ? 'update' : 'create';
 
       const formData = new FormData();
+
       formData.append('id', userInfo?.id || '');
       formData.append('profile_img_path', userInfo?.profileImgPath || '');
+      formData.append('username', userInfo?.username || '');
+      formData.append('nickname', userInfo?.nickname || '');
       formData.append('file', file);
       formData.append('type', type);
 
-      const response = await updateUserProfile(userInfo?.id || '', formData);
+      const response = await updateUser(userInfo?.nickname || '', formData);
       const img = response.data?.profileImg as string;
       const path = response.data?.profileImgPath as string;
       setProfilePreview(img);
@@ -70,7 +73,7 @@ const UserProfileEditPage = () => {
             id='user_wrapper'
             className='flex text-center items-end justify-between px-5 pt-[110px]'
           >
-            <div className='relative w-30 h-30 rounded-full bg-[#F5F5F5] bottom-[40px]'>
+            <div className='relative w-[190px] h-30 rounded-full bg-[#F5F5F5] bottom-[40px]'>
               <ProfileImage
                 imageSrc={profilePreview || null}
                 className='w-full h-full object-cover'
@@ -93,30 +96,29 @@ const UserProfileEditPage = () => {
                 onChange={handleFileChange}
               />
             </div>
-            <div id='challenge' className='flex flex-col items-start'>
-              <div className='flex flex-col mb-5 items-start absolute top-[100px] w-[240px] text-left'>
+            <div id='challenge' className='flex flex-col items-start ml-[40px]'>
+              <div className='flex flex-col mb-5 items-start absolute top-[100px] w-[240px] text-left ml-[10px] mt-[20px]'>
                 <NameComponent />
                 <NicknameComponent />
               </div>
-              <div className='text-[#ccc]'>
-                <span className='font-bold'>99일</span>
+              <div className='cursor-not-allowed text-[#ccc] text-[12px]'>
+                <span className='font-bold'>편집에서는</span>
                 <br />
-                진행중
+                <span>챌린지 선택을 이용하실 수 없어요</span>
               </div>
             </div>
-            <div className='cursor-not-allowed text-[#ccc]'>
-              <span className='font-bold'>99</span>
+            <div className='cursor-not-allowed text-[#ccc] text-[12px]'>
+              <span className='font-bold'>팔로워는</span>
               <br />
-              <span>팔로워</span>
+              <span>편집에서 이용할 수 없어요</span>
             </div>
-            <div className='cursor-not-allowed text-[#ccc]'>
-              <span className='font-bold'>99</span>
+            <div className='cursor-not-allowed text-[#ccc] text-[12px]'>
+              <span className='font-bold'>팔로잉은</span>
               <br />
-              <span>팔로잉</span>
+              <span>편집에서 이용할 수 없어요</span>
             </div>
           </div>
           <div id='button_wrapper' className='flex justify-end gap-10 mt-10 px-5'>
-            <LogOut />
             <Button
               type='default'
               color='default'
@@ -126,12 +128,8 @@ const UserProfileEditPage = () => {
               회원탈퇴
             </Button>
           </div>
-          <div id='routine_wrapper' className='flex flex-col py-8 gap-1 px-5 text-[#ccc]'>
-            <p className='w-[100%]'>금주 21일째 실천중! 💦</p>
-            <p className='w-[100%]'>금주 21일째 실천중! 💦</p>
-            <p className='w-[100%]'>금주 21일째 실천중! 💦</p>
-            <p className='w-[100%]'>금주 21일째 실천중! 💦</p>
-            <p className='w-[100%]'>금주 21일째 실천중! 💦</p>
+          <div id='routine_wrapper' className='flex flex-col py-8 gap-1'>
+            <RoutineComponent type='edit' />
           </div>
           <div id='achievement_wrapper'></div>
         </section>

@@ -1,0 +1,1 @@
+export const SELECTED = 'border-b-4 border-black';

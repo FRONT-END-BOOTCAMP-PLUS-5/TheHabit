@@ -2,6 +2,7 @@ import { axiosInstance } from '@/libs/axios/axiosInstance';
 import { UserDto } from '@/backend/users/applications/dtos/UserDto';
 import { CreateRoutineCompletionResponseDto } from '@/backend/routine-completions/applications/dtos/RoutineCompletionDto';
 import { UserReviewDto } from '@/backend/users/applications/dtos/UserReviewDto';
+import { UserChallengeAndRoutineAndFollowAndCompletionDto } from '@/backend/users/applications/dtos/UserChallengeAndRoutineAndFollowAndCompletion';
 
 // API 응답 타입 정의
 interface ApiResponse<T> {
@@ -13,6 +14,30 @@ interface ApiResponse<T> {
     message: string;
   };
 }
+
+/**
+ * 해당 함수는 user nickname으로 해당 유저 필요한 컬럼만 가져오는 챌린저 + 루틴 + 팔로우 + 컴플리션 테이블 Join
+ * @param nickname: string
+ * @return Promise<ApiResponse<User>>
+ * */
+export const getUserChallengeAndRoutineAndFollowAndCompletion = async (
+  nickname: string,
+  id: string
+): Promise<ApiResponse<UserChallengeAndRoutineAndFollowAndCompletionDto>> => {
+  try {
+    const response = await axiosInstance.get<
+      ApiResponse<UserChallengeAndRoutineAndFollowAndCompletionDto>
+    >(`/api/users/${nickname}`, {
+      params: {
+        nickname,
+        id,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
 
 /**
  * 해당 함수는 user nickname으로 해당 유저 완료 루틴 가져오기
@@ -99,66 +124,18 @@ export const createUserRoutineCompletionEmotion = async (
 };
 
 /**
- * 해당 함수는 user name update 하기
- * @param id: string
- * @param nickname: string
- * @return Promise<ApiResponse<User>>
- * */
-export const updateUserName = async (
-  id: string,
-  username: string
-): Promise<ApiResponse<UserDto>> => {
-  try {
-    const response = await axiosInstance.post<ApiResponse<UserDto>>(
-      `/api/users/edit/username/${id}`,
-      {
-        id,
-        username,
-      }
-    );
-    return response.data;
-  } catch (error) {
-    throw error;
-  }
-};
-
-/**
  * 해당 함수는 user nickname update 하기
  * @param id: string
  * @param nickname: string
  * @return Promise<ApiResponse<User>>
  * */
-export const updateUserNickname = async (
-  id: string,
-  nickname: string
-): Promise<ApiResponse<UserDto>> => {
-  try {
-    const response = await axiosInstance.post<ApiResponse<UserDto>>(
-      `/api/users/edit/nickname/${id}`,
-      {
-        id,
-        nickname,
-      }
-    );
-    return response.data;
-  } catch (error) {
-    throw error;
-  }
-};
-
-/**
- * 해당 함수는 user profile update 하기
- * @param id: string
- * @param nickname: string
- * @return Promise<ApiResponse<User>>
- * */
-export const updateUserProfile = async (
-  id: string,
+export const updateUser = async (
+  nickname: string,
   formData: FormData
 ): Promise<ApiResponse<UserDto>> => {
   try {
     const response = await axiosInstance.post<ApiResponse<UserDto>>(
-      `/api/users/edit/profile/${id}`,
+      `/api/users/edit/${nickname}`,
       formData,
       {
         headers: {
@@ -222,12 +199,11 @@ export const deleteUserRoutineCompletionEmotion = async (
 };
 
 export const usersApi = {
+  getUserAllData: getUserChallengeAndRoutineAndFollowAndCompletion,
   getUserRoutineCompletion,
   getUserRoutineCompletionReview,
   createUserRoutineCompletionEmotion,
-  updateNickname: updateUserNickname,
-  updateUsername: updateUserName,
-  updateUserProfile,
+  updateUser,
   deleteRegister: deleteUserRegister,
   deleteUserRoutineCompletionEmotion,
 };

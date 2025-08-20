@@ -4,9 +4,10 @@ import { ListComponent } from '@/app/user/follow/components/List';
 
 interface IContent {
   data?: FollowerDto | FollowingDto;
+  onToggleFollow: (targetUserId: string, isFollowing: boolean | undefined) => void;
 }
 
-export const ContentComponent = ({ data }: IContent) => {
+export const ContentComponent = ({ data, onToggleFollow }: IContent) => {
   return (
     <div id='follow_content' className='mt-5 mb-5 flex justify-around h-[450px] overflow-scroll'>
       <ul className='w-full'>
@@ -17,7 +18,7 @@ export const ContentComponent = ({ data }: IContent) => {
                   <ListComponent
                     key={follower.fromUser.id}
                     data={follower.fromUser}
-                    type={'follower'}
+                    onToggleFollow={onToggleFollow}
                   />
                 );
               })
@@ -26,7 +27,7 @@ export const ContentComponent = ({ data }: IContent) => {
                   <ListComponent
                     key={following.toUser.id}
                     data={following.toUser}
-                    type={'following'}
+                    onToggleFollow={onToggleFollow}
                   />
                 );
               }))}
