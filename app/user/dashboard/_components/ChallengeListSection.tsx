@@ -2,7 +2,7 @@
 
 import WeeklySlide from '@/app/_components/weekly-slides/WeeklySlide';
 import { getKoreanDateFromDate } from '@/public/utils/dateUtils';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Radio, RadioChangeEvent } from 'antd';
 import AddChallengeButton from './AddChallengeButton';
 import '@ant-design/v5-patch-for-react-19';
@@ -13,14 +13,24 @@ import { useParams } from 'next/navigation';
 import { ChallengeDto } from '@/backend/challenges/applications/dtos/ChallengeDto';
 import AllChallengeList from './AllChallengeList';
 import CategoryChallengeList from './CategoryChallengeList';
+import { Toast } from '@/app/_components/toasts/Toast';
 
 const ChallengeListSection: React.FC = () => {
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [selectedSort, setSelectedSort] = useState<string>('all');
+  const [hasError, setHasError] = useState(false);
   const { openModal } = useModalStore();
   const params = useParams();
   const nickname = params.nickname as string;
-  const { data: dashboard } = useGetDashboardByNickname(nickname);
+  const { data: dashboard, error, isLoading } = useGetDashboardByNickname(nickname);
+
+  // 에러 처리
+  useEffect(() => {
+    if (error) {
+      setHasError(true);
+      Toast.error('챌린지 목록을 불러오는 중 문제가 발생했습니다');
+    }
+  }, [error]);
 
   // 선택된 날짜가 챌린지 기간 내에 있는지 확인하는 함수
   const isDateInChallengePeriod = (challenge: ChallengeDto, date: Date): boolean => {
@@ -64,6 +74,52 @@ const ChallengeListSection: React.FC = () => {
   const handleSort = (e: RadioChangeEvent) => {
     setSelectedSort(e.target.value);
   };
+
+  // 에러 상태 처리
+  if (hasError) {
+    return (
+      <div className='flex flex-col items-center justify-center p-6 bg-red-50 border border-red-200 rounded-lg'>
+        <div className='text-red-600 text-4xl mb-4'>⚠️</div>
+        <h3 className='text-lg font-semibold text-red-800 mb-2'>
+          챌린지 목록을 불러올 수 없습니다
+        </h3>
+        <p className='text-sm text-red-600 text-center mb-4'>
+          잠시 후 다시 시도해주세요. 문제가 지속되면 관리자에게 문의해주세요.
+        </p>
+        <div className='flex gap-3'>
+          <button
+            onClick={() => {
+              setHasError(false);
+              window.location.reload();
+            }}
+            className='px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors text-sm font-medium'
+          >
+            다시 시도
+          </button>
+          <button
+            onClick={() => window.location.reload()}
+            className='px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700 transition-colors text-sm font-medium'
+          >
+            페이지 새로고침
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // 로딩 상태 처리
+  if (isLoading) {
+    return (
+      <div className='flex flex-col gap-2 px-3 py-2 w-full relative mb-10'>
+        <div className='w-full h-20 bg-gray-200 rounded animate-pulse mb-4'></div>
+        <div className='flex flex-col gap-3'>
+          <div className='w-32 h-8 bg-gray-200 rounded animate-pulse mx-auto'></div>
+          <div className='w-48 h-10 bg-gray-200 rounded animate-pulse mx-auto'></div>
+          <div className='w-full h-40 bg-gray-200 rounded animate-pulse'></div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <section className='flex flex-col gap-2 px-3 py-2 w-full relative mb-10'>

@@ -3,8 +3,8 @@ import './globals.css';
 import { QueryProvider } from './_components/query-providers/QueryProvider';
 import ModalProvider from './_components/providers/ModalProvider';
 import NextAuthSessionProvider from './_components/providers/NextAuthSessionProvider';
+import ToastProvider from './_components/providers/ToastProvider';
 import Header from './_components/layouts/Header';
-import { ToastProvider } from './_components/toasts/Toast';
 import { pretendard } from '../public/fonts/font';
 
 export const metadata: Metadata = {
