@@ -5,31 +5,35 @@ import { ValidateFeedBackGPTResponse } from '@/app/user/feedback/_components/Val
 
 export const FeedBackPostData = async (
   challengeId: number,
-  routineCompletion: RoutineCompletionDto[]
+  routineCompletion: RoutineCompletionDto[],
+  nickname: string
 ) => {
   try {
-    const feedBackData = await getFeedBackByChallengeId(challengeId);
-    console.log('feedBackData', feedBackData);
+    const validateChallenge = await getFeedBackByChallengeId(challengeId);
 
-    // 기존 피드백이 있으면 그 데이터 반환
-    if (feedBackData.data?.gptResponseContent && feedBackData.data.gptResponseContent.length > 0) {
-      console.log('기존 피드백이 있습니다.');
-      return feedBackData.data.gptResponseContent;
+    // 기존 피드백이 있는지 더 확실하게 체크
+    const existingFeedback = validateChallenge?.data?.gptResponseContent;
+    if (existingFeedback && existingFeedback.trim() !== '') {
+      console.log('🛑 기존 피드백이 있습니다. 새로 생성하지 않습니다:', existingFeedback);
+      return existingFeedback.split('\n');
     }
+
+    console.log('✅ 기존 피드백이 없습니다. 새로 생성합니다.');
 
     // 피드백이 없으면 새로 생성
     const routineStatusMessagesGPTResponse = await ValidateFeedBackGPTResponse(
       challengeId,
-      routineCompletion
+      routineCompletion,
+      nickname
     );
 
     if (!routineStatusMessagesGPTResponse || routineStatusMessagesGPTResponse.length === 0) {
       console.log('루틴 상태 메시지가 없습니다.');
-      return [];
+      return;
     }
 
     const gptResponse = await requestGPT({
-      gptResponseContent: routineStatusMessagesGPTResponse,
+      gptResponseContent: routineStatusMessagesGPTResponse.join('\n'),
     });
 
     if (!gptResponse.data?.gptResponseContent) {
@@ -46,6 +50,6 @@ export const FeedBackPostData = async (
     return feedBack.data?.gptResponseContent || [];
   } catch (error) {
     console.error('피드백 데이터 처리 중 오류:', error);
-    return [];
+    return;
   }
 };

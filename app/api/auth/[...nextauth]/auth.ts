@@ -4,7 +4,9 @@ import { LoginRequestDto } from '@/backend/auths/applications/dtos/LoginRequestD
 import { Session, User } from 'next-auth';
 import { JWT } from 'next-auth/jwt';
 import CredentialsProvider from 'next-auth/providers/credentials';
-// import GoogleProvider from "next-auth/providers/google";
+import GoogleProvider from "next-auth/providers/google";
+import { GoogleLoginUsecase } from '@/backend/auths/applications/usecases/GoogleLoginUsecase';
+import { Account, Profile } from 'next-auth';
 // import KakaoProvider from "next-auth/providers/kakao";
 
 interface ISessionUser {
@@ -14,8 +16,14 @@ interface ISessionUser {
   username?: string;
 }
 
+const userRepository = new PrUserRepository();
+const googleLoginUsecase = new GoogleLoginUsecase(userRepository);
+
 export const authOptions = {
   secret: process.env.NEXTAUTH_SECRET,
+  session: {
+    strategy: 'jwt',
+  },
   providers: [
     CredentialsProvider({
       name: 'Credentials',
@@ -82,16 +90,68 @@ export const authOptions = {
         }
       },
     }),
-    // GoogleProvider({
-    //   clientId: process.env.GOOGLE_CLIENT_ID!,
-    //   clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
-    // }),
+    GoogleProvider({
+      clientId: process.env.GOOGLE_CLIENT_ID!,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+      authorization: {
+        params: {
+          prompt: 'consent',
+          access_type: 'offline',
+          response_type: 'code',
+        },
+      },
+    }),
     // KakaoProvider({
     //   clientId: process.env.KAKAO_CLIENT_ID!,
     //   clientSecret: process.env.KAKAO_CLIENT_SECRET!,
     // }),
   ],
   callbacks: {
+    async signIn({ user, account, profile }: {
+      user: User;
+      account: Account | null;
+      profile: Profile;
+    }) {
+      if (account?.provider === 'google') {
+        try {
+          console.log('🔐 [NextAuth] Google 로그인 처리 시작:', {
+            email: user.email,
+            name: user.name,
+            picture: user.image,
+            profileSub: profile.sub,
+            userId: user.id
+          });
+
+          // 필수 필드 검증
+          if (!user.email || !user.name) {
+            console.error('❌ [NextAuth] Google 사용자 정보 누락:', { email: user.email, name: user.name });
+            return false;
+          }
+
+          // GoogleLoginUsecase 실행
+          const result = await googleLoginUsecase.execute({
+            email: user.email,
+            name: user.name,
+            picture: user.image || undefined,
+            sub: profile.sub || user.id || '',
+          });
+
+          if (result.success) {
+            console.log('✅ [NextAuth] Google 로그인 성공:', result.message);
+            // 성공 시 추가 정보를 user 객체에 저장
+            return true;
+          } else {
+            console.error('❌ [NextAuth] Google 로그인 처리 실패:', result.message);
+            return false;
+          }
+        } catch (error) {
+          console.error('💥 [NextAuth] Google 로그인 처리 중 오류:', error);
+          return false;
+        }
+      }
+      return true;
+    },
+
     async jwt({
       token,
       user,
@@ -119,6 +179,10 @@ export const authOptions = {
         token.profileImgPath = user.profileImgPath;
         token.createdAt = user.createdAt;
         token.updatedAt = user.updatedAt;
+
+        if (user.isNewUser !== undefined) {
+          token.isNewUser = user.isNewUser;
+        }
 
         console.log('✅ [NextAuth] JWT token 업데이트 완료');
       } else {
@@ -160,14 +224,7 @@ export const authOptions = {
         session.user.createdAt = token.createdAt as Date;
         session.user.updatedAt = token.updatedAt as Date;
 
-        console.log('✅ [NextAuth] Session callback - session.user 업데이트 완료:', {
-          id: session.user.id,
-          email: session.user.email,
-          username: session.user.username,
-          nickname: session.user.nickname,
-          profileImg: session.user.profileImg,
-          profileImgPath: session.user.profileImgPath,
-        });
+    
       } else {
         console.log('⚠️ [NextAuth] Session callback - session.user가 없음');
       }
@@ -175,16 +232,26 @@ export const authOptions = {
       return session;
     },
     async redirect({ url, baseUrl }: { url: string; baseUrl: string }) {
+      console.log('🔄 [NextAuth] Redirect callback:', { url, baseUrl });
+      
       // 로그인 후 리다이렉트
-      if (url.startsWith('/')) return `${baseUrl}${url}`;
+      if (url.startsWith('/')) {
+        const redirectUrl = `${baseUrl}${url}`;
+        console.log('✅ [NextAuth] 상대 경로 리다이렉트:', redirectUrl);
+        return redirectUrl;
+      }
+      
       // 외부 URL인 경우 홈으로 리다이렉트
-      else if (new URL(url).origin === baseUrl) return url;
+      if (new URL(url).origin === baseUrl) {
+        console.log('✅ [NextAuth] 동일 도메인 리다이렉트:', url);
+        return url;
+      }
+      
+      console.log('✅ [NextAuth] 홈으로 리다이렉트:', baseUrl);
       return baseUrl;
     },
   },
   pages: {
     signIn: '/login', // 로그인 페이지 경로
-    signUp: '/signup', // 회원가입 페이지 경로
-    error: '/login', // 에러 페이지 경로
   },
 };

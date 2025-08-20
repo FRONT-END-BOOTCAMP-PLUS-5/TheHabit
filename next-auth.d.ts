@@ -1,4 +1,4 @@
-import NextAuth, { DefaultSession, DefaultUser } from 'next-auth';
+import { DefaultSession, DefaultUser } from 'next-auth';
 import { DefaultJWT } from 'next-auth/jwt';
 
 declare module 'next-auth' {
@@ -16,6 +16,7 @@ declare module 'next-auth' {
       profileImgPath: string | null;
       createdAt?: Date;
       updatedAt?: Date;
+      isNewUser?: boolean;
     } & DefaultSession['user']; // 기존 name, image 등을 유지하기 위함
   }
 
@@ -29,6 +30,7 @@ declare module 'next-auth' {
     profileImgPath?: string | null;
     createdAt?: Date;
     updatedAt?: Date;
+    isNewUser?: boolean;
   }
 }
 
@@ -43,5 +45,6 @@ declare module 'next-auth/jwt' {
     profileImgPath?: string | null;
     createdAt?: Date;
     updatedAt?: Date;
+    isNewUser?: boolean;
   }
 }
