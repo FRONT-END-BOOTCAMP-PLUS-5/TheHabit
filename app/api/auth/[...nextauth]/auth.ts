@@ -6,8 +6,13 @@ import { JWT } from 'next-auth/jwt';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import GoogleProvider from "next-auth/providers/google";
 import { GoogleLoginUsecase } from '@/backend/auths/applications/usecases/GoogleLoginUsecase';
+<<<<<<< HEAD
 import KakaoProvider from "next-auth/providers/kakao";
 import { KakaoLoginUsecase } from '@/backend/auths/applications/usecases/KakaoLoginUsecase';
+=======
+import { Account, Profile } from 'next-auth';
+// import KakaoProvider from "next-auth/providers/kakao";
+>>>>>>> feat/issue#148-new
 
 interface ISessionUser {
   profileImg?: string | null;
@@ -16,6 +21,7 @@ interface ISessionUser {
   username?: string;
 }
 
+<<<<<<< HEAD
 // 소셜 로그인 타입 정의
 type SocialProvider = 'google' | 'kakao';
 
@@ -159,6 +165,10 @@ async function handleSocialLogin(
     return false;
   }
 }
+=======
+const userRepository = new PrUserRepository();
+const googleLoginUsecase = new GoogleLoginUsecase(userRepository);
+>>>>>>> feat/issue#148-new
 
 export const authOptions = {
   secret: process.env.NEXTAUTH_SECRET,
@@ -242,6 +252,7 @@ export const authOptions = {
         },
       },
     }),
+<<<<<<< HEAD
     KakaoProvider({
       clientId: process.env.KAKAO_CLIENT_ID!,
       clientSecret: process.env.KAKAO_CLIENT_SECRET!,
@@ -251,6 +262,12 @@ export const authOptions = {
         },
       },
     }),
+=======
+    // KakaoProvider({
+    //   clientId: process.env.KAKAO_CLIENT_ID!,
+    //   clientSecret: process.env.KAKAO_CLIENT_SECRET!,
+    // }),
+>>>>>>> feat/issue#148-new
   ],
   callbacks: {
     async signIn({ user, account, profile }: {
@@ -258,6 +275,7 @@ export const authOptions = {
       account: Account | null;
       profile: Profile;
     }) {
+<<<<<<< HEAD
       console.log('🔐 [NextAuth] signIn callback 시작:', {
         provider: account?.provider,
         userId: user.id,
@@ -287,6 +305,45 @@ export const authOptions = {
       }
       
       console.log('🔐 [NextAuth] 일반 로그인 또는 기타 처리');
+=======
+      if (account?.provider === 'google') {
+        try {
+          console.log('🔐 [NextAuth] Google 로그인 처리 시작:', {
+            email: user.email,
+            name: user.name,
+            picture: user.image,
+            profileSub: profile.sub,
+            userId: user.id
+          });
+
+          // 필수 필드 검증
+          if (!user.email || !user.name) {
+            console.error('❌ [NextAuth] Google 사용자 정보 누락:', { email: user.email, name: user.name });
+            return false;
+          }
+
+          // GoogleLoginUsecase 실행
+          const result = await googleLoginUsecase.execute({
+            email: user.email,
+            name: user.name,
+            picture: user.image || undefined,
+            sub: profile.sub || user.id || '',
+          });
+
+          if (result.success) {
+            console.log('✅ [NextAuth] Google 로그인 성공:', result.message);
+            // 성공 시 추가 정보를 user 객체에 저장
+            return true;
+          } else {
+            console.error('❌ [NextAuth] Google 로그인 처리 실패:', result.message);
+            return false;
+          }
+        } catch (error) {
+          console.error('💥 [NextAuth] Google 로그인 처리 중 오류:', error);
+          return false;
+        }
+      }
+>>>>>>> feat/issue#148-new
       return true;
     },
 
@@ -314,6 +371,10 @@ export const authOptions = {
         // 타입가드를 사용한 토큰 업데이트
         updateTokenFromUser(token, user);
 
+        if (user.isNewUser !== undefined) {
+          token.isNewUser = user.isNewUser;
+        }
+
         console.log('✅ [NextAuth] JWT token 업데이트 완료');
       } else {
         console.log('🔄 [NextAuth] JWT callback - 기존 token 반환');
@@ -340,7 +401,11 @@ export const authOptions = {
         // 타입가드를 사용한 세션 업데이트
         updateSessionFromToken(session, token);
 
+<<<<<<< HEAD
         console.log('✅ [NextAuth] Session callback - session.user 업데이트 완료');
+=======
+    
+>>>>>>> feat/issue#148-new
       } else {
         console.log('⚠️ [NextAuth] Session callback - session.user가 없음');
       }
