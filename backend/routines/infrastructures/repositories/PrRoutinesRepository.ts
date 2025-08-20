@@ -32,7 +32,39 @@ export class PrRoutinesRepository implements IRoutinesRepository {
     challengeId: number;
     nickname: string;
   }): Promise<Routine> {
-    // Challenge가 해당 nickname의 사용자 것인지 확인 후 생성
+    console.log('🔍 createByNickname 요청:', request);
+
+    // Challenge가 해당 nickname의 사용자 것인지 확인
+    const challenge = await prisma.challenge.findFirst({
+      where: {
+        id: request.challengeId,
+        user: {
+          nickname: request.nickname,
+        },
+      },
+      include: {
+        user: {
+          select: {
+            nickname: true,
+          },
+        },
+      },
+    });
+
+    if (!challenge) {
+      console.log(
+        '❌ 챌린지 검증 실패 - challengeId:',
+        request.challengeId,
+        'nickname:',
+        request.nickname
+      );
+      throw new Error(
+        `챌린지 ID ${request.challengeId}는 사용자 '${request.nickname}'의 챌린지가 아닙니다.`
+      );
+    }
+
+    console.log('✅ 챌린지 검증 성공:', challenge);
+
     const createdRoutine = await prisma.routine.create({
       data: {
         routineTitle: request.routineTitle,
@@ -43,15 +75,17 @@ export class PrRoutinesRepository implements IRoutinesRepository {
       },
     });
 
-    return {
-      id: createdRoutine.id,
-      routineTitle: createdRoutine.routineTitle,
-      alertTime: createdRoutine.alertTime,
-      emoji: createdRoutine.emoji,
-      challengeId: createdRoutine.challengeId,
-      createdAt: createdRoutine.createdAt,
-      updatedAt: createdRoutine.updatedAt,
-    };
+    console.log('✅ 루틴 생성 완료:', createdRoutine);
+
+    return new Routine(
+      createdRoutine.id,
+      createdRoutine.routineTitle,
+      createdRoutine.alertTime,
+      createdRoutine.emoji,
+      createdRoutine.challengeId,
+      createdRoutine.createdAt,
+      createdRoutine.updatedAt
+    );
   }
 
   async findByChallengeId(challengeId: number): Promise<Routine[]> {
@@ -59,15 +93,17 @@ export class PrRoutinesRepository implements IRoutinesRepository {
       where: { challengeId },
     });
 
-    return routines.map((routine: Routine) => ({
-      id: routine.id,
-      routineTitle: routine.routineTitle,
-      alertTime: routine.alertTime,
-      emoji: routine.emoji,
-      challengeId: routine.challengeId,
-      createdAt: routine.createdAt,
-      updatedAt: routine.updatedAt,
-    }));
+    return routines.map(routine =>
+      new Routine(
+        routine.id,
+        routine.routineTitle,
+        routine.alertTime,
+        routine.emoji,
+        routine.challengeId,
+        routine.createdAt,
+        routine.updatedAt
+      )
+    );
   }
 
   async findByUserId(userId: string): Promise<Routine[]> {
@@ -81,15 +117,17 @@ export class PrRoutinesRepository implements IRoutinesRepository {
       },
     });
 
-    return routines.map((routine: Routine) => ({
-      id: routine.id,
-      routineTitle: routine.routineTitle,
-      alertTime: routine.alertTime,
-      emoji: routine.emoji,
-      challengeId: routine.challengeId,
-      createdAt: routine.createdAt,
-      updatedAt: routine.updatedAt,
-    }));
+    return routines.map(routine =>
+      new Routine(
+        routine.id,
+        routine.routineTitle,
+        routine.alertTime,
+        routine.emoji,
+        routine.challengeId,
+        routine.createdAt,
+        routine.updatedAt
+      )
+    );
   }
 
   async findByNickname(nickname: string): Promise<Routine[]> {
@@ -98,34 +136,38 @@ export class PrRoutinesRepository implements IRoutinesRepository {
       const routines = await prisma.routine.findMany({
         where: {
           challenge: {
-            user: { nickname }
-          }
+            user: { nickname },
+          },
         },
         include: {
           challenge: {
             include: {
               user: {
                 select: {
-                  nickname: true
-                }
-              }
-            }
-          }
-        }
+                  nickname: true,
+                },
+              },
+            },
+          },
+        },
       });
 
-      return routines.map((routine: any) => ({
-        id: routine.id,
-        routineTitle: routine.routineTitle,
-        alertTime: routine.alertTime,
-        emoji: routine.emoji,
-        challengeId: routine.challengeId,
-        createdAt: routine.createdAt,
-        updatedAt: routine.updatedAt,
-      }));
+      return routines.map(routine =>
+        new Routine(
+          routine.id,
+          routine.routineTitle,
+          routine.alertTime,
+          routine.emoji,
+          routine.challengeId,
+          routine.createdAt,
+          routine.updatedAt
+        )
+      );
     } catch (error) {
       console.error('닉네임으로 루틴 조회 중 오류:', error);
-      throw new Error(`닉네임 '${nickname}'으로 루틴 조회에 실패했습니다: ${error instanceof Error ? error.message : '알 수 없는 오류'}`);
+      throw new Error(
+        `닉네임 '${nickname}'으로 루틴 조회에 실패했습니다: ${error instanceof Error ? error.message : '알 수 없는 오류'}`
+      );
     }
   }
 
@@ -136,29 +178,31 @@ export class PrRoutinesRepository implements IRoutinesRepository {
 
     if (!routine) return null;
 
-    return {
-      id: routine.id,
-      routineTitle: routine.routineTitle,
-      alertTime: routine.alertTime,
-      emoji: routine.emoji,
-      challengeId: routine.challengeId,
-      createdAt: routine.createdAt,
-      updatedAt: routine.updatedAt,
-    };
+    return new Routine(
+      routine.id,
+      routine.routineTitle,
+      routine.alertTime,
+      routine.emoji,
+      routine.challengeId,
+      routine.createdAt,
+      routine.updatedAt
+    );
   }
 
   async findAll(): Promise<Routine[]> {
     const routines = await prisma.routine.findMany();
 
-    return routines.map((routine: Routine) => ({
-      id: routine.id,
-      routineTitle: routine.routineTitle,
-      alertTime: routine.alertTime,
-      emoji: routine.emoji,
-      challengeId: routine.challengeId,
-      createdAt: routine.createdAt,
-      updatedAt: routine.updatedAt,
-    }));
+    return routines.map(routine =>
+      new Routine(
+        routine.id,
+        routine.routineTitle,
+        routine.alertTime,
+        routine.emoji,
+        routine.challengeId,
+        routine.createdAt,
+        routine.updatedAt
+      )
+    );
   }
 
   async update(routineId: number, routine: Partial<Routine>): Promise<Routine> {
@@ -174,15 +218,15 @@ export class PrRoutinesRepository implements IRoutinesRepository {
       },
     });
 
-    return {
-      id: updatedRoutine.id,
-      routineTitle: updatedRoutine.routineTitle,
-      alertTime: updatedRoutine.alertTime,
-      emoji: updatedRoutine.emoji,
-      challengeId: updatedRoutine.challengeId,
-      createdAt: updatedRoutine.createdAt,
-      updatedAt: updatedRoutine.updatedAt,
-    };
+    return new Routine(
+      updatedRoutine.id,
+      updatedRoutine.routineTitle,
+      updatedRoutine.alertTime,
+      updatedRoutine.emoji,
+      updatedRoutine.challengeId,
+      updatedRoutine.createdAt,
+      updatedRoutine.updatedAt
+    );
   }
 
   async delete(routineId: number): Promise<boolean> {
