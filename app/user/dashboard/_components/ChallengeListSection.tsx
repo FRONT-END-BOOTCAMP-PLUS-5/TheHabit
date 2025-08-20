@@ -34,33 +34,61 @@ const ChallengeListSection: React.FC = () => {
 
   // 선택된 날짜가 챌린지 기간 내에 있는지 확인하는 함수
   const isDateInChallengePeriod = (challenge: ChallengeDto, date: Date): boolean => {
-    // 챌린지 시작일과 종료일을 날짜만으로 변환 (시간 제거)
-    const challengeStart = new Date(challenge.createdAt);
-    const challengeStartDate = new Date(
-      challengeStart.getFullYear(),
-      challengeStart.getMonth(),
-      challengeStart.getDate()
-    );
+    try {
+      // null 체크 추가
+      if (!challenge.createdAt || !challenge.endAt) {
+        return false;
+      }
 
-    const challengeEnd = new Date(challenge.endAt);
-    const challengeEndDate = new Date(
-      challengeEnd.getFullYear(),
-      challengeEnd.getMonth(),
-      challengeEnd.getDate()
-    );
+      // 챌린지 시작일과 종료일을 날짜만으로 변환 (시간 제거)
+      const challengeStart = new Date(challenge.createdAt);
+      const challengeStartDate = new Date(
+        challengeStart.getFullYear(),
+        challengeStart.getMonth(),
+        challengeStart.getDate()
+      );
 
-    // 선택된 날짜를 날짜만으로 변환 (시간 제거)
-    const selectedDateOnly = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+      const challengeEnd = new Date(challenge.endAt);
+      const challengeEndDate = new Date(
+        challengeEnd.getFullYear(),
+        challengeEnd.getMonth(),
+        challengeEnd.getDate()
+      );
 
-    return selectedDateOnly >= challengeStartDate && selectedDateOnly <= challengeEndDate;
+      // 유효한 날짜인지 확인
+      if (isNaN(challengeStartDate.getTime()) || isNaN(challengeEndDate.getTime())) {
+        return false;
+      }
+
+      // 선택된 날짜를 날짜만으로 변환 (시간 제거)
+      const selectedDateOnly = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+
+      return selectedDateOnly >= challengeStartDate && selectedDateOnly <= challengeEndDate;
+    } catch (error) {
+      console.error('날짜 변환 에러:', error);
+      return false;
+    }
   };
 
   // 선택된 날짜에 해당하는 챌린지들만 필터링
   const getChallengesForSelectedDate = () => {
-    if (!dashboard?.challenge) return [];
-    return dashboard.challenge.filter(challenge =>
-      isDateInChallengePeriod(challenge, selectedDate)
-    );
+    if (!dashboard?.challenge || !Array.isArray(dashboard.challenge)) {
+      return [];
+    }
+
+    return dashboard.challenge.filter(challenge => {
+      // challenge 객체가 유효한지 확인
+      if (!challenge || typeof challenge !== 'object') {
+        return false;
+      }
+
+      // 필수 속성들이 존재하는지 확인
+      if (!challenge.id || !challenge.createdAt || !challenge.endAt) {
+        return false;
+      }
+
+      return isDateInChallengePeriod(challenge, selectedDate);
+    });
   };
 
   const handleOpenModal = () => {
