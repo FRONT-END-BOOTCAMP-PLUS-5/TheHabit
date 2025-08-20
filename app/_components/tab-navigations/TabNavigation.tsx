@@ -4,7 +4,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import React, { useState } from 'react';
 import { tabItem } from '@/public/consts/tabItem';
-import addIcon from '@/public/icons/tabButton.svg';
+import homeIcon from '@/public/icons/home.svg';
 
 export const TabNavigation = () => {
   const [isHover, setIsHover] = useState<string>('');
@@ -33,11 +33,13 @@ export const TabNavigation = () => {
             </Link>
           </li>
         ))}
-        <Image
-          src={addIcon}
-          alt='추가하기'
-          className='w-18 h-18 absolute bottom-1/2 cursor-pointer hover:scale-110 transition-all duration-300 hover:opacity-90'
-        />
+        <div className='w-15 h-15 bg-[#93D50B] absolute bottom-1/2 cursor-pointer hover:scale-110 transition-all duration-300 hover:opacity-90 flex items-center justify-center rounded-full'>
+          <Image
+            src={homeIcon}
+            alt='추가하기'
+            className='w-10 h-10 cursor-pointer hover:scale-110 transition-all duration-300 hover:opacity-90'
+          />
+        </div>
       </ul>
     </nav>
   );
