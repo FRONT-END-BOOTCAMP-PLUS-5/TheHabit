@@ -4,6 +4,7 @@ import { QueryProvider } from './_components/query-providers/QueryProvider';
 import ModalProvider from './_components/providers/ModalProvider';
 import NextAuthSessionProvider from './_components/providers/NextAuthSessionProvider';
 import Header from './_components/layouts/Header';
+import { ToastProvider } from './_components/toasts/Toast';
 import { pretendard } from '../public/fonts/font';
 
 export const metadata: Metadata = {
@@ -65,12 +66,16 @@ const RootLayout = ({
         <meta name='theme-color' content='#000000' />
       </head>
       <body
-        className={`${pretendard.variable} ${pretendard.variable} antialiased mobile-container`}>
+        className={`${pretendard.variable} ${pretendard.variable} antialiased mobile-container`}
+      >
         <div className='mobile-wrapper'>
           <NextAuthSessionProvider>
             <Header />
             <QueryProvider>
-              <ModalProvider>{children}</ModalProvider>
+              <ModalProvider>
+                {children}
+                <ToastProvider />
+              </ModalProvider>
             </QueryProvider>
           </NextAuthSessionProvider>
         </div>
