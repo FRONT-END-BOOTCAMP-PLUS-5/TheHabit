@@ -3,8 +3,6 @@ import { GetDashboardByNicknameUsecase } from '@/backend/dashboards/application/
 import { PrDashboardRepository } from '@/backend/dashboards/infrastructure/repository/PrDashboardRepository';
 import { ApiResponse } from '@/backend/shared/types/ApiResponse';
 import { DashboardDto } from '@/backend/dashboards/application/dtos/DashboardDto';
-import { ChallengeDto } from '@/backend/challenges/applications/dtos/ChallengeDto';
-import { RoutineCompletionDto } from '@/backend/routine-completions/applications/dtos/RoutineCompletionDto';
 
 
 const repository = new PrDashboardRepository();
@@ -61,8 +59,7 @@ export async function GET(
         createdAt: routine.createdAt.toISOString(),
         updatedAt: routine.updatedAt.toISOString(),
       })),
-      routineCount: dashboard.routineCount,
-      routineCompletion: dashboard.routineCompletion.map((routineCompletion) => ({
+      routineCompletions: dashboard.routineCompletion.map((routineCompletion) => ({
         id: routineCompletion.id,
         routineId: routineCompletion.routineId,
         createdAt: routineCompletion.createdAt.toISOString(),

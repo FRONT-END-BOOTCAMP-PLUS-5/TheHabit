@@ -1,6 +1,6 @@
 import React from 'react';
-import UserProfileSection from '../../_components/user-profile-section/UserProfileSection';
-import ChallengeListSection from './_components/ChallengeListSection';
+import UserProfileSection from '@/app/_components/user-profile-section/UserProfileSection';
+import ChallengeListSection from '@/app/user/dashboard/_components/ChallengeListSection';
 
 const MainPage: React.FC = () => {
   return (

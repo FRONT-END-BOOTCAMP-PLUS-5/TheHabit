@@ -1,6 +1,5 @@
 'use client';
 
-import ChallengesAccordion from '@/app/_components/challenges-accordion/ChallengesAccordion';
 import WeeklySlide from '@/app/_components/weekly-slides/WeeklySlide';
 import { getKoreanDateFromDate } from '@/public/utils/dateUtils';
 import { useState } from 'react';
@@ -9,12 +8,50 @@ import AddChallengeButton from './AddChallengeButton';
 import '@ant-design/v5-patch-for-react-19';
 import { useModalStore } from '@/libs/stores/modalStore';
 import AddChallengeForm from './AddChallengeForm';
-import { CHALLENGE_COLORS } from '@/public/consts/challengeColors';
+import { useGetDashboardByNickname } from '@/libs/hooks';
+import { useParams } from 'next/navigation';
+import { ChallengeDto } from '@/backend/challenges/applications/dtos/ChallengeDto';
+import AllChallengeList from './AllChallengeList';
+import CategoryChallengeList from './CategoryChallengeList';
 
 const ChallengeListSection: React.FC = () => {
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [selectedSort, setSelectedSort] = useState<string>('all');
   const { openModal } = useModalStore();
+  const params = useParams();
+  const nickname = params.nickname as string;
+  const { data: dashboard } = useGetDashboardByNickname(nickname);
+
+  // 선택된 날짜가 챌린지 기간 내에 있는지 확인하는 함수
+  const isDateInChallengePeriod = (challenge: ChallengeDto, date: Date): boolean => {
+    // 챌린지 시작일과 종료일을 날짜만으로 변환 (시간 제거)
+    const challengeStart = new Date(challenge.createdAt);
+    const challengeStartDate = new Date(
+      challengeStart.getFullYear(),
+      challengeStart.getMonth(),
+      challengeStart.getDate()
+    );
+
+    const challengeEnd = new Date(challenge.endAt);
+    const challengeEndDate = new Date(
+      challengeEnd.getFullYear(),
+      challengeEnd.getMonth(),
+      challengeEnd.getDate()
+    );
+
+    // 선택된 날짜를 날짜만으로 변환 (시간 제거)
+    const selectedDateOnly = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+
+    return selectedDateOnly >= challengeStartDate && selectedDateOnly <= challengeEndDate;
+  };
+
+  // 선택된 날짜에 해당하는 챌린지들만 필터링
+  const getChallengesForSelectedDate = () => {
+    if (!dashboard?.challenge) return [];
+    return dashboard.challenge.filter(challenge =>
+      isDateInChallengePeriod(challenge, selectedDate)
+    );
+  };
 
   const handleOpenModal = () => {
     openModal(<AddChallengeForm />, 'toast');
@@ -28,138 +65,8 @@ const ChallengeListSection: React.FC = () => {
     setSelectedSort(e.target.value);
   };
 
-  const allChallenges: React.ReactNode = (
-    <div className='flex flex-col gap-0.5'>
-      <ChallengesAccordion
-        challengeId={1}
-        title='매일 팔굽혀펴기'
-        totalRoutines={3}
-        completedRoutines={2}
-        backgroundColor={CHALLENGE_COLORS[0].background}
-        completedColor={CHALLENGE_COLORS[0].completed}
-        category={0}
-      />
-      <ChallengesAccordion
-        challengeId={2}
-        title='매일 영어 스피킹'
-        totalRoutines={3}
-        completedRoutines={2}
-        backgroundColor={CHALLENGE_COLORS[1].background}
-        completedColor={CHALLENGE_COLORS[1].completed}
-        category={1}
-      />
-      <ChallengesAccordion
-        challengeId={3}
-        title='매일 아침 8시 기상'
-        totalRoutines={3}
-        completedRoutines={2}
-        backgroundColor={CHALLENGE_COLORS[2].background}
-        completedColor={CHALLENGE_COLORS[2].completed}
-        category={2}
-      />
-      <ChallengesAccordion
-        challengeId={4}
-        title='여자친구 만들기'
-        totalRoutines={3}
-        completedRoutines={1}
-        backgroundColor={CHALLENGE_COLORS[3].background}
-        completedColor={CHALLENGE_COLORS[3].completed}
-        category={3}
-      />
-    </div>
-  );
-
-  const categoryChallenges: React.ReactNode = (
-    <div className='flex flex-col gap-0.5'>
-      <div className='flex flex-col gap-0.5'>
-        <div className='text-lg font-bold text-secondary'>건강</div>
-        <div className='flex flex-col gap-0.5'>
-          <ChallengesAccordion
-            challengeId={5}
-            title='매일 팔굽혀펴기'
-            totalRoutines={3}
-            completedRoutines={2}
-            backgroundColor={CHALLENGE_COLORS[0].background}
-            completedColor={CHALLENGE_COLORS[0].completed}
-            category={0}
-          />
-          <ChallengesAccordion
-            challengeId={6}
-            title='매일 팔굽혀펴기'
-            totalRoutines={3}
-            completedRoutines={2}
-            backgroundColor={CHALLENGE_COLORS[0].background}
-            completedColor={CHALLENGE_COLORS[0].completed}
-            category={0}
-          />
-          <ChallengesAccordion
-            challengeId={7}
-            title='매일 팔굽혀펴기'
-            totalRoutines={3}
-            completedRoutines={2}
-            backgroundColor={CHALLENGE_COLORS[0].background}
-            completedColor={CHALLENGE_COLORS[0].completed}
-            category={0}
-          />
-        </div>
-        <div className='flex flex-col gap-0.5'>
-          <div className='text-lg font-bold text-secondary'>공부</div>
-          <div className='flex flex-col gap-0.5'>
-            <ChallengesAccordion
-              challengeId={8}
-              title='매일 영어 스피킹'
-              totalRoutines={3}
-              completedRoutines={2}
-              backgroundColor={CHALLENGE_COLORS[1].background}
-              completedColor={CHALLENGE_COLORS[1].completed}
-              category={0}
-            />
-            <ChallengesAccordion
-              challengeId={9}
-              title='TOEIC 700점 목표'
-              totalRoutines={3}
-              completedRoutines={2}
-              backgroundColor={CHALLENGE_COLORS[1].background}
-              completedColor={CHALLENGE_COLORS[1].completed}
-              category={1}
-            />
-          </div>
-        </div>
-        <div className='flex flex-col gap-0.5'>
-          <div className='text-lg font-bold text-secondary'>자기계발</div>
-          <div className='flex flex-col gap-0.5'>
-            <ChallengesAccordion
-              challengeId={10}
-              title='매일 아침 8시 기상'
-              totalRoutines={3}
-              completedRoutines={2}
-              backgroundColor={CHALLENGE_COLORS[2].background}
-              completedColor={CHALLENGE_COLORS[2].completed}
-              category={2}
-            />
-          </div>
-        </div>
-
-        <div className='flex flex-col gap-0.5'>
-          <div className='text-lg font-bold text-secondary'>기타</div>
-          <div className='flex flex-col gap-0.5'>
-            <ChallengesAccordion
-              challengeId={11}
-              title='여자친구 만들기'
-              totalRoutines={3}
-              completedRoutines={1}
-              backgroundColor={CHALLENGE_COLORS[3].background}
-              completedColor={CHALLENGE_COLORS[3].completed}
-              category={3}
-            />
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-
   return (
-    <section className='flex flex-col gap-2 px-2 py-2 w-full relative mb-10'>
+    <section className='flex flex-col gap-2 px-3 py-2 w-full relative mb-10'>
       <WeeklySlide onDateSelect={handleDateSelect} />
       <div className='flex flex-col gap-3'>
         <div className='flex flex-col gap-3'>
@@ -188,7 +95,24 @@ const ChallengeListSection: React.FC = () => {
             </Radio.Group>
           </div>
         </div>
-        {selectedSort === 'all' ? allChallenges : categoryChallenges}
+        {selectedSort === 'all' ? (
+          <AllChallengeList
+            challenges={getChallengesForSelectedDate()}
+            routines={dashboard?.routines || []}
+            routineCompletions={dashboard?.routineCompletions || []}
+            selectedDate={selectedDate}
+          />
+        ) : (
+          dashboard && (
+            <CategoryChallengeList
+              dashboard={dashboard}
+              challenges={getChallengesForSelectedDate()}
+              routines={dashboard?.routines || []}
+              routineCompletions={dashboard?.routineCompletions || []}
+              selectedDate={selectedDate}
+            />
+          )
+        )}
       </div>
       <AddChallengeButton onClick={handleOpenModal} />
     </section>

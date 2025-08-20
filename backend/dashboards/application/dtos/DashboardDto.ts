@@ -5,6 +5,5 @@ import { RoutineCompletionDto } from '@/backend/routine-completions/applications
 export interface DashboardDto {
   challenge: ChallengeDto[];
   routines: ReadRoutineResponseDto[];
-  routineCount: number;
-  routineCompletion: RoutineCompletionDto[];
+  routineCompletions: RoutineCompletionDto[];
 }

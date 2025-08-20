@@ -31,7 +31,7 @@ export async function GET() {
         updatedAt: routine.updatedAt.toISOString(),
       })),
       routineCount: dashboard.routineCount,
-      routineCompletion: dashboard.routineCompletion.map(rc => ({
+      routineCompletions: dashboard.routineCompletion.map(rc => ({
         id: rc.id,
         routineId: rc.routineId,
         createdAt: rc.createdAt.toISOString(),
