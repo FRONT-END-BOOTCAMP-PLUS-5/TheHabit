@@ -8,7 +8,7 @@ import { useForm, Controller } from 'react-hook-form';
 import '@ant-design/v5-patch-for-react-19';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { SocialLogin } from '@/app/login/components/SocialLogin';
+import { SocialLogin } from '@/app/login/_components/SocialLogin';
 import { signIn } from 'next-auth/react';
 import { useGetUserInfo } from '@/libs/hooks/user-hooks/useGetUserInfo';
 
