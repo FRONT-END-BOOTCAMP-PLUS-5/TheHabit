@@ -16,5 +16,4 @@ export const ONBOARDING_LIST = [
     icon: '/icons/lastOnboarding.png',
     title: '"당신의 해빛,\n지금 시작하세요"',
   },
-
 ];

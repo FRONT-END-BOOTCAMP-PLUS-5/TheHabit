@@ -25,8 +25,7 @@ export const ValidateFeedBackGPTResponse = async (
     }
 
     const routineStatusMessages = routineWithCompletion?.map(routine => {
-      const isSuccess =
-        routine.content !== null && routine.content !== undefined && routine.content !== ''; // 콘텐츠가 없으면? 실패
+      const isSuccess = routine.content !== null && routine.content !== undefined; // 콘텐츠가 없으면? 실패
       const status = isSuccess ? '성공' : '실패';
       return `${routine.routineTitle}: ${status}`;
     });
