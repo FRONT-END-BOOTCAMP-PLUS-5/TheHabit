@@ -314,6 +314,10 @@ export const authOptions = {
         // 타입가드를 사용한 토큰 업데이트
         updateTokenFromUser(token, user);
 
+        if (user.isNewUser !== undefined) {
+          token.isNewUser = user.isNewUser;
+        }
+
         console.log('✅ [NextAuth] JWT token 업데이트 완료');
       } else {
         console.log('🔄 [NextAuth] JWT callback - 기존 token 반환');
