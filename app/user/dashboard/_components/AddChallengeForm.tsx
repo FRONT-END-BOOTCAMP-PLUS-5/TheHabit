@@ -12,7 +12,7 @@ import CustomInput from '@/app/_components/inputs/CustomInput';
 import { CHALLENGE_COLORS } from '@/public/consts/challengeColors';
 import { useCreateChallenge } from '@/libs/hooks/challenges-hooks/useCreateChallenge';
 import { useGetChallengesByNickname } from '@/libs/hooks/challenges-hooks/useGetChallengesByNickname';
-import { useSession } from 'next-auth/react';
+import { useGetUserInfo } from '@/libs/hooks/user-hooks/useGetUserInfo';
 import { useModalStore } from '@/libs/stores/modalStore';
 
 const AddChallengeForm: React.FC = () => {
@@ -26,7 +26,8 @@ const AddChallengeForm: React.FC = () => {
 
   const watchCreatedAt = watch('createdAt');
   const watchCategoryId = watch('categoryId');
-  const userNickname = useSession().data?.user.nickname;
+  const { userInfo } = useGetUserInfo();
+  const userNickname = userInfo?.nickname;
 
   // 챌린지 생성 훅 사용
   const createChallengeMutation = useCreateChallenge();
@@ -74,17 +75,6 @@ const AddChallengeForm: React.FC = () => {
   }, [watchCategoryId, setValue]);
 
   const onSubmitHandler = (data: AddChallengeRequestDto) => {
-    // 디버깅 로그 추가
-    console.log('=== 챌린지 생성 디버깅 ===');
-    console.log('제출 데이터:', data);
-    console.log('카테고리 ID (원본):', data.categoryId);
-    console.log('카테고리 ID (숫자 변환):', Number(data.categoryId));
-    console.log('전체 카테고리 개수:', categoryCounts);
-    console.log('사용자 닉네임:', userNickname);
-    console.log('현재 선택된 카테고리 개수:', categoryCounts[Number(data.categoryId)]);
-    console.log('최대 허용 개수:', MAX_CHALLENGES_PER_CATEGORY);
-    console.log('========================');
-
     // 카테고리별 챌린지 개수 제한 확인 (선택된 카테고리 기준)
     const selectedCategoryId = Number(data.categoryId);
     const selectedCategoryCount = categoryCounts[selectedCategoryId] || 0;
