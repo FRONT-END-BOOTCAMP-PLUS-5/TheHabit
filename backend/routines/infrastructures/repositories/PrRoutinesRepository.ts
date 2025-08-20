@@ -77,15 +77,15 @@ export class PrRoutinesRepository implements IRoutinesRepository {
 
     console.log('✅ 루틴 생성 완료:', createdRoutine);
 
-    return {
-      id: createdRoutine.id,
-      routineTitle: createdRoutine.routineTitle,
-      alertTime: createdRoutine.alertTime,
-      emoji: createdRoutine.emoji,
-      challengeId: createdRoutine.challengeId,
-      createdAt: createdRoutine.createdAt,
-      updatedAt: createdRoutine.updatedAt,
-    };
+    return new Routine(
+      createdRoutine.id,
+      createdRoutine.routineTitle,
+      createdRoutine.alertTime,
+      createdRoutine.emoji,
+      createdRoutine.challengeId,
+      createdRoutine.createdAt,
+      createdRoutine.updatedAt
+    );
   }
 
   async findByChallengeId(challengeId: number): Promise<Routine[]> {
@@ -93,15 +93,17 @@ export class PrRoutinesRepository implements IRoutinesRepository {
       where: { challengeId },
     });
 
-    return routines.map((routine: Routine) => ({
-      id: routine.id,
-      routineTitle: routine.routineTitle,
-      alertTime: routine.alertTime,
-      emoji: routine.emoji,
-      challengeId: routine.challengeId,
-      createdAt: routine.createdAt,
-      updatedAt: routine.updatedAt,
-    }));
+    return routines.map(routine =>
+      new Routine(
+        routine.id,
+        routine.routineTitle,
+        routine.alertTime,
+        routine.emoji,
+        routine.challengeId,
+        routine.createdAt,
+        routine.updatedAt
+      )
+    );
   }
 
   async findByUserId(userId: string): Promise<Routine[]> {
@@ -115,15 +117,17 @@ export class PrRoutinesRepository implements IRoutinesRepository {
       },
     });
 
-    return routines.map((routine: Routine) => ({
-      id: routine.id,
-      routineTitle: routine.routineTitle,
-      alertTime: routine.alertTime,
-      emoji: routine.emoji,
-      challengeId: routine.challengeId,
-      createdAt: routine.createdAt,
-      updatedAt: routine.updatedAt,
-    }));
+    return routines.map(routine =>
+      new Routine(
+        routine.id,
+        routine.routineTitle,
+        routine.alertTime,
+        routine.emoji,
+        routine.challengeId,
+        routine.createdAt,
+        routine.updatedAt
+      )
+    );
   }
 
   async findByNickname(nickname: string): Promise<Routine[]> {
@@ -148,15 +152,17 @@ export class PrRoutinesRepository implements IRoutinesRepository {
         },
       });
 
-      return routines.map((routine: any) => ({
-        id: routine.id,
-        routineTitle: routine.routineTitle,
-        alertTime: routine.alertTime,
-        emoji: routine.emoji,
-        challengeId: routine.challengeId,
-        createdAt: routine.createdAt,
-        updatedAt: routine.updatedAt,
-      }));
+      return routines.map(routine =>
+        new Routine(
+          routine.id,
+          routine.routineTitle,
+          routine.alertTime,
+          routine.emoji,
+          routine.challengeId,
+          routine.createdAt,
+          routine.updatedAt
+        )
+      );
     } catch (error) {
       console.error('닉네임으로 루틴 조회 중 오류:', error);
       throw new Error(
@@ -172,29 +178,31 @@ export class PrRoutinesRepository implements IRoutinesRepository {
 
     if (!routine) return null;
 
-    return {
-      id: routine.id,
-      routineTitle: routine.routineTitle,
-      alertTime: routine.alertTime,
-      emoji: routine.emoji,
-      challengeId: routine.challengeId,
-      createdAt: routine.createdAt,
-      updatedAt: routine.updatedAt,
-    };
+    return new Routine(
+      routine.id,
+      routine.routineTitle,
+      routine.alertTime,
+      routine.emoji,
+      routine.challengeId,
+      routine.createdAt,
+      routine.updatedAt
+    );
   }
 
   async findAll(): Promise<Routine[]> {
     const routines = await prisma.routine.findMany();
 
-    return routines.map((routine: Routine) => ({
-      id: routine.id,
-      routineTitle: routine.routineTitle,
-      alertTime: routine.alertTime,
-      emoji: routine.emoji,
-      challengeId: routine.challengeId,
-      createdAt: routine.createdAt,
-      updatedAt: routine.updatedAt,
-    }));
+    return routines.map(routine =>
+      new Routine(
+        routine.id,
+        routine.routineTitle,
+        routine.alertTime,
+        routine.emoji,
+        routine.challengeId,
+        routine.createdAt,
+        routine.updatedAt
+      )
+    );
   }
 
   async update(routineId: number, routine: Partial<Routine>): Promise<Routine> {
@@ -210,15 +218,15 @@ export class PrRoutinesRepository implements IRoutinesRepository {
       },
     });
 
-    return {
-      id: updatedRoutine.id,
-      routineTitle: updatedRoutine.routineTitle,
-      alertTime: updatedRoutine.alertTime,
-      emoji: updatedRoutine.emoji,
-      challengeId: updatedRoutine.challengeId,
-      createdAt: updatedRoutine.createdAt,
-      updatedAt: updatedRoutine.updatedAt,
-    };
+    return new Routine(
+      updatedRoutine.id,
+      updatedRoutine.routineTitle,
+      updatedRoutine.alertTime,
+      updatedRoutine.emoji,
+      updatedRoutine.challengeId,
+      updatedRoutine.createdAt,
+      updatedRoutine.updatedAt
+    );
   }
 
   async delete(routineId: number): Promise<boolean> {

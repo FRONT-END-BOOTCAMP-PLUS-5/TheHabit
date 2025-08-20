@@ -125,7 +125,7 @@ const CompleteRoutineForm: React.FC<CompleteRoutineFormProps> = ({
           placeholder="오늘 루틴을 실천한 소감을 적어주세요... (최대 100글자)"
           rows={4}
           maxLength={100}
-          className="px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all resize-none"
+          className="px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-lime-500 focus:border-transparent transition-all resize-none"
         />
         <div className="flex justify-between items-center">
           {errors.review && (
@@ -147,7 +147,7 @@ const CompleteRoutineForm: React.FC<CompleteRoutineFormProps> = ({
           type="file"
           id="file"
           accept="image/*"
-          className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+          className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-lime-50 file:text-lime-700 hover:file:bg-lime-100"
         />
         {previewImage && (
           <div className="mt-3">
@@ -176,7 +176,7 @@ const CompleteRoutineForm: React.FC<CompleteRoutineFormProps> = ({
             flex-1 px-4 py-3 rounded-lg font-medium text-white transition-all
             ${isSubmitting 
               ? 'bg-gray-400 cursor-not-allowed' 
-              : 'bg-green-500 hover:bg-green-600 focus:ring-4 focus:ring-green-200'
+              : 'bg-lime-500 hover:bg-lime-600 focus:ring-4 focus:ring-lime-200'
             }
           `}
         >

@@ -2,11 +2,13 @@ import { NextRequest, NextResponse } from 'next/server';
 import { AddRoutineUseCase } from '@/backend/routines/applications/usecases/AddRoutineUseCase';
 import { GetRoutinesUseCase } from '@/backend/routines/applications/usecases/GetRoutinesUseCase';
 import { DeleteRoutineUseCase } from '@/backend/routines/applications/usecases/DeleteRoutineUseCase';
+import { UpdateRoutineUseCase } from '@/backend/routines/applications/usecases/UpdateRoutineUseCase';
 import { PrRoutinesRepository } from '@/backend/routines/infrastructures/repositories/PrRoutinesRepository';
 import { IRoutinesRepository } from '@/backend/routines/domains/repositories/IRoutinesRepository';
 import {
   CreateRoutineRequestDto,
   ReadRoutineResponseDto,
+  UpdateRoutineRequestDto,
 } from '@/backend/routines/applications/dtos/RoutineDto';
 import { ApiResponse } from '@/backend/shared/types/ApiResponse';
 
@@ -25,6 +27,10 @@ const createGetRoutinesUseCase = (): GetRoutinesUseCase => {
 
 const createDeleteRoutineUseCase = (): DeleteRoutineUseCase => {
   return new DeleteRoutineUseCase(createRoutinesRepository());
+};
+
+const createUpdateRoutineUseCase = (): UpdateRoutineUseCase => {
+  return new UpdateRoutineUseCase(createRoutinesRepository());
 };
 
 // 루틴 생성
@@ -167,6 +173,45 @@ export const DELETE = async (request: NextRequest): Promise<NextResponse> => {
       error: {
         code: 'DELETE_FAILED',
         message: '루틴 삭제에 실패했습니다.',
+      },
+    };
+    return NextResponse.json(errorResponse, { status: 500 });
+  }
+};
+
+// 루틴 수정
+export const PUT = async (request: NextRequest): Promise<NextResponse> => {
+  const usecase = createUpdateRoutineUseCase();
+
+  try {
+    const updateData: UpdateRoutineRequestDto = await request.json();
+
+    if (!updateData.routineId) {
+      const errorResponse: ApiResponse<null> = {
+        success: false,
+        error: {
+          code: 'INVALID_PARAMS',
+          message: 'routineId가 필요합니다.',
+        },
+      };
+      return NextResponse.json(errorResponse, { status: 400 });
+    }
+
+    const result = await usecase.execute(updateData);
+
+    const successResponse: ApiResponse<ReadRoutineResponseDto> = {
+      success: true,
+      data: result,
+      message: '루틴이 성공적으로 수정되었습니다.',
+    };
+    return NextResponse.json(successResponse);
+  } catch (error) {
+    console.error('루틴 수정 중 오류 발생:', error);
+    const errorResponse: ApiResponse<null> = {
+      success: false,
+      error: {
+        code: 'UPDATE_FAILED',
+        message: '루틴 수정에 실패했습니다.',
       },
     };
     return NextResponse.json(errorResponse, { status: 500 });
