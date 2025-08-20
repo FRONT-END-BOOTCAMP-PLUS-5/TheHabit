@@ -73,7 +73,13 @@ const UserProfilePage = () => {
         <section id='top_wrapper' className='flex flex-col  w-[100%]'>
           <div id='user_wrapper' className='flex text-center items-end justify-between px-5'>
             {userInfo?.profileImg ? (
-              <ProfileImage imageSrc={userInfo?.profileImg} wrapperWidth={30} wrapperHeight={30} />
+              <div className='w-[120px]'>
+                <ProfileImage
+                  imageSrc={userInfo?.profileImg}
+                  wrapperWidth={30}
+                  wrapperHeight={30}
+                />
+              </div>
             ) : (
               <NoneProfile
                 className={`w-[120] h-[120] rounded-full overflow-hidden border-primary border-2`}
@@ -147,7 +153,7 @@ const UserProfilePage = () => {
           <div id='button_wrapper' className='flex justify-center gap-10 mt-10 px-5'>
             <Button
               className={
-                'w-[200px] z-20 bg-primary text-white px-4 py-2 rounded-full text-lg font-bold shadow-lg cursor-pointer hover:animate-float transition-all duration-300 hover:scale-110'
+                'w-[200px] z-20 bg-[#FFC70A] text-white px-4 py-2 rounded-full text-lg font-bold shadow-lg cursor-pointer hover:animate-float transition-all duration-300 hover:scale-110'
               }
               onClick={() => {
                 router.push('/user/dashboard');
@@ -157,7 +163,7 @@ const UserProfilePage = () => {
             </Button>
             <Button
               className={
-                'w-[200px] z-20 bg-primary text-white px-4 py-2 rounded-full text-lg font-bold shadow-lg cursor-pointer hover:animate-float transition-all duration-300 hover:scale-110'
+                'w-[200px] z-20 bg-[#48a9a0] text-white px-4 py-2 rounded-full text-lg font-bold shadow-lg cursor-pointer hover:animate-float transition-all duration-300 hover:scale-110'
               }
               onClick={() => {
                 router.push(`/user/profile/edit/${userInfo?.nickname}`);

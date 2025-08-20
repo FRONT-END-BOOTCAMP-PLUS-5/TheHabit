@@ -22,19 +22,23 @@ export const SelectComponent = ({
   return (
     <div
       className='absolute
-    left-[-10px]
+    left-[-5px]
     min-w-[130px]
     z-99
-    bg-[#f0f4f9]
+    bg-[#fff]
+    border-1
+    border-[#d1d9e0]
     cursor-pointer
     rounded-[10px]
-    px-[16px]
+    px-[20px]
     py-[10px]
     text-[13px]
     font-normal
     text-[#1f1f1f]
     whitespace-pre-wrap
     h-[120px]
+    flex
+    items-center
     overflow-y-auto'
     >
       {filteredChallenges.map(challenge => {
@@ -43,8 +47,8 @@ export const SelectComponent = ({
         return (
           <p
             key={challenge.id}
-            className={`mb-[10px] p-2 hover:bg-gray-200 rounded transition-colors duration-150 ${
-              isSelected ? 'bg-blue-200 border border-blue-500 font-bold' : ''
+            className={`mb-[10px] p-2 hover:bg-[#818b981f] transition-colors duration-150 ${
+              isSelected ? 'border-b-2 border-[#e5831d] font-bold' : ''
             }`}
             onClick={() => onSelectChallenge(challenge.id, challenge.name)}
           >

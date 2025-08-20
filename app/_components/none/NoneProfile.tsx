@@ -6,7 +6,7 @@ const NoneProfile = ({ className }: { className?: string }) => {
   return (
     <div className={className}>
       <Image
-        src='/icons/user-regular-full.svg'
+        src='/icons/user.svg'
         alt='유저 프로필 이미지 없을때 기본 이미지'
         width={120}
         height={120}

@@ -4,14 +4,15 @@ import { Button } from '@/app/_components/buttons/Button';
 import { useUploadProfile } from '@/libs/hooks/signup/useUploadProfile';
 import { ProfileImage } from '@/app/_components/profile-images/ProfileImage';
 import Image from 'next/image';
-import { NameComponent } from '@/app/user/profile/edit/components/Name';
-import { NicknameComponent } from '@/app/user/profile/edit/components/Nickname';
+import { NameComponent } from '@/app/user/profile/edit/_components/Name';
+import { NicknameComponent } from '@/app/user/profile/edit/_components/Nickname';
 import { usersApi } from '@/libs/api/users.api';
 import { useRouter } from 'next/navigation';
-import { BackComponent } from '@/app/user/profile/edit/components/Back';
+import { BackComponent } from '@/app/user/profile/edit/_components/Back';
 import { CompletionComponent } from '@/app/user/profile/components/Completion';
 import { useGetUserInfo } from '@/libs/hooks/user-hooks/useGetUserInfo';
 import { RoutineComponent } from '@/app/user/profile/components/Routine';
+import LogOut from '@/app/user/profile/edit/_components/LogOut';
 
 const UserProfileEditPage = () => {
   const router = useRouter();
@@ -119,14 +120,31 @@ const UserProfileEditPage = () => {
             </div>
           </div>
           <div id='button_wrapper' className='flex justify-end gap-10 mt-10 px-5'>
-            <Button
-              type='default'
+            <LogOut />
+            <button
               color='default'
-              className='w-[100px]'
+              className='w-[100px]
+              h-8
+              px-6
+              cursor-pointer
+              bg-[#f74444]
+              hover:bg-[#ef0202]
+              text-white
+              font-medium
+              text-sm
+              rounded-lg
+              transition-colors
+              duration-200
+              shadow-md
+              hover:shadow-lg
+              focus:outline-none
+              focus:ring-2
+              focus:ring-[#93d50b]
+              focus:ring-opacity-50'
               onClick={handleDeleteUserRegister}
             >
               회원탈퇴
-            </Button>
+            </button>
           </div>
           <div id='routine_wrapper' className='flex flex-col py-8 gap-1'>
             <RoutineComponent type='edit' />
