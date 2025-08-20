@@ -1,10 +1,11 @@
 import type { Metadata } from 'next';
-import './globals.css';
-import { QueryProvider } from './_components/query-providers/QueryProvider';
-import ModalProvider from './_components/providers/ModalProvider';
-import NextAuthSessionProvider from './_components/providers/NextAuthSessionProvider';
-import Header from './_components/layouts/Header';
-import { pretendard } from '../public/fonts/font';
+import '@/app/globals.css';
+import { QueryProvider } from '@/app/_components/query-providers/QueryProvider';
+import ModalProvider from '@/app/_components/providers/ModalProvider';
+import NextAuthSessionProvider from '@/app/_components/providers/NextAuthSessionProvider';
+import Header from '@/app/_components/layouts/Header';
+import { pretendard } from '@/public/fonts/font';
+import { TabNavigation } from '@/app/_components/tab-navigations/TabNavigation';
 
 export const metadata: Metadata = {
   title: 'TheHabit - 습관 관리 앱',
@@ -70,7 +71,7 @@ const RootLayout = ({
           <NextAuthSessionProvider>
             <Header />
             <QueryProvider>
-              <ModalProvider>{children}</ModalProvider>
+              <ModalProvider>{children}<TabNavigation/></ModalProvider>
             </QueryProvider>
           </NextAuthSessionProvider>
         </div>
