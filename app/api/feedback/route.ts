@@ -36,7 +36,10 @@ export const POST = async (request: NextRequest) => {
 
     const successResponse: ApiResponse<AddFeedbackDto> = {
       success: true,
-      data: result,
+      data: {
+        challengeId: result.challengeId,
+        gptResponseContent: result.gptResponseContent.join('\n'),
+      },
       message: '피드백 데이터 저장에 성공했습니다.',
     };
     return NextResponse.json(successResponse);
