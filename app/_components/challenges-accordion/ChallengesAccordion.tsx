@@ -11,7 +11,7 @@ import { ChallengeDto } from '@/backend/challenges/applications/dtos/ChallengeDt
 import { ReadRoutineResponseDto } from '@/backend/routines/applications/dtos/RoutineDto';
 import { RoutineCompletionDto } from '@/backend/routine-completions/applications/dtos/RoutineCompletionDto';
 import { CHALLENGE_COLORS } from '@/public/consts/challengeColors';
-import ChallengesAccordionContent from './ChallengesAccordionContent';
+import ChallengesAccordionContent from '@/app/_components/challenges-accordion/ChallengesAccordionContent';
 
 //props 임시임 -승민
 interface ChallengesAccordionProps {
