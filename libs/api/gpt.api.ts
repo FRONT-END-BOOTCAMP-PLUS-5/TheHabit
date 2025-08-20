@@ -6,7 +6,7 @@ export const requestGPT = async (
   requestInput: GPTRequestDto
 ): Promise<ApiResponse<GPTRequestDto>> => {
   const response = await axiosInstance.post('/api/gpt', {
-    gptResponseContent: requestInput.gptResponseContent.join('\n'),
+    gptResponseContent: requestInput.gptResponseContent,
   });
 
   return response.data;

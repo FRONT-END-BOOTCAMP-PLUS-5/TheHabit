@@ -12,10 +12,11 @@ export const GET = async (_req: NextRequest, context: { params: Promise<{ id: nu
     const feedBackUseCase = new GetFeedBackUsecase(feedBackRepo);
     const result = await feedBackUseCase.execute(Number(id));
 
-    const successResponse: ApiResponse<{ feedback: AddFeedbackDto[] }> = {
+    const successResponse: ApiResponse<AddFeedbackDto> = {
       success: true,
       data: {
-        feedback: [result],
+        gptResponseContent: result.gptResponseContent.join('\n'),
+        challengeId: result.challengeId,
       },
       message: '피드백 조회에 성공했습니다.',
     };
