@@ -1,10 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import {
-  CreateRoutineCompletionRequestDto,
-  RoutineCompletionDto,
-} from '@/backend/routine-completions/applications/dtos/RoutineCompletionDto';
-import { ApiResponse } from '@/backend/shared/types/ApiResponse';
-import axios from 'axios';
+import { RoutineCompletionDto } from '@/backend/routine-completions/applications/dtos/RoutineCompletionDto';
+import { createRoutineCompletion } from '@/libs/api/routine-completions.api';
 
 interface CreateRoutineCompletionParams {
   nickname: string;
@@ -22,33 +18,15 @@ export const useCreateRoutineCompletion = () => {
 
   return useMutation<RoutineCompletionDto, Error, CreateRoutineCompletionParams>({
     mutationFn: async ({ nickname, routineId, content, photoFile }) => {
-      // FormData로 직접 API 요청
-      const formData = new FormData();
-      formData.append('nickname', nickname);
-      formData.append('routineId', routineId.toString());
-      formData.append('content', content);
-      
-      if (photoFile) {
-        formData.append('file', photoFile);
-      }
-
-      const response = await axios.post<ApiResponse<RoutineCompletionDto>>(
-        '/api/routine-completions',
-        formData,
-        {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          },
-        }
-      );
-
-      if (!response.data.data) {
-        throw new Error('서버에서 반환된 데이터가 없습니다');
-      }
-
-      return response.data.data;
+      return await createRoutineCompletion({
+        nickname,
+        routineId,
+        content,
+        proofImgUrl: null, // 파일이 있으면 서버에서 처리
+        file: photoFile,
+      });
     },
-    onSuccess: (data, variables) => {
+    onSuccess: (data) => {
       // 루틴 완료 생성 성공 시 관련 캐시 무효화
       queryClient.invalidateQueries({ queryKey: ['routine-completions'] });
       queryClient.invalidateQueries({

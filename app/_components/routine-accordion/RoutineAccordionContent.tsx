@@ -28,7 +28,7 @@ const RoutineAccordionContentInner = ({
   // 데이터 페칭
   const { data: routines = [], isLoading, error } = useGetRoutinesByChallenge(challengeId);
   const { data: completions = [], isLoading: completionsLoading } =
-    useGetRoutineCompletionsByChallenge(challengeId);
+    useGetRoutineCompletionsByChallenge(challengeId, userInfo?.nickname || '', !!userInfo?.nickname);
 
   // 뮤테이션 훅들
   const createCompletionMutation = useCreateRoutineCompletion();
