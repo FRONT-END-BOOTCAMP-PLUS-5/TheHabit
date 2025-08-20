@@ -34,11 +34,13 @@ export const TabNavigation = () => {
           </li>
         ))}
         <div className='w-15 h-15 bg-[#93D50B] absolute bottom-1/2 cursor-pointer hover:scale-110 transition-all duration-300 hover:opacity-90 flex items-center justify-center rounded-full'>
-          <Image
-            src={homeIcon}
-            alt='추가하기'
-            className='w-10 h-10 cursor-pointer hover:scale-110 transition-all duration-300 hover:opacity-90'
-          />
+          <Link href="/">
+            <Image
+              src={homeIcon}
+              alt='홈으로 이동'
+              className='w-10 h-10 cursor-pointer hover:scale-110 transition-all duration-300 hover:opacity-90'
+            />
+          </Link>
         </div>
       </ul>
     </nav>
