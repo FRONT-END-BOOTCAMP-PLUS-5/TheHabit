@@ -3,6 +3,7 @@ export interface CreateRoutineRequestDto {
   alertTime: Date | null;
   emoji: number;
   challengeId: number;
+  nickname: string;
 }
 
 export interface ReadRoutineResponseDto {

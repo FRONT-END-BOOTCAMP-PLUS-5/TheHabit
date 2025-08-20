@@ -1,16 +1,11 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { createRoutineCompletion } from '@/libs/api/routine-completions.api';
-import {
-  CreateRoutineCompletionRequestDto,
-  RoutineCompletionDto,
-} from '@/backend/routine-completions/applications/dtos/RoutineCompletionDto';
-import axios from 'axios';
 
 interface CreateRoutineCompletionParams {
-  userId: string;
+  nickname: string;
   routineId: number;
-  review: string;
-  photoFile?: File;
+  content: string;
+  proofImgUrl: string | null;
 }
 
 /**
@@ -20,29 +15,10 @@ interface CreateRoutineCompletionParams {
 export const useCreateRoutineCompletion = () => {
   const queryClient = useQueryClient();
 
-  return useMutation<RoutineCompletionDto, Error, CreateRoutineCompletionParams>({
-    mutationFn: async ({ photoFile, ...rest }) => {
-      let proofImgUrl: string | null = null;
-
-      if (photoFile) {
-        const formData = new FormData();
-        formData.append('file', photoFile);
-
-        const { data: uploadData } = await axios.post(
-          '/api/routine-completions/image',
-          formData,
-        );
-        proofImgUrl = uploadData.imageUrl;
-      }
-
-      const completionData: CreateRoutineCompletionRequestDto = {
-        ...rest,
-        proofImgUrl,
-      };
-
-      return createRoutineCompletion(completionData);
-    },
-    onSuccess: (data, variables) => {
+  return useMutation({
+    mutationFn: ({ nickname, routineId, content, proofImgUrl }: CreateRoutineCompletionParams) => 
+      createRoutineCompletion({ nickname, routineId, review: content, content, proofImgUrl }),
+    onSuccess: (data) => {
       // 루틴 완료 생성 성공 시 관련 캐시 무효화
       queryClient.invalidateQueries({ queryKey: ['routine-completions'] });
       queryClient.invalidateQueries({
