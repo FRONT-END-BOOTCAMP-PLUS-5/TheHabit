@@ -1,0 +1,233 @@
+import { axiosInstance } from '@/libs/axios/axiosInstance';
+import { UserDto } from '@/backend/users/applications/dtos/UserDto';
+import { CreateRoutineCompletionResponseDto } from '@/backend/routine-completions/applications/dtos/RoutineCompletionDto';
+import { UserReviewDto } from '@/backend/users/applications/dtos/UserReviewDto';
+
+// API 응답 타입 정의
+interface ApiResponse<T> {
+  success: boolean;
+  data?: T;
+  message?: string;
+  error?: {
+    code: string;
+    message: string;
+  };
+}
+
+/**
+ * 해당 함수는 user nickname으로 해당 유저 완료 루틴 가져오기
+ * @param id: string
+ * @param nickname: string
+ * @return Promise<ApiResponse<User>>
+ * */
+export const getUserRoutineCompletion = async (
+  nickname: string,
+  pageParam: number,
+  pageSize: number,
+  categoryId: string
+): Promise<ApiResponse<CreateRoutineCompletionResponseDto[]>> => {
+  try {
+    const response = await axiosInstance.get<ApiResponse<CreateRoutineCompletionResponseDto[]>>(
+      `/api/users/routine/${nickname}`,
+      {
+        params: {
+          nickname,
+          pageParam,
+          pageSize,
+          categoryId,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+/**
+ * 해당 함수는 user 완료 루틴 감정표현 모두 가져오기
+ * @param id: string
+ * @param routineCompletionId: string
+ * @return Promise<ApiResponse<UserReviewDto[]>>
+ * */
+export const getUserRoutineCompletionReview = async (
+  nickname: string,
+  routineCompletionId: string
+): Promise<ApiResponse<UserReviewDto[]>> => {
+  try {
+    const response = await axiosInstance.get<ApiResponse<UserReviewDto[]>>(
+      `/api/users/review/${nickname}`,
+      {
+        params: {
+          routineCompletionId,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+/**
+ * 해당 함수는 user nickname으로 해당 유저 완료 루틴에 감정표현 나타내기
+ * @param nickname: string
+ * @param explain: string
+ * @param routineCompletionId: string
+ * @param userId: string
+ * @return Promise<ApiResponse<User>>
+ * */
+export const createUserRoutineCompletionEmotion = async (
+  nickname: string,
+  explain: string,
+  routineCompletionId: string,
+  userId: string
+): Promise<ApiResponse<UserReviewDto>> => {
+  try {
+    const response = await axiosInstance.post<ApiResponse<UserReviewDto>>(
+      `/api/users/review/${nickname}`,
+      {
+        explain,
+        routineCompletionId,
+        userId,
+      }
+    );
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+/**
+ * 해당 함수는 user name update 하기
+ * @param id: string
+ * @param nickname: string
+ * @return Promise<ApiResponse<User>>
+ * */
+export const updateUserName = async (
+  id: string,
+  username: string
+): Promise<ApiResponse<UserDto>> => {
+  try {
+    const response = await axiosInstance.post<ApiResponse<UserDto>>(
+      `/api/users/edit/username/${id}`,
+      {
+        id,
+        username,
+      }
+    );
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+/**
+ * 해당 함수는 user nickname update 하기
+ * @param id: string
+ * @param nickname: string
+ * @return Promise<ApiResponse<User>>
+ * */
+export const updateUserNickname = async (
+  id: string,
+  nickname: string
+): Promise<ApiResponse<UserDto>> => {
+  try {
+    const response = await axiosInstance.post<ApiResponse<UserDto>>(
+      `/api/users/edit/nickname/${id}`,
+      {
+        id,
+        nickname,
+      }
+    );
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+/**
+ * 해당 함수는 user profile update 하기
+ * @param id: string
+ * @param nickname: string
+ * @return Promise<ApiResponse<User>>
+ * */
+export const updateUserProfile = async (
+  id: string,
+  formData: FormData
+): Promise<ApiResponse<UserDto>> => {
+  try {
+    const response = await axiosInstance.post<ApiResponse<UserDto>>(
+      `/api/users/edit/profile/${id}`,
+      formData,
+      {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+/**
+ * 해당 함수는 user 회원탈퇴 하기
+ * @param id: string
+ * @return Promise<ApiResponse<void>>
+ * */
+export const deleteUserRegister = async (id: string): Promise<ApiResponse<void>> => {
+  try {
+    const response = await axiosInstance.delete<ApiResponse<void>>(`/api/users/${id}`, {
+      data: {
+        id,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+/**
+ * 해당 함수는 유저 완료 루틴에 자신이 표현한 감정표현 삭제하기
+ * @param nickname: string
+ * @param id: string
+ * @param routineCompletionId: string
+ * @param reviewContent: string
+ * @return Promise<ApiResponse<void>>
+ * */
+export const deleteUserRoutineCompletionEmotion = async (
+  nickname: string,
+  id: string,
+  routineCompletionId: string,
+  reviewContent: string
+): Promise<ApiResponse<void>> => {
+  try {
+    const response = await axiosInstance.delete<ApiResponse<void>>(
+      `/api/users/review/${nickname}`,
+      {
+        data: {
+          id,
+          routineCompletionId,
+          reviewContent,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const usersApi = {
+  getUserRoutineCompletion,
+  getUserRoutineCompletionReview,
+  createUserRoutineCompletionEmotion,
+  updateNickname: updateUserNickname,
+  updateUsername: updateUserName,
+  updateUserProfile,
+  deleteRegister: deleteUserRegister,
+  deleteUserRoutineCompletionEmotion,
+};

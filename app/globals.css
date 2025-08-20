@@ -1,0 +1,273 @@
+@import 'tailwindcss';
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+  --max-width: 480px;
+  --safe-area-inset-top: env(safe-area-inset-top);
+  --safe-area-inset-bottom: env(safe-area-inset-bottom);
+  --safe-area-inset-left: env(safe-area-inset-left);
+  --safe-area-inset-right: env(safe-area-inset-right);
+  --primary: #93d50b;
+  --primary-light: #81ac2c;
+  --primary-grey: #d9d9d9;
+  --secondary: #57564f;
+  --secondary-grey: #808080;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-primary: var(--primary);
+  --color-primary-grey: var(--primary-grey);
+  --color-secondary: var(--secondary);
+  --font-sans: var(--font-pretendard);
+  --font-mono: var(--font-pretendard);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+/* 모달 슬라이드 애니메이션 */
+@keyframes slide-up {
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slide-down {
+  from {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+}
+
+.animate-slide-up {
+  animation: slide-up 0.3s ease-out forwards;
+}
+
+.animate-slide-down {
+  animation: slide-down 0.3s ease-in forwards;
+}
+
+.login-button {
+  background-color: #93d50b;
+  border-radius: 10px;
+  font-size: 16px;
+  color: white;
+  height: 55px;
+  width: 100%;
+}
+
+.login-input {
+  background-color: #f2f3f7;
+  padding-left: 8px;
+  border: none;
+  border-radius: 10px;
+  width: 100%;
+  height: 55px;
+}
+
+.nickname-input {
+  background-color: #f2f3f7;
+  padding-left: 8px;
+  border: none;
+  border-radius: 10px;
+  width: 100%;
+  height: 55px;
+}
+
+html {
+  height: 100%;
+  overflow: hidden;
+  -webkit-text-size-adjust: 100%;
+  -ms-text-size-adjust: 100%;
+}
+
+body {
+  background: #f5f5f5;
+  color: var(--foreground);
+  font-family: var(--font-pretendard);
+  height: 100vh;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow: hidden;
+}
+
+/* removed react-calendar-heatmap styles */
+
+/* Mobile container: centers content horizontally, aligns to top, applies safe area insets, and constrains max width for mobile layout */
+.mobile-container {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  height: 100vh;
+  padding-top: var(--safe-area-inset-top);
+  padding-bottom: var(--safe-area-inset-bottom);
+  padding-left: var(--safe-area-inset-left);
+  padding-right: var(--safe-area-inset-right);
+  overflow: hidden;
+}
+
+.mobile-wrapper {
+  width: 100vw;
+  max-width: var(--max-width);
+  height: 100vh;
+  background: var(--background);
+  position: relative;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+/* 모바일 최적화 스타일 */
+@media (max-width: 480px) {
+  .mobile-wrapper {
+    max-width: 100%;
+    box-shadow: none;
+  }
+}
+
+/* 터치 최적화 */
+button,
+a,
+input,
+textarea,
+select {
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+/* 스크롤바 숨기기 */
+::-webkit-scrollbar {
+  width: 0px;
+  height: 0px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: transparent;
+}
+
+/* 선택 텍스트 스타일 */
+::selection {
+  background: rgba(0, 0, 0, 0.1);
+  color: var(--foreground);
+}
+
+/* 스크롤바 숨기기 */
+.scrollbar-hide {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none; /* Chrome, Safari and Opera */
+}
+
+/* Radio Button 커스텀 스타일 - 높은 우선순위 */
+.custom-radio-group .ant-radio-button-wrapper-checked,
+.custom-radio-group .ant-radio-button-wrapper-checked:hover,
+.custom-radio-group .ant-radio-button-wrapper-checked:focus {
+  background-color: var(--primary) !important;
+  border-color: var(--primary) !important;
+  color: white !important;
+}
+
+.custom-radio-group .ant-radio-button-wrapper-checked span {
+  color: white !important;
+}
+
+.custom-radio-group .ant-radio-button-wrapper:hover {
+  color: white !important;
+  background-color: var(--primary) !important;
+  border-color: var(--primary) !important;
+}
+
+.custom-radio-group .ant-radio-button-wrapper-checked::before {
+  background-color: var(--primary) !important;
+}
+.custom-radio-group .ant-radio-button-wrapper {
+  border-color: var(--primary) !important;
+  color: var(--secondary) !important;
+  font-weight: 700 !important;
+  font-size: 1rem !important;
+}
+
+/* Radio Button 구분선 색상 변경 - 높은 우선순위 */
+.custom-radio-group .ant-radio-button-wrapper:not(:first-child)::before,
+.custom-radio-group .ant-radio-button-wrapper-checked:not(:first-child)::before {
+  background-color: var(--primary) !important;
+}
+
+/* Radio Button 클릭 시 반짝임 효과 제거 */
+.custom-radio-group .ant-radio-button-wrapper:focus,
+.custom-radio-group .ant-radio-button-wrapper:focus-within {
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+.custom-radio-group .ant-radio-button-wrapper:active {
+  box-shadow: none !important;
+  transform: none !important;
+}
+
+.custom-radio-group .ant-radio-button-wrapper-checked:focus,
+.custom-radio-group .ant-radio-button-wrapper-checked:focus-within {
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+/* 프로그레스바 애니메이션 */
+@keyframes progressFill {
+  from {
+    width: 0%;
+  }
+  to {
+    width: var(--progress-width);
+  }
+}
+
+/* 둥둥 떠다니는 애니메이션 */
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+.animate-float {
+  animation: float 2s ease-in-out infinite;
+}
+
+/* Radio Button 강제 스타일 적용 - 최고 우선순위 */
+.custom-radio-group.ant-radio-group .ant-radio-button-wrapper-checked {
+  background-color: var(--primary) !important;
+  border-color: var(--primary) !important;
+  color: white !important;
+}
+
+.custom-radio-group.ant-radio-group .ant-radio-button-wrapper-checked span {
+  color: white !important;
+}

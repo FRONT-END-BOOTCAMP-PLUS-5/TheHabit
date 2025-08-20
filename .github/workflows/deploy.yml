@@ -1,0 +1,120 @@
+name: CI/CD Pipeline for New Project (Bun)
+
+on:
+  # main 브랜치에 코드가 병합push되었을 때 검증
+  push:
+    branches:
+      - main
+  # main 브랜치로 Pull Request가 생성/업데이트되었을 때 검증
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  # =============================================================
+  # 1. 빌드 잡 (CI)
+  # =============================================================
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # .env 파일 생성
+      - name: Create .env file for build
+        run: |
+          echo "NEXTAUTH_SECRET=${{ secrets.NEXTAUTH_SECRET }}" > .env
+          echo "KAKAO_CLIENT_ID=${{ secrets.KAKAO_CLIENT_ID }}" >> .env
+          echo "KAKAO_CLIENT_SECRET=${{ secrets.KAKAO_CLIENT_SECRET }}" >> .env
+          echo "GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }}" >> .env
+          echo "GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }}" >> .env
+          echo "NEXT_PUBLIC_API_URL=${{ secrets.NEXT_PUBLIC_API_URL }}" >> .env
+          # ...
+
+      # Bun v1.2.19 설치
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: '1.2.19'
+
+      # 의존성 설치 및 빌드
+      - name: Install dependencies and build with Bun
+        run: |
+          bun install
+          bun run build
+
+  # =============================================================
+  # 2. 배포 잡 (CD)
+  # =============================================================
+  deploy:
+    needs: build
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploy to Server
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.RLAND_HOST }}
+          username: ${{ secrets.RLAND_USERNAME }}
+          password: ${{ secrets.RLAND_PASSWORD }}
+          port: ${{ secrets.RLAND_PORT }}
+
+          script: |
+            # --- 서버 환경 설정 ---
+            export NVM_DIR="$HOME/.nvm"
+            [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+            nvm use v22.4.0
+
+            export BUN_INSTALL="$HOME/.bun"
+            export PATH="$BUN_INSTALL/bin:$PATH"
+            # --- 환경 설정 끝 ---
+
+            # 작업 디렉토리로 이동 및 코드 업데이트
+            mkdir -p ~/www
+            cd ~/www
+            if [ -d "TheHabit" ] ; then
+              cd TheHabit
+              git pull
+            else
+              git clone https://github.com/FRONT-END-BOOTCAMP-PLUS-5/TheHabit.git
+              cd TheHabit
+            fi
+
+            # 서버에 .env 파일 생성
+            echo "Creating .env file on server from GitHub Secrets..."
+            cat << EOF > .env
+            # NextAuth.js Secret
+
+            NEXTAUTH_SECRET="${{ secrets.NEXTAUTH_SECRET }}"
+
+            # Kakao Login
+            KAKAO_CLIENT_ID="${{ secrets.KAKAO_CLIENT_ID }}"
+            KAKAO_CLIENT_SECRET="${{ secrets.KAKAO_CLIENT_SECRET }}"
+
+            # Google Login
+            GOOGLE_CLIENT_ID="${{ secrets.GOOGLE_CLIENT_ID }}"
+            GOOGLE_CLIENT_SECRET="${{ secrets.GOOGLE_CLIENT_SECRET }}"
+
+            # Database URL
+            DATABASE_URL="${{ secrets.DATABASE_URL }}"
+
+            # 기타 API 키 등...
+            NEXT_PUBLIC_API_URL=="${{ secrets.NEXT_PUBLIC_API_URL }}"
+
+            EOF
+
+            echo ".env file created successfully."
+
+            # 의존성 설치 및 빌드
+            bun install
+            bun run build
+
+            # PM2로 서비스 시작
+            npm install -g pm2
+            pm2 stop new-cafe || true
+            pm2 delete new-cafe || true
+            pm2 start bun --name "The-Habit" -- run start -- --port 4444
+            pm2 save
+            echo "빌드 성공 및 배포 완료!"
