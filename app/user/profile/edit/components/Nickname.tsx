@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { usersApi } from '@/libs/api/users.api';
+import { updateUser, usersApi } from '@/libs/api/users.api';
 import { useGetUserInfo } from '@/libs/hooks/user-hooks/useGetUserInfo';
 
 export const NicknameComponent = () => {
@@ -8,33 +8,42 @@ export const NicknameComponent = () => {
   const [getValue, setValue] = useState<string>('');
   const [getNickname, setNickname] = useState<string>(userInfo?.nickname || '');
 
-  const { updateNickname } = usersApi;
+  const { updateUser } = usersApi;
 
   const handleChangeState = () => {
     setState(prev => !prev);
   };
 
   const handleUpdateUserNickname = async () => {
-    // if (getValue) {
-    //   const response = await updateNickname(userInfo?.id || '', getValue);
-    //   if (response.success) {
-    //     const nickname = response.data?.nickname as string;
-    //     update({
-    //       profileImg: userInfo?.profileImg,
-    //       profileImgPath: userInfo?.profileImgPath,
-    //       nickname: nickname,
-    //       username: userInfo?.username,
-    //     });
-    //     setNickname(nickname);
-    //     setState(prev => !prev);
-    //   } else {
-    //     alert(response.message);
-    //     return;
-    //   }
-    // } else {
-    //   setState(prev => !prev);
-    //   return;
-    // }
+    if (getValue) {
+      const formData = new FormData();
+      formData.append('id', userInfo?.id || '');
+      formData.append('profile_img', userInfo?.profileImg || '');
+      formData.append('profile_img_path', userInfo?.profileImgPath || '');
+      formData.append('username', userInfo?.username || '');
+      formData.append('nickname', getValue);
+      formData.append('before_nickname', userInfo?.nickname || '');
+
+      const response = await updateUser(userInfo?.nickname || '', formData);
+
+      if (response.success) {
+        const nickname = response.data?.nickname as string;
+        update({
+          profileImg: userInfo?.profileImg,
+          profileImgPath: userInfo?.profileImgPath,
+          nickname,
+          username: userInfo?.username,
+        });
+        setNickname(nickname);
+        setState(prev => !prev);
+      } else {
+        alert(response.message);
+        return;
+      }
+    } else {
+      setState(prev => !prev);
+      return;
+    }
   };
 
   useEffect(() => {

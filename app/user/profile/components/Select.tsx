@@ -22,7 +22,9 @@ export const SelectComponent = ({
   return (
     <div
       className='absolute
-    z-10
+    left-[-10px]
+    min-w-[130px]
+    z-99
     bg-[#f0f4f9]
     cursor-pointer
     rounded-[10px]

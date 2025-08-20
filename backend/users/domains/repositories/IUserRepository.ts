@@ -6,7 +6,6 @@ import { UserReviewEntity } from '@/backend/users/domains/entities/UserReviewEnt
 export interface IUserRepository {
   // Create
   create(user: User): Promise<User>;
-  createProfileImg(file: File): Promise<string[] | undefined>;
   createUserReview(
     reviewContent: string,
     routineCompletionId: number,
@@ -35,24 +34,13 @@ export interface IUserRepository {
   checkEmailExists(email: string): Promise<boolean>;
 
   // Update
-  update(nickname: string, user: Partial<User>): Promise<User | { message: string } | null>;
-  updateProfileImg(
-    nickname: string,
-    userProfilePath: string,
-    file: File,
-    type: 'create' | 'update'
-  ): Promise<User | undefined>;
-
-  updateProfileImg(
-    id: string,
-    userProfilePath: string,
-    file: File,
-    type: 'create' | 'update'
-  ): Promise<User | undefined>;
+  update(
+    user: Partial<User>,
+    beforeNickname?: string
+  ): Promise<User | { message: string } | undefined>;
 
   // Delete
   delete(id: string): Promise<boolean>;
-  deleteProfileImg(key: string): Promise<boolean | undefined>;
   deleteUserRoutineCompletionReview(
     reviewContent: string,
     routineCompletionId: number,

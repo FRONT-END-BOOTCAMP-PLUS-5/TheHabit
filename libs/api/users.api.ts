@@ -124,66 +124,18 @@ export const createUserRoutineCompletionEmotion = async (
 };
 
 /**
- * 해당 함수는 user name update 하기
- * @param id: string
- * @param nickname: string
- * @return Promise<ApiResponse<User>>
- * */
-export const updateUserName = async (
-  id: string,
-  username: string
-): Promise<ApiResponse<UserDto>> => {
-  try {
-    const response = await axiosInstance.post<ApiResponse<UserDto>>(
-      `/api/users/edit/username/${id}`,
-      {
-        id,
-        username,
-      }
-    );
-    return response.data;
-  } catch (error) {
-    throw error;
-  }
-};
-
-/**
  * 해당 함수는 user nickname update 하기
  * @param id: string
  * @param nickname: string
  * @return Promise<ApiResponse<User>>
  * */
-export const updateUserNickname = async (
-  id: string,
-  nickname: string
-): Promise<ApiResponse<UserDto>> => {
-  try {
-    const response = await axiosInstance.post<ApiResponse<UserDto>>(
-      `/api/users/edit/nickname/${id}`,
-      {
-        id,
-        nickname,
-      }
-    );
-    return response.data;
-  } catch (error) {
-    throw error;
-  }
-};
-
-/**
- * 해당 함수는 user profile update 하기
- * @param id: string
- * @param nickname: string
- * @return Promise<ApiResponse<User>>
- * */
-export const updateUserProfile = async (
-  id: string,
+export const updateUser = async (
+  nickname: string,
   formData: FormData
 ): Promise<ApiResponse<UserDto>> => {
   try {
     const response = await axiosInstance.post<ApiResponse<UserDto>>(
-      `/api/users/edit/profile/${id}`,
+      `/api/users/edit/${nickname}`,
       formData,
       {
         headers: {
@@ -251,9 +203,7 @@ export const usersApi = {
   getUserRoutineCompletion,
   getUserRoutineCompletionReview,
   createUserRoutineCompletionEmotion,
-  updateNickname: updateUserNickname,
-  updateUsername: updateUserName,
-  updateUserProfile,
+  updateUser,
   deleteRegister: deleteUserRegister,
   deleteUserRoutineCompletionEmotion,
 };
