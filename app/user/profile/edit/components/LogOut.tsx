@@ -7,7 +7,7 @@ export default function LogOut() {
       onClick={async () => {
         await signOut({ callbackUrl: '/login' });
       }}
-      className="px-6 py-3 bg-red-500 hover:bg-red-600 text-white font-medium rounded-lg transition-colors duration-200 shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50"
+      className='w-[100px] h-8 px-6 bg-[#93d50b] hover:bg-green-600 text-white font-medium text-sm rounded-lg transition-colors duration-200 shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-green-[#93d50b]focus:ring-opacity-50'
     >
       로그아웃
     </button>
