@@ -7,29 +7,47 @@ import DevelopIcon from '@/public/icons/icon_develop.png';
 import GuitarIcon from '@/public/icons/icon_guitar.png';
 import UpArrow from '@/public/icons/icon_up_arrow.png';
 import DownArrow from '@/public/icons/icon_down_arrow.svg';
+import { ChallengeDto } from '@/backend/challenges/applications/dtos/ChallengeDto';
+import { ReadRoutineResponseDto } from '@/backend/routines/applications/dtos/RoutineDto';
+import { RoutineCompletionDto } from '@/backend/routine-completions/applications/dtos/RoutineCompletionDto';
+import { CHALLENGE_COLORS } from '@/public/consts/challengeColors';
+import ChallengesAccordionContent from '@/app/_components/challenges-accordion/ChallengesAccordionContent';
+import { StaticImageData } from 'next/image';
 
 //props 임시임 -승민
 interface ChallengesAccordionProps {
-  challengeId: number;
-  title: string;
-  totalRoutines: number;
-  completedRoutines: number;
-  backgroundColor: string;
-  completedColor: string;
-  category: number;
+  challenge: ChallengeDto;
+  routines: ReadRoutineResponseDto[];
+  routineCompletions: RoutineCompletionDto[];
 }
 
+const CATEGORY_ICON: Record<number, { icon: StaticImageData; alt: string }> = {
+  0: {
+    icon: HealthIcon,
+    alt: 'health',
+  },
+  1: {
+    icon: BookIcon,
+    alt: 'book',
+  },
+  2: {
+    icon: DevelopIcon,
+    alt: 'develop',
+  },
+  3: {
+    icon: GuitarIcon,
+    alt: 'guitar',
+  },
+};
+
 const ChallengesAccordion: React.FC<ChallengesAccordionProps> = ({
-  challengeId,
-  title,
-  totalRoutines,
-  completedRoutines,
-  backgroundColor,
-  completedColor,
-  category,
+  challenge,
+  routines,
+  routineCompletions,
 }) => {
   // 완료된 루틴 비율에 따라 동적으로 너비 계산
-  const completedRatio = totalRoutines > 0 ? (completedRoutines / totalRoutines) * 100 : 0;
+  const completedRatio =
+    routines.length > 0 ? (routineCompletions.length / routines.length) * 100 : 0;
 
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const contentRef = useRef<HTMLDivElement>(null);
@@ -50,13 +68,13 @@ const ChallengesAccordion: React.FC<ChallengesAccordionProps> = ({
     <div className='px-1 py-0.5 w-full rounded-lg'>
       <div
         className='w-full rounded-full relative overflow-hidden duration-300'
-        style={{ backgroundColor: completedColor }}
+        style={{ backgroundColor: CHALLENGE_COLORS[challenge.categoryId].completed }}
       >
         <div
           className='absolute top-0 left-0 h-full rounded-full transition-all duration-1000 ease-out'
           style={
             {
-              backgroundColor: backgroundColor,
+              backgroundColor: CHALLENGE_COLORS[challenge.categoryId].background,
               width: `${completedRatio}%`,
               animation: 'progressFill 1s ease-out forwards',
               '--progress-width': `${completedRatio}%`,
@@ -68,12 +86,14 @@ const ChallengesAccordion: React.FC<ChallengesAccordionProps> = ({
           <div className='flex flex-col gap-1 p-2'>
             <div className='flex items-center gap-2'>
               <div className='flex justify-center items-center rounded-full bg-white p-1 w-10 h-10 border-primary border-2'>
-                {category === 0 && <Image src={HealthIcon} alt='health' width={24} height={24} />}
-                {category === 1 && <Image src={BookIcon} alt='book' width={24} height={24} />}
-                {category === 2 && <Image src={DevelopIcon} alt='develop' width={24} height={24} />}
-                {category === 3 && <Image src={GuitarIcon} alt='guitar' width={24} height={24} />}
+                <Image
+                  src={CATEGORY_ICON[challenge.categoryId].icon}
+                  alt={CATEGORY_ICON[challenge.categoryId].alt}
+                  width={24}
+                  height={24}
+                />
               </div>
-              <div className='text-xl font-bold text-white'>{title}</div>
+              <div className='text-xl font-bold text-white'>{challenge.name}</div>
             </div>
           </div>
           <button
@@ -91,32 +111,24 @@ const ChallengesAccordion: React.FC<ChallengesAccordionProps> = ({
 
       {/* 아코디언 내용 영역 */}
       <div
-        className={`bg-white rounded-lg mt-1 overflow-hidden transition-all duration-300 ease-in-out border-2`}
+        className='bg-white rounded-xl mt-3 overflow-hidden transition-all duration-300 ease-in-out border-2'
         style={{
           height: isOpen ? `${contentHeight}px` : '0px',
           opacity: isOpen ? 1 : 0,
+          borderColor: CHALLENGE_COLORS[challenge.categoryId].background,
         }}
       >
-        <div ref={contentRef} className='p-3'>
-          {/* 완료된 루틴 표시 */}
-          <div className='flex items-center gap-3 mb-4'>
-            <div
-              className={`w-8 h-8 rounded-full ${backgroundColor} flex items-center justify-center`}
-            >
-              <div className='text-white text-sm'>✓</div>
-            </div>
-            <div className='flex items-center gap-2'>
-              <div className='text-yellow-500 text-lg'>🛹</div>
-              <span className='text-primary-grey font-medium'>스케이트보드 알리 연습</span>
-            </div>
-          </div>
-
-          {/* 새로운 루틴 추가 버튼 */}
-          <div className='flex justify-center'>
-            <button className='bg-primary rounded-full flex items-center justify-center text-white text-sm font-bold py-2 px-4 cursor-pointer'>
-              + 루틴 추가하기
-            </button>
-          </div>
+        <div ref={contentRef}>
+          <ChallengesAccordionContent
+            challenge={challenge}
+            routines={routines.filter(routine => routine.challengeId === challenge.id)}
+            routineCompletions={routineCompletions.filter(completion =>
+              routines.some(
+                routine =>
+                  routine.id === completion.routineId && routine.challengeId === challenge.id
+              )
+            )}
+          />
         </div>
       </div>
     </div>

@@ -26,6 +26,10 @@ export const useCreateChallenge = () => {
       queryClient.invalidateQueries({ queryKey: ['challenges', 'all'] });
       queryClient.invalidateQueries({ queryKey: ['challenges', 'category'] });
 
+      // Dashboard 관련 쿼리도 무효화하여 실시간 업데이트
+      queryClient.invalidateQueries({ queryKey: ['dashboard'] });
+      queryClient.invalidateQueries({ queryKey: ['dashboards'] });
+
       console.log('챌린지 생성 성공:', data);
     },
     onError: error => {
