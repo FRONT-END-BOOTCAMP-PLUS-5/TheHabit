@@ -12,6 +12,7 @@ import { ReadRoutineResponseDto } from '@/backend/routines/applications/dtos/Rou
 import { RoutineCompletionDto } from '@/backend/routine-completions/applications/dtos/RoutineCompletionDto';
 import { CHALLENGE_COLORS } from '@/public/consts/challengeColors';
 import ChallengesAccordionContent from '@/app/_components/challenges-accordion/ChallengesAccordionContent';
+import { StaticImageData } from 'next/image';
 
 //props 임시임 -승민
 interface ChallengesAccordionProps {
@@ -19,6 +20,25 @@ interface ChallengesAccordionProps {
   routines: ReadRoutineResponseDto[];
   routineCompletions: RoutineCompletionDto[];
 }
+
+const CATEGORY_ICON: Record<number, { icon: StaticImageData; alt: string }> = {
+  0: {
+    icon: HealthIcon,
+    alt: 'health',
+  },
+  1: {
+    icon: BookIcon,
+    alt: 'book',
+  },
+  2: {
+    icon: DevelopIcon,
+    alt: 'develop',
+  },
+  3: {
+    icon: GuitarIcon,
+    alt: 'guitar',
+  },
+};
 
 const ChallengesAccordion: React.FC<ChallengesAccordionProps> = ({
   challenge,
@@ -66,18 +86,12 @@ const ChallengesAccordion: React.FC<ChallengesAccordionProps> = ({
           <div className='flex flex-col gap-1 p-2'>
             <div className='flex items-center gap-2'>
               <div className='flex justify-center items-center rounded-full bg-white p-1 w-10 h-10 border-primary border-2'>
-                {challenge.categoryId === 1 && (
-                  <Image src={HealthIcon} alt='health' width={24} height={24} />
-                )}
-                {challenge.categoryId === 2 && (
-                  <Image src={BookIcon} alt='book' width={24} height={24} />
-                )}
-                {challenge.categoryId === 3 && (
-                  <Image src={DevelopIcon} alt='develop' width={24} height={24} />
-                )}
-                {challenge.categoryId === 4 && (
-                  <Image src={GuitarIcon} alt='guitar' width={24} height={24} />
-                )}
+                <Image
+                  src={CATEGORY_ICON[challenge.categoryId].icon}
+                  alt={CATEGORY_ICON[challenge.categoryId].alt}
+                  width={24}
+                  height={24}
+                />
               </div>
               <div className='text-xl font-bold text-white'>{challenge.name}</div>
             </div>
