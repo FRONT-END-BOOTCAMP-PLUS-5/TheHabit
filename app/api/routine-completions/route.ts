@@ -24,7 +24,7 @@ const createGetRoutinesUseCase = () => {
 };
 
 // 루틴 완료 생성 (POST) - 이미지 업로드 포함
-export async function POST(request: NextRequest): Promise<NextResponse<ApiResponse<RoutineCompletionDto | null>>> {
+export async function POST(request: NextRequest): Promise<NextResponse> {
   try {
     console.log('=== POST /api/routine-completions 요청 시작 ===');
 
@@ -120,7 +120,13 @@ export async function POST(request: NextRequest): Promise<NextResponse<ApiRespon
     });
 
     console.log('루틴 완료 생성 성공:', result);
-    return NextResponse.json({ success: true, data: result }, { status: 201 });
+    
+    const successResponse: ApiResponse<RoutineCompletionDto> = {
+      success: true,
+      data: result,
+      message: '루틴이 성공적으로 완료되었습니다.'
+    };
+    return NextResponse.json(successResponse, { status: 201 });
   } catch (error) {
     console.error('루틴 완료 생성 오류:', error);
     const errorResponse: ApiResponse<null> = {
@@ -135,7 +141,7 @@ export async function POST(request: NextRequest): Promise<NextResponse<ApiRespon
 }
 
 // 루틴 완료 목록 조회 (GET)
-export async function GET(request: NextRequest): Promise<NextResponse<ApiResponse<RoutineCompletionDto[] | null>>> {
+export async function GET(request: NextRequest): Promise<NextResponse> {
   try {
     const { searchParams } = new URL(request.url);
     const challengeId = searchParams.get('challengeId');
@@ -190,7 +196,12 @@ export async function GET(request: NextRequest): Promise<NextResponse<ApiRespons
     const completionResults = await Promise.all(completionPromises);
     const completions = completionResults.flat();
 
-    return NextResponse.json({ success: true, data: completions });
+    const successResponse: ApiResponse<RoutineCompletionDto[]> = {
+      success: true,
+      data: completions,
+      message: '루틴 완료 목록을 성공적으로 조회했습니다.'
+    };
+    return NextResponse.json(successResponse);
   } catch (error) {
     console.error('루틴 완료 목록 조회 오류:', error);
     const errorResponse: ApiResponse<null> = {
