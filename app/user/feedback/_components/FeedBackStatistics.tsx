@@ -1,82 +1,143 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Progress } from 'antd';
-import { ChallengeDto } from '@/backend/challenges/applications/dtos/ChallengeDto';
 import Image from 'next/image';
+import { Dashboard } from '@/backend/dashboards/domain/entity/Dashboard';
 
-export const FeedBackStatistics = ({ challenges }: { challenges: ChallengeDto[] }) => {
-  const userId = 'a70ecc14-fb02-41ce-8f1d-750a69f5558d';
+export const FeedBackStatistics = ({ dashBoardData }: { dashBoardData: Dashboard }) => {
+  const { challenge, routines, routineCount, routineCompletion } = dashBoardData;
+  const [currentIndex, setCurrentIndex] = useState(0);
 
-  //피드백 -> 루틴에 대한 피드백을 주는겁니다.
-  //챌린지ID로 -> 루틴이 딸려있다.
-  //루틴이 어떤 챌린지 인지는 챌린지 ID로 알 수 있고, 또한 created_at으로 그날 챌린지를 했는지 알 수 있다.
-  //루틴 ID로 어떤 루틴이 완료되었는지 확인할 수 있다.
+  // 안전한 날짜 비교 함수
+  const getDateString = (dateValue: Date): string => {
+    if (!dateValue) return '';
 
-  const userFeedback = challenges?.filter(challenge => challenge.id === Number(userId));
+    if (dateValue instanceof Date) {
+      return dateValue.toISOString().split('T')[0];
+    }
 
-  const userFeedbackByDate = userFeedback?.map(challenge => {
-    return {
-      createdAt: new Date(challenge.createdAt).toISOString().split('T')[0],
-    };
+    // 문자열인 경우 Date로 변환 후 처리
+    try {
+      return new Date(dateValue).toISOString().split('T')[0];
+    } catch (error) {
+      console.error('날짜 변환 오류:', error, dateValue);
+      return '';
+    }
+  };
+
+  // //createdAt을 기준으로 + 21을 하자
+  const currentChallenge = challenge && challenge[currentIndex];
+
+  const heatMap = getDateString(currentChallenge?.createdAt);
+
+  // 21일 카운트 해야함
+  const days = 21;
+  const dataArray = Array.from({ length: days }, (_, i) => {
+    const date = new Date(heatMap);
+    date.setDate(date.getDate() + i);
+    return date.toISOString().split('T')[0];
   });
 
-  //완료 되었는지 확인
-  const completedRoutine = [
-    {
-      createdAt: '2025-08-12T23:05:40.000Z',
-      img: 'https://habit-img.s3.ap-northeast-2.amazonaws.com/%EA%B7%B8%EB%85%80%EA%B0%80+%EC%9E%88%EC%96%B4%EC%84%9C+%ED%96%89%EB%B3%B5%ED%95%A9%EB%8B%88%EB%8B%A4.jfif',
-      routineId: '1',
-    },
-  ];
+  // 현재 챌린지의 루틴 ID들만 가져오기 (더 효율적)
+  const currentChallengeRoutineIds = routines
+    .filter(routine => routine.challengeId === currentChallenge?.id)
+    .map(routine => routine.id);
 
-  //루틴이 완료되었는지 확인 우선 날짜가 같으면 그 챌린지를 한거니까 그 챌린지의 루틴을 찾아서 완료되었는지 확인
-  const completedDates = completedRoutine
-    .filter(r => r.img) // 이미지가 있는 것만
-    .map(r => new Date(r.createdAt).toISOString().split('T')[0]); // YYYY-MM-DD 배열
+  // 챌린지 날짜별 완료 여부 확인
+  const completion = dataArray.map(date => {
+    // 해당 날짜에 완료된 루틴들 중 현재 챌린지의 루틴들만 필터링
+    const dailyCompletions = routineCompletion.filter(completion => {
+      const completionDate = getDateString(completion.createdAt);
 
-  //createdAt을 기준으로 + 21을 하자
-  const startData = userFeedbackByDate && userFeedbackByDate[0]?.createdAt;
-  const days = 21;
+      return (
+        completionDate === date && // 날짜가 일치하고
+        currentChallengeRoutineIds.includes(completion.routineId) && // 현재 챌린지의 루틴이고
+        completion.content && // content가 존재하고
+        completion.content.trim() !== '' // 빈 문자열이 아닌 경우
+      );
+    });
 
-  const dataArray =
-    startData && !isNaN(new Date(startData).getTime())
-      ? Array.from({ length: days }, (_, i) => {
-          const date = new Date(startData);
-          date.setDate(date.getDate() + i);
-          return date.toISOString().split('T')[0];
-        })
-      : [];
+    // 완료된 루틴 ID들
+    const completedRoutineIds = dailyCompletions.map(completion => completion.routineId);
 
-  const weekdayLabels = ['일', '월', '화', '수', '목', '금', '토'];
+    // 현재 챌린지의 모든 루틴이 완료되었는지 확인
+    const allRoutinesCompleted =
+      currentChallengeRoutineIds.length > 0 &&
+      currentChallengeRoutineIds.every(routineId => completedRoutineIds.includes(routineId));
+
+    return allRoutinesCompleted;
+  });
+
+  const handlePrev = () => {
+    if (challenge) {
+      setCurrentIndex(currentIndex === 0 ? challenge.length - 1 : currentIndex - 1);
+    }
+  };
+
+  const handleNext = () => {
+    if (challenge) {
+      setCurrentIndex(currentIndex === challenge.length - 1 ? 0 : currentIndex + 1);
+    }
+  };
+
+  if (!challenge || challenge.length === 0) {
+    return (
+      <div className='w-full text-center p-8'>
+        <p className='text-gray-500'>챌린지가 없습니다.</p>
+      </div>
+    );
+  }
 
   return (
-    <section className='w-full mx-auto mt-10 shadow-md flex flex-col items-center justify-center p-5 rounded-lg'>
-      <div className='flex flex-col gap-2'>
-        <div className='grid gap-6 grid-cols-7 text-md font-medium'>
-          {weekdayLabels.map(label => (
-            <p key={label} className='text-center'>
-              {label}
-            </p>
-          ))}
+    <div className='w-full relative'>
+      <div className='flex flex-col items-center justify-center mt-10'>
+        <button
+          onClick={handlePrev}
+          className='absolute left-0 cursor-pointer hover:opacity-70 transition-opacity duration-200'
+        >
+          <Image src='/icons/left.svg' alt='prev' width={20} height={20} />
+        </button>
+
+        <div className='p-6 w-3/4 border rounded-lg shadow-md'>
+          <h3 className='text-xl font-bold mb-4'>{currentChallenge.name}</h3>
+          <div className='text-center grid gap-6 grid-cols-7'>
+            {dataArray.map((_, index) => {
+              const isCompleted = completion[index];
+              return (
+                <Image
+                  key={index}
+                  src={isCompleted ? '/icons/completed.svg' : '/icons/notCompleted.svg'}
+                  alt={isCompleted ? 'completed' : 'not completed'}
+                  width={20}
+                  height={20}
+                  className='w-5 h-5'
+                />
+              );
+            })}
+          </div>
         </div>
-        <div className='grid gap-6 grid-cols-7'>
-          {dataArray.map((date, index) => {
-            const completed = completedDates.includes(date);
-            return (
-              <Image
-                key={index}
-                src={completed ? '/icons/completed.svg' : '/icons/notCompleted.svg'}
-                alt='check'
-                width={20}
-                height={20}
-                className={`w-6 h-6`}
-              />
-            );
-          })}
-        </div>
-        <Progress percent={4} />
+
+        <button
+          onClick={handleNext}
+          className='absolute right-0 cursor-pointer hover:opacity-70 transition-opacity duration-200'
+        >
+          <Image src='/icons/right.svg' alt='next' width={20} height={20} />
+        </button>
       </div>
-    </section>
+
+      {/* 페이지네이션 인디케이터 */}
+      <div className='flex justify-center mt-4 space-x-2'>
+        {challenge?.map((_, index) => (
+          <button
+            key={index}
+            onClick={() => setCurrentIndex(index)}
+            className={`w-3 h-3 rounded-full transition-colors duration-200 ${
+              index === currentIndex ? 'bg-primary' : 'bg-gray-300'
+            }`}
+          />
+        ))}
+      </div>
+    </div>
   );
 };

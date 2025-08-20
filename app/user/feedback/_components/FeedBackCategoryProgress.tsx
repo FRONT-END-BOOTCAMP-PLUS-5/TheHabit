@@ -1,13 +1,16 @@
-import { ChallengeDto } from '@/backend/challenges/applications/dtos/ChallengeDto';
+import { Dashboard } from '@/backend/dashboards/domain/entity/Dashboard';
 import { Progress } from 'antd';
-import React from 'react';
+import React, { useState } from 'react';
 
-export const FeedBackCategoryProgress = ({ challenges }: { challenges: ChallengeDto[] }) => {
-  const data = challenges.map(challenge => {
+export const FeedBackCategoryProgress = ({ dashBoardData }: { dashBoardData: Dashboard }) => {
+  const { challenge, routines, routineCount, routineCompletion } = dashBoardData;
+
+  const data = challenge.map(challenge => {
     return {
       name: challenge.name,
       createdAt: challenge.createdAt,
       category: challenge.categoryId,
+      active: challenge.active,
     };
   });
 
@@ -47,15 +50,48 @@ export const FeedBackCategoryProgress = ({ challenges }: { challenges: Challenge
     },
   ];
 
+  // 카테고리별로 챌린지 데이터 구분
+  const categoryData = progressBarLabel.map(category => {
+    // 해당 카테고리에 속한 챌린지들 필터링
+    const categoryChallenges = data.filter(item => item.category === category.id);
+
+    return {
+      ...category,
+      challenges: categoryChallenges,
+      challengeCount: categoryChallenges.length,
+      activeCount: categoryChallenges.filter(ch => ch.active).length,
+    };
+  });
+
+  console.log('categoryData', categoryData);
+
   return (
     <section className='w-full flex flex-col gap-3 mt-10'>
-      <h3 className='text-2xl font-bold'>주간 카테고리별 통계</h3>
-      {progressBarLabel.map(item => {
+      <h3 className='text-2xl font-bold'>카테고리별 통계</h3>
+      {categoryData.map(category => {
+        // 간단한 진행률 계산 (챌린지 수 기준)
+        const progressPercent =
+          category.challengeCount > 0
+            ? Math.round((category.activeCount / category.challengeCount) * 100)
+            : 0;
+
         return (
-          <div key={item.id} className='w-full flex gap-2 items-center'>
-            <p className={`text-md w-2 ${item.textClass} font-bold`}>-</p>
-            <p className='text-sm whitespace-nowrap w-20 font-bold'>{item.name}</p>
-            <Progress className='w-full' percent={50} strokeColor={item.color} />
+          <div key={category.id} className='w-full flex gap-2 items-center'>
+            <p className={`text-md w-2 ${category.textClass} font-bold`}>-</p>
+            <div className='flex flex-col w-20'>
+              <p className='text-sm whitespace-nowrap font-bold'>{category.name}</p>
+              <p className='text-xs text-gray-500'>{category.challengeCount}개 챌린지</p>
+            </div>
+            <div className='flex-1 flex items-center gap-2'>
+              <Progress
+                className='flex-1'
+                percent={progressPercent}
+                showInfo={false}
+                strokeColor={category.color}
+                size='small'
+              />
+              <p className='text-sm text-gray-600 w-12'>{progressPercent}%</p>
+            </div>
           </div>
         );
       })}

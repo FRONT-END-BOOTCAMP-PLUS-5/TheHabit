@@ -2,11 +2,12 @@
 
 import { useState } from 'react';
 import { FeedBackStatistics } from '@/app/user/feedback/_components/FeedBackStatistics';
-import { useGetAllChallenges } from '@/libs/hooks';
+import { useGetDashboardByNickname } from '@/libs/hooks';
 import { FeedBackCategoryProgress } from '@/app/user/feedback/_components/FeedBackCategoryProgress';
 import { FeedBackDescription } from '@/app/user/feedback/_components/FeedBackDescription';
 import { FeedBackDetail } from '@/app/user/feedback/_components/FeedBackDetail';
 import { FeedBackBarChart } from '@/app/user/feedback/_components/FeedBackBarChart';
+import { useGetUserInfo } from '@/libs/hooks/user-hooks/useGetUserInfo';
 
 const FEEDBACK_CATEGORIES = [
   { id: 1, name: '통계' },
@@ -14,7 +15,10 @@ const FEEDBACK_CATEGORIES = [
 ] as const;
 
 export const FeedBackList = () => {
-  const { data: challenges } = useGetAllChallenges();
+  // const { userInfo } = useGetUserInfo();
+  // const nickname = userInfo?.nickname;
+  const { data: dashBoardData } = useGetDashboardByNickname('aiden0413');
+  console.log('dashBoardData', dashBoardData);
 
   const [selectedCategoryName, setSelectedCategoryName] = useState<string>('통계');
 
@@ -48,10 +52,10 @@ export const FeedBackList = () => {
       </nav>
       {selectedCategoryName === '통계' ? (
         <div className='flex flex-col gap-10 w-6/7 mx-auto'>
-          <FeedBackStatistics challenges={challenges || []} />
+          {dashBoardData && <FeedBackStatistics dashBoardData={dashBoardData} />}
           <FeedBackDescription />
-          <FeedBackCategoryProgress challenges={challenges || []} />
-          <FeedBackBarChart challenges={challenges || []} />
+          {dashBoardData && <FeedBackCategoryProgress dashBoardData={dashBoardData} />}
+          {/* <FeedBackBarChart challenges={dashBoardData?.challenge || []} /> */}
         </div>
       ) : (
         <FeedBackDetail />
