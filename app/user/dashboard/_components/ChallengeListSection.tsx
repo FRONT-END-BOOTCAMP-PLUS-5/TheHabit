@@ -138,14 +138,40 @@ const ChallengeListSection: React.FC = () => {
   // 로딩 상태 처리
   if (isLoading) {
     return (
-      <div className='flex flex-col gap-2 px-3 py-2 w-full relative mb-10'>
-        <div className='w-full h-20 bg-gray-200 rounded animate-pulse mb-4'></div>
+      <section className='flex flex-col gap-2 px-3 py-2 w-full relative mb-10'>
+        {/* WeeklySlide 스켈레톤 */}
+        <div className='w-full h-24 bg-gray-200 rounded-lg animate-pulse mb-4'></div>
+
         <div className='flex flex-col gap-3'>
-          <div className='w-32 h-8 bg-gray-200 rounded animate-pulse mx-auto'></div>
-          <div className='w-48 h-10 bg-gray-200 rounded animate-pulse mx-auto'></div>
-          <div className='w-full h-40 bg-gray-200 rounded animate-pulse'></div>
+          {/* 날짜 표시 스켈레톤 */}
+          <div className='flex items-center justify-center'>
+            <div className='w-32 h-8 bg-gray-200 rounded animate-pulse'></div>
+          </div>
+
+          {/* 라디오 버튼 그룹 스켈레톤 */}
+          <div className='flex justify-center w-full'>
+            <div className='flex gap-2 w-48'>
+              <div className='flex-1 h-10 bg-gray-200 rounded animate-pulse'></div>
+              <div className='flex-1 h-10 bg-gray-200 rounded animate-pulse'></div>
+            </div>
+          </div>
+
+          {/* 챌린지 목록 스켈레톤 */}
+          <div className='space-y-3'>
+            {/* 챌린지 카드 1 */}
+            <div className='h-15 bg-gray-200 rounded-lg animate-pulse'></div>
+            {/* 챌린지 카드 2 */}
+            <div className='h-15 bg-gray-200 rounded-lg animate-pulse'></div>
+            {/* 챌린지 카드 3 */}
+            <div className='h-15 bg-gray-200 rounded-lg animate-pulse'></div>
+          </div>
         </div>
-      </div>
+
+        {/* AddChallengeButton 스켈레톤 */}
+        <div className='absolute bottom-0 right-0'>
+          <div className='w-12 h-12 bg-gray-200 rounded-full animate-pulse'></div>
+        </div>
+      </section>
     );
   }
 

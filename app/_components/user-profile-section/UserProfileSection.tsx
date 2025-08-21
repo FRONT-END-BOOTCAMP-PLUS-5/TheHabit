@@ -42,7 +42,7 @@ const UserProfileSection: React.FC = () => {
   if (isLoading) {
     return (
       <div className='flex flex-row items-center gap-2 w-full px-4 py-4'>
-        <div className='w-8 h-8 bg-gray-200 rounded-full animate-pulse'></div>
+        <div className='w-22 h-22 bg-gray-200 rounded-full animate-pulse'></div>
         <div className='flex flex-col gap-2'>
           <div className='w-24 h-6 bg-gray-200 rounded animate-pulse'></div>
           <div className='w-16 h-4 bg-gray-200 rounded animate-pulse'></div>

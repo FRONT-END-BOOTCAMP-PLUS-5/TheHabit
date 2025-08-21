@@ -14,6 +14,7 @@ import { useCreateChallenge } from '@/libs/hooks/challenges-hooks/useCreateChall
 import { useGetChallengesByNickname } from '@/libs/hooks/challenges-hooks/useGetChallengesByNickname';
 import { useGetUserInfo } from '@/libs/hooks/user-hooks/useGetUserInfo';
 import { useModalStore } from '@/libs/stores/modalStore';
+import { Toast } from '@/app/_components/toasts/Toast';
 
 const AddChallengeForm: React.FC = () => {
   const {
@@ -79,7 +80,7 @@ const AddChallengeForm: React.FC = () => {
     const selectedCategoryId = Number(data.categoryId);
     const selectedCategoryCount = categoryCounts[selectedCategoryId] || 0;
     if (selectedCategoryCount >= MAX_CHALLENGES_PER_CATEGORY) {
-      alert(
+      Toast.error(
         `한 카테고리에서는 최대 ${MAX_CHALLENGES_PER_CATEGORY}개까지만 챌린지를 만들 수 있습니다.`
       );
       return;
@@ -97,19 +98,19 @@ const AddChallengeForm: React.FC = () => {
         if (response.success) {
           console.log('챌린지 생성 성공:', response.message);
           // 챌린지 생성 성공 시 alert 표시 후 1초 뒤 모달 닫기
-          alert('챌린지 생성에 성공했습니다.');
+          Toast.success('챌린지 생성에 성공했습니다.');
 
           setTimeout(() => {
             closeModal();
           }, 500);
         } else {
           console.error('챌린지 생성 실패:', response.error?.message);
-          alert('챌린지 생성에 실패했습니다: ' + response.error?.message);
+          Toast.error('챌린지 생성에 실패했습니다: ' + response.error?.message);
         }
       },
       onError: (error: Error) => {
         console.error('챌린지 생성 중 오류 발생:', error);
-        alert('챌린지 생성 중 오류가 발생했습니다: ' + error.message);
+        Toast.error('챌린지 생성 중 오류가 발생했습니다: ' + error.message);
       },
     });
   };
