@@ -1,4 +1,4 @@
-import { IRoutineCompletionsRepository } from '@/backend/routine-completions/domains/repositories/IRoutineCompletionsRepository';
+import { IRoutineCompletionsRepository } from '../../domains/repositories/IRoutineCompletionsRepository';
 
 
 export class DeleteRoutineCompletionUseCase {
