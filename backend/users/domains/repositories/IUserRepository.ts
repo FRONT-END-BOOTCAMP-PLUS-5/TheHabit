@@ -40,7 +40,7 @@ export interface IUserRepository {
   ): Promise<User | { message: string } | undefined>;
 
   // Delete
-  delete(id: string): Promise<boolean>;
+  delete(nickname: string): Promise<boolean>;
   deleteUserRoutineCompletionReview(
     reviewContent: string,
     routineCompletionId: number,

@@ -19,10 +19,12 @@ const createGetUserChallengeAndRoutineAndFollowAndCompletion = () => {
 
 type UserResponse = ApiResponse<UserChallengeAndRoutineAndFollowAndCompletionDto>;
 
-export async function GET(request: NextRequest): Promise<NextResponse<UserResponse> | undefined> {
+export async function GET(
+  request: NextRequest,
+  { params }: { params: { nickname: string } }
+): Promise<NextResponse<UserResponse> | undefined> {
   try {
-    const nickname = request.nextUrl.searchParams.get('nickname');
-
+    const { nickname } = await params;
     if (!nickname) {
       throw new Error('사용자 닉네임이 존재하지 않습니다!');
     }
@@ -66,14 +68,17 @@ export async function GET(request: NextRequest): Promise<NextResponse<UserRespon
   }
 }
 
-export async function DELETE(request: NextRequest): Promise<NextResponse | undefined> {
+export async function DELETE(
+  request: NextRequest,
+  { params }: { params: { nickname: string } }
+): Promise<NextResponse | undefined> {
   try {
-    const { id } = await request.json();
+    const { nickname } = await params;
 
-    if (!id) throw new Error('사용자 아이디가 존재하지 않습니다!');
+    if (!nickname) throw new Error('사용자 닉네임이 존재하지 않습니다!');
 
     const usecase = createDeleteUser();
-    const deletedUserRegister = await usecase.execute(id);
+    const deletedUserRegister = await usecase.execute(nickname);
 
     return NextResponse.json(
       {

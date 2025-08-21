@@ -8,7 +8,7 @@ interface ICategory {
   nickname: string;
 }
 
-export const CategoryComponent = ({ init, type, nickname }: ICategory) => {
+export const FollowCategoryComponent = ({ init, type, nickname }: ICategory) => {
   const router = useRouter();
   const [getCategory, setCategory] = useState<'follower' | 'following'>(type);
   const handlerSelected = (category: 'follower' | 'following') => {

@@ -10,7 +10,8 @@ const NoneImg = ({
 }) => {
   return (
     <div
-      className={`w-[${width}] h-[${height}] ${rounded ? `rounded-[${rounded}]` : ''} text-center font-semibold bg-gradient-to-r from-[#84fab0] to-[#8fd3f4] flex items-center justify-center text-[#fff]`}
+      className={`${rounded ? `rounded-[${rounded}]` : ''}  text-center font-semibold bg-gradient-to-r from-[#84fab0] to-[#8fd3f4] flex items-center justify-center text-[#fff]`}
+      style={{ width, height }}
     >
       <p>
         루틴 완료한 해당

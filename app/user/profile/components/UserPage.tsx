@@ -7,7 +7,7 @@ import { usersApi } from '@/libs/api/users.api';
 import { useEffect, useState, useRef, useMemo } from 'react';
 import { RoutineComponent } from '@/app/user/profile/components/Routine';
 import { UserChallengeAndRoutineAndFollowAndCompletionDto } from '@/backend/users/applications/dtos/UserChallengeAndRoutineAndFollowAndCompletion';
-import { SelectComponent } from '@/app/user/profile/components/Select';
+import { ChallengeSelectComponent } from '@/app/user/profile/components/ChallengeSelect';
 import NoneProfile from '@/app/_components/none/NoneProfile';
 
 export const UserPage = ({
@@ -64,7 +64,7 @@ export const UserPage = ({
   }, [getShow]);
 
   const filteredUserData = useMemo(() => {
-    if (!getSelectedChallengeId) return getUserData; //변수명도 생각안나고 백엔드 Dto명이나 엔티티도 생각안나서 테이블 조인한거 테이블명 에다가 And 해놓음~ ㅋ
+    if (!getSelectedChallengeId) return getUserData;
 
     const filteredChallenges = getUserData.challenges.filter(
       challenge => challenge.id === getSelectedChallengeId
@@ -118,7 +118,7 @@ export const UserPage = ({
                 )}
               </div>
               {getShow && (
-                <SelectComponent
+                <ChallengeSelectComponent
                   getUserData={getUserData}
                   selectedChallengeId={getSelectedChallengeId}
                   onSelectChallenge={(id, name) => {

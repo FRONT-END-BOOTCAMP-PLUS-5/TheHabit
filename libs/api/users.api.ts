@@ -26,11 +26,7 @@ export const getUserChallengeAndRoutineAndFollowAndCompletion = async (
   try {
     const response = await axiosInstance.get<
       ApiResponse<UserChallengeAndRoutineAndFollowAndCompletionDto>
-    >(`/api/users/${nickname}`, {
-      params: {
-        nickname,
-      },
-    });
+    >(`/api/users/${nickname}`);
     return response.data;
   } catch (error) {
     throw error;
@@ -152,13 +148,9 @@ export const updateUser = async (
  * @param id: string
  * @return Promise<ApiResponse<void>>
  * */
-export const deleteUserRegister = async (id: string): Promise<ApiResponse<void>> => {
+export const deleteUserRegister = async (nickname: string): Promise<ApiResponse<void>> => {
   try {
-    const response = await axiosInstance.delete<ApiResponse<void>>(`/api/users/${id}`, {
-      data: {
-        id,
-      },
-    });
+    const response = await axiosInstance.delete<ApiResponse<void>>(`/api/users/${nickname}`);
     return response.data;
   } catch (error) {
     throw error;

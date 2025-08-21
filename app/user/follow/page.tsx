@@ -1,16 +1,17 @@
 'use client';
 import Input from '@/app/_components/inputs/Input';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useSearchParams } from 'next/navigation';
 
-import { BackComponent } from '@/app/user/follow/components/Back';
-import { CategoryComponent } from '@/app/user/follow/components/Category';
+import { BackComponent } from '@/app/_components/back/Back';
+import { FollowCategoryComponent } from '@/app/user/follow/components/FollowCategory';
 import { ContentComponent } from '@/app/user/follow/components/Content';
 import { useGetUserInfo } from '@/libs/hooks/user-hooks/useGetUserInfo';
 import { useGetFollowing } from '@/libs/hooks/user-hooks/useGetFollowing';
 import { useGetFollower } from '@/libs/hooks/user-hooks/useGetFollower';
 import { useFollowMutation } from '@/libs/hooks/user-hooks/useCreateFollow';
 import { useUnfollowMutation } from '@/libs/hooks/user-hooks/useDeleteFollow';
+import { debounce } from 'lodash';
 
 const FollowPage = () => {
   const searchParams = useSearchParams();
@@ -22,15 +23,17 @@ const FollowPage = () => {
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [getValue, setValue] = useState<string>('');
 
-  useEffect(() => {
-    const handler = setTimeout(() => {
-      setValue(searchTerm);
+  const debounceSearch = useMemo(() => {
+    return debounce((value: string) => {
+      setValue(value);
     }, 500);
+  }, []);
 
+  useEffect(() => {
     return () => {
-      clearTimeout(handler);
+      debounceSearch.cancel();
     };
-  }, [searchTerm]);
+  }, [debounceSearch]);
 
   const { data: followerData, isLoading: isFollowerLoading } = useGetFollower(
     userInfo?.id || '',
@@ -67,14 +70,17 @@ const FollowPage = () => {
             {nickname}
           </p>
         </div>
-        <CategoryComponent
+        <FollowCategoryComponent
           init={init}
           type={type as 'follower' | 'following'}
           nickname={userInfo?.nickname || ''}
         />
         <Input
           placeholder='Search'
-          onChange={evt => setSearchTerm(evt.target.value)}
+          onChange={evt => {
+            setSearchTerm(evt.target.value);
+            debounceSearch(evt.target.value);
+          }}
           value={searchTerm}
         />
         <p className='mt-10 font-semibold'>

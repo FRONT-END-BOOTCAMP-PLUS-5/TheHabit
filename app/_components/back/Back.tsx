@@ -1,11 +1,10 @@
 import { useRouter } from 'next/navigation';
 import { useGetUserInfo } from '@/libs/hooks/user-hooks/useGetUserInfo';
 
-export const BackComponent = () => {
+export const BackComponent = ({ nickname }: { nickname?: string }) => {
   const router = useRouter();
-  const { userInfo } = useGetUserInfo();
-
-  const handlergoBack = () => router.push(`/user/profile/${userInfo?.nickname}`);
+  //팔로우일때는 각 다른 url로 이동하기때문에 push로 해줘야함
+  const handlergoBack = () => (nickname ? router.push(`/user/profile/${nickname}`) : router.back());
 
   return (
     <p

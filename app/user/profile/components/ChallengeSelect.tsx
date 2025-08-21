@@ -2,7 +2,7 @@
 
 import { UserChallengeAndRoutineAndFollowAndCompletionDto } from '@/backend/users/applications/dtos/UserChallengeAndRoutineAndFollowAndCompletion';
 
-export const SelectComponent = ({
+export const ChallengeSelectComponent = ({
   getUserData,
   selectedChallengeId,
   onSelectChallenge,
