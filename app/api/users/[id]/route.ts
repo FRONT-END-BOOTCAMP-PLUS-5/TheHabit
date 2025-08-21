@@ -22,14 +22,13 @@ type UserResponse = ApiResponse<UserChallengeAndRoutineAndFollowAndCompletionDto
 export async function GET(request: NextRequest): Promise<NextResponse<UserResponse> | undefined> {
   try {
     const nickname = request.nextUrl.searchParams.get('nickname');
-    const id = request.nextUrl.searchParams.get('id');
 
     if (!nickname) {
       throw new Error('사용자 닉네임이 존재하지 않습니다!');
     }
 
     const usecase = createGetUserChallengeAndRoutineAndFollowAndCompletion();
-    const userJoinData = await usecase.execute(nickname, id || '');
+    const userJoinData = await usecase.execute(nickname);
 
     if (!userJoinData) {
       return NextResponse.json(

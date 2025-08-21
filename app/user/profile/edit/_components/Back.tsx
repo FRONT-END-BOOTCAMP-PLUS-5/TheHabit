@@ -1,11 +1,11 @@
 import { useRouter } from 'next/navigation';
-
-const NICK_NAME = '이게 도파민이지...';
+import { useGetUserInfo } from '@/libs/hooks/user-hooks/useGetUserInfo';
 
 export const BackComponent = () => {
   const router = useRouter();
+  const { userInfo } = useGetUserInfo();
 
-  const handlergoBack = () => router.push(`/user/profile/${NICK_NAME}`);
+  const handlergoBack = () => router.push(`/user/profile/${userInfo?.nickname}`);
 
   return (
     <p

@@ -4,14 +4,12 @@ import { UserChallengeAndRoutineAndFollowAndCompletion } from '@/backend/users/d
 export class GetUserChallengeAndRoutineAndFollowAndCompletion {
   constructor(private readonly userRepo: IUserRepository) {}
 
-  async execute(
-    nickname: string,
-    userId: string
-  ): Promise<UserChallengeAndRoutineAndFollowAndCompletion | null> {
+  async execute(nickname: string): Promise<UserChallengeAndRoutineAndFollowAndCompletion | null> {
     try {
+      const user = await this.userRepo.findByNickname(nickname);
       const joinResult = await this.userRepo.findByUserChallengesAndRoutinesAndFollowAndCompletion(
         nickname,
-        userId
+        user?.id || ''
       );
 
       if (!joinResult) return null;

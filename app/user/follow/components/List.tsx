@@ -2,9 +2,7 @@
 import { Button } from '@/app/_components/buttons/Button';
 import { ProfileImage } from '@/app/_components/profile-images/ProfileImage';
 import NoneProfile from '@/app/_components/none/NoneProfile';
-// import { followsApi } from '@/libs/api/follows.api'; // ⬅️ 제거
-// import { useState } from 'react'; // ⬅️ 제거
-// import { useGetUserInfo } from '@/libs/hooks/user-hooks/useGetUserInfo'; // ⬅️ 제거
+import { useRouter } from 'next/navigation';
 
 interface User {
   id: string;
@@ -20,9 +18,18 @@ interface IList {
 }
 
 export const ListComponent = ({ data, onToggleFollow }: IList) => {
+  const router = useRouter();
+
+  const handlergoBack = (nickname: string) => router.push(`/user/profile/${nickname}`);
   return (
     <li key={data.id} className='flex justify-between items-center mb-8'>
-      <div id='follower_users' className='flex items-center gap-2'>
+      <div
+        id='follower_users'
+        className='flex items-center gap-2 cursor-pointer'
+        onClick={() => {
+          handlergoBack(data.nickname);
+        }}
+      >
         {data.profileImg ? (
           <ProfileImage imageSrc={data.profileImg} wrapperWidth={20} wrapperHeight={20} />
         ) : (

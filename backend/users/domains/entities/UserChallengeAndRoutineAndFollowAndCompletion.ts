@@ -1,5 +1,10 @@
 export class UserChallengeAndRoutineAndFollowAndCompletion {
   constructor(
+    public readonly id: string,
+    public readonly nickname: string,
+    public readonly username: string,
+    public readonly profileImg: string | null,
+    public readonly profileImgPath: string | null,
     public readonly challenges: {
       id: number;
       name: string;

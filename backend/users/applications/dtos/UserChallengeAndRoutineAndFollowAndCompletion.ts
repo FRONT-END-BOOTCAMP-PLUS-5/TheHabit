@@ -1,6 +1,11 @@
 import { UserChallengeAndRoutineAndFollowAndCompletion } from '@/backend/users/domains/entities/UserChallengeAndRoutineAndFollowAndCompletion';
 
 export interface UserChallengeAndRoutineAndFollowAndCompletionDto {
+  readonly id: string;
+  readonly nickname: string;
+  readonly username: string;
+  readonly profileImg: string | null;
+  readonly profileImgPath: string | null;
   readonly challenges: {
     id: number;
     name: string;
@@ -61,6 +66,11 @@ export class UserChallengeAndRoutineAndFollowAndCompletionDtoMapper {
     });
 
     return {
+      id: entity.id,
+      username: entity.username,
+      nickname: entity.nickname,
+      profileImg: entity.profileImg,
+      profileImgPath: entity.profileImgPath,
       challenges: challengesDto,
       following: entity.following,
       followers: entity.followers,

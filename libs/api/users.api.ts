@@ -21,8 +21,7 @@ interface ApiResponse<T> {
  * @return Promise<ApiResponse<User>>
  * */
 export const getUserChallengeAndRoutineAndFollowAndCompletion = async (
-  nickname: string,
-  id: string
+  nickname: string
 ): Promise<ApiResponse<UserChallengeAndRoutineAndFollowAndCompletionDto>> => {
   try {
     const response = await axiosInstance.get<
@@ -30,7 +29,6 @@ export const getUserChallengeAndRoutineAndFollowAndCompletion = async (
     >(`/api/users/${nickname}`, {
       params: {
         nickname,
-        id,
       },
     });
     return response.data;

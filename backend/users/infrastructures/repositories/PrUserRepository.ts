@@ -76,6 +76,11 @@ export class PrUserRepository implements IUserRepository {
           nickname,
         },
         select: {
+          id: true,
+          nickname: true,
+          username: true,
+          profileImg: true,
+          profileImgPath: true,
           challenges: {
             select: {
               id: true,
