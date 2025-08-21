@@ -1,11 +1,10 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import CustomInput from '@/app/_components/inputs/CustomInput';
 import { Button } from '@/app/_components/buttons/Button';
 import { LoginItem } from '@/public/consts/loginItem';
 import { useForm, Controller } from 'react-hook-form';
-import '@ant-design/v5-patch-for-react-19';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { SocialLogin } from '@/app/login/_components/SocialLogin';
@@ -49,7 +48,7 @@ export const LoginForm = () => {
   console.log('✅ 폼 유효성:', isValid);
 
   // 이미 로그인된 경우 메인 페이지로 리다이렉트
-  React.useEffect(() => {
+  useEffect(() => {
     console.log('🔄 useEffect 실행 - 사용자 정보 변경 감지:', userInfo);
     if (userInfo && !isUserInfoLoading) {
       console.log('🚀 이미 로그인됨, 메인 페이지로 리다이렉트');
