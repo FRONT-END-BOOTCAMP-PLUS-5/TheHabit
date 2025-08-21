@@ -1,15 +1,19 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import Input from '@/app/_components/inputs/Input';
+import React, { useState } from 'react';
+import CustomInput from '@/app/_components/inputs/CustomInput';
 import { Button } from '@/app/_components/buttons/Button';
 import { LoginItem } from '@/public/consts/loginItem';
 import { useForm, Controller } from 'react-hook-form';
+import '@ant-design/v5-patch-for-react-19';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { SocialLogin } from '@/app/login/_components/SocialLogin';
 import { signIn } from 'next-auth/react';
 import { useGetUserInfo } from '@/libs/hooks/user-hooks/useGetUserInfo';
+import Image from 'next/image';
+import eyeIcon from '@/public/icons/eye.svg';
+import eyeOffIcon from '@/public/icons/eye_off.svg';
 
 interface ILoginForm {
   email: string;
@@ -21,6 +25,7 @@ export const LoginForm = () => {
   const { userInfo, isLoading: isUserInfoLoading } = useGetUserInfo();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [showPassword, setShowPassword] = useState(false);
 
   console.log('🔍 LoginForm 렌더링 - 현재 사용자 정보:', userInfo);
 
@@ -44,7 +49,7 @@ export const LoginForm = () => {
   console.log('✅ 폼 유효성:', isValid);
 
   // 이미 로그인된 경우 메인 페이지로 리다이렉트
-  useEffect(() => {
+  React.useEffect(() => {
     console.log('🔄 useEffect 실행 - 사용자 정보 변경 감지:', userInfo);
     if (userInfo && !isUserInfoLoading) {
       console.log('🚀 이미 로그인됨, 메인 페이지로 리다이렉트');
@@ -101,6 +106,10 @@ export const LoginForm = () => {
     console.log('📝 사용자에게 오류 메시지 표시');
   };
 
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
+
   console.log('🎨 LoginForm 렌더링 완료 - isLoading:', isLoading, 'error:', error);
 
   return (
@@ -122,8 +131,53 @@ export const LoginForm = () => {
                 }}
                 render={({ field, fieldState }) => {
                   console.log(`🎯 ${item.name} 필드 상태:`, fieldState);
+
+                  // 비밀번호 필드인 경우 눈 아이콘과 함께 렌더링
+                  if (item.name === 'password') {
+                    return (
+                      <div className='flex flex-col gap-2'>
+                        {item.label && (
+                          <label className='w-full p-1 text-secondary'>{item.label}</label>
+                        )}
+                        <div className='relative'>
+                          <input
+                            {...field}
+                            type={showPassword ? 'text' : 'password'}
+                            placeholder={item.placeholder}
+                            className='w-full h-16 login-input pr-12 px-3 py-2 text-secondary placeholder:text-secondary-grey border-2 border-primary-grey rounded-md focus:border-primary focus:outline-none'
+                          />
+                          <button
+                            type='button'
+                            onClick={togglePasswordVisibility}
+                            className='absolute right-3 top-1/2 transform -translate-y-1/2 text-secondary-grey hover:text-secondary cursor-pointer'
+                            aria-label={showPassword ? '비밀번호 숨기기' : '비밀번호 보기'}
+                          >
+                            {showPassword ? (
+                              <Image
+                                src={eyeOffIcon}
+                                alt='비밀번호 숨기기'
+                                width='20'
+                                height='20'
+                                className='text-secondary-grey'
+                              />
+                            ) : (
+                              <Image
+                                src={eyeIcon}
+                                alt='비밀번호 보기'
+                                width='20'
+                                height='20'
+                                className='text-secondary-grey'
+                              />
+                            )}
+                          </button>
+                        </div>
+                      </div>
+                    );
+                  }
+
+                  // 일반 필드는 기존대로 렌더링
                   return (
-                    <Input
+                    <CustomInput
                       {...field}
                       type={item.type}
                       placeholder={item.placeholder}
