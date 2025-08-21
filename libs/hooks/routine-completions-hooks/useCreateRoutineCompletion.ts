@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { createRoutineCompletion } from '@/libs/api/routine-completions.api';
 import { RoutineCompletionDto } from '@/backend/routine-completions/applications/dtos/RoutineCompletionDto';
+import { createRoutineCompletion } from '@/libs/api/routine-completions.api';
 
 interface CreateRoutineCompletionHookParams {
   nickname: string;

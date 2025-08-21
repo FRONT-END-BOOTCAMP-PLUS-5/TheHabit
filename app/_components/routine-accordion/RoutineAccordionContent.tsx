@@ -82,12 +82,13 @@ const RoutineAccordionContentInner = ({
       return;
     }
 
-    createCompletionMutation.mutate({
-      nickname: userInfo.nickname,
-      routineId: selectedRoutine.id,  
-      content: reviewText,
-      photoFile,
-    },
+    createCompletionMutation.mutate(
+      {
+        nickname: userInfo.nickname,
+        routineId: selectedRoutine.id,
+        content: reviewText,
+        photoFile,
+      },
       {
         onSuccess: () => {
           closeModal();
