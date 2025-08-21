@@ -17,7 +17,7 @@ export const CheckBoxItem: ICheckBoxItem[] = [
   },
   {
     id: 3,
-    label: '마케팅 활용 동의를 체크 해주세요',
+    label: '(선택)마케팅 활용 동의를 체크 해주세요',
     required: false,
   },
 ];
