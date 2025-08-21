@@ -4,14 +4,14 @@ import { Button } from '@/app/_components/buttons/Button';
 import { useUploadProfile } from '@/libs/hooks/signup/useUploadProfile';
 import { ProfileImage } from '@/app/_components/profile-images/ProfileImage';
 import Image from 'next/image';
-import { NameComponent } from '@/app/user/profile/edit/components/Name';
-import { NicknameComponent } from '@/app/user/profile/edit/components/Nickname';
+import { NameComponent } from '@/app/user/profile/edit/_components/Name';
+import { NicknameComponent } from '@/app/user/profile/edit/_components/Nickname';
 import { updateUserProfile, usersApi } from '@/libs/api/users.api';
 import { useRouter } from 'next/navigation';
-import { BackComponent } from '@/app/user/profile/edit/components/Back';
+import { BackComponent } from '@/app/user/profile/edit/_components/Back';
 import { CompletionComponent } from '@/app/user/profile/components/Completion';
 import { useGetUserInfo } from '@/libs/hooks/user-hooks/useGetUserInfo';
-import LogOut from '@/app/user/profile/edit/components/LogOut';
+import LogOut from '@/app/user/profile/edit/_components/LogOut';
 
 const UserProfileEditPage = () => {
   const router = useRouter();
