@@ -2,7 +2,7 @@ import prisma from '@/public/utils/prismaClient';
 import { IUserRepository } from '@/backend/users/domains/repositories/IUserRepository';
 import { User } from '@/backend/users/domains/entities/UserEntity';
 import { DeleteObjectCommand, PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
-import { RoutineCompletion } from '@/backend/routine-completions/domains/entities/routine-completion/routineCompletion';
+import { RoutineCompletion } from '@/backend/routine-completions/domains/entities/routineCompletion';
 import { v4 as uuidv4 } from 'uuid';
 import { UserReviewEntity } from '@/backend/users/domains/entities/UserReviewEntity';
 
@@ -67,7 +67,6 @@ export class PrUserRepository implements IUserRepository {
       await this.s3.send(command);
 
       const signedUrl: string = `https://${process.env.AMPLIFY_BUCKET}.s3.${process.env.AWS_REGION}.amazonaws.com/${key}`;
-
 
       return [signedUrl, key];
     } catch (error) {
@@ -287,7 +286,6 @@ export class PrUserRepository implements IUserRepository {
     }
   }
 
-
   async findById(id: string): Promise<User | null> {
     try {
       const user = await prisma.user.findUnique({
@@ -305,7 +303,6 @@ export class PrUserRepository implements IUserRepository {
 
   async update(nickname: string, user: Partial<User>): Promise<User | null> {
     try {
-
       if (user.nickname && user.nickname !== nickname) {
         throw new Error('닉네임은 변경할 수 없습니다.');
       }

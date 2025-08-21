@@ -47,24 +47,43 @@ const CompleteRoutineForm: React.FC<CompleteRoutineFormProps> = ({
   };
 
   const onSubmitHandler = async (formData: CompletionFormData) => {
-    createRoutineCompletionMutation.mutate(
-      {
-        nickname,
-        routineId,
-        content: formData.content.trim(),
-        photoFile: selectedFile || undefined,
-      },
-      {
+    if (selectedFile) {
+      const data = new FormData();
+      data.append('nickname', nickname);
+      data.append('routineId', routineId.toString());
+      data.append('review', formData.content.trim());
+      data.append('content', formData.content.trim());
+      data.append('file', selectedFile);
+
+      createRoutineCompletionMutation.mutate(data, {
         onSuccess: () => {
           closeModal();
           onSuccess?.();
         },
         onError: (error) => {
           console.error('루틴 완료 기록 실패:', error);
-          alert('루틴 완료 기록에 실패했습니다. 다시 시도해주세요.');
         }
-      }
-    );
+      });
+    } else {
+      createRoutineCompletionMutation.mutate(
+        {
+          nickname,
+          routineId,
+          review: formData.content.trim(),
+          content: formData.content.trim(),
+          proofImgUrl: null,
+        },
+        {
+          onSuccess: () => {
+            closeModal();
+            onSuccess?.();
+          },
+          onError: (error) => {
+            console.error('루틴 완료 기록 실패:', error);
+          }
+        }
+      );
+    }
   };
 
   return (

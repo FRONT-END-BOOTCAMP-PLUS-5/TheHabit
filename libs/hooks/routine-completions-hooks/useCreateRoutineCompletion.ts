@@ -1,13 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { RoutineCompletionDto } from '@/backend/routine-completions/applications/dtos/RoutineCompletionDto';
+import { RoutineCompletionDto, CreateRoutineCompletionRequestDto } from '@/backend/routine-completions/applications/dtos/RoutineCompletionDto';
 import { createRoutineCompletion } from '@/libs/api/routine-completions.api';
-
-interface CreateRoutineCompletionHookParams {
-  nickname: string;
-  routineId: number;
-  content: string;
-  photoFile?: File;
-}
 
 /**
  * 루틴 완료를 생성하는 훅
@@ -16,16 +9,10 @@ interface CreateRoutineCompletionHookParams {
 export const useCreateRoutineCompletion = () => {
   const queryClient = useQueryClient();
 
-  return useMutation<RoutineCompletionDto, Error, CreateRoutineCompletionHookParams>({
-    mutationFn: async ({
-      nickname,
-      routineId,
-      content,
-      photoFile,
-    }: CreateRoutineCompletionHookParams) => {
-      return await createRoutineCompletion(nickname, routineId, content, photoFile);
-    },
-    onSuccess: data => {
+  return useMutation({
+    mutationFn: (data: FormData | CreateRoutineCompletionRequestDto) => 
+      createRoutineCompletion(data),
+    onSuccess: (data) => {
       // 루틴 완료 생성 성공 시 관련 캐시 무효화
       queryClient.invalidateQueries({ queryKey: ['routine-completions'] });
       queryClient.invalidateQueries({

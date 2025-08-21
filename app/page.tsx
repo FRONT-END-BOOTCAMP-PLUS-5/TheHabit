@@ -1,5 +1,5 @@
-import OnBoardingPage from '@/app/(onboarding)/page';
 import Image from 'next/image';
+import OnBoardingPage from '@/app/(onboarding)/page';
 
 export default function Home() {
   return (
