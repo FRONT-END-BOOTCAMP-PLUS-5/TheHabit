@@ -24,3 +24,15 @@ export const getKoreanDateFromDate = (selectedDate: Date): string => {
 
   return `${year}년 ${month}월 ${date}일 ${dayName}요일`;
 };
+
+
+// 날짜 반환 함수
+export const getDateString = (dateValue: Date | string): string => {
+    if (!dateValue) return '';
+    try {
+      return new Date(dateValue).toISOString().split('T')[0];
+    } catch (error) {
+      console.error('날짜 변환 오류:', error, dateValue);
+      return '';
+    }
+  };

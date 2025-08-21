@@ -21,7 +21,7 @@ export const FeedBackDetail = () => {
     };
   });
 
-  const routineCompletion = data?.routineCompletion.map(routineCompletion => {
+  const routineCompletion = data?.routineCompletions.map(routineCompletion => {
     return {
       ...routineCompletion,
       routineId: routineCompletion.routineId,

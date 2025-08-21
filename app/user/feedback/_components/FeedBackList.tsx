@@ -17,9 +17,7 @@ const FEEDBACK_CATEGORIES = [
 export const FeedBackList = () => {
   // const { userInfo } = useGetUserInfo();
   // const nickname = userInfo?.nickname;
-  const { data: dashBoardData } = useGetDashboardByNickname('aiden0413');
-  console.log('dashBoardData', dashBoardData);
-
+  const { data: dashBoardData } = useGetDashboardByNickname('sign2test');
   const [selectedCategoryName, setSelectedCategoryName] = useState<string>('통계');
 
   const handleModal = (name: string) => {
@@ -55,7 +53,7 @@ export const FeedBackList = () => {
           {dashBoardData && <FeedBackStatistics dashBoardData={dashBoardData} />}
           <FeedBackDescription />
           {dashBoardData && <FeedBackCategoryProgress dashBoardData={dashBoardData} />}
-          {/* <FeedBackBarChart challenges={dashBoardData?.challenge || []} /> */}
+          {dashBoardData && <FeedBackBarChart dashBoardData={dashBoardData} />}
         </div>
       ) : (
         <FeedBackDetail />

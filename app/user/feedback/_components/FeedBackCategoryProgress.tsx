@@ -1,9 +1,8 @@
-import { Dashboard } from '@/backend/dashboards/domain/entity/Dashboard';
+import { DashboardDto } from '@/backend/dashboards/application/dtos/DashboardDto';
 import { Progress } from 'antd';
-import React, { useState } from 'react';
 
-export const FeedBackCategoryProgress = ({ dashBoardData }: { dashBoardData: Dashboard }) => {
-  const { challenge, routines, routineCount, routineCompletion } = dashBoardData;
+export const FeedBackCategoryProgress = ({ dashBoardData }: { dashBoardData: DashboardDto }) => {
+  const { challenge } = dashBoardData;
 
   const data = challenge.map(challenge => {
     return {
@@ -13,8 +12,6 @@ export const FeedBackCategoryProgress = ({ dashBoardData }: { dashBoardData: Das
       active: challenge.active,
     };
   });
-
-  console.log(data);
 
   //여기도 루틴이 필요함 루틴 완료 확인 -> 이미지로 확인 해야 함
   const progressBarLabel = [
@@ -63,8 +60,6 @@ export const FeedBackCategoryProgress = ({ dashBoardData }: { dashBoardData: Das
     };
   });
 
-  console.log('categoryData', categoryData);
-
   return (
     <section className='w-full flex flex-col gap-3 mt-10'>
       <h3 className='text-2xl font-bold'>카테고리별 통계</h3>
@@ -77,10 +72,10 @@ export const FeedBackCategoryProgress = ({ dashBoardData }: { dashBoardData: Das
 
         return (
           <div key={category.id} className='w-full flex gap-2 items-center'>
-            <p className={`text-md w-2 ${category.textClass} font-bold`}>-</p>
+            <p className={`text-lg w-2 ${category.textClass} font-bold`}>-</p>
             <div className='flex flex-col w-20'>
-              <p className='text-sm whitespace-nowrap font-bold'>{category.name}</p>
-              <p className='text-xs text-gray-500'>{category.challengeCount}개 챌린지</p>
+              <p className='text-lg whitespace-nowrap font-bold'>{category.name}</p>
+              <p className='text-sm text-gray-500'>{category.challengeCount}개 챌린지</p>
             </div>
             <div className='flex-1 flex items-center gap-2'>
               <Progress
@@ -90,7 +85,7 @@ export const FeedBackCategoryProgress = ({ dashBoardData }: { dashBoardData: Das
                 strokeColor={category.color}
                 size='small'
               />
-              <p className='text-sm text-gray-600 w-12'>{progressPercent}%</p>
+              <p className='text-md text-gray-600 w-12'>{progressPercent}%</p>
             </div>
           </div>
         );
