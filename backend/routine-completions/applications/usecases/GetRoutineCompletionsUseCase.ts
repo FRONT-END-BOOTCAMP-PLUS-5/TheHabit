@@ -4,6 +4,22 @@ import { RoutineCompletionDto } from '@/backend/routine-completions/applications
 export class GetRoutineCompletionsUseCase {
   constructor(private readonly routineCompletionsRepository: IRoutineCompletionsRepository) {}
 
+  async getById(completionId: number): Promise<RoutineCompletionDto | null> {
+    const completion = await this.routineCompletionsRepository.findById(completionId);
+
+    if (!completion) {
+      return null;
+    }
+
+    return {
+      id: completion.id,
+      routineId: completion.routineId,
+      createdAt: completion.createdAt.toISOString(),
+      proofImgUrl: completion.proofImgUrl,
+      content: completion.content,
+    };
+  }
+
   async getByRoutineId(routineId: number): Promise<RoutineCompletionDto[]> {
     const completions = await this.routineCompletionsRepository.findByRoutineId(routineId);
 
@@ -12,34 +28,20 @@ export class GetRoutineCompletionsUseCase {
       routineId: completion.routineId,
       createdAt: completion.createdAt.toISOString(),
       proofImgUrl: completion.proofImgUrl,
+      content: completion.content,
     }));
   }
 
-  async getByUserId(userId: string): Promise<RoutineCompletionDto[]> {
-    const completions = await this.routineCompletionsRepository.findByUserId(userId);
+  async getByNickname(nickname: string): Promise<RoutineCompletionDto[]> {
+    // Repository에서 nickname으로 직접 조회
+    const completions = await this.routineCompletionsRepository.findByNickname(nickname);
 
     return completions.map(completion => ({
       id: completion.id,
       routineId: completion.routineId,
       createdAt: completion.createdAt.toISOString(),
       proofImgUrl: completion.proofImgUrl,
-    }));
-  }
-
-  async getByUserAndRoutine(
-    userId: string,
-    routineId: number
-  ): Promise<RoutineCompletionDto[]> {
-    const completions = await this.routineCompletionsRepository.findByUserIdAndRoutineId(
-      userId,
-      routineId
-    );
-
-    return completions.map(completion => ({
-      id: completion.id,
-      routineId: completion.routineId,
-      createdAt: completion.createdAt.toISOString(),
-      proofImgUrl: completion.proofImgUrl,
+      content: completion.content,
     }));
   }
 
@@ -57,6 +59,7 @@ export class GetRoutineCompletionsUseCase {
       routineId: completion.routineId,
       createdAt: completion.createdAt.toISOString(),
       proofImgUrl: completion.proofImgUrl,
+      content: completion.content,
     }));
   }
 }

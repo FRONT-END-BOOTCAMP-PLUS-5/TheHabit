@@ -4,30 +4,42 @@ import { GetRoutineCompletionsUseCase } from '@/backend/routine-completions/appl
 import { GetRoutinesUseCase } from '@/backend/routines/applications/usecases/GetRoutinesUseCase';
 import { PrRoutineCompletionsRepository } from '@/backend/routine-completions/infrastructures/repositories/PrRoutineCompletionsRepository';
 import { PrRoutinesRepository } from '@/backend/routines/infrastructures/repositories/PrRoutinesRepository';
-import { ApiResponse } from '@/backend/shared/types/ApiResponse';
-import { RoutineCompletionDto } from '@/backend/routine-completions/applications/dtos/RoutineCompletionDto';
 import { s3Service } from '@/backend/shared/services/s3.service';
+import { RoutineCompletionDto } from '@/backend/routine-completions/applications/dtos/RoutineCompletionDto';
+import { ApiResponse } from '@/backend/shared/types/ApiResponse';
 
-const routineCompletionsRepository = new PrRoutineCompletionsRepository();
-const routinesRepository = new PrRoutinesRepository();
+const createAddRoutineCompletionUseCase = () => {
+  const repository = new PrRoutineCompletionsRepository();
+  return new AddRoutineCompletionUseCase(repository);
+};
 
-// 루틴 완료 생성 (POST) - 이미지 업로드 포함
+const createGetRoutineCompletionsUseCase = () => {
+  const repository = new PrRoutineCompletionsRepository();
+  return new GetRoutineCompletionsUseCase(repository);
+};
+
+const createGetRoutinesUseCase = () => {
+  const repository = new PrRoutinesRepository();
+  return new GetRoutinesUseCase(repository);
+};
+
+// 루틴 완료 생성 (POST)
 export async function POST(request: NextRequest): Promise<NextResponse> {
   try {
     console.log('=== POST /api/routine-completions 요청 시작 ===');
 
     // FormData 파싱
     const formData = await request.formData();
-    const file = formData.get('file');
-    const routineIdValue = formData.get('routineId');
-    const reviewValue = formData.get('review');
-    const nicknameValue = formData.get('nickname');
+    const file = formData.get('file') as File | null;
+    const routineIdValue = formData.get('routineId') as string;
+    const contentValue = formData.get('content') as string;
+    const nicknameValue = formData.get('nickname') as string;
 
-    console.log('요청 데이터:', { 
+    console.log('요청 데이터:', {
       hasFile: !!file,
       routineId: routineIdValue,
-      review: reviewValue,
-      nickname: nicknameValue
+      content: contentValue,
+      nickname: nicknameValue,
     });
 
     // 필수 필드 검증
@@ -35,8 +47,8 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       const errorResponse: ApiResponse<null> = {
         success: false,
         error: {
-          code: 'INVALID_NICKNAME',
-          message: '닉네임이 제공되지 않았습니다.'
+          code: 'MISSING_NICKNAME',
+          message: '닉네임이 필요합니다.'
         }
       };
       return NextResponse.json(errorResponse, { status: 400 });
@@ -53,12 +65,12 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       return NextResponse.json(errorResponse, { status: 400 });
     }
 
-    if (!reviewValue || typeof reviewValue !== 'string' || reviewValue.trim() === '') {
+    if (!contentValue || typeof contentValue !== 'string' || contentValue.trim() === '') {
       const errorResponse: ApiResponse<null> = {
         success: false,
         error: {
-          code: 'MISSING_REVIEW',
-          message: '리뷰 내용이 필요합니다.'
+          code: 'MISSING_CONTENT',
+          message: '콘텐츠 내용이 필요합니다.'
         }
       };
       return NextResponse.json(errorResponse, { status: 400 });
@@ -98,15 +110,13 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     }
 
     // 루틴 완료 데이터 생성
-    const addRoutineCompletionUseCase = new AddRoutineCompletionUseCase(
-      routineCompletionsRepository
-    );
+    const addRoutineCompletionUseCase = createAddRoutineCompletionUseCase();
 
-    const result = await addRoutineCompletionUseCase.executeByNickname({
+    const result = await addRoutineCompletionUseCase.execute({
       nickname: nicknameValue.trim(),
       routineId: routineIdNumber,
+      content: contentValue.trim(),
       proofImgUrl,
-      content: reviewValue.trim(),
     });
 
     console.log('루틴 완료 생성 성공:', result);
@@ -117,13 +127,12 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       message: '루틴이 성공적으로 완료되었습니다.'
     };
     return NextResponse.json(successResponse, { status: 201 });
-
   } catch (error) {
     console.error('루틴 완료 생성 오류:', error);
     const errorResponse: ApiResponse<null> = {
       success: false,
       error: {
-        code: 'COMPLETION_FAILED',
+        code: 'CREATION_FAILED',
         message: '루틴 완료 생성에 실패했습니다.'
       }
     };
@@ -135,27 +144,27 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 export async function GET(request: NextRequest): Promise<NextResponse> {
   try {
     const { searchParams } = new URL(request.url);
-    const nickname = searchParams.get('nickname');
     const challengeId = searchParams.get('challengeId');
+    const nickname = searchParams.get('nickname');
 
-    if (!nickname || nickname.trim() === '') {
+    // 필수 파라미터 검증
+    if (!nickname) {
       const errorResponse: ApiResponse<null> = {
         success: false,
         error: {
-          code: 'INVALID_NICKNAME',
-          message: '닉네임이 제공되지 않았습니다.'
+          code: 'MISSING_NICKNAME',
+          message: '닉네임이 필요합니다.'
         }
       };
       return NextResponse.json(errorResponse, { status: 400 });
     }
 
-    // 필수 파라미터 검증
     if (!challengeId) {
       const errorResponse: ApiResponse<null> = {
         success: false,
         error: {
-          code: 'INVALID_PARAMS',
-          message: '필수 파라미터가 누락되었습니다: challengeId'
+          code: 'MISSING_CHALLENGE_ID',
+          message: '챌린지 ID가 필요합니다.'
         }
       };
       return NextResponse.json(errorResponse, { status: 400 });
@@ -173,17 +182,15 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       return NextResponse.json(errorResponse, { status: 400 });
     }
 
-    const getRoutinesUseCase = new GetRoutinesUseCase(routinesRepository);
-    const getRoutineCompletionsUseCase = new GetRoutineCompletionsUseCase(
-      routineCompletionsRepository
-    );
+    const getRoutinesUseCase = createGetRoutinesUseCase();
+    const getRoutineCompletionsUseCase = createGetRoutineCompletionsUseCase();
 
     // 1. 해당 챌린지의 루틴 목록 조회
     const routines = await getRoutinesUseCase.getByChallengeId(challengeIdNumber);
 
     // 2. 각 루틴에 대한 사용자의 완료 상태 조회 (병렬 처리로 성능 개선)
     const completionPromises = routines.map(routine =>
-      getRoutineCompletionsUseCase.getByNicknameAndRoutine(nickname.trim(), routine.id)
+      getRoutineCompletionsUseCase.getByNicknameAndRoutine(nickname, routine.id)
     );
 
     const completionResults = await Promise.all(completionPromises);

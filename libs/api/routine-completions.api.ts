@@ -1,18 +1,34 @@
 import { axiosInstance } from '@/libs/axios/axiosInstance';
 import { ApiResponse } from '@/backend/shared/types/ApiResponse';
 import {
-  CreateRoutineCompletionRequestDto,
   RoutineCompletionDto,
 } from '@/backend/routine-completions/applications/dtos/RoutineCompletionDto';
 
 // 루틴 완료 생성
 export const createRoutineCompletion = async (
-  data: CreateRoutineCompletionRequestDto
+  nickname: string,
+  routineId: number,
+  content: string,
+  photoFile?: File
 ): Promise<RoutineCompletionDto> => {
   try {
+    const formData = new FormData();
+    formData.append('nickname', nickname);
+    formData.append('routineId', routineId.toString());
+    formData.append('content', content);
+    
+    if (photoFile) {
+      formData.append('file', photoFile);
+    }
+
     const response = await axiosInstance.post<ApiResponse<RoutineCompletionDto>>(
       '/api/routine-completions',
-      data
+      formData,
+      {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      }
     );
 
     if (!response.data.data) {
