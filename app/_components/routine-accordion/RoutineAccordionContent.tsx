@@ -49,11 +49,7 @@ const RoutineAccordionContentInner = ({
     setSelectedRoutine(null);
   };
 
-  // 루틴 완료 상태 확인 함수들
-  const isRoutineCompleted = (routineId: number) => {
-    return completions.some((completion: RoutineCompletionDto) => completion.routineId === routineId);
-  };
-
+  // 루틴 완료 상태 확인 함수
   const getRoutineCompletion = (routineId: number) => {
     return completions.find((completion: RoutineCompletionDto) => completion.routineId === routineId);
   };
@@ -142,8 +138,8 @@ const RoutineAccordionContentInner = ({
 
         <div className='space-y-3'>
           {routines.map((routine: ReadRoutineResponseDto) => {
-            const isCompleted = isRoutineCompleted(routine.id);
             const completion = getRoutineCompletion(routine.id);
+            const isCompleted = !!completion;
 
             return (
               <RoutineItem
