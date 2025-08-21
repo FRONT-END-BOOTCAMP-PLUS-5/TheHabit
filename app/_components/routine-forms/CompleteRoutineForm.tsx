@@ -48,14 +48,16 @@ const CompleteRoutineForm: React.FC<CompleteRoutineFormProps> = ({
   };
 
   const onSubmitHandler = async (formData: CompletionFormData) => {
-    createRoutineCompletionMutation.mutate(
-      {
-        nickname,
-        routineId,
-        content: formData.content.trim(),
-        proofImgUrl: null, // 파일 업로드는 별도 처리 필요
-      },
-      {
+    // 파일이 있으면 FormData로, 없으면 JSON으로 전송
+    if (selectedFile) {
+      const data = new FormData();
+      data.append('nickname', nickname);
+      data.append('routineId', routineId.toString());
+      data.append('review', formData.content.trim());
+      data.append('content', formData.content.trim());
+      data.append('file', selectedFile);
+
+      createRoutineCompletionMutation.mutate(data, {
         onSuccess: () => {
           closeModal();
           onSuccess?.();
@@ -63,8 +65,27 @@ const CompleteRoutineForm: React.FC<CompleteRoutineFormProps> = ({
         onError: (error) => {
           console.error('루틴 완료 기록 실패:', error);
         }
-      }
-    );
+      });
+    } else {
+      createRoutineCompletionMutation.mutate(
+        {
+          nickname,
+          routineId,
+          review: formData.content.trim(),
+          content: formData.content.trim(),
+          proofImgUrl: null,
+        },
+        {
+          onSuccess: () => {
+            closeModal();
+            onSuccess?.();
+          },
+          onError: (error) => {
+            console.error('루틴 완료 기록 실패:', error);
+          }
+        }
+      );
+    }
   };
 
   return (
