@@ -1,5 +1,5 @@
 import { IRoutineCompletionsRepository } from '@/backend/routine-completions/domains/repositories/IRoutineCompletionsRepository';
-import { RoutineCompletionDto } from '@/backend/routine-completions/applications/dtos/RoutineCompletionDto';
+import { RoutineCompletionDto, RoutineCompletionDtoMapper } from '@/backend/routine-completions/applications/dtos/RoutineCompletionDto';
 
 export class GetRoutineCompletionsUseCase {
   constructor(private readonly routineCompletionsRepository: IRoutineCompletionsRepository) {}
@@ -11,38 +11,17 @@ export class GetRoutineCompletionsUseCase {
       return null;
     }
 
-    return {
-      id: completion.id,
-      routineId: completion.routineId,
-      createdAt: completion.createdAt.toISOString(),
-      proofImgUrl: completion.proofImgUrl,
-      content: completion.content,
-    };
+    return RoutineCompletionDtoMapper.fromEntity(completion);
   }
 
   async getByRoutineId(routineId: number): Promise<RoutineCompletionDto[]> {
     const completions = await this.routineCompletionsRepository.findByRoutineId(routineId);
-
-    return completions.map(completion => ({
-      id: completion.id,
-      routineId: completion.routineId,
-      createdAt: completion.createdAt.toISOString(),
-      proofImgUrl: completion.proofImgUrl,
-      content: completion.content,
-    }));
+    return RoutineCompletionDtoMapper.fromEntities(completions);
   }
 
   async getByNickname(nickname: string): Promise<RoutineCompletionDto[]> {
-    // Repository에서 nickname으로 직접 조회
     const completions = await this.routineCompletionsRepository.findByNickname(nickname);
-
-    return completions.map(completion => ({
-      id: completion.id,
-      routineId: completion.routineId,
-      createdAt: completion.createdAt.toISOString(),
-      proofImgUrl: completion.proofImgUrl,
-      content: completion.content,
-    }));
+    return RoutineCompletionDtoMapper.fromEntities(completions);
   }
 
   async getByNicknameAndRoutine(
@@ -53,13 +32,6 @@ export class GetRoutineCompletionsUseCase {
       nickname,
       routineId
     );
-
-    return completions.map(completion => ({
-      id: completion.id,
-      routineId: completion.routineId,
-      createdAt: completion.createdAt.toISOString(),
-      proofImgUrl: completion.proofImgUrl,
-      content: completion.content,
-    }));
+    return RoutineCompletionDtoMapper.fromEntities(completions);
   }
 }
