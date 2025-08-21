@@ -5,9 +5,11 @@ import Link from 'next/link';
 import React, { useState } from 'react';
 import { tabItem } from '@/public/consts/tabItem';
 import homeIcon from '@/public/icons/home.svg';
+import { useGetUserInfo } from '@/libs/hooks/user-hooks/useGetUserInfo';
 
 export const TabNavigation = () => {
   const [isHover, setIsHover] = useState<string>('');
+  const { userInfo } = useGetUserInfo();
 
   const isMouseHover = (name: string) => {
     setIsHover(name);
@@ -34,7 +36,7 @@ export const TabNavigation = () => {
           </li>
         ))}
         <div className='w-15 h-15 bg-[#93D50B] absolute bottom-1/2 cursor-pointer hover:scale-110 transition-all duration-300 hover:opacity-90 flex items-center justify-center rounded-full'>
-          <Link href="/">
+          <Link href={userInfo?.nickname ? `/user/dashboard/${userInfo.nickname}` : '/user/dashboard'}>
             <Image
               src={homeIcon}
               alt='홈으로 이동'
