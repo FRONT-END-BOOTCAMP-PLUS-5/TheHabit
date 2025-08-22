@@ -22,13 +22,10 @@ export const LoginForm = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  console.log('🔍 LoginForm 렌더링 - 현재 사용자 정보:', userInfo);
-
   const {
     control,
     handleSubmit,
     formState: { errors, isValid },
-    watch,
   } = useForm<ILoginForm>({
     mode: 'onChange',
     defaultValues: {
@@ -37,26 +34,19 @@ export const LoginForm = () => {
     },
   });
 
-  // 폼 값 실시간 감시
-  const watchedValues = watch();
-  console.log('👀 폼 값 실시간 감시:', watchedValues);
-  console.log('❌ 폼 에러 상태:', errors);
-  console.log('✅ 폼 유효성:', isValid);
 
   // 이미 로그인된 경우 메인 페이지로 리다이렉트
   useEffect(() => {
+
+    const nickname = userInfo?.nickname;
     console.log('🔄 useEffect 실행 - 사용자 정보 변경 감지:', userInfo);
     if (userInfo && !isUserInfoLoading) {
       console.log('🚀 이미 로그인됨, 메인 페이지로 리다이렉트');
-      router.push('/');
+      router.push(`/user/dashboard/${nickname}`);
     }
   }, [userInfo, isUserInfoLoading, router]);
 
   const onSubmit = async (data: ILoginForm) => {
-    console.log('🚀 로그인 시도 시작');
-    console.log('📝 폼 데이터:', data);
-    console.log('🔍 폼 에러:', errors);
-    console.log('✅ 폼 유효성:', isValid);
     setError(null);
     setIsLoading(true);
 
@@ -148,7 +138,7 @@ export const LoginForm = () => {
         <Link className='text-md text-right' href='/'>
           비밀번호 찾기
         </Link>
-        <Button htmlType='submit' className='login-button' disabled={isLoading}>
+        <Button buttonType='primary' className='login-button' disabled={isLoading}>
           {isLoading ? '로그인 중...' : '로그인'}
         </Button>
       </form>
