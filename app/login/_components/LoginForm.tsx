@@ -25,7 +25,7 @@ export const LoginForm = () => {
   const {
     control,
     handleSubmit,
-    formState: { errors, isValid },
+    formState: { errors },
   } = useForm<ILoginForm>({
     mode: 'onChange',
     defaultValues: {
