@@ -58,6 +58,7 @@ export const LoginForm = () => {
         redirect: false, // 자동 리다이렉트 방지
       });
 
+      
       console.log('📊 NextAuth signIn 결과:', result);
 
       if (result?.error) {
