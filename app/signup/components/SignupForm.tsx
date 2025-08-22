@@ -119,7 +119,7 @@ export const SignUpForm = () => {
           </div>
         ))}
         <CheckBoxList onChange={handleCheckboxChange} />
-        <Button className='login-button' buttonType='primary' disabled={loading || !isAllRequiredChecked()}>
+        <Button className='signup-button' buttonType='primary' disabled={loading || !isAllRequiredChecked()}>
           {loading ? '회원가입 중...' : '회원가입'}
         </Button>
         {error && <p className='text-xs text-red-500'>{error}</p>}
