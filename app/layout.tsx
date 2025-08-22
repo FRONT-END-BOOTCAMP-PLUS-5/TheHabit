@@ -1,11 +1,11 @@
 import type { Metadata } from 'next';
 import './globals.css';
-import { QueryProvider } from './_components/query-providers/QueryProvider';
-import ModalProvider from './_components/providers/ModalProvider';
-import NextAuthSessionProvider from './_components/providers/NextAuthSessionProvider';
-import ToastProvider from './_components/providers/ToastProvider';
-import Header from './_components/layouts/Header';
-import { pretendard } from '../public/fonts/font';
+import { QueryProvider } from '@/app/_components/query-providers/QueryProvider';
+import ModalProvider from '@/app/_components/providers/ModalProvider';
+import NextAuthSessionProvider from '@/app/_components/providers/NextAuthSessionProvider';
+import ToastProvider from '@/app/_components/providers/ToastProvider';
+import Header from '@/app/_components/layouts/Header';
+import { pretendard } from '@/public/fonts/font';
 
 export const metadata: Metadata = {
   title: 'TheHabit - 습관 관리 앱',
