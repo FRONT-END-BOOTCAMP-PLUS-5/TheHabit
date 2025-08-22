@@ -1,6 +1,6 @@
+import { IRoutineCompletionsRepository } from '@/backend/routine-completions/domains/repositories/IRoutineCompletionsRepository';
+import { RoutineCompletion } from '@/backend/routine-completions/domains/entities/routineCompletion';
 import prisma from '@/public/utils/prismaClient';
-import { IRoutineCompletionsRepository } from '../../domains/repositories/IRoutineCompletionsRepository';
-import { RoutineCompletion } from '../../domains/entities/routineCompletion';
 
 export class PrRoutineCompletionsRepository implements IRoutineCompletionsRepository {
   async create(

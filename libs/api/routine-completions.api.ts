@@ -81,25 +81,13 @@ export const updateRoutineCompletion = async (
   }
 };
 
-// ID로 루틴 완료 상세 조회
-export const getRoutineCompletionById = async (id: number): Promise<ApiResponse<RoutineCompletionDto>> => {
-  try {
-    const response = await axiosInstance.get<ApiResponse<RoutineCompletionDto>>(
-      `/api/routine-completions/${id}`
-    );
-
-    return response.data;
-  } catch (error) {
-    console.error('루틴 완료 상세 조회 실패:', error);
-    throw error;
-  }
-};
 
 // 루틴 완료 삭제
-export const deleteRoutineCompletion = async (id: number): Promise<ApiResponse<void>> => {
+export const deleteRoutineCompletion = async (completionId: number): Promise<void> => {
   try {
-    const response = await axiosInstance.delete<ApiResponse<void>>(`/api/routine-completions/${id}`);
-    return response.data;
+    await axiosInstance.delete<ApiResponse<void>>('/api/routine-completions', {
+      data: { completionId }
+    });
   } catch (error) {
     console.error('루틴 완료 삭제 실패:', error);
     throw error;
@@ -111,7 +99,6 @@ export const routineCompletionsApi = {
   create: createRoutineCompletion,
   getByChallenge: getRoutineCompletionsByChallenge,
   getByUser: getRoutineCompletionsByUser,
-  getById: getRoutineCompletionById,
   update: updateRoutineCompletion,
   delete: deleteRoutineCompletion,
 };
