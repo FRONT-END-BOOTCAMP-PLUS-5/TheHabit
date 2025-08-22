@@ -9,6 +9,8 @@ import { RoutineComponent } from '@/app/user/profile/components/Routine';
 import { UserChallengeAndRoutineAndFollowAndCompletionDto } from '@/backend/users/applications/dtos/UserChallengeAndRoutineAndFollowAndCompletion';
 import { ChallengeSelectComponent } from '@/app/user/profile/components/ChallengeSelect';
 import NoneProfile from '@/app/_components/none/NoneProfile';
+import { AvatarSkeleton, ButtonSkeleton, TextSkeleton } from '@/app/_components/skeleton/Skeleton';
+import { BackComponent } from '@/app/_components/back/Back';
 
 export const UserPage = ({
   userNickname,
@@ -31,13 +33,18 @@ export const UserPage = ({
   const [getSelectedChallengeId, setSelectedChallengeId] = useState<number | null>(null);
   const [getSelectedChallengeName, setSelectedChallengeName] = useState<string>('');
   const [getShow, setShow] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const selectWrapperRef = useRef<HTMLDivElement>(null);
 
   const { getUserAllData } = usersApi;
 
   const fetchData = async () => {
+    setIsLoading(true);
     const response = await getUserAllData(userNickname || '');
-    if (response?.data) setUserData({ ...response.data });
+    if (response?.data) {
+      setUserData({ ...response.data });
+      setIsLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -79,8 +86,11 @@ export const UserPage = ({
     <main>
       <section id='top' className='flex mt-10 justify-center items-center px-5'>
         <section id='top_wrapper' className='flex flex-col  w-[100%]'>
+          {sessionNickname != userNickname && <BackComponent />}
           <div id='user_wrapper' className='flex text-center items-end justify-between px-5'>
-            {getUserData?.profileImg ? (
+            {isLoading ? (
+              <AvatarSkeleton size={'large'} className='w-[120px] h-[120px]' />
+            ) : getUserData?.profileImg ? (
               <div className='w-[120px]'>
                 <ProfileImage
                   imageSrc={getUserData?.profileImg}
@@ -93,11 +103,25 @@ export const UserPage = ({
                 className={`w-[120] h-[120] rounded-full overflow-hidden border-primary border-2`}
               />
             )}
-            <div id='challenge' className='relative' ref={selectWrapperRef}>
-              <p className='font-bold text-[19px] text-left'>{getUserData?.username}</p>
-              <p className='font-semibold mb-5 text-[13px] text-[#CCC] text-left'>{`${getUserData?.nickname ? '(' + getUserData?.nickname + ')' : ''}`}</p>
+
+            <div
+              id='challenge'
+              className={`relative ${sessionNickname === userNickname ? '' : 'ml-2'}`}
+              ref={selectWrapperRef}
+            >
+              {isLoading ? (
+                <TextSkeleton lines={2} className='mb-[30px]' />
+              ) : (
+                <>
+                  <p className='font-bold text-[19px] text-left'>{getUserData?.username}</p>
+                  <p className='font-semibold mb-5 text-[13px] text-[#CCC] text-left'>{`${getUserData?.nickname ? '(' + getUserData?.nickname + ')' : ''}`}</p>
+                </>
+              )}
+
               <div className='cursor-pointer'>
-                {getUserData.challenges.length > 0 ? (
+                {isLoading ? (
+                  <TextSkeleton lines={2} className='w-[100px]' />
+                ) : getUserData.challenges.length > 0 ? (
                   <div
                     onClick={() => {
                       setShow(prev => !prev);
@@ -129,7 +153,9 @@ export const UserPage = ({
                 />
               )}
             </div>
-            {sessionNickname === userNickname ? (
+            {isLoading ? (
+              <TextSkeleton lines={2} className='w-[60px]' />
+            ) : sessionNickname === userNickname ? (
               <div
                 className='cursor-pointer mr-[20px]'
                 onClick={() => {
@@ -153,8 +179,9 @@ export const UserPage = ({
                 </span>
               </div>
             )}
-
-            {sessionNickname === userNickname ? (
+            {isLoading ? (
+              <TextSkeleton lines={2} className='w-[60px]' />
+            ) : sessionNickname === userNickname ? (
               <div
                 className='cursor-pointer'
                 onClick={() => {
@@ -183,17 +210,23 @@ export const UserPage = ({
             id='button_wrapper'
             className={`flex gap-10 mt-10 px-5 ${sessionNickname != userNickname ? 'justify-end' : 'justify-center'}`}
           >
-            <Button
-              className={
-                'w-[200px] z-20 bg-[#FFC70A] text-white px-4 py-2 rounded-full text-lg font-bold shadow-lg cursor-pointer hover:animate-float transition-all duration-300 hover:scale-110'
-              }
-              onClick={() => {
-                router.push('/user/dashboard');
-              }}
-            >
-              대시보드 보러가기
-            </Button>
-            {sessionNickname === userNickname ? (
+            {isLoading ? (
+              <ButtonSkeleton width={'w-[200px]'} className='h-[44px] rounded-full' />
+            ) : (
+              <Button
+                className={
+                  'w-[200px] z-20 bg-[#FFC70A] text-white px-4 py-2 rounded-full text-lg font-bold shadow-lg cursor-pointer hover:animate-float transition-all duration-300 hover:scale-110'
+                }
+                onClick={() => {
+                  router.push(`/user/dashboard/${userNickname}`);
+                }}
+              >
+                대시보드 보러가기
+              </Button>
+            )}
+            {isLoading ? (
+              <ButtonSkeleton width={'w-[200px]'} className='h-[44px] rounded-full' />
+            ) : sessionNickname === userNickname ? (
               <Button
                 className={
                   'w-[200px] z-20 bg-[#48a9a0] text-white px-4 py-2 rounded-full text-lg font-bold shadow-lg cursor-pointer hover:animate-float transition-all duration-300 hover:scale-110'
@@ -209,7 +242,7 @@ export const UserPage = ({
             )}
           </div>
           <div id='routine_wrapper' className='flex flex-col py-8 gap-1'>
-            <RoutineComponent getUserData={filteredUserData} />
+            <RoutineComponent getUserData={filteredUserData} isLoading={isLoading} />
           </div>
           <div id='achievement_wrapper'>
             <div></div>
@@ -222,6 +255,7 @@ export const UserPage = ({
           username={getUserData?.username || ''}
           nickname={userNickname || ''}
           userId={getUserData?.id || ''}
+          propLoading={isLoading}
         />
       </section>
     </main>

@@ -13,17 +13,21 @@ import { useModalStore } from '@/libs/stores/modalStore';
 import { CreateRoutineCompletionResponseDto } from '@/backend/routine-completions/applications/dtos/RoutineCompletionDto';
 import UserRoutineCompletion from '@/app/user/profile/components/UserRoutineCompletion';
 import NoneImg from '@/app/_components/none/NoneImg';
+import { ButtonSkeleton, Skeleton } from '@/app/_components/skeleton/Skeleton';
+import { COMPLETION_SKELETON } from '@/public/consts/completionSkeleton';
 
 export const CompletionComponent = ({
   profileImg,
   username,
   nickname,
   userId,
+  propLoading,
 }: {
   profileImg?: string | null;
   username: string;
   nickname: string;
   userId: string | null;
+  propLoading?: boolean;
 }) => {
   const [getSelectedCategory, setSelectedCategory] = useState<string>('All');
   const [getUserClicked, setUserClicked] = useState<boolean>(false);
@@ -79,9 +83,10 @@ export const CompletionComponent = ({
 
   if (isLoading && userId != 'edit') {
     contentToRender = (
-      // 임시 ㅋ
-      <div className='flex items-center justify-center h-[450px] text-gray-500'>
-        <p>데이터를 불러오는 중...</p>
+      <div className='grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 gap-1 overflow-y-scroll scroll-smooth max-h-[450px]'>
+        {COMPLETION_SKELETON.map((_, idx) => (
+          <Skeleton key={idx} width={'w-[144px]'} height={'h-[144px]'} />
+        ))}
       </div>
     );
   } else if (
@@ -133,7 +138,9 @@ export const CompletionComponent = ({
           const isSelected = getSelectedCategory === item.id;
           const selectedClass = isSelected ? CATEGORY_COLOR[item.id] : 'bg-white text-[#333]';
 
-          return (
+          return propLoading ? (
+            <ButtonSkeleton key={item.id} width={'w-[80px] rounded-full'} />
+          ) : (
             <Button
               key={item.id}
               className={`${BUTTON_CLASS} ${selectedClass}`}

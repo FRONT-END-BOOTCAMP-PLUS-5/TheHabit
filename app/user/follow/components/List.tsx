@@ -44,8 +44,8 @@ export const ListComponent = ({ data, onToggleFollow }: IList) => {
         </div>
       </div>
       <Button
-        buttonType={getFollow ? 'danger' : 'primary'}
-        className='w-[76px]'
+        color='default'
+        className='w-[100px]'
         onClick={() => onToggleFollow(data.id, data.isFollowing)}
       >
         {data.isFollowing ? 'Unfollow' : 'Follow'}

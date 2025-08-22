@@ -12,10 +12,11 @@ import { useGetFollower } from '@/libs/hooks/user-hooks/useGetFollower';
 import { useFollowMutation } from '@/libs/hooks/user-hooks/useCreateFollow';
 import { useUnfollowMutation } from '@/libs/hooks/user-hooks/useDeleteFollow';
 import { debounce } from 'lodash';
+import { AvatarSkeleton, ButtonSkeleton, TextSkeleton } from '@/app/_components/skeleton/Skeleton';
+import { COMPLETION_SKELETON } from '@/public/consts/completionSkeleton';
 
 const FollowPage = () => {
   const searchParams = useSearchParams();
-  const nickname = searchParams.get('nickname');
   const type = searchParams.get('t');
 
   const { userInfo } = useGetUserInfo();
@@ -65,10 +66,12 @@ const FollowPage = () => {
     <main className='px-5'>
       <section id='head'>
         <div id='follow_wrapper' className='flex items-center gap-[5.8rem]'>
-          <BackComponent nickname={userInfo?.nickname || ''} />
-          <p className='pt-2 font-bold text-[20px] w-[200] text-center whitespace-nowrap overflow-hidden text-ellipsis'>
-            {nickname}
-          </p>
+          <BackComponent
+            nickname={userInfo?.nickname || ''}
+            className={
+              'text-[40px] text-[#93d50b] cursor-pointer inline pl-[20px] absolute top-[-4px] left-0'
+            }
+          />
         </div>
         <FollowCategoryComponent
           init={init}
@@ -87,9 +90,22 @@ const FollowPage = () => {
           {type === 'follower' ? '나를 팔로워한 사람들' : '내가 팔로잉한 사람들'}
         </p>
       </section>
-      <section id='content'>
+      <section id='content' className='h-[450px] overflow-scroll'>
         {isLoading ? (
-          <p>나중에 스켈레톤이나 스피너 해주겠지</p>
+          COMPLETION_SKELETON.map((_, idx) => {
+            return (
+              <div key={idx} className='flex justify-between items-center mb-8 mt-4'>
+                <div className='flex gap-2 items-center'>
+                  <AvatarSkeleton className='w-[80px] h-[80px]' />
+                  <div>
+                    <TextSkeleton className='w-[140px] mb-3' />
+                    <TextSkeleton className='w-[140px]' />
+                  </div>
+                </div>
+                <ButtonSkeleton />
+              </div>
+            );
+          })
         ) : (
           <ContentComponent data={followData} onToggleFollow={handleToggleFollow} />
         )}

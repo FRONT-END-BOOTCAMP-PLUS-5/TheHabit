@@ -1,1 +1,1 @@
-export const SELECTED = 'border-b-4 border-[#fa6a8e]';
+export const SELECTED = 'border-b-4 border-[#93d50b] bold font-bold';
