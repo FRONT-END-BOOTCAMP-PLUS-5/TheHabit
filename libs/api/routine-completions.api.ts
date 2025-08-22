@@ -7,6 +7,7 @@ import {
 
 // 루틴 완료 생성 (이미지 업로드 포함)
 export const createRoutineCompletion = async (
+
   data: FormData | CreateRoutineCompletionRequestDto
 ): Promise<ApiResponse<RoutineCompletionDto>> => {
   try {
@@ -20,6 +21,7 @@ export const createRoutineCompletion = async (
           'Content-Type': 'multipart/form-data',
         },
       } : undefined
+
     );
 
     return response.data;
@@ -50,7 +52,9 @@ export const getRoutineCompletionsByChallenge = async (
 export const getRoutineCompletionsByUser = async (
   nickname: string,
   challengeId: number
+
 ): Promise<ApiResponse<RoutineCompletionDto[]>> => {
+
   try {
     const response = await axiosInstance.get<ApiResponse<RoutineCompletionDto[]>>(
       `/api/routine-completions?nickname=${nickname}&challengeId=${challengeId}`

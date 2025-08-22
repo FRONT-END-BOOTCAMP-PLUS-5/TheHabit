@@ -94,8 +94,7 @@ export const FileUpload: React.FC<FileUploadProps> = ({
         <>
           {accept.startsWith('image/') && (
             <Button
-              type='primary'
-              color='blue'
+              buttonType='primary'
               onClick={handleTakePhoto}
               className='w-full h-12 flex items-center justify-center space-x-2'
             >
@@ -105,7 +104,7 @@ export const FileUpload: React.FC<FileUploadProps> = ({
           )}
 
           <Button
-            type='default'
+            buttonType='secondary'
             onClick={handleSelectFromGallery}
             className='w-full h-12 flex items-center justify-center space-x-2'
           >
@@ -114,7 +113,7 @@ export const FileUpload: React.FC<FileUploadProps> = ({
           </Button>
         </>
       ) : (
-        <Button type='default' onClick={resetFile} className='w-full h-10'>
+        <Button buttonType='tertiary' onClick={resetFile} className='w-full h-10'>
           다시 선택
         </Button>
       )}
