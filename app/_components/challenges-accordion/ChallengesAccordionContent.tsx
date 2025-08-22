@@ -18,6 +18,7 @@ interface ChallengesAccordionContentProps {
   challenge: ChallengeDto;
   routines: ReadRoutineResponseDto[];
   routineCompletions: RoutineCompletionDto[];
+  selectedDate: Date; // 선택된 날짜 추가
   onRoutineAdded?: () => void; // 루틴 추가 후 새로고침을 위한 콜백
 }
 
@@ -28,6 +29,7 @@ export const ChallengesAccordionContent = ({
   challenge,
   routines,
   routineCompletions,
+  selectedDate,
   onRoutineAdded,
 }: ChallengesAccordionContentProps) => {
   const { openModal } = useModalStore();
@@ -68,6 +70,31 @@ export const ChallengesAccordionContent = ({
       return;
     }
 
+    // 선택된 날짜에 해당 루틴의 완료 데이터가 있는지 확인
+    const hasCompletionOnSelectedDate = routineCompletions.some(completion => {
+      if (completion.routineId !== routineId) return false;
+
+      // 완료 날짜가 선택된 날짜와 같은지 확인
+      const completionDate = new Date(completion.createdAt);
+      const selectedDateOnly = new Date(
+        selectedDate.getFullYear(),
+        selectedDate.getMonth(),
+        selectedDate.getDate()
+      );
+      const completionDateOnly = new Date(
+        completionDate.getFullYear(),
+        completionDate.getMonth(),
+        completionDate.getDate()
+      );
+
+      return completionDateOnly.getTime() === selectedDateOnly.getTime();
+    });
+
+    if (hasCompletionOnSelectedDate) {
+      Toast.info('이미 해당 날짜에 완료된 루틴입니다.');
+      return;
+    }
+
     openModal(
       <RoutineCompletionForm
         routineId={routineId}
@@ -105,9 +132,25 @@ export const ChallengesAccordionContent = ({
         <div className='space-y-3 mb-4'>
           <h4 className='text-sm font-semibold text-gray-700 mb-2'>루틴 목록</h4>
           {routines.map(routine => {
-            const isCompleted = routineCompletions.some(
-              completion => completion.routineId === routine.id
-            );
+            // 선택된 날짜에 해당 루틴의 완료 데이터가 있는지 확인
+            const isCompleted = routineCompletions.some(completion => {
+              if (completion.routineId !== routine.id) return false;
+
+              // 완료 날짜가 선택된 날짜와 같은지 확인
+              const completionDate = new Date(completion.createdAt);
+              const selectedDateOnly = new Date(
+                selectedDate.getFullYear(),
+                selectedDate.getMonth(),
+                selectedDate.getDate()
+              );
+              const completionDateOnly = new Date(
+                completionDate.getFullYear(),
+                completionDate.getMonth(),
+                completionDate.getDate()
+              );
+
+              return completionDateOnly.getTime() === selectedDateOnly.getTime();
+            });
 
             return (
               <div

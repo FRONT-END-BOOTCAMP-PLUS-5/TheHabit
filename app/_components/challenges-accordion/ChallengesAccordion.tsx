@@ -20,6 +20,7 @@ interface ChallengesAccordionProps {
   challenge: ChallengeDto;
   routines: ReadRoutineResponseDto[];
   routineCompletions: RoutineCompletionDto[];
+  selectedDate: Date; // 선택된 날짜 추가
   onRoutineAdded?: () => void;
 }
 
@@ -46,6 +47,7 @@ const ChallengesAccordion: React.FC<ChallengesAccordionProps> = ({
   challenge,
   routines,
   routineCompletions,
+  selectedDate,
   onRoutineAdded,
 }) => {
   // 완료된 루틴 비율에 따라 동적으로 너비 계산
@@ -131,6 +133,7 @@ const ChallengesAccordion: React.FC<ChallengesAccordionProps> = ({
                   routine.id === completion.routineId && routine.challengeId === challenge.id
               )
             )}
+            selectedDate={selectedDate}
             onRoutineAdded={onRoutineAdded}
           />
         </div>

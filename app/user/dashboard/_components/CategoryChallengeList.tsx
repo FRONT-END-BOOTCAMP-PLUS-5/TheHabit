@@ -43,6 +43,7 @@ const CategoryChallengeList: React.FC<CategoryChallengeListProps> = ({
                   challenge={challenge}
                   routines={routines}
                   routineCompletions={routineCompletions}
+                  selectedDate={selectedDate}
                   onRoutineAdded={onRoutineAdded}
                 />
               ))
