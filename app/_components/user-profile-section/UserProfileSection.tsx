@@ -15,10 +15,6 @@ const UserProfileSection: React.FC = () => {
     }
   }, [error]);
 
-  useEffect(() => {
-    console.log(userInfo);
-  }, [userInfo]);
-
   // 에러 상태 처리
   if (hasError) {
     return (
