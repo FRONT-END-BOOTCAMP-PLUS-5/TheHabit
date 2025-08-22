@@ -7,6 +7,7 @@ import {
 
 // 루틴 완료 생성 (이미지 업로드 포함)
 export const createRoutineCompletion = async (
+
   data: FormData | CreateRoutineCompletionRequestDto
 ): Promise<ApiResponse<RoutineCompletionDto>> => {
   try {
@@ -20,6 +21,7 @@ export const createRoutineCompletion = async (
           'Content-Type': 'multipart/form-data',
         },
       } : undefined
+
     );
 
     return response.data;
@@ -50,7 +52,9 @@ export const getRoutineCompletionsByChallenge = async (
 export const getRoutineCompletionsByUser = async (
   nickname: string,
   challengeId: number
+
 ): Promise<ApiResponse<RoutineCompletionDto[]>> => {
+
   try {
     const response = await axiosInstance.get<ApiResponse<RoutineCompletionDto[]>>(
       `/api/routine-completions?nickname=${nickname}&challengeId=${challengeId}`
@@ -81,6 +85,7 @@ export const updateRoutineCompletion = async (
   }
 };
 
+
 // ID로 루틴 완료 상세 조회
 export const getRoutineCompletionById = async (id: number): Promise<ApiResponse<RoutineCompletionDto>> => {
   try {
@@ -100,6 +105,7 @@ export const deleteRoutineCompletion = async (id: number): Promise<ApiResponse<v
   try {
     const response = await axiosInstance.delete<ApiResponse<void>>(`/api/routine-completions/${id}`);
     return response.data;
+
   } catch (error) {
     console.error('루틴 완료 삭제 실패:', error);
     throw error;

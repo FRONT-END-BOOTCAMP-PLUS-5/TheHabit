@@ -74,12 +74,17 @@ export const RoutineCompletionModal = ({
       open={isOpen}
       onCancel={handleClose}
       footer={[
-        <Button key='cancel' onClick={handleClose} disabled={isSubmitting || loading}>
+        <Button
+          key='cancel'
+          buttonType='tertiary'
+          onClick={handleClose}
+          disabled={isSubmitting || loading}
+        >
           취소
         </Button>,
         <Button
           key='submit'
-          type='primary'
+          buttonType='primary'
           onClick={handleSubmit}
           style={{ opacity: isSubmitting || loading ? 0.6 : 1 }}
           disabled={isSubmitting || loading}
@@ -93,7 +98,9 @@ export const RoutineCompletionModal = ({
       }}
     >
       <div>
-                <p className='text-gray-600 mb-3'>&ldquo;<strong>{selectedRoutine?.routineTitle}</strong>&rdquo; 루틴을 완료하셨네요! 🎉</p>
+        <p className='text-gray-600 mb-3'>
+          &ldquo;<strong>{selectedRoutine?.routineTitle}</strong>&rdquo; 루틴을 완료하셨네요! 🎉
+        </p>
         <p className='text-gray-600 mb-4'>{UI_MESSAGES.MODAL.REVIEW_DESCRIPTION}</p>
 
         {/* 소감 작성 영역 */}
