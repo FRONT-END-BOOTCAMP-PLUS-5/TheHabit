@@ -200,7 +200,7 @@ export class PrUserRepository implements IUserRepository {
         user.username,
         user.nickname,
         user.profileImg,
-        null, // profileImgPath
+        user.profileImgPath,
         user.id,
         user.password,
         user.email
@@ -276,7 +276,7 @@ export class PrUserRepository implements IUserRepository {
         user.username,
         user.nickname,
         user.profileImg,
-        null, // profileImgPath
+        user.profileImgPath,
         user.id,
         user.password,
         user.email
@@ -321,7 +321,7 @@ export class PrUserRepository implements IUserRepository {
         updatedUser.username,
         updatedUser.nickname,
         updatedUser.profileImg,
-        null, // profileImgPath
+        updatedUser.profileImgPath,
         updatedUser.id,
         updatedUser.password,
         updatedUser.email
