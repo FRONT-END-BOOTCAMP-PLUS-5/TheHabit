@@ -1,46 +1,27 @@
 import { IRoutineCompletionsRepository } from '@/backend/routine-completions/domains/repositories/IRoutineCompletionsRepository';
-import { RoutineCompletionDto } from '@/backend/routine-completions/applications/dtos/RoutineCompletionDto';
+import { RoutineCompletionDto, RoutineCompletionDtoMapper } from '@/backend/routine-completions/applications/dtos/RoutineCompletionDto';
 
 export class GetRoutineCompletionsUseCase {
   constructor(private readonly routineCompletionsRepository: IRoutineCompletionsRepository) {}
 
+  async getById(completionId: number): Promise<RoutineCompletionDto | null> {
+    const completion = await this.routineCompletionsRepository.findById(completionId);
+
+    if (!completion) {
+      return null;
+    }
+
+    return RoutineCompletionDtoMapper.fromEntity(completion);
+  }
+
   async getByRoutineId(routineId: number): Promise<RoutineCompletionDto[]> {
     const completions = await this.routineCompletionsRepository.findByRoutineId(routineId);
-
-    return completions.map(completion => ({
-      id: completion.id,
-      routineId: completion.routineId,
-      createdAt: completion.createdAt.toISOString(),
-      proofImgUrl: completion.proofImgUrl,
-    }));
+    return RoutineCompletionDtoMapper.fromEntities(completions);
   }
 
-  async getByUserId(userId: string): Promise<RoutineCompletionDto[]> {
-    const completions = await this.routineCompletionsRepository.findByUserId(userId);
-
-    return completions.map(completion => ({
-      id: completion.id,
-      routineId: completion.routineId,
-      createdAt: completion.createdAt.toISOString(),
-      proofImgUrl: completion.proofImgUrl,
-    }));
-  }
-
-  async getByUserAndRoutine(
-    userId: string,
-    routineId: number
-  ): Promise<RoutineCompletionDto[]> {
-    const completions = await this.routineCompletionsRepository.findByUserIdAndRoutineId(
-      userId,
-      routineId
-    );
-
-    return completions.map(completion => ({
-      id: completion.id,
-      routineId: completion.routineId,
-      createdAt: completion.createdAt.toISOString(),
-      proofImgUrl: completion.proofImgUrl,
-    }));
+  async getByNickname(nickname: string): Promise<RoutineCompletionDto[]> {
+    const completions = await this.routineCompletionsRepository.findByNickname(nickname);
+    return RoutineCompletionDtoMapper.fromEntities(completions);
   }
 
   async getByNicknameAndRoutine(
@@ -51,12 +32,6 @@ export class GetRoutineCompletionsUseCase {
       nickname,
       routineId
     );
-
-    return completions.map(completion => ({
-      id: completion.id,
-      routineId: completion.routineId,
-      createdAt: completion.createdAt.toISOString(),
-      proofImgUrl: completion.proofImgUrl,
-    }));
+    return RoutineCompletionDtoMapper.fromEntities(completions);
   }
 }

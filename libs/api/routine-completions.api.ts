@@ -1,18 +1,34 @@
 import { axiosInstance } from '@/libs/axios/axiosInstance';
 import { ApiResponse } from '@/backend/shared/types/ApiResponse';
 import {
-  CreateRoutineCompletionRequestDto,
   RoutineCompletionDto,
 } from '@/backend/routine-completions/applications/dtos/RoutineCompletionDto';
 
-// 루틴 완료 생성
+// 루틴 완료 생성 (이미지 업로드 포함)
 export const createRoutineCompletion = async (
-  data: CreateRoutineCompletionRequestDto
+  nickname: string,
+  routineId: number,
+  content: string,
+  photoFile?: File
 ): Promise<RoutineCompletionDto> => {
   try {
+    const formData = new FormData();
+    formData.append('nickname', nickname);
+    formData.append('routineId', routineId.toString());
+    formData.append('content', content);
+    
+    if (photoFile) {
+      formData.append('file', photoFile);
+    }
+
     const response = await axiosInstance.post<ApiResponse<RoutineCompletionDto>>(
       '/api/routine-completions',
-      data
+      formData,
+      {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      }
     );
 
     if (!response.data.data) {
@@ -47,13 +63,14 @@ export const getRoutineCompletionsByChallenge = async (
   }
 };
 
-// 닉네임으로 루틴 완료 조회
+// 닉네임으로 루틴 완료 조회 (챌린지 ID 필수)
 export const getRoutineCompletionsByUser = async (
-  nickname: string
+  nickname: string,
+  challengeId: number
 ): Promise<RoutineCompletionDto[]> => {
   try {
     const response = await axiosInstance.get<ApiResponse<RoutineCompletionDto[]>>(
-      `/api/routine-completions?nickname=${nickname}`
+      `/api/routine-completions?nickname=${nickname}&challengeId=${challengeId}`
     );
 
     if (!response.data.data) {
@@ -69,13 +86,13 @@ export const getRoutineCompletionsByUser = async (
 
 // 루틴 완료 수정 (증명 이미지용)
 export const updateRoutineCompletion = async (
-  id: number,
+  completionId: number,
   proofImgUrl: string | null
 ): Promise<RoutineCompletionDto> => {
   try {
     const response = await axiosInstance.patch<ApiResponse<RoutineCompletionDto>>(
-      `/api/routine-completions/${id}`,
-      { proofImgUrl }
+      '/api/routine-completions',
+      { completionId, proofImgUrl }
     );
 
     if (!response.data.data) {
@@ -89,28 +106,13 @@ export const updateRoutineCompletion = async (
   }
 };
 
-// ID로 루틴 완료 상세 조회
-export const getRoutineCompletionById = async (id: number): Promise<RoutineCompletionDto> => {
-  try {
-    const response = await axiosInstance.get<ApiResponse<RoutineCompletionDto>>(
-      `/api/routine-completions/${id}`
-    );
-
-    if (!response.data.data) {
-      throw new Error('서버에서 반환된 데이터가 없습니다');
-    }
-
-    return response.data.data;
-  } catch (error) {
-    console.error('루틴 완료 상세 조회 실패:', error);
-    throw error;
-  }
-};
 
 // 루틴 완료 삭제
-export const deleteRoutineCompletion = async (id: number): Promise<void> => {
+export const deleteRoutineCompletion = async (completionId: number): Promise<void> => {
   try {
-    await axiosInstance.delete<ApiResponse<void>>(`/api/routine-completions/${id}`);
+    await axiosInstance.delete<ApiResponse<void>>('/api/routine-completions', {
+      data: { completionId }
+    });
   } catch (error) {
     console.error('루틴 완료 삭제 실패:', error);
     throw error;
@@ -121,8 +123,7 @@ export const deleteRoutineCompletion = async (id: number): Promise<void> => {
 export const routineCompletionsApi = {
   create: createRoutineCompletion,
   getByChallenge: getRoutineCompletionsByChallenge,
-  getByNickname: getRoutineCompletionsByUser,
-  getById: getRoutineCompletionById,
+  getByUser: getRoutineCompletionsByUser,
   update: updateRoutineCompletion,
   delete: deleteRoutineCompletion,
 };

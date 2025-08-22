@@ -1,48 +1,31 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { RoutineCompletionDto } from '@/backend/routine-completions/applications/dtos/RoutineCompletionDto';
 import { createRoutineCompletion } from '@/libs/api/routine-completions.api';
-import {
-  CreateRoutineCompletionRequestDto,
-  RoutineCompletionDto,
-} from '@/backend/routine-completions/applications/dtos/RoutineCompletionDto';
-import axios from 'axios';
 
-interface CreateRoutineCompletionParams {
-  userId: string;
+interface CreateRoutineCompletionHookParams {
+  nickname: string;
   routineId: number;
-  review: string;
+  content: string;
   photoFile?: File;
 }
 
 /**
- * 루틴 완료를 생성하는 훅 (이미지 업로드 포함)
+ * 루틴 완료를 생성하는 훅
  * @returns 루틴 완료 생성 mutation
  */
 export const useCreateRoutineCompletion = () => {
   const queryClient = useQueryClient();
 
-  return useMutation<RoutineCompletionDto, Error, CreateRoutineCompletionParams>({
-    mutationFn: async ({ photoFile, ...rest }) => {
-      let proofImgUrl: string | null = null;
-
-      if (photoFile) {
-        const formData = new FormData();
-        formData.append('file', photoFile);
-
-        const { data: uploadData } = await axios.post(
-          '/api/routine-completions/image',
-          formData,
-        );
-        proofImgUrl = uploadData.imageUrl;
-      }
-
-      const completionData: CreateRoutineCompletionRequestDto = {
-        ...rest,
-        proofImgUrl,
-      };
-
-      return createRoutineCompletion(completionData);
+  return useMutation<RoutineCompletionDto, Error, CreateRoutineCompletionHookParams>({
+    mutationFn: async ({
+      nickname,
+      routineId,
+      content,
+      photoFile,
+    }: CreateRoutineCompletionHookParams) => {
+      return await createRoutineCompletion(nickname, routineId, content, photoFile);
     },
-    onSuccess: (data, variables) => {
+    onSuccess: data => {
       // 루틴 완료 생성 성공 시 관련 캐시 무효화
       queryClient.invalidateQueries({ queryKey: ['routine-completions'] });
       queryClient.invalidateQueries({

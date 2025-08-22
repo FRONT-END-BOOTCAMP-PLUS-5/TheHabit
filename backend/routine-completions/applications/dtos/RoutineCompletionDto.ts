@@ -3,33 +3,18 @@ import { RoutineCompletion } from '@/backend/routine-completions/domains/entitie
 export interface CreateRoutineCompletionRequestDto {
   nickname: string;
   routineId: number;
-  review: string;
+  content: string;
   proofImgUrl: string | null;
-  content: string | null;
 }
 
 export interface CreateRoutineCompletionResponseDto {
   id: number;
-  userId: string;
   routineId: number;
   createdAt: Date;
   proofImgUrl: string | null;
   content: string | null;
 }
 
-// 루틴 완료 목록 조회
-export interface ReadRoutineCompletionListDto {
-  completions: RoutineCompletionDto[];
-  total: number;
-  page: number;
-  limit: number;
-}
-// 메인 페이지 - 오늘의 루틴 완료 상태
-export interface CreateTodayRoutineCompletionDto {
-  routineId: number;
-  isCompleted: boolean;
-  completion?: RoutineCompletionDto;
-}
 
 // 루틴 완료 수정 (인증샷 업데이트)
 export interface UpdateRoutineCompletionDto {
