@@ -145,8 +145,8 @@ export const LoginForm = () => {
                             placeholder={item.placeholder}
                             className='w-full h-16 login-input pr-12 px-3 py-2 text-secondary placeholder:text-secondary-grey border-2 border-primary-grey rounded-md focus:border-primary focus:outline-none'
                           />
-                          <button
-                            type='button'
+                          <Button
+                            htmlType='button'
                             onClick={togglePasswordVisibility}
                             className='absolute right-3 top-1/2 transform -translate-y-1/2 text-secondary-grey hover:text-secondary cursor-pointer'
                             aria-label={showPassword ? '비밀번호 숨기기' : '비밀번호 보기'}
@@ -168,7 +168,7 @@ export const LoginForm = () => {
                                 className='text-secondary-grey'
                               />
                             )}
-                          </button>
+                          </Button>
                         </div>
                       </div>
                     );

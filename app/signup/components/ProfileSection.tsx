@@ -1,12 +1,12 @@
 'use client';
 
 import Image from 'next/image';
-import Input from '@/app/_components/inputs/Input';
 import { Controller, useFormContext } from 'react-hook-form';
 import { ProfileImage } from '@/app/_components/profile-images/ProfileImage';
 import { useUploadProfile } from '@/libs/hooks/signup/useUploadProfile';
 import { useEffect } from 'react';
 import { Rex } from '@/public/consts/Rex';
+import CustomInput from '@/app/_components/inputs/CustomInput';
 
 export const ProfileSection = () => {
   const {
@@ -20,8 +20,8 @@ export const ProfileSection = () => {
   useEffect(() => {
     if (profileFile) {
       setValue('profileImage', profileFile.name);
-      setValue('profileImagePath', profileFile.name); // 임시로 파일명을 경로로 사용
-      setValue('profileFile', profileFile); // profileFile 객체 자체를 폼에 설정
+      setValue('profileImagePath', profileFile.name);
+      setValue('profileFile', profileFile); 
     }
   }, [profileFile, setValue]);
 
@@ -37,7 +37,7 @@ export const ProfileSection = () => {
           className='absolute bottom-0 right-0 cursor-pointer z-10 border border-light-gray bg-white rounded-full'
           onClick={handleImageClick}
         />
-        <input
+        <CustomInput
           type='file'
           className='hidden'
           accept='image/*'
@@ -58,7 +58,7 @@ export const ProfileSection = () => {
         }}
         render={({ field }) => (
           <div className='relative'>
-            <Input
+            <CustomInput
               label='닉네임'
               labelHtmlFor='nickname'
               placeholder='ex) 홍길동'

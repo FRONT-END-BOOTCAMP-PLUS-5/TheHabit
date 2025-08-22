@@ -6,7 +6,6 @@ import { CheckBoxItem } from '@/public/consts/checkBoxItem';
 import CustomInput from '@/app/_components/inputs/CustomInput';
 import { Controller, FormProvider, useForm } from 'react-hook-form';
 import { Button } from '@/app/_components/buttons/Button';
-import '@ant-design/v5-patch-for-react-19';
 import { CheckBoxList } from '@/app/_components/checkboxes/Checkbox';
 import { useSignUp } from '@/libs/hooks/signup/useSignUp';
 import { useState } from 'react';
@@ -84,8 +83,8 @@ export const SignUpForm = () => {
       }
 
       await signUp(formData);
-    } catch (err) {
-      console.error(err);
+    } catch (error) {
+      console.error(error);
     }
   };
 
@@ -114,7 +113,6 @@ export const SignUpForm = () => {
                 },
               }}
               render={({ field }) => {
-                // 비밀번호 필드인 경우 눈 아이콘과 함께 렌더링
                 if (item.name === 'password') {
                   return (
                     <div className='flex flex-col gap-2'>
@@ -124,14 +122,14 @@ export const SignUpForm = () => {
                         </label>
                       )}
                       <div className='relative'>
-                        <input
+                        <CustomInput
                           {...field}
                           type={showPassword ? 'text' : 'password'}
                           placeholder={item.placeholder}
                           className='w-full h-16 login-input pr-12 px-3 py-2 text-secondary placeholder:text-secondary-grey border-2 border-primary-grey rounded-md focus:border-primary focus:outline-none'
                         />
-                        <button
-                          type='button'
+                        <Button
+                          htmlType='button'
                           onClick={togglePasswordVisibility}
                           className='absolute right-3 top-1/2 transform -translate-y-1/2 text-secondary-grey hover:text-secondary cursor-pointer'
                           aria-label={showPassword ? '비밀번호 숨기기' : '비밀번호 보기'}
@@ -153,13 +151,12 @@ export const SignUpForm = () => {
                               className='text-secondary-grey'
                             />
                           )}
-                        </button>
+                        </Button>
                       </div>
                     </div>
                   );
                 }
 
-                // 비밀번호 확인 필드인 경우 눈 아이콘과 함께 렌더링
                 if (item.name === 'passwordConfirm') {
                   return (
                     <div className='flex flex-col gap-2'>
@@ -169,14 +166,14 @@ export const SignUpForm = () => {
                         </label>
                       )}
                       <div className='relative'>
-                        <input
+                        <CustomInput
                           {...field}
                           type={showPasswordConfirm ? 'text' : 'password'}
                           placeholder={item.placeholder}
                           className='w-full h-16 login-input pr-12 px-3 py-2 text-secondary placeholder:text-secondary-grey border-2 border-primary-grey rounded-md focus:border-primary focus:outline-none'
                         />
-                        <button
-                          type='button'
+                        <Button
+                          htmlType='button'
                           onClick={togglePasswordConfirmVisibility}
                           className='absolute right-3 top-1/2 transform -translate-y-1/2 text-secondary-grey hover:text-secondary cursor-pointer'
                           aria-label={showPasswordConfirm ? '비밀번호 숨기기' : '비밀번호 보기'}
@@ -198,13 +195,12 @@ export const SignUpForm = () => {
                               className='text-secondary-grey'
                             />
                           )}
-                        </button>
+                        </Button>
                       </div>
                     </div>
                   );
                 }
 
-                // 일반 필드는 CustomInput 사용
                 return (
                   <CustomInput
                     type={item.type}
