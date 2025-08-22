@@ -5,12 +5,13 @@ import { useForm } from 'react-hook-form';
 import { useModalStore } from '@/libs/stores/modalStore';
 import { useCreateRoutineCompletion } from '@/libs/hooks/routine-completions-hooks/useCreateRoutineCompletion';
 import { FileUpload } from '@/app/_components/file-upload/FileUpload';
+import { useGetUserInfo } from '@/libs/hooks/user-hooks/useGetUserInfo';
+import CustomTextarea from '@/app/_components/inputs/CustomTextarea';
 
 interface CompleteRoutineFormProps {
   routineId: number;
   routineTitle: string;
   emoji: string;
-  nickname: string;
   onSuccess?: () => void;
 }
 
@@ -22,12 +23,12 @@ const CompleteRoutineForm: React.FC<CompleteRoutineFormProps> = ({
   routineId,
   routineTitle,
   emoji,
-  nickname,
   onSuccess,
 }) => {
   const { closeModal } = useModalStore();
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const createRoutineCompletionMutation = useCreateRoutineCompletion();
+  const { userInfo } = useGetUserInfo();
 
   const {
     register,
@@ -47,11 +48,15 @@ const CompleteRoutineForm: React.FC<CompleteRoutineFormProps> = ({
   };
 
   const onSubmitHandler = async (formData: CompletionFormData) => {
+    if (!userInfo?.nickname) {
+      console.error('사용자 정보를 불러올 수 없습니다.');
+      return;
+    }
+
     if (selectedFile) {
       const data = new FormData();
-      data.append('nickname', nickname);
+      data.append('nickname', userInfo.nickname);
       data.append('routineId', routineId.toString());
-      data.append('review', formData.content.trim());
       data.append('content', formData.content.trim());
       data.append('file', selectedFile);
 
@@ -62,14 +67,13 @@ const CompleteRoutineForm: React.FC<CompleteRoutineFormProps> = ({
         },
         onError: (error) => {
           console.error('루틴 완료 기록 실패:', error);
-        }
+        },
       });
     } else {
       createRoutineCompletionMutation.mutate(
         {
-          nickname,
+          nickname: userInfo.nickname,
           routineId,
-          review: formData.content.trim(),
           content: formData.content.trim(),
           proofImgUrl: null,
         },
@@ -80,7 +84,7 @@ const CompleteRoutineForm: React.FC<CompleteRoutineFormProps> = ({
           },
           onError: (error) => {
             console.error('루틴 완료 기록 실패:', error);
-          }
+          },
         }
       );
     }
@@ -98,29 +102,29 @@ const CompleteRoutineForm: React.FC<CompleteRoutineFormProps> = ({
       </div>
 
       {/* 소감 작성 */}
-      <div className='flex flex-col gap-2'>
-        <label htmlFor='content' className='text-sm font-medium text-gray-700'>
-          오늘의 소감 <span className='text-red-500'>*</span>
-        </label>
-        <textarea
-          {...register('content', {
-            required: '소감을 입력해주세요',
-            maxLength: { value: 100, message: '100글자 이하로 입력해주세요' },
-          })}
-          id='content'
-          placeholder='루틴 완료 소감 작성'
-          rows={4}
-          maxLength={100}
-          className='w-full px-3 py-2 text-secondary placeholder:text-secondary-grey border-2 border-primary-grey rounded-md focus:border-primary focus:outline-none resize-none'
-        />
-        <div className='flex justify-between items-center'>
-          {errors.content && <span className='text-red-500 text-sm'>{errors.content.message}</span>}
-          <span
-            className={`text-xs ml-auto ${(watchedContent?.length || 0) > 90 ? 'text-red-500' : 'text-gray-500'}`}
-          >
-            {watchedContent?.length || 0}/100
-          </span>
-        </div>
+      <CustomTextarea
+        label={
+          <>
+            오늘의 소감 <span className='text-red-500'>*</span>
+          </>
+        }
+        labelHtmlFor='content'
+        {...register('content', {
+          required: '소감을 입력해주세요',
+          maxLength: { value: 100, message: '100글자 이하로 입력해주세요' },
+        })}
+        id='content'
+        placeholder='루틴 완료 소감 작성'
+        rows={4}
+        maxLength={100}
+      />
+      <div className='flex justify-between items-center'>
+        {errors.content && <span className='text-red-500 text-sm'>{errors.content.message}</span>}
+        <span
+          className={`text-xs ml-auto ${(watchedContent?.length || 0) > 90 ? 'text-red-500' : 'text-gray-500'}`}
+        >
+          {watchedContent?.length || 0}/100
+        </span>
       </div>
 
       {/* 인증 사진 업로드 */}

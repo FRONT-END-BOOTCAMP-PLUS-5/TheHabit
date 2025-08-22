@@ -7,10 +7,10 @@ import { getEmojiByNumber, getEmojiNumbers } from '@/public/consts/routineItem';
 import { useModalStore } from '@/libs/stores/modalStore';
 import { useCreateRoutine } from '@/libs/hooks/routines-hooks/useCreateRoutine';
 import CustomInput from '@/app/_components/inputs/CustomInput';
+import { useGetUserInfo } from '@/libs/hooks/user-hooks/useGetUserInfo';
 
 interface AddRoutineFormProps {
   challengeId: number;
-  nickname: string;
   onSuccess?: () => void;
 }
 
@@ -20,11 +20,12 @@ interface RoutineFormData {
   alertTime: string;
 }
 
-const AddRoutineForm: React.FC<AddRoutineFormProps> = ({ challengeId, nickname, onSuccess }) => {
+const AddRoutineForm: React.FC<AddRoutineFormProps> = ({ challengeId, onSuccess }) => {
   const { closeModal } = useModalStore();
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [enableAlert, setEnableAlert] = useState(false);
   const createRoutineMutation = useCreateRoutine();
+  const { userInfo } = useGetUserInfo();
 
   const {
     register,
@@ -62,6 +63,11 @@ const AddRoutineForm: React.FC<AddRoutineFormProps> = ({ challengeId, nickname, 
   }, [showEmojiPicker]);
 
   const onSubmitHandler = async (formData: RoutineFormData) => {
+    if (!userInfo?.nickname) {
+      console.error('사용자 정보를 불러올 수 없습니다.');
+      return;
+    }
+
     const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD 형태
     const alertTime = enableAlert && formData.alertTime 
       ? new Date(`${today}T${formData.alertTime}:00`) 
@@ -72,7 +78,7 @@ const AddRoutineForm: React.FC<AddRoutineFormProps> = ({ challengeId, nickname, 
       alertTime: alertTime,
       emoji: formData.emoji,
       challengeId: challengeId,
-      nickname: nickname,
+      nickname: userInfo.nickname,
     };
 
     createRoutineMutation.mutate(createRoutineData, {
