@@ -8,6 +8,9 @@ import { EmojiDisplay } from '@/app/_components/emoji/EmojiDisplay';
 import { useModalStore } from '@/libs/stores/modalStore';
 import { useGetUserInfo } from '@/libs/hooks/user-hooks/useGetUserInfo';
 import AddRoutineForm from '@/app/user/dashboard/_components/CreateRoutineForm';
+import RoutineCompletionForm from '@/app/_components/challenges-accordion/RoutineCompletionForm';
+import { useCreateRoutineCompletion } from '@/libs/hooks/routine-completions-hooks/useCreateRoutineCompletion';
+import { Toast } from '@/app/_components/toasts/Toast';
 
 // ChallengesAccordionContent 컴포넌트는 피드백 및 분석에도 사용되므로 공통으로 분리하였습니다.
 // - 승민 2025.08.23
@@ -21,14 +24,15 @@ interface ChallengesAccordionContentProps {
 //TODO : 루틴 목록 TODO LIST 제공
 //TODO : 루틴 완료 처리 시 Routine Completion 처리 로직 구현
 
-const ChallengesAccordionContent: React.FC<ChallengesAccordionContentProps> = ({
+export const ChallengesAccordionContent = ({
   challenge,
   routines,
   routineCompletions,
   onRoutineAdded,
-}) => {
+}: ChallengesAccordionContentProps) => {
   const { openModal } = useModalStore();
   const { userInfo } = useGetUserInfo();
+  const createRoutineCompletionMutation = useCreateRoutineCompletion();
 
   const handleOpenAddRoutineModal = () => {
     if (!challenge.id || !userInfo?.nickname) {
@@ -41,7 +45,6 @@ const ChallengesAccordionContent: React.FC<ChallengesAccordionContentProps> = ({
         challengeId={challenge.id}
         nickname={userInfo.nickname}
         onSuccess={() => {
-
           // 루틴 목록 새로고침
           if (onRoutineAdded) {
             onRoutineAdded();
@@ -60,7 +63,39 @@ const ChallengesAccordionContent: React.FC<ChallengesAccordionContentProps> = ({
   };
 
   const handleRoutineCompletion = (routineId: number) => {
-    console.log(routineId);
+    if (!userInfo?.nickname) {
+      Toast.error('사용자 정보를 불러올 수 없습니다.');
+      return;
+    }
+
+    openModal(
+      <RoutineCompletionForm
+        routineId={routineId}
+        onSubmit={async (reviewText: string, photoFile?: File) => {
+          try {
+            await createRoutineCompletionMutation.mutateAsync({
+              nickname: userInfo.nickname,
+              routineId,
+              content: reviewText,
+              photoFile,
+            });
+
+            // 페이지 새로고침하여 완료 상태 반영
+            setTimeout(() => {
+              window.location.reload();
+            }, 1000);
+          } catch (error) {
+            console.error('루틴 완료 처리 실패:', error);
+          }
+        }}
+        onCancel={() => {
+          // 모달 닫기
+        }}
+      />,
+      'floating',
+      '루틴 완료',
+      '루틴 완료 소감을 작성해주세요'
+    );
   };
 
   return (
@@ -83,14 +118,23 @@ const ChallengesAccordionContent: React.FC<ChallengesAccordionContentProps> = ({
                   borderRadius: '2rem',
                 }}
               >
-                {/* 체크박스 */}
-                <div
-                  className={`w-8 h-8 rounded-full border-2 flex items-center justify-center ${
-                    isCompleted ? 'bg-primary border-primary' : 'border-primary bg-white'
+                {/* 체크박스 버튼 */}
+                <button
+                  onClick={() => handleRoutineCompletion(routine.id)}
+                  className={`w-8 h-8 rounded-full border-2 flex items-center justify-center transition-all duration-200 hover:scale-110 ${
+                    isCompleted
+                      ? 'bg-primary border-primary hover:bg-primary/90'
+                      : 'border-primary bg-white hover:bg-primary/10'
                   }`}
+                  disabled={isCompleted}
+                  title={isCompleted ? '이미 완료된 루틴입니다' : '루틴 완료하기'}
                 >
-                  {isCompleted && <div className='text-white text-xs'>✓</div>}
-                </div>
+                  {isCompleted ? (
+                    <div className='text-white text-xs font-bold'>✓</div>
+                  ) : (
+                    <div className='text-primary text-xs font-bold'>+</div>
+                  )}
+                </button>
 
                 {/* 루틴 정보 */}
                 <div className='flex-1'>

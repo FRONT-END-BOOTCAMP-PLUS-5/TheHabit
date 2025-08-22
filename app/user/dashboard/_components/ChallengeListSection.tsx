@@ -91,7 +91,7 @@ const ChallengeListSection: React.FC = () => {
     });
   };
 
-  const handleOpenModal = () => {
+  const handleOpenAddChallengeModal = () => {
     openModal(<AddChallengeForm />, 'toast');
   };
 
@@ -224,7 +224,7 @@ const ChallengeListSection: React.FC = () => {
           )
         )}
       </div>
-      <AddChallengeButton onClick={handleOpenModal} />
+      <AddChallengeButton onClick={handleOpenAddChallengeModal} />
     </section>
   );
 };
