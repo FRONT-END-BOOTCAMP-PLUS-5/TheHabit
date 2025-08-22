@@ -5,11 +5,17 @@ import { ChallengeDto } from '@/backend/challenges/applications/dtos/ChallengeDt
 import { ReadRoutineResponseDto } from '@/backend/routines/applications/dtos/RoutineDto';
 import { RoutineCompletionDto } from '@/backend/routine-completions/applications/dtos/RoutineCompletionDto';
 import { EmojiDisplay } from '@/app/_components/emoji/EmojiDisplay';
+import { useModalStore } from '@/libs/stores/modalStore';
+import { useGetUserInfo } from '@/libs/hooks/user-hooks/useGetUserInfo';
+import AddRoutineForm from '@/app/user/dashboard/_components/CreateRoutineForm';
 
+// ChallengesAccordionContent 컴포넌트는 피드백 및 분석에도 사용되므로 공통으로 분리하였습니다.
+// - 승민 2025.08.23
 interface ChallengesAccordionContentProps {
   challenge: ChallengeDto;
   routines: ReadRoutineResponseDto[];
   routineCompletions: RoutineCompletionDto[];
+  onRoutineAdded?: () => void; // 루틴 추가 후 새로고침을 위한 콜백
 }
 
 //TODO : 루틴 목록 TODO LIST 제공
@@ -19,7 +25,44 @@ const ChallengesAccordionContent: React.FC<ChallengesAccordionContentProps> = ({
   challenge,
   routines,
   routineCompletions,
+  onRoutineAdded,
 }) => {
+  const { openModal } = useModalStore();
+  const { userInfo } = useGetUserInfo();
+
+  const handleOpenAddRoutineModal = () => {
+    if (!challenge.id || !userInfo?.nickname) {
+      console.error('챌린지 ID 또는 사용자 닉네임이 없습니다');
+      return;
+    }
+
+    openModal(
+      <AddRoutineForm
+        challengeId={challenge.id}
+        nickname={userInfo.nickname}
+        onSuccess={() => {
+
+          // 루틴 목록 새로고침
+          if (onRoutineAdded) {
+            onRoutineAdded();
+          }
+
+          // 페이지 새로고침하여 새로운 목록을 받아옴
+          setTimeout(() => {
+            window.location.reload();
+          }, 1000); // 토스트 메시지가 보인 후 1초 뒤 새로고침
+        }}
+      />,
+      'floating',
+      '새 루틴 추가',
+      '챌린지에 새로운 루틴을 추가합니다'
+    );
+  };
+
+  const handleRoutineCompletion = (routineId: number) => {
+    console.log(routineId);
+  };
+
   return (
     <div className='px-3 py-3'>
       {/* 루틴 목록 Todo List */}
@@ -91,6 +134,7 @@ const ChallengesAccordionContent: React.FC<ChallengesAccordionContentProps> = ({
               : 'bg-primary text-white hover:bg-primary/90'
           }`}
           disabled={routines.length >= 3}
+          onClick={handleOpenAddRoutineModal}
         >
           + 루틴 추가하기
           {routines.length >= 3 && <span className='ml-1 text-xs'>(최대 3개)</span>}

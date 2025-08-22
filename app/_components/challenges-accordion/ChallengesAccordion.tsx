@@ -14,27 +14,29 @@ import { CHALLENGE_COLORS } from '@/public/consts/challengeColors';
 import ChallengesAccordionContent from '@/app/_components/challenges-accordion/ChallengesAccordionContent';
 import { StaticImageData } from 'next/image';
 
-//props 임시임 -승민
+// ChallengesAccordion 컴포넌트는 피드백 및 분석에도 사용되므로 공통으로 분리하였습니다.
+// - 승민 2025.08.23
 interface ChallengesAccordionProps {
   challenge: ChallengeDto;
   routines: ReadRoutineResponseDto[];
   routineCompletions: RoutineCompletionDto[];
+  onRoutineAdded?: () => void;
 }
 
 const CATEGORY_ICON: Record<number, { icon: StaticImageData; alt: string }> = {
-  0: {
+  1: {
     icon: HealthIcon,
     alt: 'health',
   },
-  1: {
+  2: {
     icon: BookIcon,
     alt: 'book',
   },
-  2: {
+  3: {
     icon: DevelopIcon,
     alt: 'develop',
   },
-  3: {
+  4: {
     icon: GuitarIcon,
     alt: 'guitar',
   },
@@ -44,6 +46,7 @@ const ChallengesAccordion: React.FC<ChallengesAccordionProps> = ({
   challenge,
   routines,
   routineCompletions,
+  onRoutineAdded,
 }) => {
   // 완료된 루틴 비율에 따라 동적으로 너비 계산
   const completedRatio =
@@ -128,6 +131,7 @@ const ChallengesAccordion: React.FC<ChallengesAccordionProps> = ({
                   routine.id === completion.routineId && routine.challengeId === challenge.id
               )
             )}
+            onRoutineAdded={onRoutineAdded}
           />
         </div>
       </div>
