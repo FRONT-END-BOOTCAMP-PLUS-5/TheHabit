@@ -11,11 +11,13 @@ type RoutineCompletion = RoutineCompletionDto;
 interface UseRoutineCompletionProps {
   completions: RoutineCompletion[];
   onError?: (message: string) => void;
+  nickname: string;
 }
 
 export const useRoutineCompletion = ({
   completions,
   onError = msg => alert(msg),
+  nickname,
 }: UseRoutineCompletionProps) => {
   const createCompletionMutation = useCreateRoutineCompletion();
   const deleteCompletionMutation = useDeleteRoutineCompletion();
@@ -41,9 +43,9 @@ export const useRoutineCompletion = ({
     async (routine: ReadRoutineResponseDto, onSuccess?: () => void) => {
       try {
         await createCompletionMutation.mutateAsync({
-          userId: 'f1c6b5ae-b27e-4ae3-9e30-0cb8653b04fd', // TODO: 실제 사용자 ID
+          nickname: nickname,
           routineId: routine.id,
-          proofImgUrl: null,
+          content: '',
         });
         onSuccess?.();
       } catch (error) {

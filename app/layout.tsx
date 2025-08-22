@@ -1,10 +1,11 @@
 import type { Metadata } from 'next';
 import './globals.css';
-import { QueryProvider } from './_components/query-providers/QueryProvider';
-import ModalProvider from './_components/providers/ModalProvider';
-import NextAuthSessionProvider from './_components/providers/NextAuthSessionProvider';
-import Header from './_components/layouts/Header';
-import { pretendard } from '../public/fonts/font';
+import { QueryProvider } from '@/app/_components/query-providers/QueryProvider';
+import ModalProvider from '@/app/_components/providers/ModalProvider';
+import NextAuthSessionProvider from '@/app/_components/providers/NextAuthSessionProvider';
+import ToastProvider from '@/app/_components/providers/ToastProvider';
+import Header from '@/app/_components/layouts/Header';
+import { pretendard } from '@/public/fonts/font';
 
 export const metadata: Metadata = {
   title: 'TheHabit - 습관 관리 앱',
@@ -65,12 +66,16 @@ const RootLayout = ({
         <meta name='theme-color' content='#000000' />
       </head>
       <body
-        className={`${pretendard.variable} ${pretendard.variable} antialiased mobile-container`}>
+        className={`${pretendard.variable} ${pretendard.variable} antialiased mobile-container`}
+      >
         <div className='mobile-wrapper'>
           <NextAuthSessionProvider>
             <Header />
             <QueryProvider>
-              <ModalProvider>{children}</ModalProvider>
+              <ModalProvider>
+                {children}
+                <ToastProvider />
+              </ModalProvider>
             </QueryProvider>
           </NextAuthSessionProvider>
         </div>
