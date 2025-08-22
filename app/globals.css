@@ -1,3 +1,13 @@
+@import 'tailwindcss/preflight';
+@tailwind utilities;
+
+/* Toast 커스터마이징 - 너비만 조정 */
+.Toastify__toast {
+  min-width: 400px !important;
+  max-width: 90vw !important;
+  width: auto !important;
+}
+
 @import 'tailwindcss';
 
 :root {
