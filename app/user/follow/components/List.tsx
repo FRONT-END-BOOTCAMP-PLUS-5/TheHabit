@@ -50,8 +50,7 @@ export const ListComponent = ({ data, type }: IList) => {
         </div>
       </div>
       <Button
-        type='default'
-        color='default'
+        buttonType={getFollow ? 'danger' : 'primary'}
         className='w-[76px]'
         disabled={getDisabled}
         onClick={() => {
