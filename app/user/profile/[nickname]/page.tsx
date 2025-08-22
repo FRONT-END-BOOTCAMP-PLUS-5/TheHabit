@@ -55,8 +55,7 @@ const UserProfilePage = () => {
           </div>
           <div id='button_wrapper' className='flex justify-center gap-10 mt-10 px-5'>
             <Button
-              type='default'
-              color='default'
+              buttonType='secondary'
               className='w-[200px]'
               onClick={() => {
                 router.push('/challenges');
@@ -65,8 +64,7 @@ const UserProfilePage = () => {
               챌린지 보러가기
             </Button>
             <Button
-              type='default'
-              color='default'
+              buttonType='secondary'
               className='w-[200px]'
               onClick={() => {
                 router.push(`/user/profile/edit/${userInfo?.nickname}`);

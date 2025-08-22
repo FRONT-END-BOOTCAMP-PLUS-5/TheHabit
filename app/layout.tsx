@@ -6,6 +6,7 @@ import NextAuthSessionProvider from '@/app/_components/providers/NextAuthSession
 import Header from '@/app/_components/layouts/Header';
 import { pretendard } from '@/public/fonts/font';
 import { TabNavigation } from '@/app/_components/tab-navigations/TabNavigation';
+import ToastProvider from './_components/providers/ToastProvider';
 
 export const metadata: Metadata = {
   title: 'TheHabit - 습관 관리 앱',
@@ -66,12 +67,17 @@ const RootLayout = ({
         <meta name='theme-color' content='#000000' />
       </head>
       <body
-        className={`${pretendard.variable} ${pretendard.variable} antialiased mobile-container`}>
+        className={`${pretendard.variable} ${pretendard.variable} antialiased mobile-container`}
+      >
         <div className='mobile-wrapper'>
           <NextAuthSessionProvider>
             <Header />
             <QueryProvider>
-              <ModalProvider>{children}<TabNavigation/></ModalProvider>
+              <ModalProvider>
+                {children}
+                <TabNavigation/>
+                <ToastProvider />
+              </ModalProvider>
             </QueryProvider>
           </NextAuthSessionProvider>
         </div>

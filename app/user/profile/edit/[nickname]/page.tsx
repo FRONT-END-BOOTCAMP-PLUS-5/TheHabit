@@ -117,12 +117,7 @@ const UserProfileEditPage = () => {
           </div>
           <div id='button_wrapper' className='flex justify-end gap-10 mt-10 px-5'>
             <LogOut />
-            <Button
-              type='default'
-              color='default'
-              className='w-[100px]'
-              onClick={handleDeleteUserRegister}
-            >
+            <Button buttonType='danger' className='w-[100px]' onClick={handleDeleteUserRegister}>
               회원탈퇴
             </Button>
           </div>

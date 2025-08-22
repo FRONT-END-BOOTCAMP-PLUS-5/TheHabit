@@ -58,12 +58,7 @@ export const RoutineItem = ({
               {UI_MESSAGES.SUCCESS.PHOTO_VERIFIED}
             </span>
           ) : (
-            <Button
-              type='link'
-              color='blue'
-              onClick={() => onPhotoUpload(routine)}
-              className='text-xs'
-            >
+            <Button buttonType='link' onClick={() => onPhotoUpload(routine)} className='text-xs'>
               📸 인증샷
             </Button>
           )}

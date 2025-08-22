@@ -1,7 +1,6 @@
 import prisma from '@/public/utils/prismaClient';
-import { IRoutineCompletionsRepository } from '../../domains/repositories/IRoutineCompletionsRepository';
-import { RoutineCompletion } from '../../domains/entities/routine-completion/routineCompletion';
-import { s3Service } from '@/backend/shared/services/s3.service';
+import { IRoutineCompletionsRepository } from '@/backend/routine-completions/domains/repositories/IRoutineCompletionsRepository';
+import { RoutineCompletion } from '@/backend/routine-completions/domains/entities/routine-completion/routineCompletion';
 
 export class PrRoutineCompletionsRepository implements IRoutineCompletionsRepository {
   async create(
@@ -16,48 +15,47 @@ export class PrRoutineCompletionsRepository implements IRoutineCompletionsReposi
       },
     });
 
-    return {
-      id: createdCompletion.id,
-      userId: createdCompletion.userId,
-      routineId: createdCompletion.routineId,
-      createdAt: createdCompletion.createdAt,
-      proofImgUrl: createdCompletion.proofImgUrl,
-      content: createdCompletion.content,
-    };
+    return new RoutineCompletion(
+      createdCompletion.id,
+      createdCompletion.userId,
+      createdCompletion.routineId,
+      createdCompletion.createdAt,
+      createdCompletion.proofImgUrl,
+      createdCompletion.content
+    );
   }
 
   async createByNickname(request: {
     nickname: string;
     routineId: number;
+    content: string;
     proofImgUrl: string | null;
-    content: string | null;
   }): Promise<RoutineCompletion> {
-    // 먼저 nickname으로 user를 찾아서 userId 가져오기
     const user = await prisma.user.findUnique({
-      where: { nickname: request.nickname }
+      where: { nickname: request.nickname },
     });
 
     if (!user) {
-      throw new Error(`User with nickname '${request.nickname}' not found`);
+      throw new Error(`사용자를 찾을 수 없습니다: ${request.nickname}`);
     }
 
     const createdCompletion = await prisma.routineCompletion.create({
       data: {
         userId: user.id,
         routineId: request.routineId,
-        proofImgUrl: request.proofImgUrl,
         content: request.content,
+        proofImgUrl: request.proofImgUrl,
       },
     });
 
-    return {
-      id: createdCompletion.id,
-      userId: createdCompletion.userId,
-      routineId: createdCompletion.routineId,
-      createdAt: createdCompletion.createdAt,
-      proofImgUrl: createdCompletion.proofImgUrl,
-      content: createdCompletion.content,
-    };
+    return new RoutineCompletion(
+      createdCompletion.id,
+      createdCompletion.userId,
+      createdCompletion.routineId,
+      createdCompletion.createdAt,
+      createdCompletion.proofImgUrl,
+      createdCompletion.content
+    );
   }
 
   async findByRoutineId(routineId: number): Promise<RoutineCompletion[]> {
@@ -65,30 +63,16 @@ export class PrRoutineCompletionsRepository implements IRoutineCompletionsReposi
       where: { routineId },
     });
 
-    return completions.map((completion: RoutineCompletion) => ({
-      id: completion.id,
-      userId: completion.userId,
-      routineId: completion.routineId,
-      createdAt: completion.createdAt,
-      proofImgUrl: completion.proofImgUrl,
-      content: completion.content,
-    }));
+    return completions.map(completion => new RoutineCompletion(
+      completion.id,
+      completion.userId,
+      completion.routineId,
+      completion.createdAt,
+      completion.proofImgUrl,
+      completion.content
+    ));
   }
 
-  async findByUserId(userId: string): Promise<RoutineCompletion[]> {
-    const completions = await prisma.routineCompletion.findMany({
-      where: { userId },
-    });
-
-    return completions.map((completion: RoutineCompletion) => ({
-      id: completion.id,
-      userId: completion.userId,
-      routineId: completion.routineId,
-      createdAt: completion.createdAt,
-      proofImgUrl: completion.proofImgUrl,
-      content: completion.content,
-    }));
-  }
 
   async findById(completionId: number): Promise<RoutineCompletion | null> {
     const completion = await prisma.routineCompletion.findUnique({
@@ -97,14 +81,14 @@ export class PrRoutineCompletionsRepository implements IRoutineCompletionsReposi
 
     if (!completion) return null;
 
-    return {
-      id: completion.id,
-      userId: completion.userId,
-      routineId: completion.routineId,
-      createdAt: completion.createdAt,
-      proofImgUrl: completion.proofImgUrl,
-      content: completion.content,
-    };
+    return new RoutineCompletion(
+      completion.id,
+      completion.userId,
+      completion.routineId,
+      completion.createdAt,
+      completion.proofImgUrl,
+      completion.content
+    );
   }
 
   async findByNickname(nickname: string): Promise<RoutineCompletion[]> {
@@ -121,14 +105,14 @@ export class PrRoutineCompletionsRepository implements IRoutineCompletionsReposi
         }
       });
 
-      return completions.map((completion: RoutineCompletion) => ({
-        id: completion.id,
-        userId: completion.userId,
-        routineId: completion.routineId,
-        createdAt: completion.createdAt,
-        proofImgUrl: completion.proofImgUrl,
-        content: completion.content,
-      }));
+      return completions.map(completion => new RoutineCompletion(
+        completion.id,
+        completion.userId,
+        completion.routineId,
+        completion.createdAt,
+        completion.proofImgUrl,
+        completion.content
+      ));
     } catch (error) {
       console.error('닉네임으로 루틴 완료 조회 중 오류:', error);
       throw new Error(`닉네임 '${nickname}'으로 루틴 완료 조회에 실패했습니다: ${error instanceof Error ? error.message : '알 수 없는 오류'}`);
@@ -143,14 +127,14 @@ export class PrRoutineCompletionsRepository implements IRoutineCompletionsReposi
       },
     });
 
-    return completions.map((completion: RoutineCompletion) => ({
-      id: completion.id,
-      userId: completion.userId,
-      routineId: completion.routineId,
-      createdAt: completion.createdAt,
-      proofImgUrl: completion.proofImgUrl,
-      content: completion.content,
-    }));
+    return completions.map(completion => new RoutineCompletion(
+      completion.id,
+      completion.userId,
+      completion.routineId,
+      completion.createdAt,
+      completion.proofImgUrl,
+      completion.content
+    ));
   }
 
   async findByNicknameAndRoutineId(nickname: string, routineId: number): Promise<RoutineCompletion[]> {
@@ -170,14 +154,14 @@ export class PrRoutineCompletionsRepository implements IRoutineCompletionsReposi
         }
       });
 
-      return completions.map((completion: RoutineCompletion) => ({
-        id: completion.id,
-        userId: completion.userId,
-        routineId: completion.routineId,
-        createdAt: completion.createdAt,
-        proofImgUrl: completion.proofImgUrl,
-        content: completion.content,
-      }));
+      return completions.map(completion => new RoutineCompletion(
+        completion.id,
+        completion.userId,
+        completion.routineId,
+        completion.createdAt,
+        completion.proofImgUrl,
+        completion.content
+      ));
     } catch (error) {
       console.error('닉네임과 루틴ID로 완료 조회 중 오류:', error);
       throw new Error(`닉네임 '${nickname}'과 루틴ID '${routineId}'로 조회에 실패했습니다: ${error instanceof Error ? error.message : '알 수 없는 오류'}`);
@@ -197,14 +181,14 @@ export class PrRoutineCompletionsRepository implements IRoutineCompletionsReposi
       },
     });
 
-    return {
-      id: updatedCompletion.id,
-      userId: updatedCompletion.userId,
-      routineId: updatedCompletion.routineId,
-      createdAt: updatedCompletion.createdAt,
-      proofImgUrl: updatedCompletion.proofImgUrl,
-      content: updatedCompletion.content,
-    };
+    return new RoutineCompletion(
+      updatedCompletion.id,
+      updatedCompletion.userId,
+      updatedCompletion.routineId,
+      updatedCompletion.createdAt,
+      updatedCompletion.proofImgUrl,
+      updatedCompletion.content
+    );
   }
 
   async delete(completionId: number): Promise<boolean> {
@@ -217,9 +201,5 @@ export class PrRoutineCompletionsRepository implements IRoutineCompletionsReposi
       if (error instanceof Error) throw new Error(error.message);
       throw new Error('Failed to delete routine completion');
     }
-  }
-
-  async uploadImage(file: File): Promise<{ imageUrl: string; key: string }> {
-    return s3Service.uploadImage(file, 'routine-completions');
   }
 }

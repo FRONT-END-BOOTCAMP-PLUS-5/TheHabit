@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import { LoadingSpinner } from '@/app/_components/loading/LoadingSpinner';
 import { RoutineItem } from './RoutineItem';
 import { RoutineCompletionModal } from './RoutineCompletionModal';
 import { ErrorBoundary } from './ErrorBoundary';
@@ -18,16 +17,19 @@ import { RoutineAccordionContentProps } from './types';
 import { ReadRoutineResponseDto } from '@/backend/routines/applications/dtos/RoutineDto';
 import { RoutineCompletionDto } from '@/backend/routine-completions/applications/dtos/RoutineCompletionDto';
 import { UI_MESSAGES } from '@/public/consts/routineItem';
+import { useGetUserInfo } from '@/libs/hooks/user-hooks/useGetUserInfo';
 
 const RoutineAccordionContentInner = ({
   challengeId,
   challengeName,
   contentRef,
 }: RoutineAccordionContentProps) => {
+  // 사용자 정보 가져오기
+  const { userInfo } = useGetUserInfo();
   // 데이터 페칭
   const { data: routines = [], isLoading, error } = useGetRoutinesByChallenge(challengeId);
   const { data: completions = [], isLoading: completionsLoading } =
-    useGetRoutineCompletionsByChallenge(challengeId);
+    useGetRoutineCompletionsByChallenge(challengeId, userInfo?.nickname || '', !!userInfo?.nickname);
 
   // 뮤테이션 훅들
   const createCompletionMutation = useCreateRoutineCompletion();
@@ -47,13 +49,9 @@ const RoutineAccordionContentInner = ({
     setSelectedRoutine(null);
   };
 
-  // 루틴 완료 상태 확인 함수들
-  const isRoutineCompleted = (routineId: number) => {
-    return completions.some(completion => completion.routineId === routineId);
-  };
-
+  // 루틴 완료 상태 확인 함수
   const getRoutineCompletion = (routineId: number) => {
-    return completions.find(completion => completion.routineId === routineId);
+    return completions.find((completion: RoutineCompletionDto) => completion.routineId === routineId);
   };
 
   // 이벤트 핸들러
@@ -75,11 +73,16 @@ const RoutineAccordionContentInner = ({
       return;
     }
 
+    if (!userInfo?.nickname) {
+      alert('로그인이 필요합니다.');
+      return;
+    }
+
     createCompletionMutation.mutate(
       {
-        userId: 'f1c6b5ae-b27e-4ae3-9e30-0cb8653b04fd', // TODO: 실제 사용자 ID 사용
+        nickname: userInfo.nickname,
         routineId: selectedRoutine.id,
-        review: reviewText,
+        content: reviewText,
         photoFile,
       },
       {
@@ -87,7 +90,7 @@ const RoutineAccordionContentInner = ({
           closeModal();
           alert('루틴 완료가 제출되었습니다!');
         },
-        onError: error => {
+        onError: (error: Error) => {
           console.error('루틴 완료 생성 오류:', error);
           alert('제출에 실패했습니다. 다시 시도해주세요.');
         },
@@ -134,9 +137,9 @@ const RoutineAccordionContentInner = ({
         <h4 className='text-lg font-semibold text-gray-800 mb-4'>📋 오늘의 루틴</h4>
 
         <div className='space-y-3'>
-          {routines.map(routine => {
-            const isCompleted = isRoutineCompleted(routine.id);
+          {routines.map((routine: ReadRoutineResponseDto) => {
             const completion = getRoutineCompletion(routine.id);
+            const isCompleted = !!completion;
 
             return (
               <RoutineItem
