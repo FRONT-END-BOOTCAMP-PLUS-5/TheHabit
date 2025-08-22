@@ -1,17 +1,28 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { AddRoutineCompletionUseCase } from '@/backend/routine-completions/applications/usecases/AddRoutineCompletionUseCase';
-import { GetRoutineCompletionsUseCase } from '@/backend/routine-completions/applications/usecases/GetRoutineCompletionsUseCase';
-import { GetRoutinesUseCase } from '@/backend/routines/applications/usecases/GetRoutinesUseCase';
+import { UpdateRoutineCompletionUseCase } from '@/backend/routine-completions/applications/usecases/UpdateRoutineCompletionUseCase';
+import { DeleteRoutineCompletionUseCase } from '@/backend/routine-completions/applications/usecases/DeleteRoutineCompletionUseCase';
 import { PrRoutineCompletionsRepository } from '@/backend/routine-completions/infrastructures/repositories/PrRoutineCompletionsRepository';
-import { PrRoutinesRepository } from '@/backend/routines/infrastructures/repositories/PrRoutinesRepository';
-import { ApiResponse } from '@/backend/shared/types/ApiResponse';
-import { RoutineCompletionDto } from '@/backend/routine-completions/applications/dtos/RoutineCompletionDto';
 import { s3Service } from '@/backend/shared/services/s3.service';
+import { RoutineCompletionDto, RoutineCompletionDtoMapper } from '@/backend/routine-completions/applications/dtos/RoutineCompletionDto';
+import { ApiResponse } from '@/backend/shared/types/ApiResponse';
 
-const routineCompletionsRepository = new PrRoutineCompletionsRepository();
-const routinesRepository = new PrRoutinesRepository();
+const createAddRoutineCompletionUseCase = () => {
+  const repository = new PrRoutineCompletionsRepository();
+  return new AddRoutineCompletionUseCase(repository);
+};
 
-// 루틴 완료 생성 (POST) - 이미지 업로드 포함
+const createUpdateRoutineCompletionUseCase = () => {
+  const repository = new PrRoutineCompletionsRepository();
+  return new UpdateRoutineCompletionUseCase(repository);
+};
+
+const createDeleteRoutineCompletionUseCase = () => {
+  const repository = new PrRoutineCompletionsRepository();
+  return new DeleteRoutineCompletionUseCase(repository);
+};
+
+// 루틴 완료 생성 (POST)
 export async function POST(request: NextRequest): Promise<NextResponse> {
   try {
     console.log('=== POST /api/routine-completions 요청 시작 ===');
@@ -20,23 +31,23 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     const formData = await request.formData();
     const file = formData.get('file');
     const routineIdValue = formData.get('routineId');
-    const reviewValue = formData.get('review');
+    const contentValue = formData.get('content');
     const nicknameValue = formData.get('nickname');
 
-    console.log('요청 데이터:', { 
+    console.log('요청 데이터:', {
       hasFile: !!file,
       routineId: routineIdValue,
-      review: reviewValue,
-      nickname: nicknameValue
+      content: contentValue,
+      nickname: nicknameValue,
     });
 
     // 필수 필드 검증
-    if (!nicknameValue || typeof nicknameValue !== 'string' || nicknameValue.trim() === '') {
+    if (!nicknameValue || typeof nicknameValue !== 'string' || String(nicknameValue).trim() === '') {
       const errorResponse: ApiResponse<null> = {
         success: false,
         error: {
-          code: 'INVALID_NICKNAME',
-          message: '닉네임이 제공되지 않았습니다.'
+          code: 'MISSING_NICKNAME',
+          message: '닉네임이 필요합니다.'
         }
       };
       return NextResponse.json(errorResponse, { status: 400 });
@@ -53,12 +64,12 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       return NextResponse.json(errorResponse, { status: 400 });
     }
 
-    if (!reviewValue || typeof reviewValue !== 'string' || reviewValue.trim() === '') {
+    if (!contentValue || typeof contentValue !== 'string' || String(contentValue).trim() === '') {
       const errorResponse: ApiResponse<null> = {
         success: false,
         error: {
-          code: 'MISSING_REVIEW',
-          message: '리뷰 내용이 필요합니다.'
+          code: 'MISSING_CONTENT',
+          message: '콘텐츠 내용이 필요합니다.'
         }
       };
       return NextResponse.json(errorResponse, { status: 400 });
@@ -66,7 +77,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
     // 루틴 ID 검증
     const routineIdNumber = Number(routineIdValue);
-    if (isNaN(routineIdNumber)) {
+    if (isNaN(routineIdNumber) || !routineIdValue) {
       const errorResponse: ApiResponse<null> = {
         success: false,
         error: {
@@ -98,15 +109,13 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     }
 
     // 루틴 완료 데이터 생성
-    const addRoutineCompletionUseCase = new AddRoutineCompletionUseCase(
-      routineCompletionsRepository
-    );
+    const addRoutineCompletionUseCase = createAddRoutineCompletionUseCase();
 
-    const result = await addRoutineCompletionUseCase.executeByNickname({
-      nickname: nicknameValue.trim(),
+    const result = await addRoutineCompletionUseCase.execute({
+      nickname: String(nicknameValue).trim(),
       routineId: routineIdNumber,
+      content: String(contentValue).trim(),
       proofImgUrl,
-      content: reviewValue.trim(),
     });
 
     console.log('루틴 완료 생성 성공:', result);
@@ -117,13 +126,12 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       message: '루틴이 성공적으로 완료되었습니다.'
     };
     return NextResponse.json(successResponse, { status: 201 });
-
   } catch (error) {
     console.error('루틴 완료 생성 오류:', error);
     const errorResponse: ApiResponse<null> = {
       success: false,
       error: {
-        code: 'COMPLETION_FAILED',
+        code: 'CREATION_FAILED',
         message: '루틴 완료 생성에 실패했습니다.'
       }
     };
@@ -131,79 +139,90 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
   }
 }
 
-// 루틴 완료 목록 조회 (GET)
-export async function GET(request: NextRequest): Promise<NextResponse> {
+// 루틴 완료 수정 (PATCH)
+export async function PATCH(request: NextRequest): Promise<NextResponse<ApiResponse<RoutineCompletionDto | null>>> {
   try {
-    const { searchParams } = new URL(request.url);
-    const nickname = searchParams.get('nickname');
-    const challengeId = searchParams.get('challengeId');
+    const { completionId, proofImgUrl } = await request.json();
 
-    if (!nickname || nickname.trim() === '') {
+    if (!completionId || typeof completionId !== 'number') {
       const errorResponse: ApiResponse<null> = {
         success: false,
         error: {
-          code: 'INVALID_NICKNAME',
-          message: '닉네임이 제공되지 않았습니다.'
+          code: 'MISSING_COMPLETION_ID',
+          message: '루틴 완료 ID가 필요합니다.'
         }
       };
       return NextResponse.json(errorResponse, { status: 400 });
     }
 
-    // 필수 파라미터 검증
-    if (!challengeId) {
+    if (proofImgUrl !== null && typeof proofImgUrl !== 'string') {
       const errorResponse: ApiResponse<null> = {
         success: false,
         error: {
-          code: 'INVALID_PARAMS',
-          message: '필수 파라미터가 누락되었습니다: challengeId'
+          code: 'INVALID_PROOF_IMG_URL',
+          message: '유효하지 않은 인증 이미지 URL입니다.'
         }
       };
       return NextResponse.json(errorResponse, { status: 400 });
     }
 
-    const challengeIdNumber = Number(challengeId);
-    if (isNaN(challengeIdNumber)) {
-      const errorResponse: ApiResponse<null> = {
-        success: false,
-        error: {
-          code: 'INVALID_CHALLENGE_ID',
-          message: '올바른 챌린지 ID가 필요합니다.'
-        }
-      };
-      return NextResponse.json(errorResponse, { status: 400 });
-    }
+    const usecase = createUpdateRoutineCompletionUseCase();
+    const updatedCompletion = await usecase.execute(completionId, { proofImgUrl });
 
-    const getRoutinesUseCase = new GetRoutinesUseCase(routinesRepository);
-    const getRoutineCompletionsUseCase = new GetRoutineCompletionsUseCase(
-      routineCompletionsRepository
-    );
-
-    // 1. 해당 챌린지의 루틴 목록 조회
-    const routines = await getRoutinesUseCase.getByChallengeId(challengeIdNumber);
-
-    // 2. 각 루틴에 대한 사용자의 완료 상태 조회 (병렬 처리로 성능 개선)
-    const completionPromises = routines.map(routine =>
-      getRoutineCompletionsUseCase.getByNicknameAndRoutine(nickname.trim(), routine.id)
-    );
-
-    const completionResults = await Promise.all(completionPromises);
-    const completions = completionResults.flat();
-
-    const successResponse: ApiResponse<RoutineCompletionDto[]> = {
+    const successResponse: ApiResponse<RoutineCompletionDto> = {
       success: true,
-      data: completions,
-      message: '루틴 완료 목록을 성공적으로 조회했습니다.'
+      data: RoutineCompletionDtoMapper.fromEntity(updatedCompletion),
+      message: '루틴 완료가 성공적으로 수정되었습니다.'
     };
     return NextResponse.json(successResponse);
   } catch (error) {
-    console.error('루틴 완료 목록 조회 오류:', error);
+    console.error('루틴 완료 수정 중 오류 발생:', error);
     const errorResponse: ApiResponse<null> = {
       success: false,
       error: {
-        code: 'FETCH_FAILED',
-        message: '루틴 완료 목록 조회에 실패했습니다.'
+        code: 'UPDATE_FAILED',
+        message: error instanceof Error ? error.message : '루틴 완료 수정에 실패했습니다.'
       }
     };
     return NextResponse.json(errorResponse, { status: 500 });
   }
 }
+
+// 루틴 완료 삭제 (DELETE)
+export async function DELETE(request: NextRequest): Promise<NextResponse<ApiResponse<null>>> {
+  try {
+    const { completionId } = await request.json();
+
+    if (!completionId || typeof completionId !== 'number') {
+      const errorResponse: ApiResponse<null> = {
+        success: false,
+        error: {
+          code: 'MISSING_COMPLETION_ID',
+          message: '루틴 완료 ID가 필요합니다.'
+        }
+      };
+      return NextResponse.json(errorResponse, { status: 400 });
+    }
+
+    const usecase = createDeleteRoutineCompletionUseCase();
+    await usecase.execute(completionId);
+
+    const successResponse: ApiResponse<null> = {
+      success: true,
+      data: null,
+      message: '루틴 완료가 성공적으로 삭제되었습니다.'
+    };
+    return NextResponse.json(successResponse);
+  } catch (error) {
+    console.error('루틴 완료 삭제 중 오류 발생:', error);
+    const errorResponse: ApiResponse<null> = {
+      success: false,
+      error: {
+        code: 'DELETE_FAILED',
+        message: error instanceof Error ? error.message : '루틴 완료 삭제에 실패했습니다.'
+      }
+    };
+    return NextResponse.json(errorResponse, { status: 500 });
+  }
+}
+

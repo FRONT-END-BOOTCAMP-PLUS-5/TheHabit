@@ -1,7 +1,6 @@
 'use client';
 import React from 'react';
-import { toast, ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { toast } from 'react-toastify';
 
 // Toast 타입 정의
 export type ToastType = 'success' | 'error' | 'info' | 'warning' | 'default';
@@ -57,24 +56,6 @@ export const Toast = {
   },
 };
 
-// Toast 컨테이너 컴포넌트
-export const ToastProvider: React.FC = () => {
-  return (
-    <ToastContainer
-      position='top-center'
-      autoClose={3000}
-      hideProgressBar={false}
-      newestOnTop={false}
-      closeOnClick
-      rtl={false}
-      pauseOnFocusLoss
-      draggable
-      pauseOnHover
-      theme='light'
-    />
-  );
-};
-
 // 커스텀 Toast 컴포넌트 (TSX로 사용할 때)
 interface CustomToastProps {
   type: ToastType;
@@ -104,7 +85,11 @@ export const CustomToast: React.FC<CustomToastProps> = ({ type, message, options
     }
   };
 
-  return <div onClick={handleClick}>{children}</div>;
+  return (
+    <div onClick={handleClick} className='w-full'>
+      {children}
+    </div>
+  );
 };
 
 export default Toast;
