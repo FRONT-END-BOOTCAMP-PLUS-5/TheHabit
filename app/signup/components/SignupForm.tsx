@@ -2,11 +2,12 @@
 
 import { ProfileSection } from '@/app/signup/components/ProfileSection';
 import { SignupItem } from '@/public/consts/signupItem';
+import { CheckBoxItem } from '@/public/consts/checkBoxItem';
 import CustomInput from '@/app/_components/inputs/CustomInput';
 import { Controller, FormProvider, useForm } from 'react-hook-form';
 import { Button } from '@/app/_components/buttons/Button';
 import '@ant-design/v5-patch-for-react-19';
-import { CheckBox } from '@/app/signup/components/CheckBox';
+import { CheckBoxList } from '@/app/_components/checkboxes/Checkbox';
 import { useSignUp } from '@/libs/hooks/signup/useSignUp';
 import { useState } from 'react';
 import Image from 'next/image';
@@ -27,6 +28,7 @@ interface ISignupForm {
 export const SignUpForm = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showPasswordConfirm, setShowPasswordConfirm] = useState(false);
+  const [checkedItems, setCheckedItems] = useState<{ [key: number]: boolean }>({});
   
   const methods = useForm<ISignupForm>({
     mode: 'onChange',
@@ -57,6 +59,15 @@ export const SignUpForm = () => {
 
   const togglePasswordConfirmVisibility = () => {
     setShowPasswordConfirm(!showPasswordConfirm);
+  };
+
+  const handleCheckboxChange = (checkedItems: { [key: number]: boolean }) => {
+    setCheckedItems(checkedItems);
+  };
+
+  const isAllRequiredChecked = () => {
+    const requiredItems = CheckBoxItem.filter(item => item.required);
+    return requiredItems.every(item => checkedItems[item.id]);
   };
 
   const onSubmit = async (data: ISignupForm) => {
@@ -212,8 +223,8 @@ export const SignUpForm = () => {
             )}
           </div>
         ))}
-        <CheckBox />
-        <Button className='login-button' htmlType='submit' disabled={loading}>
+        <CheckBoxList onChange={handleCheckboxChange} />
+        <Button className='login-button' htmlType='submit' disabled={loading || !isAllRequiredChecked()}>
           {loading ? '회원가입 중...' : '회원가입'}
         </Button>
         {error && <p className='text-red-500 text-xs'>{error}</p>}
