@@ -3,21 +3,17 @@
 import { useState, useCallback } from 'react';
 import { Button } from '@/app/_components/buttons/Button';
 import { CustomInput } from '@/app/_components/inputs/Input';
-import { EmojiDisplay } from '@/app/_components/emoji/EmojiDisplay';
 import { FileUpload } from '@/app/_components/file-upload/FileUpload';
-import { ReadRoutineResponseDto } from '@/backend/routines/applications/dtos/RoutineDto';
 import { UI_MESSAGES, FORM_LIMITS } from '@/public/consts/routineItem';
 import { showError, ROUTINE_ERRORS } from '@/public/utils/errorUtils';
 
 interface RoutineCompletionFormProps {
-  routineId: number;
   onSubmit: (reviewText: string, photoFile?: File) => Promise<void>;
   onCancel: () => void;
   loading?: boolean;
 }
 
 export const RoutineCompletionForm = ({
-  routineId,
   onSubmit,
   onCancel,
   loading = false,

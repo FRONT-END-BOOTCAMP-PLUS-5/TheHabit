@@ -97,7 +97,6 @@ export const ChallengesAccordionContent = ({
 
     openModal(
       <RoutineCompletionForm
-        routineId={routineId}
         onSubmit={async (reviewText: string, photoFile?: File) => {
           try {
             await createRoutineCompletionMutation.mutateAsync({
