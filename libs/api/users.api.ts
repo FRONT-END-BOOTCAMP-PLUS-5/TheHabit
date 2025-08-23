@@ -1,7 +1,8 @@
 import { axiosInstance } from '@/libs/axios/axiosInstance';
-import { UserDto } from '@/backend/users/applications/dtos/UserDto';
+import { newUserDto, UserDto } from '@/backend/users/applications/dtos/UserDto';
 import { CreateRoutineCompletionResponseDto } from '@/backend/routine-completions/applications/dtos/RoutineCompletionDto';
 import { UserReviewDto } from '@/backend/users/applications/dtos/UserReviewDto';
+import { UserChallengeAndRoutineAndFollowAndCompletionDto } from '@/backend/users/applications/dtos/UserChallengeAndRoutineAndFollowAndCompletion';
 
 // API 응답 타입 정의
 interface ApiResponse<T> {
@@ -13,6 +14,24 @@ interface ApiResponse<T> {
     message: string;
   };
 }
+
+/**
+ * 해당 함수는 user nickname으로 해당 유저 필요한 컬럼만 가져오는 챌린저 + 루틴 + 팔로우 + 컴플리션 테이블 Join
+ * @param nickname: string
+ * @return Promise<ApiResponse<User>>
+ * */
+export const getUserChallengeAndRoutineAndFollowAndCompletion = async (
+  nickname: string
+): Promise<ApiResponse<UserChallengeAndRoutineAndFollowAndCompletionDto>> => {
+  try {
+    const response = await axiosInstance.get<
+      ApiResponse<UserChallengeAndRoutineAndFollowAndCompletionDto>
+    >(`/api/users/${nickname}`);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
 
 /**
  * 해당 함수는 user nickname으로 해당 유저 완료 루틴 가져오기
@@ -70,6 +89,33 @@ export const getUserRoutineCompletionReview = async (
 };
 
 /**
+ * 해당 함수는 Users 가져오기
+ * @param id: string
+ * @param toUserId: string
+ * @param keyword: string
+ * @return ApiResponse<UserDto[]>
+ * */
+export const getUsers = async (
+  myNickname: string,
+  fromUserId: string,
+  username: string
+): Promise<ApiResponse<newUserDto[]>> => {
+  try {
+    const response = await axiosInstance.get<ApiResponse<newUserDto[]>>(`/api/users/search`, {
+      params: {
+        myNickname,
+        username,
+        fromUserId,
+      },
+    });
+
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+/**
  * 해당 함수는 user nickname으로 해당 유저 완료 루틴에 감정표현 나타내기
  * @param nickname: string
  * @param explain: string
@@ -99,66 +145,18 @@ export const createUserRoutineCompletionEmotion = async (
 };
 
 /**
- * 해당 함수는 user name update 하기
- * @param id: string
- * @param nickname: string
- * @return Promise<ApiResponse<User>>
- * */
-export const updateUserName = async (
-  id: string,
-  username: string
-): Promise<ApiResponse<UserDto>> => {
-  try {
-    const response = await axiosInstance.post<ApiResponse<UserDto>>(
-      `/api/users/edit/username/${id}`,
-      {
-        id,
-        username,
-      }
-    );
-    return response.data;
-  } catch (error) {
-    throw error;
-  }
-};
-
-/**
  * 해당 함수는 user nickname update 하기
  * @param id: string
  * @param nickname: string
  * @return Promise<ApiResponse<User>>
  * */
-export const updateUserNickname = async (
-  id: string,
-  nickname: string
-): Promise<ApiResponse<UserDto>> => {
-  try {
-    const response = await axiosInstance.post<ApiResponse<UserDto>>(
-      `/api/users/edit/nickname/${id}`,
-      {
-        id,
-        nickname,
-      }
-    );
-    return response.data;
-  } catch (error) {
-    throw error;
-  }
-};
-
-/**
- * 해당 함수는 user profile update 하기
- * @param id: string
- * @param nickname: string
- * @return Promise<ApiResponse<User>>
- * */
-export const updateUserProfile = async (
-  id: string,
+export const updateUser = async (
+  nickname: string,
   formData: FormData
 ): Promise<ApiResponse<UserDto>> => {
   try {
     const response = await axiosInstance.post<ApiResponse<UserDto>>(
-      `/api/users/edit/profile/${id}`,
+      `/api/users/edit/${nickname}`,
       formData,
       {
         headers: {
@@ -177,13 +175,9 @@ export const updateUserProfile = async (
  * @param id: string
  * @return Promise<ApiResponse<void>>
  * */
-export const deleteUserRegister = async (id: string): Promise<ApiResponse<void>> => {
+export const deleteUserRegister = async (nickname: string): Promise<ApiResponse<void>> => {
   try {
-    const response = await axiosInstance.delete<ApiResponse<void>>(`/api/users/${id}`, {
-      data: {
-        id,
-      },
-    });
+    const response = await axiosInstance.delete<ApiResponse<void>>(`/api/users/${nickname}`);
     return response.data;
   } catch (error) {
     throw error;
@@ -222,12 +216,12 @@ export const deleteUserRoutineCompletionEmotion = async (
 };
 
 export const usersApi = {
+  getUserAllData: getUserChallengeAndRoutineAndFollowAndCompletion,
   getUserRoutineCompletion,
   getUserRoutineCompletionReview,
+  getUsers,
   createUserRoutineCompletionEmotion,
-  updateNickname: updateUserNickname,
-  updateUsername: updateUserName,
-  updateUserProfile,
+  updateUser,
   deleteRegister: deleteUserRegister,
   deleteUserRoutineCompletionEmotion,
 };

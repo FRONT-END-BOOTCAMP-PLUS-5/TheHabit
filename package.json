@@ -17,6 +17,7 @@
     "@aws-sdk/s3-request-presigner": "^3.864.0",
     "@prisma/client": "^6.13.0",
     "@tanstack/react-query": "^5.84.1",
+    "@types/lodash": "^4.17.20",
     "antd": "^5.26.7",
     "axios": "^1.11.0",
     "bcryptjs": "^3.0.2",
