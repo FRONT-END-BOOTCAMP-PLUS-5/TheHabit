@@ -10,6 +10,7 @@ export const ValidateFeedBackGPTResponse = async (
     const response = await getRoutinesByChallenge(challengeId, nickname);
 
     const routines = response.data || [];
+    console.log(routines, 'routines');
 
     const routineWithCompletion = routines.map(routine => {
       const completion = routineCompletion.find(completion => completion.routineId === routine.id);
@@ -20,12 +21,12 @@ export const ValidateFeedBackGPTResponse = async (
     });
 
     if (routineWithCompletion.length === 0) {
-      console.log('루틴이 없습니다.');
       return [];
     }
 
     const routineStatusMessages = routineWithCompletion?.map(routine => {
-      const isSuccess = routine.content !== null && routine.content !== undefined; // 콘텐츠가 없으면? 실패
+      console.log(routine, 'routine');
+      const isSuccess = routine.content !== null && routine.content !== undefined;
       const status = isSuccess ? '성공' : '실패';
       return `${routine.routineTitle}: ${status}`;
     });

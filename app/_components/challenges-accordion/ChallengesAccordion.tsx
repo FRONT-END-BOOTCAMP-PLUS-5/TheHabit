@@ -19,6 +19,7 @@ interface ChallengesAccordionProps {
   challenge: ChallengeDto;
   routines: ReadRoutineResponseDto[];
   routineCompletions: RoutineCompletionDto[];
+  onFeedbackClick?: (challengeId: number) => void;
 }
 
 const CATEGORY_ICON: Record<number, { icon: StaticImageData; alt: string }> = {
@@ -44,6 +45,7 @@ const ChallengesAccordion: React.FC<ChallengesAccordionProps> = ({
   challenge,
   routines,
   routineCompletions,
+  onFeedbackClick,
 }) => {
   // 완료된 루틴 비율에 따라 동적으로 너비 계산
   const completedRatio =
@@ -121,6 +123,7 @@ const ChallengesAccordion: React.FC<ChallengesAccordionProps> = ({
         <div ref={contentRef}>
           <ChallengesAccordionContent
             challenge={challenge}
+            challengeId={challenge.id as number}
             routines={routines.filter(routine => routine.challengeId === challenge.id)}
             routineCompletions={routineCompletions.filter(completion =>
               routines.some(
@@ -128,6 +131,7 @@ const ChallengesAccordion: React.FC<ChallengesAccordionProps> = ({
                   routine.id === completion.routineId && routine.challengeId === challenge.id
               )
             )}
+            onFeedbackClick={onFeedbackClick}
           />
         </div>
       </div>

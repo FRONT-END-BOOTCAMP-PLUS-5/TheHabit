@@ -1,54 +1,21 @@
 import { DashboardDto } from '@/backend/dashboards/application/dtos/DashboardDto';
 import React from 'react';
 import { Bar, BarChart, CartesianGrid, Tooltip, XAxis, YAxis, Cell } from 'recharts';
+import { calculateAllCategoriesProgress } from '@/app/user/feedback/_components/CalcFeedBackData';
 
 export const FeedBackBarChart = ({ dashBoardData }: { dashBoardData: DashboardDto }) => {
-  const { challenge } = dashBoardData;
+  const { challenge, routines, routineCompletions } = dashBoardData;
 
-  const categoryName = [
-    {
-      id: 1,
-      name: '건강',
-      color: '#FFB347',
-    },
-    {
-      id: 2,
-      name: '자기계발',
-      color: '#3B82F6',
-    },
-    {
-      id: 3,
-      name: '공부',
-      color: '#F472B6',
-    },
-    {
-      id: 4,
-      name: '생활',
-      color: '#6A89CC',
-    },
-    {
-      id: 5,
-      name: '기타',
-      color: '#93d50b',
-    },
-  ];
+  const allCategoryData = calculateAllCategoriesProgress(challenge, routines, routineCompletions);
 
-  const challengeData = categoryName.map(item => {
-    const total = challenge.filter(challenge => challenge.categoryId === item.id).length;
-
-    const categoryChallenge = challenge.filter(challenge => challenge.categoryId === item.id);
-
-    const active = categoryChallenge.filter(challenge => challenge.active).length;
-
-    // total이 0이면 0%, 아니면 계산
-    const completionRate = total > 0 ? Math.round((active / total) * 100) : 0;
-
+  const challengeData = allCategoryData.map(category => {
+    const active = category.challengesWithProgress.filter(item => item.progressPercent > 0).length;
     return {
-      name: item.name,
-      total: total,
-      active: active,
-      completionRate: completionRate,
-      color: item.color, // 각 카테고리의 고유 색상 추가
+      name: category.name,
+      total: category.challengeCount,
+      completionRate: category.categoryProgressPercent,
+      color: category.color,
+      challengesWithProgress: category.challengesWithProgress,
     };
   });
 
@@ -64,17 +31,14 @@ export const FeedBackBarChart = ({ dashBoardData }: { dashBoardData: DashboardDt
         >
           <CartesianGrid stroke='#D9D9D9' strokeDasharray='1 1' vertical={false} />
           <XAxis dataKey='name' tickLine={false} />
-          <YAxis allowDecimals={false} tickLine={false} />
+          <YAxis allowDecimals={false} tickLine={false} domain={[0, 100]} />
           <Tooltip
             formatter={(value, name) => {
-              if (name === 'total') return [`${value}개`, '총 챌린지'];
-              if (name === 'active') return [`${value}개`, '활성 챌린지'];
-              if (name === 'completionRate') return [`${value}%`, '활성률'];
+              if (name === 'completionRate') return [`${value}%`, '진행률'];
               return [value, name];
             }}
           />
-          <Bar dataKey='total' fill='#E5E7EB' name='총 챌린지' />
-          <Bar dataKey='active' name='활성 챌린지'>
+          <Bar dataKey='completionRate' name='진행률'>
             {challengeData.map((entry, index) => (
               <Cell key={`cell-${index}`} fill={entry.color} />
             ))}

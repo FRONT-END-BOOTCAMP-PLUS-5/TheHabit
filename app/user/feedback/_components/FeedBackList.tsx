@@ -8,6 +8,7 @@ import { FeedBackDescription } from '@/app/user/feedback/_components/FeedBackDes
 import { FeedBackDetail } from '@/app/user/feedback/_components/FeedBackDetail';
 import { FeedBackBarChart } from '@/app/user/feedback/_components/FeedBackBarChart';
 import { useGetUserInfo } from '@/libs/hooks/user-hooks/useGetUserInfo';
+import { FeedBackSkeleton } from '@/app/user/feedback/_components/FeedBackSkeleton';
 
 const FEEDBACK_CATEGORIES = [
   { id: 1, name: '통계' },
@@ -17,7 +18,7 @@ const FEEDBACK_CATEGORIES = [
 export const FeedBackList = () => {
   // const { userInfo } = useGetUserInfo();
   // const nickname = userInfo?.nickname;
-  const { data: dashBoardData } = useGetDashboardByNickname('sign2test');
+  const { data: dashBoardData, isLoading } = useGetDashboardByNickname('aiden0413');
   const [selectedCategoryName, setSelectedCategoryName] = useState<string>('통계');
 
   const handleModal = (name: string) => {
@@ -48,15 +49,25 @@ export const FeedBackList = () => {
           })}
         </div>
       </nav>
-      {selectedCategoryName === '통계' ? (
-        <div className='flex flex-col gap-10 w-6/7 mx-auto'>
-          {dashBoardData && <FeedBackStatistics dashBoardData={dashBoardData} />}
-          <FeedBackDescription />
-          {dashBoardData && <FeedBackCategoryProgress dashBoardData={dashBoardData} />}
-          {dashBoardData && <FeedBackBarChart dashBoardData={dashBoardData} />}
-        </div>
+      {isLoading ? (
+        <FeedBackSkeleton />
       ) : (
-        <FeedBackDetail />
+        <>
+          {selectedCategoryName === '통계' ? (
+            <div className='flex flex-col gap-10 w-6/7 mx-auto'>
+              {dashBoardData && (
+                <>
+                  <FeedBackStatistics dashBoardData={dashBoardData} />
+                  <FeedBackDescription />
+                  <FeedBackCategoryProgress dashBoardData={dashBoardData} />
+                  <FeedBackBarChart dashBoardData={dashBoardData} />
+                </>
+              )}
+            </div>
+          ) : (
+            <FeedBackDetail />
+          )}
+        </>
       )}
     </section>
   );

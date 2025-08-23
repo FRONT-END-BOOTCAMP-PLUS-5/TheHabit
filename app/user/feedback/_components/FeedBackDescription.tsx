@@ -1,3 +1,4 @@
+import { DashboardDto } from '@/backend/dashboards/application/dtos/DashboardDto';
 import { FEEDBACK_DESCRIPTION } from '@/public/consts/feedBackItem';
 import Image from 'next/image';
 import React from 'react';

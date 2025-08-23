@@ -129,3 +129,12 @@ model UserAchievement {
   @@id([userId, achievementId])
   @@map("user_achievements")
 }
+
+model push_subscriptions {
+  id         Int      @id @default(autoincrement())
+  endpoint   String   @unique
+  p256dh     String
+  auth       String
+  created_at DateTime @default(now())
+  user_id    String
+}

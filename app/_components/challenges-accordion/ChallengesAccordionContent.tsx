@@ -5,11 +5,14 @@ import { ChallengeDto } from '@/backend/challenges/applications/dtos/ChallengeDt
 import { ReadRoutineResponseDto } from '@/backend/routines/applications/dtos/RoutineDto';
 import { RoutineCompletionDto } from '@/backend/routine-completions/applications/dtos/RoutineCompletionDto';
 import { EmojiDisplay } from '@/app/_components/emoji/EmojiDisplay';
+import { usePathname } from 'next/navigation';
 
 interface ChallengesAccordionContentProps {
   challenge: ChallengeDto;
   routines: ReadRoutineResponseDto[];
   routineCompletions: RoutineCompletionDto[];
+  onFeedbackClick?: (challengeId: number) => void;
+  challengeId: number;
 }
 
 //TODO : 루틴 목록 TODO LIST 제공
@@ -19,7 +22,12 @@ const ChallengesAccordionContent: React.FC<ChallengesAccordionContentProps> = ({
   challenge,
   routines,
   routineCompletions,
+  onFeedbackClick,
+  challengeId,
 }) => {
+  const pathname = usePathname();
+  const isFeedback = pathname === '/user/feedback';
+
   return (
     <div className='px-3 py-3'>
       {/* 루틴 목록 Todo List */}
@@ -85,14 +93,18 @@ const ChallengesAccordionContent: React.FC<ChallengesAccordionContentProps> = ({
       {/* 새로운 루틴 추가 버튼 */}
       <div className='flex justify-center'>
         <button
+          onClick={() => {
+            if (pathname.includes('feedback')) {
+              onFeedbackClick?.(challengeId);
+            }
+          }}
           className={`rounded-full flex items-center justify-center text-sm font-bold py-2 px-4 cursor-pointer ${
             routines.length >= 3
               ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
               : 'bg-primary text-white hover:bg-primary/90'
           }`}
-          disabled={routines.length >= 3}
         >
-          + 루틴 추가하기
+          {isFeedback ? '피드백 받기' : '+ 루틴 추가하기'}
           {routines.length >= 3 && <span className='ml-1 text-xs'>(최대 3개)</span>}
         </button>
       </div>

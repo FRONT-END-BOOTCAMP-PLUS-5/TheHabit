@@ -2,58 +2,38 @@
 
 import { Pagination, A11y } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/react';
-import Image from 'next/image';
 import { DashboardDto } from '@/backend/dashboards/application/dtos/DashboardDto';
-import { getDateString } from '@/public/utils/dateUtils';
 import 'swiper/css';
 import 'swiper/css/pagination';
+import { useMemo } from 'react';
+import {
+  FeedBackEmptyIcon,
+  FeedBackErrorIcon,
+  FeedBackSuccessIcon,
+} from '@/app/user/feedback/_components/FeedbackIcon';
+import { calculateSingleChallengeProgress } from '@/app/user/feedback/_components/CalcFeedBackData';
 
 export const FeedBackStatistics = ({ dashBoardData }: { dashBoardData: DashboardDto }) => {
   const { challenge, routines, routineCompletions } = dashBoardData;
 
-  // 각 챌린지별 완료 데이터를 미리 계산
-  const challengeCompletionData = challenge.map(currentChallenge => {
-    const heatMap = getDateString(new Date(currentChallenge?.createdAt));
-
-    // 21일 카운트 해야함
-    const days = 21;
-    const dataArray = Array.from({ length: days }, (_, i) => {
-      const date = new Date(heatMap);
-      date.setDate(date.getDate() + i);
-      return date.toISOString().split('T')[0];
-    });
-
-    const currentChallengeRoutineIds = routines
-      .filter(routine => routine.challengeId === currentChallenge?.id)
-      .map(routine => routine.id);
-
-    const completion = dataArray.map(date => {
-      const dailyCompletions = routineCompletions.filter(completion => {
-        const completionDate = getDateString(new Date(completion.createdAt));
-
-        return (
-          completionDate === date &&
-          currentChallengeRoutineIds.includes(completion.routineId) &&
-          completion.content &&
-          completion.content.trim() !== ''
+  // 각 챌린지별 완료 데이터를 미리 계산 (메모이제이션)
+  const challengeCompletionData = useMemo(
+    () =>
+      challenge.map(currentChallenge => {
+        const { dailyCompletions } = calculateSingleChallengeProgress(
+          currentChallenge,
+          routines,
+          routineCompletions,
+          21
         );
-      });
 
-      const completedRoutineIds = dailyCompletions.map(completion => completion.routineId);
-
-      const allRoutinesCompleted =
-        currentChallengeRoutineIds.length > 0 &&
-        currentChallengeRoutineIds.every(routineId => completedRoutineIds.includes(routineId));
-
-      return allRoutinesCompleted;
-    });
-
-    return {
-      challenge: currentChallenge,
-      dataArray,
-      completion,
-    };
-  });
+        return {
+          challenge: currentChallenge,
+          dailyCompletions,
+        };
+      }),
+    [challenge, routines, routineCompletions]
+  );
 
   if (!challenge || challenge.length === 0) {
     return (
@@ -64,14 +44,18 @@ export const FeedBackStatistics = ({ dashBoardData }: { dashBoardData: Dashboard
   }
 
   return (
-    <section className='w-full mt-10 h-full p-2 rounded-lg shadow-md'>
+    <section className='w-full mt-10 h-full rounded-lg shadow-md'>
       <Swiper
         modules={[Pagination, A11y]}
         spaceBetween={30}
         slidesPerView={1}
-        speed={500}
-        threshold={10}
+        speed={300}
+        threshold={5}
         loop={true}
+        touchRatio={1}
+        resistance={false}
+        freeMode={false}
+        touchStartPreventDefault={false}
         pagination={{
           clickable: true,
           dynamicBullets: true,
@@ -83,22 +67,20 @@ export const FeedBackStatistics = ({ dashBoardData }: { dashBoardData: Dashboard
       >
         {challengeCompletionData.map(data => (
           <SwiperSlide key={data.challenge.id}>
-            <div className='p-4'>
+            <div className='p-5'>
               <h3 className='text-xl font-bold mb-4'>{data.challenge.name}</h3>
-              <div className='text-center grid gap-6 grid-cols-7'>
-                {data.dataArray.map((_, dayIndex) => {
-                  const isCompleted = data.completion[dayIndex];
-                  return (
-                    <Image
-                      key={dayIndex}
-                      src={isCompleted ? '/icons/completed.svg' : '/icons/notCompleted.svg'}
-                      alt={isCompleted ? 'completed' : 'not completed'}
-                      width={20}
-                      height={20}
-                      className='w-5 h-5'
-                    />
-                  );
-                })}
+              <div className='text-center grid gap-3 grid-cols-7'>
+                {data.dailyCompletions.map((isCompleted, dayIndex) => (
+                  <div key={dayIndex} className={`rounded-full text-white text-xs font-bold`}>
+                    {isCompleted === null ? (
+                      <FeedBackEmptyIcon />
+                    ) : isCompleted ? (
+                      <FeedBackSuccessIcon />
+                    ) : (
+                      <FeedBackErrorIcon />
+                    )}
+                  </div>
+                ))}
               </div>
             </div>
           </SwiperSlide>
