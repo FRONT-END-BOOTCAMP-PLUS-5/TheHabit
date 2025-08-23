@@ -10,6 +10,7 @@ export const useUnfollowMutation = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['follower'] });
       queryClient.invalidateQueries({ queryKey: ['following'] });
+      queryClient.invalidateQueries({ queryKey: ['users'] });
     },
   });
 };

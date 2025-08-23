@@ -1,5 +1,5 @@
 import { axiosInstance } from '@/libs/axios/axiosInstance';
-import { UserDto } from '@/backend/users/applications/dtos/UserDto';
+import { newUserDto, UserDto } from '@/backend/users/applications/dtos/UserDto';
 import { CreateRoutineCompletionResponseDto } from '@/backend/routine-completions/applications/dtos/RoutineCompletionDto';
 import { UserReviewDto } from '@/backend/users/applications/dtos/UserReviewDto';
 import { UserChallengeAndRoutineAndFollowAndCompletionDto } from '@/backend/users/applications/dtos/UserChallengeAndRoutineAndFollowAndCompletion';
@@ -82,6 +82,33 @@ export const getUserRoutineCompletionReview = async (
         },
       }
     );
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+/**
+ * 해당 함수는 Users 가져오기
+ * @param id: string
+ * @param toUserId: string
+ * @param keyword: string
+ * @return ApiResponse<UserDto[]>
+ * */
+export const getUsers = async (
+  myNickname: string,
+  fromUserId: string,
+  username: string
+): Promise<ApiResponse<newUserDto[]>> => {
+  try {
+    const response = await axiosInstance.get<ApiResponse<newUserDto[]>>(`/api/users/search`, {
+      params: {
+        myNickname,
+        username,
+        fromUserId,
+      },
+    });
+
     return response.data;
   } catch (error) {
     throw error;
@@ -192,6 +219,7 @@ export const usersApi = {
   getUserAllData: getUserChallengeAndRoutineAndFollowAndCompletion,
   getUserRoutineCompletion,
   getUserRoutineCompletionReview,
+  getUsers,
   createUserRoutineCompletionEmotion,
   updateUser,
   deleteRegister: deleteUserRegister,

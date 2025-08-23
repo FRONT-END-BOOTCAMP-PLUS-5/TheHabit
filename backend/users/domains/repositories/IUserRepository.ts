@@ -16,7 +16,7 @@ export interface IUserRepository {
   findById(id: string): Promise<User | null>;
   findByNickname(nickname: string): Promise<User | null>;
   findByEmail(email: string): Promise<User | null>;
-  findAll(): Promise<User[] | undefined>;
+  findAll(username: string, myNickName: string): Promise<User[] | undefined>;
   findByUserChallengesAndRoutinesAndFollowAndCompletion(
     nickname: string,
     userId: string

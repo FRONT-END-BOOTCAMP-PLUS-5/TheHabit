@@ -176,17 +176,27 @@ export class PrUserRepository implements IUserRepository {
     }
   }
 
-  async findAll(nickname: string = ''): Promise<User[] | undefined> {
+  async findAll(username: string = '', myNickName: string): Promise<User[] | undefined> {
     try {
       const users = await prisma.user.findMany({
         where: {
-          nickname: {
-            contains: nickname,
+          username: {
+            contains: username,
+          },
+          NOT: {
+            nickname: myNickName,
           },
         },
       });
       return users.map(
-        user => new User(user.username, user.nickname, user.profileImg || '', user.id || '')
+        user =>
+          new User(
+            user.username,
+            user.nickname,
+            user.profileImg || '',
+            user.profileImgPath || '',
+            user.id || ''
+          )
       );
     } catch (error) {
       if (error instanceof Error) throw new Error(error.message);

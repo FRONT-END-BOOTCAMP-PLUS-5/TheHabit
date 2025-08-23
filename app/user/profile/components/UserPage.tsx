@@ -234,7 +234,7 @@ export const UserPage = ({
                   'w-[200px] z-20 bg-[#48a9a0] text-white px-4 py-2 rounded-[10px] text-lg font-bold shadow-lg cursor-pointer hover:animate-float transition-all duration-300 hover:scale-110'
                 }
                 onClick={() => {
-                  router.push(`/user/profile/edit/${getUserData?.nickname}`);
+                  router.push(`/user/profile/edit/${sessionNickname}`);
                 }}
               >
                 프로필 편집
