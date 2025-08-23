@@ -11,9 +11,9 @@ py-[8px]
 `
 
 export const CATEGORY_COLOR: { [key: string]: string } = {
-    'All': 'bg-[#93d50b] text-[#FFF]',
-    '0': 'bg-[#FA6A8E] text-[#FFF]',
-    '1': 'bg-[#FFC70A] text-[#FFF]',
-    '2': 'bg-[#AAE3F6] text-[#FFF]',
-    '3': 'bg-[#CFBBF1] text-[#FFF]',
+  'All': 'bg-[#93d50b] text-[#FFF]',
+  '1': 'bg-[#FA6A8E] text-[#FFF]',
+  '2': 'bg-[#FFC70A] text-[#FFF]',
+  '3': 'bg-[#AAE3F6] text-[#FFF]',
+  '4': 'bg-[#CFBBF1] text-[#FFF]',
 };

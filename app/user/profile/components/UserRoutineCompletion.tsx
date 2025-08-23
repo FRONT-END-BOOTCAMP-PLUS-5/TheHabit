@@ -11,13 +11,14 @@ import {
   getUserRoutineCompletionReview,
 } from '@/libs/api/users.api';
 import { UserReviewDto } from '@/backend/users/applications/dtos/UserReviewDto';
+import NoneImg from '@/app/_components/none/NoneImg';
+import { useGetUserInfo } from '@/libs/hooks/user-hooks/useGetUserInfo';
 
 interface IUserRoutineCompletion {
   proofImgUrl: string;
   content?: string;
   createdAt: Date;
   username: string;
-  userId: string | null;
   nickname: string;
   profileImg: string | null;
   routineCompletionId: string;
@@ -28,7 +29,6 @@ const UserRoutineCompletion = ({
   content,
   createdAt,
   username,
-  userId,
   nickname,
   profileImg,
   routineCompletionId,
@@ -36,6 +36,9 @@ const UserRoutineCompletion = ({
   const [getReviewContainer, setReviewContainer] = useState<boolean>(false);
   const [getReviewEmotion, setReviewEmotion] = useState<UserReviewDto[]>([]);
   const [selectedEmojis, setSelectedEmojis] = useState<string[]>([]);
+
+  const { userInfo } = useGetUserInfo();
+
   const changeDate = () => {
     const date = new Date(createdAt);
     return getKoreanDateFromDate(date);
@@ -47,7 +50,7 @@ const UserRoutineCompletion = ({
     setReviewEmotion([...reviews]);
 
     const userSelected = reviews
-      .filter(item => item.usernames?.includes(username))
+      .filter(item => item.nicknames?.includes(userInfo?.nickname || ''))
       .map(item => item.reviewContent);
 
     setSelectedEmojis(userSelected);
@@ -63,7 +66,7 @@ const UserRoutineCompletion = ({
       setReviewContainer(false);
       await deleteUserRoutineCompletionEmotion(
         nickname,
-        userId || '',
+        userInfo?.id || '',
         routineCompletionId,
         explain
       );
@@ -74,7 +77,7 @@ const UserRoutineCompletion = ({
         nickname,
         explain,
         routineCompletionId,
-        userId || ''
+        userInfo?.id || ''
       );
       setSelectedEmojis(prev => [...prev, explain]);
     }
@@ -113,15 +116,20 @@ const UserRoutineCompletion = ({
         <div className='absolute top-3 right-2 text-[12px] text-[#656565]'>{changeDate()}</div>
       </div>
       <div id='middle' className='w-full h-full mb-8'>
-        <Image
-          src={proofImgUrl}
-          alt={content || '유저 루틴 완료 이미지 사진'}
-          width={600}
-          height={800}
-          className='w-full h-auto'
-          placeholder='blur'
-          blurDataURL='data:image/jpeg;base64,...'
-        />
+        {proofImgUrl ? (
+          <Image
+            src={proofImgUrl}
+            alt={content || '유저 루틴 완료 이미지 사진'}
+            width={600}
+            height={800}
+            className='w-full h-auto'
+            placeholder='blur'
+            blurDataURL='data:image/jpeg;base64,...'
+          />
+        ) : (
+          <NoneImg height={'300px'} />
+        )}
+
         <div className='mt-3 line-clamp-4 text-[14px]'>{content}</div>
       </div>
       <div id='bottom' className='relative'>
@@ -130,7 +138,8 @@ const UserRoutineCompletion = ({
             className={`rounded-full border-1 w-[28px] h-[28px] bg-[#F6F8FA] border-[#d1d9e0] flex items-center justify-center cursor-pointer hover:bg-[#EFF2F5]`}
             onClick={() => {
               setReviewContainer(prev => !prev);
-            }}>
+            }}
+          >
             <Image
               src='/icons/face-smile-regular-full.svg'
               alt='클릭시 상대한테 감정표현으로 표현'
@@ -144,7 +153,7 @@ const UserRoutineCompletion = ({
                 emotion => emotion.explain === item.reviewContent
               );
               const selectedNickname = item.nicknames?.find(
-                userNickname => userNickname === nickname
+                userNickname => userNickname === userInfo?.nickname
               );
               if (matchingEmotion) {
                 return (
@@ -156,14 +165,16 @@ const UserRoutineCompletion = ({
                                   cursor-pointer ${selectedNickname ? 'bg-[#DDF4FF] !border-[#0969DA]' : 'bg-[#FFF]'}`}
                       onClick={() => {
                         selectEmoji(item.reviewContent);
-                      }}>
+                      }}
+                    >
                       {matchingEmotion.icon}
                       <span className='text-[12px] font-bold'>{item.count}</span>
                     </button>
                     <div
                       className='absolute bottom-full left-1/2 -translate-x-1/2 mb-2
                                   invisible opacity-0 group-hover:visible group-hover:opacity-100 transition-opacity duration-200
-                                  [word-break:keep-all] text-center w-fit min-w-[80px] max-w-xs word-break-keep-all bg-gray-900 text-white text-sm font-normal rounded-md p-2 z-10 shadow-lg text-[12px]'>
+                                  [word-break:keep-all] text-center w-fit min-w-[80px] max-w-xs word-break-keep-all bg-gray-900 text-white text-sm font-normal rounded-md p-2 z-10 shadow-lg text-[12px]'
+                    >
                       {formatToolTipText(item.usernames!)}
                       <div
                         className='absolute left-1/2 -translate-x-1/2 top-full w-0 h-0
@@ -180,7 +191,8 @@ const UserRoutineCompletion = ({
         {getReviewContainer && (
           <div
             id='review_icons'
-            className='absolute animate-slide-up bottom-[-52px] left-0 flex gap-3 border-[#d1d9e0] border rounded-[20px] bg-white p-2 shadow-md'>
+            className='absolute animate-slide-up bottom-[-52px] left-0 flex gap-3 border-[#d1d9e0] border rounded-[20px] bg-white p-2 shadow-md'
+          >
             {REVIEW_ARR.map((_, idx) => {
               const emojiData = REVIEW_EMOTION[idx + 1];
               const isSelected = selectedEmojis.includes(emojiData.explain);
@@ -190,7 +202,8 @@ const UserRoutineCompletion = ({
                 <button
                   key={idx}
                   className={buttonClassName}
-                  onClick={() => selectEmoji(emojiData.explain)}>
+                  onClick={() => selectEmoji(emojiData.explain)}
+                >
                   {emojiData.icon}
                 </button>
               );

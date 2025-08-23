@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { usersApi } from '@/libs/api/users.api';
+import { updateUser } from '@/libs/api/users.api';
 import { useGetUserInfo } from '@/libs/hooks/user-hooks/useGetUserInfo';
 
 export const NameComponent = () => {
@@ -8,23 +8,27 @@ export const NameComponent = () => {
   const [getValue, setValue] = useState<string>('');
   const [getName, setName] = useState<string>(userInfo?.username || '');
 
-  const { updateUsername } = usersApi;
-
   const handleChangeState = () => {
     setState(prev => !prev);
   };
 
   const handleUpdateUserName = async () => {
     if (getValue) {
-      const response = await updateUsername(userInfo?.id || '', getValue);
-      const name = response.data?.username as string;
+      const formData = new FormData();
+      formData.append('id', userInfo?.id || '');
+      formData.append('profile_img', userInfo?.profileImg || '');
+      formData.append('profile_img_path', userInfo?.profileImgPath || '');
+      formData.append('username', getValue);
+      formData.append('nickname', userInfo?.nickname || '');
+      const response = await updateUser(userInfo?.nickname || '', formData);
+      const username = response.data?.username as string;
       update({
         profileImg: userInfo?.profileImg,
         profileImgPath: userInfo?.profileImgPath,
         nickname: userInfo?.nickname,
-        username: name,
+        username,
       });
-      setName(name);
+      setName(username);
       setState(prev => !prev);
     } else {
       setState(prev => !prev);
