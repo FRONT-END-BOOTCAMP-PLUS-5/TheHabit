@@ -1,8 +1,7 @@
 import { axiosInstance } from '@/libs/axios/axiosInstance';
 import { newUserDto, UserDto } from '@/backend/users/applications/dtos/UserDto';
-import { CreateRoutineCompletionResponseDto } from '@/backend/routine-completions/applications/dtos/RoutineCompletionDto';
 import { UserReviewDto } from '@/backend/users/applications/dtos/UserReviewDto';
-import { UserChallengeAndRoutineAndFollowAndCompletionDto } from '@/backend/users/applications/dtos/UserChallengeAndRoutineAndFollowAndCompletion';
+import { UserProfileDto } from '@/backend/users/applications/dtos/UserProfileDto';
 
 // API 응답 타입 정의
 interface ApiResponse<T> {
@@ -16,58 +15,10 @@ interface ApiResponse<T> {
 }
 
 /**
- * 해당 함수는 user nickname으로 해당 유저 필요한 컬럼만 가져오는 챌린저 + 루틴 + 팔로우 + 컴플리션 테이블 Join
- * @param nickname: string
- * @return Promise<ApiResponse<User>>
- * */
-export const getUserChallengeAndRoutineAndFollowAndCompletion = async (
-  nickname: string
-): Promise<ApiResponse<UserChallengeAndRoutineAndFollowAndCompletionDto>> => {
-  try {
-    const response = await axiosInstance.get<
-      ApiResponse<UserChallengeAndRoutineAndFollowAndCompletionDto>
-    >(`/api/users/${nickname}`);
-    return response.data;
-  } catch (error) {
-    throw error;
-  }
-};
-
-/**
- * 해당 함수는 user nickname으로 해당 유저 완료 루틴 가져오기
- * @param id: string
- * @param nickname: string
- * @return Promise<ApiResponse<User>>
- * */
-export const getUserRoutineCompletion = async (
-  nickname: string,
-  pageParam: number,
-  pageSize: number,
-  categoryId: string
-): Promise<ApiResponse<CreateRoutineCompletionResponseDto[]>> => {
-  try {
-    const response = await axiosInstance.get<ApiResponse<CreateRoutineCompletionResponseDto[]>>(
-      `/api/users/routine/${nickname}`,
-      {
-        params: {
-          nickname,
-          pageParam,
-          pageSize,
-          categoryId,
-        },
-      }
-    );
-    return response.data;
-  } catch (error) {
-    throw error;
-  }
-};
-
-/**
  * 해당 함수는 user 완료 루틴 감정표현 모두 가져오기
  * @param id: string
  * @param routineCompletionId: string
- * @return Promise<ApiResponse<UserReviewDto[]>>
+ * @return Promise<ApiResponse<User>>
  * */
 export const getUserRoutineCompletionReview = async (
   nickname: string,
@@ -215,13 +166,29 @@ export const deleteUserRoutineCompletionEmotion = async (
   }
 };
 
+/**
+ * 닉네임으로 단일 유저 프로필 정보 조회
+ * @param nickname 유저 닉네임
+ * @return Promise<ApiResponse<UserProfileDto>>
+ */
+export const getUserProfileByNickname = async (
+  nickname: string
+): Promise<ApiResponse<UserProfileDto>> => {
+  try {
+    const response = await axiosInstance.get<ApiResponse<UserProfileDto>>(
+      `/api/users/profile/${nickname}`
+    );
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+// API 편의 객체
 export const usersApi = {
-  getUserAllData: getUserChallengeAndRoutineAndFollowAndCompletion,
-  getUserRoutineCompletion,
   getUserRoutineCompletionReview,
-  getUsers,
   createUserRoutineCompletionEmotion,
   updateUser,
-  deleteRegister: deleteUserRegister,
-  deleteUserRoutineCompletionEmotion,
+  deleteUserRegister,
+  getUserProfileByNickname,
 };
