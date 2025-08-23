@@ -12,20 +12,24 @@ import { CompletionComponent } from '@/app/user/profile/components/Completion';
 import { useGetUserInfo } from '@/libs/hooks/user-hooks/useGetUserInfo';
 import { RoutineComponent } from '@/app/user/profile/components/Routine';
 import LogOut from '@/app/user/profile/edit/_components/LogOut';
+import ConfirmModal from '@/app/_components/modals/ConfirmModal';
 
 const UserProfileEditPage = () => {
   const router = useRouter();
   const { userInfo, update } = useGetUserInfo();
   const [profilePreview, setProfilePreview] = useState<string | null>(userInfo?.profileImg || '');
+  const [open, setOpen] = useState<boolean>(false);
 
   const { handleImageClick, fileInputRef } = useUploadProfile();
 
   const { updateUser, deleteRegister } = usersApi;
 
   const handleDeleteUserRegister = async () => {
-    //나중에 confirm창으로 추가 validation 해야함!
     const response = await deleteRegister(userInfo?.id || '');
-    if (response.data) router.push('/login');
+    if (response.data) {
+      setOpen(false);
+      router.push('/login');
+    }
   };
 
   const handleFileChange = async (evt: React.ChangeEvent<HTMLInputElement>) => {
@@ -69,6 +73,16 @@ const UserProfileEditPage = () => {
       </section>
       <section id='top' className='flex mt-10 justify-center items-center px-5'>
         <section id='top_wrapper' className='flex flex-col  w-[100%]'>
+          <ConfirmModal
+            isOpen={open}
+            onClose={() => setOpen(false)}
+            onConfirm={handleDeleteUserRegister}
+            type='negative'
+            title='계정을 삭제할까요?'
+            description='이 작업은 되돌릴 수 없습니다.'
+          >
+            <p className='text-sm text-gray-600'>삭제 시 모든 데이터가 제거됩니다.</p>
+          </ConfirmModal>
           <div
             id='user_wrapper'
             className='flex text-center items-end justify-between px-5 pt-[110px]'
@@ -140,7 +154,7 @@ const UserProfileEditPage = () => {
               focus:ring-2
               focus:ring-[#93d50b]
               focus:ring-opacity-50'
-              onClick={handleDeleteUserRegister}
+              onClick={() => setOpen(true)}
             >
               회원탈퇴
             </button>

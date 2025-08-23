@@ -3,7 +3,8 @@
 import { UserChallengeAndRoutineAndFollowAndCompletionDto } from '@/backend/users/applications/dtos/UserChallengeAndRoutineAndFollowAndCompletion';
 import { EMOJI_MAP } from '@/public/consts/routineItem';
 import { getYearAndMonthAndDay } from '@/public/utils/dateUtils';
-import { ListItemSkeleton, ListSkeleton, TextSkeleton } from '@/app/_components/skeleton/Skeleton';
+import { TextSkeleton } from '@/app/_components/skeleton/Skeleton';
+import { ROUTINE_ARR } from '@/public/consts/userRoutine';
 
 interface IRoutine {
   id: number;
@@ -51,15 +52,12 @@ export const RoutineComponent = ({
   return (
     <div
       id='routine_wrapper'
-      className='flex flex-col py-8 gap-2 border-t border-b border-gray-200 mt-6 h-[200px] overflow-y-auto'
+      className='flex flex-col py-8 gap-2 border-t border-b border-gray-200 mt-6 h-[200px]'
     >
       {isLoading ? (
-        <>
-          <TextSkeleton height={'h-[24px]'} />
-          <TextSkeleton height={'h-[24px]'} />
-          <TextSkeleton height={'h-[24px]'} />
-          <TextSkeleton height={'h-[24px]'} />
-        </>
+        ROUTINE_ARR.map((_, idx) => {
+          return <TextSkeleton key={idx} height={'h-[24px]'} />;
+        })
       ) : routine && routine.length > 0 ? (
         <>
           <h2 className='text-xl font-bold mb-4 text-gray-800'>루틴 실천 현황</h2>

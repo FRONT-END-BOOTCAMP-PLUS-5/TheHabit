@@ -118,20 +118,22 @@ export const UserPage = ({
                 </>
               )}
 
-              <div className='cursor-pointer'>
+              <div className='cursor-pointer w-[110px] min-h-[54px] line-clamp-2'>
                 {isLoading ? (
-                  <TextSkeleton lines={2} className='w-[100px]' />
+                  <TextSkeleton lines={2} className='w-[100px] mt-[12px]' />
                 ) : getUserData.challenges.length > 0 ? (
                   <div
                     onClick={() => {
                       setShow(prev => !prev);
                     }}
                   >
-                    <span className='font-bold'>
+                    <span className='font-bold text-[15px]'>
                       {getSelectedChallengeName ? `${getSelectedChallengeName}` : '챌린지'}
                     </span>
                     <br />
-                    <span className='font-bold'>{getSelectedChallengeName && '챌린지'} 선택</span>
+                    <span className='font-bold [word-break: break-all]'>
+                      {getSelectedChallengeName && '챌린지 선택'}
+                    </span>
                   </div>
                 ) : (
                   <>
@@ -211,11 +213,11 @@ export const UserPage = ({
             className={`flex gap-10 mt-10 px-5 ${sessionNickname != userNickname ? 'justify-end' : 'justify-center'}`}
           >
             {isLoading ? (
-              <ButtonSkeleton width={'w-[200px]'} className='h-[44px] rounded-full' />
+              <ButtonSkeleton width={'w-[200px]'} className='h-[44px] rounded-[10px]' />
             ) : (
               <Button
                 className={
-                  'w-[200px] z-20 bg-[#FFC70A] text-white px-4 py-2 rounded-full text-lg font-bold shadow-lg cursor-pointer hover:animate-float transition-all duration-300 hover:scale-110'
+                  'w-[200px] z-20 bg-[#FFC70A] text-white px-4 py-2 rounded-[10px] text-lg font-bold shadow-lg cursor-pointer hover:animate-float transition-all duration-300 hover:scale-110'
                 }
                 onClick={() => {
                   router.push(`/user/dashboard/${userNickname}`);
@@ -225,11 +227,11 @@ export const UserPage = ({
               </Button>
             )}
             {isLoading ? (
-              <ButtonSkeleton width={'w-[200px]'} className='h-[44px] rounded-full' />
+              <ButtonSkeleton width={'w-[200px]'} className='h-[44px] rounded-[10px]' />
             ) : sessionNickname === userNickname ? (
               <Button
                 className={
-                  'w-[200px] z-20 bg-[#48a9a0] text-white px-4 py-2 rounded-full text-lg font-bold shadow-lg cursor-pointer hover:animate-float transition-all duration-300 hover:scale-110'
+                  'w-[200px] z-20 bg-[#48a9a0] text-white px-4 py-2 rounded-[10px] text-lg font-bold shadow-lg cursor-pointer hover:animate-float transition-all duration-300 hover:scale-110'
                 }
                 onClick={() => {
                   router.push(`/user/profile/edit/${getUserData?.nickname}`);

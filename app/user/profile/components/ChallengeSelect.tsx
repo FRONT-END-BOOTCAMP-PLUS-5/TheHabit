@@ -14,7 +14,6 @@ export const ChallengeSelectComponent = ({
   const unique = new Set();
   const filteredChallenges = getUserData.challenges.filter(challenge => {
     if (unique.has(challenge.id)) return false;
-
     unique.add(challenge.id);
     return true;
   });
@@ -23,21 +22,22 @@ export const ChallengeSelectComponent = ({
     <div
       className='absolute
     left-[-5px]
-    min-w-[130px]
+    w-[110px]
+    max-w-[110px]
+    max-h-[320px]
+    [overflow-wrap: break-word]
     z-99
     bg-[#fff]
     border-1
     border-[#d1d9e0]
     cursor-pointer
     rounded-[10px]
-    px-[20px]
-    py-[10px]
     text-[13px]
     font-normal
     text-[#1f1f1f]
     whitespace-pre-wrap
-    h-[120px]
     flex
+    flex-col
     items-center
     overflow-y-auto'
     >
@@ -47,9 +47,15 @@ export const ChallengeSelectComponent = ({
         return (
           <p
             key={challenge.id}
-            className={`mb-[10px] p-2 hover:bg-[#818b981f] transition-colors duration-150 ${
-              isSelected ? 'border-b-2 border-[#e5831d] font-bold' : ''
-            }`}
+            className={`w-[100%] 
+            h-[100%] 
+            pt-[10px] 
+            pb-[10px]
+            ${isSelected ? '' : 'hover:bg-[#818b981f]'} 
+            transition-colors 
+            duration-150 
+            first:border-b-0 
+            border-[#e5831d] ${isSelected ? 'font-bold bg-[#93d50b] text-[#fff]' : ''}`}
             onClick={() => onSelectChallenge(challenge.id, challenge.name)}
           >
             {challenge.durationInDays}일 <span>챌린지</span> <br />

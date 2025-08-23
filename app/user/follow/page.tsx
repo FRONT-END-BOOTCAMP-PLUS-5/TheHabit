@@ -60,6 +60,7 @@ const FollowPage = () => {
 
   const init = () => {
     setSearchTerm('');
+    setValue('');
   };
 
   return (
@@ -79,7 +80,12 @@ const FollowPage = () => {
           nickname={userInfo?.nickname || ''}
         />
         <Input
-          placeholder='Search'
+          placeholder={
+            type === 'follower'
+              ? '팔로워한 사람들을 검색해보세요'
+              : '팔로잉한 사람들을 검색해보세요'
+          }
+          className='border-t-0 border-l-0 border-r-0 border-b-2 focus:!border-[#07bc0c] rounded-[0px] hover:border-[#07bc0c] !shadow-none '
           onChange={evt => {
             setSearchTerm(evt.target.value);
             debounceSearch(evt.target.value);
