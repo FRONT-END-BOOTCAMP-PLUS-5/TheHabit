@@ -143,3 +143,16 @@ export const getUserRoutineCompletion = async (
   }
 };
 
+// API 편의 객체
+export const routinesApi = {
+  getAll: getRoutinesByNickname,
+  getByChallenge: getRoutinesByChallenge,
+  getByNickname: getRoutinesByNickname,
+  getById: getRoutineById,
+  getDashboard: getDashboardRoutines,
+  getUserRoutineCompletion,
+  create: createRoutine,
+  update: updateRoutine,
+  delete: deleteRoutine,
+};
+
