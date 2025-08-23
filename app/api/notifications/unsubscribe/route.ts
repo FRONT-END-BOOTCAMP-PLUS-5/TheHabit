@@ -12,7 +12,7 @@ const createUnsubscribePushNotificationUseCase = () => {
   return new UnsubscribePushNotificationUseCase(pushSubscriptionRepository);
 };
 
-export async function POST(request: NextRequest): Promise<NextResponse<ApiResponse<any>>> {
+export async function POST(request: NextRequest): Promise<NextResponse<ApiResponse<null>>> {
   try {
     // 1. 사용자 인증 확인
     const session = await getServerSession(authOptions);
@@ -61,7 +61,7 @@ export async function POST(request: NextRequest): Promise<NextResponse<ApiRespon
     }
 
     // 5. 성공 응답
-    const successResponse: ApiResponse<any> = {
+    const successResponse: ApiResponse<null> = {
       success: true,
       data: null,
       message: '푸시 알림 구독이 해제되었습니다.'

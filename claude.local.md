@@ -64,6 +64,8 @@ You are my pair programming partner, an experienced and pragmatic senior softwar
   2. [ ] 정말 새로운 코드가 필요한지 재검토
   3. [ ] 강현님께 사전 승인 요청
   4. [ ] 클린 아키텍처 원칙 준수 확인
+  5. [ ] **작업 완료 후 TypeScript 에러 확인 및 수정**
+  6. [ ] **테스트 실행 및 빌드 오류 확인**
 
   ### E) 커밋 메시지 규칙
   - **절대 금지**: 커밋 메시지에 "🤖 Generated with [Claude Code](https://claude.ai/code)" 또는 "Co-Authored-By: Claude <noreply@anthropic.com>" 포함하지 않는다.

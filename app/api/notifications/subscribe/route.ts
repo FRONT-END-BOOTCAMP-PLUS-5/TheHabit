@@ -4,6 +4,7 @@ import { authOptions } from '@/app/api/auth/[...nextauth]/auth';
 import { PrPushSubscriptionRepository } from '@/backend/notifications/infrastructures/repositories/PrPushSubscriptionRepository';
 import { SubscribePushNotificationUseCase } from '@/backend/notifications/applications/usecases/SubscribePushNotificationUseCase';
 import { ApiResponse } from '@/backend/shared/types/ApiResponse';
+import { PushSubscriptionDto } from '@/backend/notifications/applications/dtos/PushSubscriptionDto';
 
 // Repository와 UseCase 인스턴스 생성
 const pushSubscriptionRepository = new PrPushSubscriptionRepository();
@@ -12,7 +13,7 @@ const createSubscribePushNotificationUseCase = () => {
   return new SubscribePushNotificationUseCase(pushSubscriptionRepository);
 };
 
-export async function POST(request: NextRequest): Promise<NextResponse<ApiResponse<any>>> {
+export async function POST(request: NextRequest): Promise<NextResponse<ApiResponse<PushSubscriptionDto | null>>> {
   try {
     // 1. 사용자 인증 확인
     const session = await getServerSession(authOptions);
@@ -52,14 +53,9 @@ export async function POST(request: NextRequest): Promise<NextResponse<ApiRespon
     });
 
     // 5. 성공 응답
-    const successResponse: ApiResponse<any> = {
+    const successResponse: ApiResponse<PushSubscriptionDto> = {
       success: true,
-      data: {
-        id: subscription.id,
-        endpoint: subscription.endpoint,
-        userId: subscription.userId,
-        createdAt: subscription.createdAt.toISOString()
-      },
+      data: subscription,
       message: '푸시 알림 구독이 완료되었습니다.'
     };
     return NextResponse.json(successResponse, { status: 201 });
