@@ -75,7 +75,7 @@ export const CompletionComponent = ({
     if (inView && hasNextPage) {
       fetchNextPage();
     }
-  }, [inView]);
+  }, [inView, hasNextPage, fetchNextPage]);
 
   const allCompletions = data?.pages.flatMap(page => page.data) || [];
 

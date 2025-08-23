@@ -38,11 +38,17 @@ const FollowPage = () => {
 
   const { data: followerData, isLoading: isFollowerLoading } = useGetFollower(
     userInfo?.id || '',
-    getValue
+    getValue,
+    {
+      enabled: !!userInfo?.id && type === 'follower',
+    }
   );
   const { data: followingData, isLoading: isFollowingLoading } = useGetFollowing(
     userInfo?.id || '',
-    getValue
+    getValue,
+    {
+      enabled: !!userInfo?.id && type === 'following',
+    }
   );
   const followMutation = useFollowMutation();
   const unfollowMutation = useUnfollowMutation();
