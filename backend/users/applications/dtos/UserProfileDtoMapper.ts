@@ -6,7 +6,7 @@ export class UserProfileDtoMapper {
     return {
       username: entity.username,
       nickname: entity.nickname,
-      profileImgPath: entity.profileImgPath,
+      profileImg: entity.profileImg || null,
     };
   }
 }

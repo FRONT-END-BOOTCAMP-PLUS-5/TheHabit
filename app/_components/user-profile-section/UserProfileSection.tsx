@@ -1,12 +1,29 @@
 'use client';
-import { useGetUserInfo } from '@/libs/hooks/user-hooks/useGetUserInfo';
 import { ProfileImage } from '@/app/_components/profile-images/ProfileImage';
 import { useEffect, useState } from 'react';
 import { Toast } from '@/app/_components/toasts/Toast';
+import { useGetUserByNickname } from '@/libs/hooks/user-hooks/useGetUserByNickname';
 
-const UserProfileSection: React.FC = () => {
-  const { userInfo, error, isLoading } = useGetUserInfo();
+interface UserProfileSectionProps {
+  nickname?: string; // 옵셔널로 유저 닉네임 받기
+}
+
+const UserProfileSection: React.FC<UserProfileSectionProps> = ({ nickname: propNickname }) => {
   const [hasError, setHasError] = useState(false);
+
+  // props로 받은 nickname이 없으면 빈 문자열로 설정 (훅에서 enabled: false가 되도록)
+  const nickname = propNickname || '';
+  const { data: userInfo, isLoading, error } = useGetUserByNickname(nickname);
+
+  // 훅 테스트를 위한 디버깅 정보
+  useEffect(() => {
+    console.log('=== useGetUserByNickname 훅 테스트 ===');
+    console.log('nickname prop:', nickname);
+    console.log('userInfo:', userInfo);
+    console.log('isLoading:', isLoading);
+    console.log('error:', error);
+    console.log('==============================');
+  }, [nickname, userInfo, isLoading, error]);
 
   useEffect(() => {
     if (error) {
@@ -49,13 +66,13 @@ const UserProfileSection: React.FC = () => {
 
   return (
     <div className='flex flex-row items-center gap-2 w-full px-4 py-4'>
-      <ProfileImage imageSrc={userInfo?.profileImg} />
+      <ProfileImage imageSrc={userInfo?.data?.profileImgPath} />
       <div className='flex flex-col justify-center'>
         {/* username */}
-        <div className='text-2xl font-bold'>{userInfo?.username || '사용자'}</div>
+        <div className='text-2xl font-bold'>{userInfo?.data?.username || '사용자'}</div>
         {/* nickname */}
         <div className='text-sm font-bold text-primary-grey'>
-          {userInfo?.nickname ? `(${userInfo.nickname})` : ''}
+          {userInfo?.data?.nickname ? `(${userInfo.data.nickname})` : ''}
         </div>
       </div>
     </div>

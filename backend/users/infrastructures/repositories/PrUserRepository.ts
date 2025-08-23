@@ -309,7 +309,7 @@ export class PrUserRepository implements IUserRepository {
         user.username,
         user.nickname,
         user.profileImg,
-        null, // profileImgPath
+        user.profileImgPath, // null 대신 실제 값 사용
         user.id,
         user.password,
         user.email
