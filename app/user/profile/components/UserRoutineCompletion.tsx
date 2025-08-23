@@ -12,13 +12,13 @@ import {
 } from '@/libs/api/users.api';
 import { UserReviewDto } from '@/backend/users/applications/dtos/UserReviewDto';
 import NoneImg from '@/app/_components/none/NoneImg';
+import { useGetUserInfo } from '@/libs/hooks/user-hooks/useGetUserInfo';
 
 interface IUserRoutineCompletion {
   proofImgUrl: string;
   content?: string;
   createdAt: Date;
   username: string;
-  userId: string | null;
   nickname: string;
   profileImg: string | null;
   routineCompletionId: string;
@@ -29,7 +29,6 @@ const UserRoutineCompletion = ({
   content,
   createdAt,
   username,
-  userId,
   nickname,
   profileImg,
   routineCompletionId,
@@ -37,6 +36,9 @@ const UserRoutineCompletion = ({
   const [getReviewContainer, setReviewContainer] = useState<boolean>(false);
   const [getReviewEmotion, setReviewEmotion] = useState<UserReviewDto[]>([]);
   const [selectedEmojis, setSelectedEmojis] = useState<string[]>([]);
+
+  const { userInfo } = useGetUserInfo();
+
   const changeDate = () => {
     const date = new Date(createdAt);
     return getKoreanDateFromDate(date);
@@ -48,7 +50,7 @@ const UserRoutineCompletion = ({
     setReviewEmotion([...reviews]);
 
     const userSelected = reviews
-      .filter(item => item.usernames?.includes(username))
+      .filter(item => item.nicknames?.includes(userInfo?.nickname || ''))
       .map(item => item.reviewContent);
 
     setSelectedEmojis(userSelected);
@@ -64,7 +66,7 @@ const UserRoutineCompletion = ({
       setReviewContainer(false);
       await deleteUserRoutineCompletionEmotion(
         nickname,
-        userId || '',
+        userInfo?.id || '',
         routineCompletionId,
         explain
       );
@@ -75,7 +77,7 @@ const UserRoutineCompletion = ({
         nickname,
         explain,
         routineCompletionId,
-        userId || ''
+        userInfo?.id || ''
       );
       setSelectedEmojis(prev => [...prev, explain]);
     }
@@ -151,7 +153,7 @@ const UserRoutineCompletion = ({
                 emotion => emotion.explain === item.reviewContent
               );
               const selectedNickname = item.nicknames?.find(
-                userNickname => userNickname === nickname
+                userNickname => userNickname === userInfo?.nickname
               );
               if (matchingEmotion) {
                 return (

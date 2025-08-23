@@ -28,7 +28,7 @@ export const ContentComponent = ({ data, onToggleFollow }: IContent) => {
           ? data?.map(item => {
               return (
                 <li key={item.nickname} className='flex justify-between items-center mb-8'>
-                  <div id='follower_users' className='flex items-center gap-2 cursor-pointer'>
+                  <div id='follower_users' className='flex items-center gap-2'>
                     {item.profileImg ? (
                       <ProfileImage
                         imageSrc={item.profileImg}

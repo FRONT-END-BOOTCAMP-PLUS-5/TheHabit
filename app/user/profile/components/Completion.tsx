@@ -65,7 +65,6 @@ export const CompletionComponent = ({
         username={username}
         nickname={nickname}
         routineCompletionId={id.toString()}
-        userId={userId}
       />,
       'floating'
     );
