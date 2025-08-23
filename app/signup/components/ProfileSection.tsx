@@ -26,7 +26,7 @@ export const ProfileSection = () => {
   }, [profileFile, setValue]);
 
   return (
-    <section className='grid grid-cols-[1fr_3fr] items-center gap-5 w-full'>
+    <section className='grid grid-cols-[1fr_3fr] items-center gap-5 w-full mt-6 mb-6'>
       <div className='relative w-20 h-20 rounded-full bg-[#F5F5F5]'>
         <ProfileImage imageSrc={profilePreview || null} className='w-full h-full object-cover' />
         <Image
@@ -57,7 +57,7 @@ export const ProfileSection = () => {
           },
         }}
         render={({ field }) => (
-          <div className='relative'>
+          <div className='relative font-bold'>
             <CustomInput
               label='닉네임'
               labelHtmlFor='nickname'

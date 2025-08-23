@@ -2,13 +2,10 @@
 
 import { ProfileSection } from '@/app/signup/components/ProfileSection';
 import { SignupItem } from '@/public/consts/signupItem';
-import { CheckBoxItem } from '@/public/consts/checkBoxItem';
 import CustomInput from '@/app/_components/inputs/CustomInput';
 import { Controller, FormProvider, useForm } from 'react-hook-form';
 import { Button } from '@/app/_components/buttons/Button';
-import { CheckBoxList } from '@/app/_components/checkboxes/Checkbox';
 import { useSignUp } from '@/libs/hooks/signup/useSignUp';
-import { useState } from 'react';
 
 interface ISignupForm {
   username: string;
@@ -22,7 +19,6 @@ interface ISignupForm {
 }
 
 export const SignUpForm = () => {
-  const [checkedItems, setCheckedItems] = useState<{ [key: number]: boolean }>({});
   
   const methods = useForm<ISignupForm>({
     mode: 'onChange',
@@ -47,15 +43,6 @@ export const SignUpForm = () => {
 
   const { signUp, loading, error } = useSignUp();
 
-  const handleCheckboxChange = (checkedItems: { [key: number]: boolean }) => {
-    setCheckedItems(checkedItems);
-  };
-
-  const isAllRequiredChecked = () => {
-    const requiredItems = CheckBoxItem.filter(item => item.required);
-    return requiredItems.every(item => checkedItems[item.id]);
-  };
-
   const onSubmit = async (data: ISignupForm) => {
     try {
       // FormData로 데이터 전송
@@ -77,13 +64,10 @@ export const SignUpForm = () => {
 
   return (
     <FormProvider {...methods}>
-      <form
-        className='flex flex-col gap-10 absolute top-1/6 left-1/2 -translate-x-1/2 w-11/12'
-        onSubmit={handleSubmit(onSubmit)}
-      >
+      <form className='flex flex-col gap-4 w-11/12 mx-auto pt-10' onSubmit={handleSubmit(onSubmit)}>
         <ProfileSection />
         {SignupItem.map(item => (
-          <div key={item.id} className='flex flex-col h-30 relative'>
+          <div key={item.id} className='flex flex-col h-30 relative font-bold'>
             <Controller
               control={control}
               name={item.name}
@@ -118,8 +102,7 @@ export const SignUpForm = () => {
             )}
           </div>
         ))}
-        <CheckBoxList onChange={handleCheckboxChange} />
-        <Button className='signup-button' buttonType='primary' disabled={loading || !isAllRequiredChecked()}>
+        <Button className='signup-button h-11 mt-4 mb-20' buttonType='primary' disabled={loading}>
           {loading ? '회원가입 중...' : '회원가입'}
         </Button>
         {error && <p className='text-xs text-red-500'>{error}</p>}

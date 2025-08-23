@@ -100,7 +100,7 @@ export const LoginForm = () => {
         {LoginItem.map(item => {
           console.log(`🏷️ ${item.name} 필드 렌더링:`, item);
           return (
-            <div key={item.id} className='flex flex-col'>
+            <div key={item.id} className='flex flex-col font-bold'>
               <Controller
                 name={item.name}
                 control={control}
@@ -139,12 +139,12 @@ export const LoginForm = () => {
         <Link className='text-md text-right' href='/'>
           비밀번호 찾기
         </Link>
-        <Button buttonType='primary' className='login-button' disabled={isLoading}>
+        <Button buttonType='primary' className='login-button h-11' disabled={isLoading}>
           {isLoading ? '로그인 중...' : '로그인'}
         </Button>
       </form>
       <SocialLogin />
-      <p className='text-md text-center gap-2 flex justify-center mt-4'>
+      <p className='text-md text-center gap-2 flex justify-center mt-6'>
         아직 회원이 아니신가요?
         <Link href='/signup' className='text-[#34A853] font-bold'>
           회원가입
