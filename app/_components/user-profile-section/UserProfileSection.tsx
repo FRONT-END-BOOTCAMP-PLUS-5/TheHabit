@@ -3,17 +3,18 @@ import { ProfileImage } from '@/app/_components/profile-images/ProfileImage';
 import { useEffect, useState } from 'react';
 import { Toast } from '@/app/_components/toasts/Toast';
 import { useGetUserByNickname } from '@/libs/hooks/user-hooks/useGetUserByNickname';
+import { useParams } from 'next/navigation';
 
 interface UserProfileSectionProps {
   nickname?: string; // 옵셔널로 유저 닉네임 받기
 }
 
-const UserProfileSection: React.FC<UserProfileSectionProps> = ({ nickname: propNickname }) => {
+const UserProfileSection: React.FC<UserProfileSectionProps> = () => {
   const [hasError, setHasError] = useState(false);
 
   // props로 받은 nickname이 없으면 빈 문자열로 설정 (훅에서 enabled: false가 되도록)
-  const nickname = propNickname || '';
-  const { data: userInfo, isLoading, error } = useGetUserByNickname(nickname);
+  const nickname = useParams().nickname || '';
+  const { data: userInfo, isLoading, error } = useGetUserByNickname(nickname as string);
 
   // 훅 테스트를 위한 디버깅 정보
   useEffect(() => {
@@ -66,7 +67,7 @@ const UserProfileSection: React.FC<UserProfileSectionProps> = ({ nickname: propN
 
   return (
     <div className='flex flex-row items-center gap-2 w-full px-4 py-4'>
-      <ProfileImage imageSrc={userInfo?.data?.profileImgPath} />
+      <ProfileImage imageSrc={userInfo?.data?.profileImg} />
       <div className='flex flex-col justify-center'>
         {/* username */}
         <div className='text-2xl font-bold'>{userInfo?.data?.username || '사용자'}</div>

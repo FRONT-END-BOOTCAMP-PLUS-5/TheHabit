@@ -12,6 +12,7 @@ export const ProfileImage = ({
   wrapperWidth?: number;
   wrapperHeight?: number;
 }) => {
+  console.log('imageSrc', imageSrc);
   return (
     <>
       {imageSrc && (
