@@ -51,8 +51,41 @@ const ChallengesAccordion: React.FC<ChallengesAccordionProps> = ({
   onRoutineAdded,
 }) => {
   // 완료된 루틴 비율에 따라 동적으로 너비 계산
-  const completedRatio =
-    routines.length > 0 ? (routineCompletions.length / routines.length) * 100 : 0;
+  const completedRatio = (() => {
+    if (routines.length === 0) return 0;
+
+    // 이미 필터링된 routineCompletions를 사용
+    const filteredRoutines = routines.filter(routine => routine.challengeId === challenge.id);
+    const filteredCompletions = routineCompletions.filter(completion => {
+      // 해당 챌린지의 루틴인지 확인
+      const isRoutineInChallenge = filteredRoutines.some(
+        routine => routine.id === completion.routineId
+      );
+
+      if (!isRoutineInChallenge) return false;
+
+      // 선택된 날짜에 완료된 루틴인지 확인
+      const completionDate = new Date(completion.createdAt);
+      const selectedDateOnly = new Date(
+        selectedDate.getFullYear(),
+        selectedDate.getMonth(),
+        selectedDate.getDate()
+      );
+      const completionDateOnly = new Date(
+        completionDate.getFullYear(),
+        completionDate.getMonth(),
+        completionDate.getDate()
+      );
+
+      const isSameDate = completionDateOnly.getTime() === selectedDateOnly.getTime();
+
+      return isSameDate;
+    });
+
+    const ratio = (filteredCompletions.length / filteredRoutines.length) * 100;
+
+    return ratio;
+  })();
 
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const contentRef = useRef<HTMLDivElement>(null);
@@ -89,8 +122,8 @@ const ChallengesAccordion: React.FC<ChallengesAccordionProps> = ({
 
         <div className='flex items-center justify-between relative z-10 w-full'>
           <div className='flex flex-col gap-1 p-2'>
-            <div className='flex items-center gap-2'>
-              <div className='flex justify-center items-center rounded-full bg-white p-1 w-10 h-10 border-primary border-2'>
+            <div className='flex items-center gap-2 min-w-0'>
+              <div className='flex justify-center items-center rounded-full bg-white p-1 w-10 h-10 border-primary border-2 flex-shrink-0'>
                 <Image
                   src={CATEGORY_ICON[challenge.categoryId].icon}
                   alt={CATEGORY_ICON[challenge.categoryId].alt}
@@ -98,7 +131,9 @@ const ChallengesAccordion: React.FC<ChallengesAccordionProps> = ({
                   height={24}
                 />
               </div>
-              <div className='text-xl font-bold text-white'>{challenge.name}</div>
+              <div className='w-[80%] text-xl font-bold text-white truncate min-w-0 overflow-hidden flex-shrink-0'>
+                {challenge.name}
+              </div>
             </div>
           </div>
           <button
@@ -127,12 +162,30 @@ const ChallengesAccordion: React.FC<ChallengesAccordionProps> = ({
           <ChallengesAccordionContent
             challenge={challenge}
             routines={routines.filter(routine => routine.challengeId === challenge.id)}
-            routineCompletions={routineCompletions.filter(completion =>
-              routines.some(
+            routineCompletions={routineCompletions.filter(completion => {
+              // 해당 챌린지의 루틴인지 확인
+              const isRoutineInChallenge = routines.some(
                 routine =>
                   routine.id === completion.routineId && routine.challengeId === challenge.id
-              )
-            )}
+              );
+
+              if (!isRoutineInChallenge) return false;
+
+              // 선택된 날짜에 완료된 루틴인지 확인
+              const completionDate = new Date(completion.createdAt);
+              const selectedDateOnly = new Date(
+                selectedDate.getFullYear(),
+                selectedDate.getMonth(),
+                selectedDate.getDate()
+              );
+              const completionDateOnly = new Date(
+                completionDate.getFullYear(),
+                completionDate.getMonth(),
+                completionDate.getDate()
+              );
+
+              return completionDateOnly.getTime() === selectedDateOnly.getTime();
+            })}
             selectedDate={selectedDate}
             onRoutineAdded={onRoutineAdded}
           />

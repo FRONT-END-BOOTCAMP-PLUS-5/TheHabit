@@ -136,13 +136,20 @@ const AddChallengeForm: React.FC = () => {
           챌린지 이름 <span className='text-red-500'>*</span>
         </label>
         <CustomInput
-          {...register('name', { required: '챌린지 이름을 입력해주세요' })}
+          {...register('name', {
+            required: '챌린지 이름을 입력해주세요',
+            maxLength: { value: 20, message: '챌린지 이름은 20자 이내로 입력해주세요' },
+          })}
           type='text'
           id='name'
-          placeholder='예: 매일 운동하기'
+          placeholder='예: 매일 운동하기 (20자 이내)'
+          maxLength={20}
           onBlur={() => {}}
         />
-        {errors.name && <span className='text-red-500 text-sm'>{errors.name.message}</span>}
+        <div className='flex justify-between items-center'>
+          {errors.name && <span className='text-red-500 text-sm'>{errors.name.message}</span>}
+          <span className='text-xs text-gray-400 ml-auto'>{watch('name')?.length || 0}/20</span>
+        </div>
       </div>
 
       {/* 시작 날짜 */}

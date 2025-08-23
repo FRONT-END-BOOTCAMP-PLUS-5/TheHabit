@@ -7,7 +7,7 @@ import { RoutineCompletionDto } from '@/backend/routine-completions/applications
 import { EmojiDisplay } from '@/app/_components/emoji/EmojiDisplay';
 import { useModalStore } from '@/libs/stores/modalStore';
 import { useGetUserInfo } from '@/libs/hooks/user-hooks/useGetUserInfo';
-import AddRoutineForm from '@/app/user/dashboard/_components/CreateRoutineForm';
+import AddRoutineForm from '@/app/user/dashboard/_components/AddRoutineForm';
 import RoutineCompletionForm from '@/app/_components/challenges-accordion/RoutineCompletionForm';
 import { useCreateRoutineCompletion } from '@/libs/hooks/routine-completions-hooks/useCreateRoutineCompletion';
 import { Toast } from '@/app/_components/toasts/Toast';
