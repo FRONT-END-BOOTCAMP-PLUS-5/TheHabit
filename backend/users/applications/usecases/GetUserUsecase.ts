@@ -4,7 +4,7 @@ import { User } from '@/backend/users/domains/entities/UserEntity';
 // 유저 Get 유스케이스
 export class GetUserUsecase {
   // 리포지토리 주입
-  constructor(private readonly userRepo: IUserRepository) {}
+  constructor(private readonly userRepo: IUserRepository) { }
 
   //유저 Get 실행
   async execute(user: User): Promise<User | null | undefined> {
@@ -14,6 +14,9 @@ export class GetUserUsecase {
 
       return getUser;
     } catch (error) {
+      if (error instanceof Error) {
+        throw new Error(error.message);
+      }
       throw new Error('회원 정보 가져오기 실패');
     }
   }
