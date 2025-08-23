@@ -144,6 +144,12 @@ export const LoginForm = () => {
         </Button>
       </form>
       <SocialLogin />
+      <p className='text-md text-center gap-2 flex justify-center mt-4'>
+        아직 회원이 아니신가요?
+        <Link href='/signup' className='text-[#34A853] font-bold'>
+          회원가입
+        </Link>
+      </p>
     </fieldset>
   );
 };

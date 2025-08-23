@@ -20,8 +20,8 @@ export const TabNavigation = () => {
   };
 
   return (
-    <nav>
-      <ul className=' w-11/12 h-22 flex justify-around shadow-2xl items-center absolute bottom-10 left-1/2 -translate-x-1/2 rounded-xl'>
+    <nav className='sticky bottom-0'>
+      <ul className=' w-11/12 h-22 flex justify-around bg-white shadow-2xl items-center absolute bottom-10 left-1/2 -translate-x-1/2 rounded-xl'>
         {tabItem.map((item, i) => (
           <li key={i}>
             <Link href={item.href || ''} className='w-12 h-12 flex justify-center items-center'>
