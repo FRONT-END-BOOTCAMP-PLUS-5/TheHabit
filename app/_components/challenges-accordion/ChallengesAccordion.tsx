@@ -87,6 +87,46 @@ const ChallengesAccordion: React.FC<ChallengesAccordionProps> = ({
     return ratio;
   })();
 
+  // 챌린지 진행 일수 계산
+  const getChallengeProgressDays = () => {
+    try {
+      const startDate = new Date(challenge.createdAt);
+      const endDate = new Date(challenge.endAt);
+      const today = new Date();
+
+      // 날짜만 비교 (시간 제거)
+      const startDateOnly = new Date(
+        startDate.getFullYear(),
+        startDate.getMonth(),
+        startDate.getDate()
+      );
+      const endDateOnly = new Date(endDate.getFullYear(), endDate.getMonth(), endDate.getDate());
+      const todayOnly = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+
+      // 챌린지가 아직 시작되지 않았거나 종료된 경우
+      if (todayOnly < startDateOnly) {
+        return { status: 'not-started', days: 0, totalDays: 0 };
+      }
+
+      if (todayOnly > endDateOnly) {
+        return { status: 'completed', days: 0, totalDays: 0 };
+      }
+
+      // 진행 중인 챌린지
+      const totalDays =
+        Math.ceil((endDateOnly.getTime() - startDateOnly.getTime()) / (1000 * 60 * 60 * 24)) + 1;
+      const currentDay =
+        Math.ceil((todayOnly.getTime() - startDateOnly.getTime()) / (1000 * 60 * 60 * 24)) + 1;
+
+      return { status: 'in-progress', days: currentDay, totalDays };
+    } catch (error) {
+      console.error('챌린지 진행 일수 계산 오류:', error);
+      return { status: 'error', days: 0, totalDays: 0 };
+    }
+  };
+
+  const progressInfo = getChallengeProgressDays();
+
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const contentRef = useRef<HTMLDivElement>(null);
   const [contentHeight, setContentHeight] = useState<number>(0);
@@ -131,8 +171,21 @@ const ChallengesAccordion: React.FC<ChallengesAccordionProps> = ({
                   height={24}
                 />
               </div>
-              <div className='w-[80%] text-xl font-bold text-white truncate min-w-0 overflow-hidden flex-shrink-0'>
-                {challenge.name}
+              <div className='flex flex-col gap-1 min-w-0'>
+                <div className='w-full text-xl font-bold text-white truncate min-w-0 overflow-hidden flex-shrink-0'>
+                  {challenge.name}
+                </div>
+                {/* 챌린지 진행 일수 표시 */}
+                <div className='text-xs text-white/80'>
+                  {progressInfo.status === 'not-started' && <span>시작 예정</span>}
+                  {progressInfo.status === 'in-progress' && (
+                    <span>
+                      <span className='font-bold'>{progressInfo.days}일째</span> 진행 중
+                    </span>
+                  )}
+                  {progressInfo.status === 'completed' && <span>완료됨</span>}
+                  {progressInfo.status === 'error' && <span>진행 정보 오류</span>}
+                </div>
               </div>
             </div>
           </div>
