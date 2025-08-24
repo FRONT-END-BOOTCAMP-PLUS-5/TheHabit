@@ -271,7 +271,6 @@ export const authOptions = {
         const provider = account.provider as SocialProvider;
         console.log(`🔐 [NextAuth] ${provider} 로그인 처리 시작`);
         
-        // Google과 Kakao의 profile 구조가 다르므로 통합 처리
         const userInfo: SocialUserInfo = {
           email: user.email || '',
           name: user.name || '',
@@ -352,8 +351,14 @@ export const authOptions = {
       return session;
     },
     
-    async redirect({ url, baseUrl }: { url: string; baseUrl: string }) {
+    async redirect({ url, baseUrl, session }: { url: string; baseUrl: string; session: Session }) {
       console.log('🔄 [NextAuth] Redirect callback:', { url, baseUrl });
+
+      // (로컬 및 소셜 로그인 후)닉네임이 있으면 대시보드로 리다이렉트
+      if (session?.user?.nickname) {
+        const dashboardUrl = `${baseUrl}/user/dashboard/${session.user.nickname}`;
+        return dashboardUrl;
+      }
       
       // 로그인 후 리다이렉트
       if (url.startsWith('/')) {

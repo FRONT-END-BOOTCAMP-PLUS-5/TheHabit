@@ -10,13 +10,23 @@ const nextConfig: NextConfig = {
     disable: process.env.NODE_ENV === 'development',
   }),
   images: {
-    domains: ['images.unsplash.com'],
+    domains: ['images.unsplash.com', 'lh3.googleusercontent.com', 'k.kakaocdn.net'],
     remotePatterns: [
       {
         protocol: 'https',
         hostname: 'habit-img.s3.ap-northeast-2.amazonaws.com',
         port: '',
         pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'lh3.googleusercontent.com',
+        pathname: '**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'k.kakaocdn.net',
+        pathname: '**',
       },
     ],
   },
