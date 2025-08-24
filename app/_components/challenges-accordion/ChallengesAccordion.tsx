@@ -19,6 +19,7 @@ import {
   isSameDate,
   getChallengeDurationInfo,
 } from '@/public/utils/dateUtils';
+import ChallengeBadge from './ChallengeBadge';
 
 // ChallengesAccordion 컴포넌트는 피드백 및 분석에도 사용되므로 공통으로 분리하였습니다.
 // - 승민 2025.08.23
@@ -119,27 +120,7 @@ const ChallengesAccordion: React.FC<ChallengesAccordionProps> = ({
                 </div>
                 {/* 챌린지 기간 뱃지 */}
                 <div className='flex items-center gap-2'>
-                  <span
-                    className={`px-3 py-1.5 text-xs font-bold text-white rounded-full shadow-lg border-2 animate-pulse ${
-                      durationInfo.badge === '21일'
-                        ? 'bg-gradient-to-r from-gray-300 to-gray-500 border-gray-200 shadow-gray-200/50'
-                        : durationInfo.badge === '66일'
-                          ? 'bg-gradient-to-r from-yellow-400 to-yellow-600 border-yellow-300 shadow-yellow-300/50'
-                          : 'bg-gradient-to-r from-red-400 to-red-600 border-red-300 shadow-red-300/50'
-                    }`}
-                    style={{
-                      boxShadow: `0 0 10px ${
-                        durationInfo.badge === '21일'
-                          ? 'rgba(156, 163, 175, 0.5)'
-                          : durationInfo.badge === '66일'
-                            ? 'rgba(234, 179, 8, 0.5)'
-                            : 'rgba(239, 68, 68, 0.5)'
-                      }`,
-                      animation: 'glow 2s ease-in-out infinite alternate',
-                    }}
-                  >
-                    {durationInfo.badge}
-                  </span>
+                  <ChallengeBadge badge={durationInfo.badge} />
                   {/* 챌린지 진행 일수 표시 */}
                   <div className='text-xs text-white/80'>
                     {progressInfo.status === 'not-started' && <span>시작 예정</span>}
