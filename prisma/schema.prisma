@@ -137,4 +137,5 @@ model push_subscriptions {
   auth       String
   created_at DateTime @default(now())
   user_id    String
+
 }

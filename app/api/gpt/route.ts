@@ -27,13 +27,13 @@ export const POST = async (request: NextRequest): Promise<NextResponse> => {
     const addGPTResponseUsecase = new AddGPTResponseUsecase(gptRepository);
 
     const result = await addGPTResponseUsecase.execute({
-      gptResponseContent: body.gptResponseContent.split('\n'),
+      gptResponseContent: body.gptResponseContent,
     });
 
     const successResponse: ApiResponse<GPTRequestDto> = {
       success: true,
       data: {
-        gptResponseContent: [result.gptResponseContent],
+        gptResponseContent: result.gptResponseContent,
       },
       message: 'gptResponseContent 저장에 성공했습니다.',
     };

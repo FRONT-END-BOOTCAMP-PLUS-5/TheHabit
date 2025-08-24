@@ -20,6 +20,7 @@ interface ChallengesAccordionProps {
   challenge: ChallengeDto;
   routines: ReadRoutineResponseDto[];
   routineCompletions: RoutineCompletionDto[];
+  onFeedbackClick?: (challengeId: number) => void;
   selectedDate: Date; // 선택된 날짜 추가
   onRoutineAdded?: () => void;
 }
@@ -47,6 +48,7 @@ const ChallengesAccordion: React.FC<ChallengesAccordionProps> = ({
   challenge,
   routines,
   routineCompletions,
+  onFeedbackClick,
   selectedDate,
   onRoutineAdded,
 }) => {
@@ -214,6 +216,7 @@ const ChallengesAccordion: React.FC<ChallengesAccordionProps> = ({
         <div ref={contentRef}>
           <ChallengesAccordionContent
             challenge={challenge}
+            challengeId={challenge.id as number}
             routines={routines.filter(routine => routine.challengeId === challenge.id)}
             routineCompletions={routineCompletions.filter(completion => {
               // 해당 챌린지의 루틴인지 확인
@@ -241,6 +244,7 @@ const ChallengesAccordion: React.FC<ChallengesAccordionProps> = ({
             })}
             selectedDate={selectedDate}
             onRoutineAdded={onRoutineAdded}
+            onFeedbackClick={onFeedbackClick}
           />
         </div>
       </div>

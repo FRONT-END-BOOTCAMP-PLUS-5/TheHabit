@@ -9,7 +9,7 @@ export const SignUpTitle = () => {
 
   return (
     <>
-      <h1 className='text-4xl font-bold top-1/11 absolute left-1/2 -translate-x-1/2'>회원가입</h1>
+      <h1 className='text-4xl font-bold top-1/11 absolute left-1/2 -translate-x-1/2 mt-8'>회원가입</h1>
       <Image
         onClick={() => router.back()}
         src='/icons/back.svg'
