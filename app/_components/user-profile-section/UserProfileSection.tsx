@@ -1,23 +1,11 @@
 'use client';
 import { useGetUserInfo } from '@/libs/hooks/user-hooks/useGetUserInfo';
 import { ProfileImage } from '@/app/_components/profile-images/ProfileImage';
-import { useEffect, useState } from 'react';
-import { Toast } from '@/app/_components/toasts/Toast';
+import { useState } from 'react';
 
 const UserProfileSection: React.FC = () => {
-  const { userInfo, error, isLoading } = useGetUserInfo();
+  const { userInfo, isLoading } = useGetUserInfo();
   const [hasError, setHasError] = useState(false);
-
-  useEffect(() => {
-    if (error) {
-      setHasError(true);
-      Toast.error('사용자 정보를 불러올 수 없습니다');
-    }
-  }, [error]);
-
-  useEffect(() => {
-    console.log(userInfo);
-  }, [userInfo]);
 
   // 에러 상태 처리
   if (hasError) {
