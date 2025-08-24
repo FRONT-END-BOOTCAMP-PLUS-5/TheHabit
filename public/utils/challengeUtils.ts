@@ -3,6 +3,69 @@ import { ChallengeDto } from '@/backend/challenges/applications/dtos/ChallengeDt
 import { ReadRoutineResponseDto } from '@/backend/routines/applications/dtos/RoutineDto';
 import { RoutineCompletionDto } from '@/backend/routine-completions/applications/dtos/RoutineCompletionDto';
 
+/**
+ * 챌린지 완료 진행 상황을 나타내는 enum
+ */
+export enum ChallengeProgress {
+  IN_PROGRESS = 'in_progress',      // 진행 중
+  COMPLETED_21 = 'completed_21',    // 21일 완료 후 종료
+  COMPLETED_66 = 'completed_66',    // 66일 완료 후 종료
+  FAILED_21 = 'failed_21',          // 21일 중간에 실패
+  FAILED_66 = 'failed_66',          // 66일 중간에 실패
+  EXTENDED = 'extended',             // 21일 → 66일로 연장됨
+  UNLIMITED = 'unlimited',           // 무제한 챌린지 (66일 이후)
+  UNLIMITED_ACTIVE = 'unlimited_active' // 무제한 챌린지 진행 중
+}
+
+/**
+ * 챌린지 진행 상황을 표시할 수 있는 텍스트
+ */
+export const getChallengeProgressText = (progress: ChallengeProgress): string => {
+  switch (progress) {
+    case ChallengeProgress.IN_PROGRESS:
+      return '🔄 진행 중';
+    case ChallengeProgress.COMPLETED_21:
+      return '✅ 21일 챌린지 성공 완료';
+    case ChallengeProgress.COMPLETED_66:
+      return '🏆 66일 챌린지 성공 완료';
+    case ChallengeProgress.FAILED_21:
+      return '❌ 21일 챌린지 실패';
+    case ChallengeProgress.FAILED_66:
+      return '❌ 66일 챌린지 실패';
+    case ChallengeProgress.EXTENDED:
+      return '🔄 66일로 연장됨';
+    case ChallengeProgress.UNLIMITED:
+      return '♾️ 무제한 챌린지';
+    case ChallengeProgress.UNLIMITED_ACTIVE:
+      return '♾️ 무제한 챌린지 진행 중';
+    default:
+      return '🔄 진행 중';
+  }
+};
+
+/**
+ * 챌린지 진행 상황에 따른 색상 클래스
+ */
+export const getChallengeProgressColor = (progress: ChallengeProgress): string => {
+  switch (progress) {
+    case ChallengeProgress.IN_PROGRESS:
+      return 'text-blue-600';
+    case ChallengeProgress.COMPLETED_21:
+    case ChallengeProgress.COMPLETED_66:
+      return 'text-green-600';
+    case ChallengeProgress.FAILED_21:
+    case ChallengeProgress.FAILED_66:
+      return 'text-red-600';
+    case ChallengeProgress.EXTENDED:
+      return 'text-yellow-600';
+    case ChallengeProgress.UNLIMITED:
+    case ChallengeProgress.UNLIMITED_ACTIVE:
+      return 'text-purple-600';
+    default:
+      return 'text-blue-600';
+  }
+};
+
 export interface ChallengeProgressInfo {
   status: 'not-started' | 'in-progress' | 'completed' | 'error';
   days: number;
