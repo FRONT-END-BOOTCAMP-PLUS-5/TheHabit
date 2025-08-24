@@ -12,7 +12,7 @@ import { ChallengeDto } from '@/backend/challenges/applications/dtos/ChallengeDt
 import { ReadRoutineResponseDto } from '@/backend/routines/applications/dtos/RoutineDto';
 import { RoutineCompletionDto } from '@/backend/routine-completions/applications/dtos/RoutineCompletionDto';
 import { CHALLENGE_COLORS } from '@/public/consts/challengeColors';
-import ChallengesAccordionContent from '@/app/_components/challenges-accordion/ChallengesAccordionContent';
+import { ChallengesAccordionContent } from '@/app/_components/challenges-accordion/ChallengesAccordionContent';
 import { StaticImageData } from 'next/image';
 import {
   getChallengeProgress,
@@ -201,13 +201,13 @@ const ChallengesAccordion: React.FC<ChallengesAccordionProps> = ({
         <div ref={contentRef}>
           <ChallengesAccordionContent
             challenge={challenge}
-            challengeId={challenge.id as number}
-            routines={routines.filter(routine => routine.challengeId === challenge.id)}
+            challengeId={challenge.id || 0}
+            routines={routines.filter(routine => routine.challengeId === (challenge.id || 0))}
             routineCompletions={routineCompletions.filter(completion => {
               // 해당 챌린지의 루틴인지 확인
               const isRoutineInChallenge = routines.some(
                 routine =>
-                  routine.id === completion.routineId && routine.challengeId === challenge.id
+                  routine.id === completion.routineId && routine.challengeId === (challenge.id || 0)
               );
 
               if (!isRoutineInChallenge) return false;

@@ -49,6 +49,7 @@ export async function GET(
         color: challenge.color,
         active: challenge.active,
         categoryId: challenge.categoryId,
+        completionProgress: challenge.completionProgress,
       })),
       routines: dashboard.routines.map(routine => ({
         id: routine.id,

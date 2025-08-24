@@ -73,27 +73,55 @@ const ChallengeListSection: React.FC = () => {
   // 선택된 날짜에 해당하는 활성 챌린지들만 필터링
   const getActiveChallengesForSelectedDate = () => {
     if (!dashboard?.challenge || !Array.isArray(dashboard.challenge)) {
+      console.log('대시보드 데이터가 없거나 challenge가 배열이 아님');
       return [];
     }
 
-    return dashboard.challenge.filter(challenge => {
+    console.log('전체 챌린지 개수:', dashboard.challenge.length);
+    console.log('선택된 날짜:', selectedDate.toISOString());
+
+    const filteredChallenges = dashboard.challenge.filter(challenge => {
       // challenge 객체가 유효한지 확인
       if (!challenge || typeof challenge !== 'object') {
+        console.log('챌린지 객체가 유효하지 않음:', challenge);
         return false;
       }
 
       // 필수 속성들이 존재하는지 확인
       if (!challenge.id || !challenge.createdAt || !challenge.endAt) {
+        console.log('필수 속성 누락:', {
+          id: challenge.id,
+          createdAt: challenge.createdAt,
+          endAt: challenge.endAt,
+        });
         return false;
       }
 
       // active가 true인 챌린지만 필터링
       if (challenge.active !== true) {
+        console.log('비활성 챌린지 제외:', challenge.name, 'active:', challenge.active);
         return false;
       }
 
-      return isDateInChallengePeriod(challenge, selectedDate);
+      // completionProgress가 'in_progress'인 챌린지만 필터링
+      if (challenge.completionProgress !== 'in_progress') {
+        console.log(
+          '진행중이 아닌 챌린지 제외:',
+          challenge.name,
+          'completionProgress:',
+          challenge.completionProgress
+        );
+        return false;
+      }
+
+      const isInPeriod = isDateInChallengePeriod(challenge, selectedDate);
+      console.log(`챌린지 "${challenge.name}": 기간 내 포함 여부 = ${isInPeriod}`);
+
+      return isInPeriod;
     });
+
+    console.log('필터링 후 챌린지 개수:', filteredChallenges.length);
+    return filteredChallenges;
   };
 
   const handleOpenAddChallengeModal = () => {
@@ -225,6 +253,8 @@ const ChallengeListSection: React.FC = () => {
               routines={dashboard?.routines || []}
               routineCompletions={dashboard?.routineCompletions || []}
               selectedDate={selectedDate}
+              onFeedbackClick={undefined}
+              onRoutineAdded={undefined}
             />
           )
         )}

@@ -118,7 +118,8 @@ export class PrDashboardRepository implements IDashboardRepository {
         challengeData.userId,
         challengeData.categoryId,
         challengeData.active,
-        challengeData.id
+        'in_progress', // completionProgress 기본값
+        challengeData.id // id
       )
     );
 

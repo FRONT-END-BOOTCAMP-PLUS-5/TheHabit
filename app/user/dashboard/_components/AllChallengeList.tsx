@@ -31,6 +31,7 @@ const AllChallengeList: React.FC<AllChallengeListProps> = ({
             routineCompletions={routineCompletions}
             selectedDate={selectedDate}
             onRoutineAdded={onRoutineAdded}
+            onFeedbackClick={undefined}
           />
         ))
       ) : (

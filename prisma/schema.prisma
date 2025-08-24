@@ -44,7 +44,7 @@ model Challenge {
   userId              String            @map("user_id")
   categoryId          Int               @map("category_id")
   active              Boolean           @default(true) @map("active")
-  completion_progress String?
+  completion_progress String
   feedbacks           Feedback[]
   category            ChallengeCategory @relation(fields: [categoryId], references: [id])
   user                User              @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -137,7 +137,6 @@ model PushSubscription {
   p256dh    String
   auth      String
   createdAt DateTime @default(now()) @map("created_at")
-  user_id   String
 
   @@map("push_subscriptions")
 }

@@ -13,6 +13,7 @@ export class PrChallengeRepository implements IChallengeRepository {
         userId: challenge.userId,
         categoryId: challenge.categoryId,
         active: challenge.active,
+        completion_progress: 'in_progress',
       },
     });
 
@@ -24,7 +25,7 @@ export class PrChallengeRepository implements IChallengeRepository {
       createdChallenge.userId,
       createdChallenge.categoryId,
       createdChallenge.active,
-      createdChallenge.id
+      createdChallenge.completion_progress
     );
   }
 
@@ -40,6 +41,7 @@ export class PrChallengeRepository implements IChallengeRepository {
           challenge.userId,
           challenge.categoryId,
           challenge.active,
+          challenge.completion_progress,
           challenge.id
         )
     );
@@ -60,6 +62,7 @@ export class PrChallengeRepository implements IChallengeRepository {
       challenge.userId,
       challenge.categoryId,
       challenge.active,
+      challenge.completion_progress,
       challenge.id
     );
   }
@@ -88,6 +91,7 @@ export class PrChallengeRepository implements IChallengeRepository {
             challenge.userId,
             challenge.categoryId,
             challenge.active,
+            challenge.completion_progress,
             challenge.id
           )
       );
@@ -114,6 +118,7 @@ export class PrChallengeRepository implements IChallengeRepository {
           challenge.userId,
           challenge.categoryId,
           challenge.active,
+          challenge.completion_progress,
           challenge.id
         )
     );
@@ -151,6 +156,7 @@ export class PrChallengeRepository implements IChallengeRepository {
       updatedChallenge.userId,
       updatedChallenge.categoryId,
       updatedChallenge.active,
+      updatedChallenge.completion_progress,
       updatedChallenge.id
     );
   }

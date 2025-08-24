@@ -12,6 +12,7 @@ export enum ChallengeProgress {
   COMPLETED_66 = 'completed_66',    // 66일 완료 후 종료
   FAILED_21 = 'failed_21',          // 21일 중간에 실패
   FAILED_66 = 'failed_66',          // 66일 중간에 실패
+  FAILED_UNLIMITED = 'failed_unlimited', // 무제한 챌린지 실패
   EXTENDED = 'extended',             // 21일 → 66일로 연장됨
   UNLIMITED = 'unlimited',           // 무제한 챌린지 (66일 이후)
   UNLIMITED_ACTIVE = 'unlimited_active' // 무제한 챌린지 진행 중
@@ -32,6 +33,8 @@ export const getChallengeProgressText = (progress: ChallengeProgress): string =>
       return '❌ 21일 챌린지 실패';
     case ChallengeProgress.FAILED_66:
       return '❌ 66일 챌린지 실패';
+    case ChallengeProgress.FAILED_UNLIMITED:
+      return '❌ 무제한 챌린지 실패';
     case ChallengeProgress.EXTENDED:
       return '🔄 66일로 연장됨';
     case ChallengeProgress.UNLIMITED:
@@ -55,6 +58,7 @@ export const getChallengeProgressColor = (progress: ChallengeProgress): string =
       return 'text-green-600';
     case ChallengeProgress.FAILED_21:
     case ChallengeProgress.FAILED_66:
+    case ChallengeProgress.FAILED_UNLIMITED:
       return 'text-red-600';
     case ChallengeProgress.EXTENDED:
       return 'text-yellow-600';
