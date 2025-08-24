@@ -9,3 +9,7 @@ export interface UserDto {
   readonly createdAt?: string;
   readonly updatedAt?: string;
 }
+
+export interface newUserDto extends UserDto {
+  isFollowing: boolean;
+}
