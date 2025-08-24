@@ -91,6 +91,7 @@ const AddChallengeForm: React.FC = () => {
       ...data,
       categoryId: Number(data.categoryId),
       nickname: userNickname || '',
+      completionProgress: 'in_progress', // 자동으로 기본값 설정
     };
 
     createChallengeMutation.mutate(formData, {
