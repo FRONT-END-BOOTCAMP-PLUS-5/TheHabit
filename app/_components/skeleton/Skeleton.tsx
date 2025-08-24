@@ -34,14 +34,16 @@ export const Skeleton = ({
 // 텍스트 스켈레톤
 export const TextSkeleton = ({
   lines = 1,
+  height = 'h-4',
   className = '',
 }: {
   lines?: number;
+  height?: string;
   className?: string;
 }) => (
   <div className={`space-y-2 ${className}`}>
     {[...Array(lines)].map((_, index) => (
-      <Skeleton key={index} width={index === lines - 1 ? 'w-3/4' : 'w-full'} height='h-4' />
+      <Skeleton key={index} width={index === lines - 1 ? 'w-3/4' : 'w-full'} height={height} />
     ))}
   </div>
 );
