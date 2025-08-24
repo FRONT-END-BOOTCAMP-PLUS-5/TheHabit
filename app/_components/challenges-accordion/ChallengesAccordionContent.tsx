@@ -110,7 +110,7 @@ export const ChallengesAccordionContent = ({
               nickname: userInfo.nickname,
               routineId,
               content: reviewText,
-              photoFile,
+              proofImgUrl: photoFile ? photoFile.name : null,
             });
 
             // 페이지 새로고침하여 완료 상태 반영

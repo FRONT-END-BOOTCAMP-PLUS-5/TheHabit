@@ -13,7 +13,7 @@ import {
 } from '@/app/user/feedback/_components/FeedbackIcon';
 import { calculateSingleChallengeProgress } from '@/app/user/feedback/_components/CalcFeedBackData';
 
-export const FeedBackStatistics = ({ dashBoardData }: { dashBoardData: DashboardDto }) => {
+export const FeedBackStatistics: React.FC<{ dashBoardData: DashboardDto }> = ({ dashBoardData }) => {
   const { challenge, routines, routineCompletions } = dashBoardData;
 
   // 각 챌린지별 완료 데이터를 미리 계산 (메모이제이션)

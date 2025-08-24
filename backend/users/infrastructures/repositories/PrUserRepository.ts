@@ -4,8 +4,19 @@ import { User } from '@/backend/users/domains/entities/UserEntity';
 import { RoutineCompletion } from '@/backend/routine-completions/domains/entities/routine-completion/routineCompletion';
 import { UserReviewEntity } from '@/backend/users/domains/entities/UserReviewEntity';
 import { Prisma } from '@prisma/client';
+import { s3Service } from '@/backend/shared/services/s3.service';
 
 export class PrUserRepository implements IUserRepository {
+  async createProfileImg(profileFile: File): Promise<string[]> {
+    try {
+      const { imageUrl, key } = await s3Service.uploadImage(profileFile, 'user');
+      return [imageUrl, key];
+    } catch (error) {
+      if (error instanceof Error) throw new Error(error.message);
+      throw new Error('프로필 이미지 업로드에 실패했습니다.');
+    }
+  }
+
   async create(user: User): Promise<User> {
     try {
       const createdUser = await prisma.user.create({
@@ -367,6 +378,28 @@ export class PrUserRepository implements IUserRepository {
         }
       }
       if (error instanceof Error) throw new Error(error.message);
+    }
+  }
+
+  async updateUserName(id: string, username: string): Promise<User | undefined> {
+    try {
+      const updatedUser = await prisma.user.update({
+        where: { id },
+        data: { username },
+      });
+
+      return new User(
+        updatedUser.username,
+        updatedUser.nickname,
+        updatedUser.profileImg,
+        updatedUser.profileImgPath,
+        updatedUser.id,
+        updatedUser.password,
+        updatedUser.email
+      );
+    } catch (error) {
+      if (error instanceof Error) throw new Error(error.message);
+      return undefined;
     }
   }
 

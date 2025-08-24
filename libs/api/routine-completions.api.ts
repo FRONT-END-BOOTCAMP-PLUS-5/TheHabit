@@ -2,84 +2,44 @@ import { axiosInstance } from '@/libs/axios/axiosInstance';
 import { ApiResponse } from '@/backend/shared/types/ApiResponse';
 import {
   RoutineCompletionDto,
+  CreateRoutineCompletionRequestDto,
 } from '@/backend/routine-completions/applications/dtos/RoutineCompletionDto';
 
 // 루틴 완료 생성 (이미지 업로드 포함)
-export const createRoutineCompletion = async (params: {
-  nickname: string;
-  routineId: number;
-  content: string;
-  photoFile?: File;
-}): Promise<RoutineCompletionDto> => {
-  const { nickname, routineId, content, photoFile } = params;
-
+export const createRoutineCompletion = async (
+  data: FormData | CreateRoutineCompletionRequestDto
+): Promise<ApiResponse<RoutineCompletionDto>> => {
   try {
-    const formData = new FormData();
-    formData.append('nickname', nickname);
-    formData.append('routineId', routineId.toString());
-    formData.append('content', content);
-
-    if (photoFile) {
-      formData.append('file', photoFile);
-    }
-
+    const isFormData = data instanceof FormData;
+    
     const response = await axiosInstance.post<ApiResponse<RoutineCompletionDto>>(
       '/api/routine-completions',
-      formData,
-      {
+      data,
+      isFormData ? {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
-      }
+      } : undefined
     );
 
-    if (!response.data.data) {
-      throw new Error('서버에서 반환된 데이터가 없습니다');
-    }
-
-    return response.data.data;
+    return response.data;
   } catch (error) {
     console.error('루틴 완료 생성 실패:', error);
     throw error;
   }
 };
 
-// 챌린지별 루틴 완료 조회
-export const getRoutineCompletionsByChallenge = async (
+// 루틴 완료 조회 (챌린지 ID와 닉네임 기반)
+export const getRoutineCompletions = async (
   challengeId: number,
   nickname: string
-): Promise<RoutineCompletionDto[]> => {
+): Promise<ApiResponse<RoutineCompletionDto[]>> => {
   try {
     const response = await axiosInstance.get<ApiResponse<RoutineCompletionDto[]>>(
       `/api/routine-completions?challengeId=${challengeId}&nickname=${nickname}`
     );
 
-    if (!response.data.data) {
-      throw new Error('서버에서 반환된 데이터가 없습니다');
-    }
-
-    return response.data.data;
-  } catch (error) {
-    console.error('챌린지별 루틴 완료 조회 실패:', error);
-    throw error;
-  }
-};
-
-// 닉네임으로 루틴 완료 조회 (챌린지 ID 필수)
-export const getRoutineCompletionsByUser = async (
-  nickname: string,
-  challengeId: number
-): Promise<RoutineCompletionDto[]> => {
-  try {
-    const response = await axiosInstance.get<ApiResponse<RoutineCompletionDto[]>>(
-      `/api/routine-completions?nickname=${nickname}&challengeId=${challengeId}`
-    );
-
-    if (!response.data.data) {
-      throw new Error('서버에서 반환된 데이터가 없습니다');
-    }
-
-    return response.data.data;
+    return response.data;
   } catch (error) {
     console.error('루틴 완료 조회 실패:', error);
     throw error;
@@ -90,18 +50,14 @@ export const getRoutineCompletionsByUser = async (
 export const updateRoutineCompletion = async (
   completionId: number,
   proofImgUrl: string | null
-): Promise<RoutineCompletionDto> => {
+): Promise<ApiResponse<RoutineCompletionDto>> => {
   try {
     const response = await axiosInstance.patch<ApiResponse<RoutineCompletionDto>>(
       '/api/routine-completions',
       { completionId, proofImgUrl }
     );
 
-    if (!response.data.data) {
-      throw new Error('서버에서 반환된 데이터가 없습니다');
-    }
-
-    return response.data.data;
+    return response.data;
   } catch (error) {
     console.error('루틴 완료 수정 실패:', error);
     throw error;
@@ -124,8 +80,7 @@ export const deleteRoutineCompletion = async (completionId: number): Promise<voi
 // API 편의 객체
 export const routineCompletionsApi = {
   create: createRoutineCompletion,
-  getByChallenge: getRoutineCompletionsByChallenge,
-  getByUser: getRoutineCompletionsByUser,
+  get: getRoutineCompletions,
   update: updateRoutineCompletion,
   delete: deleteRoutineCompletion,
 };

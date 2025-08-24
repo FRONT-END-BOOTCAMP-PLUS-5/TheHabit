@@ -22,10 +22,10 @@ type UserResponse = ApiResponse<UserChallengeAndRoutineAndFollowAndCompletionDto
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { nickname: string } }
-): Promise<NextResponse<UserResponse> | undefined> {
+  { params }: { params: Promise<{ nickname: string }> }
+): Promise<NextResponse<UserResponse>> {
   try {
-    const { nickname } = params;
+    const { nickname } = await params;
     if (!nickname) {
       throw new Error('사용자 닉네임이 존재하지 않습니다!');
     }
@@ -66,15 +66,25 @@ export async function GET(
         },
         { status: 500 }
       );
+    return NextResponse.json(
+      {
+        success: false,
+        error: {
+          code: 'GET_FAILED',
+          message: 'fail',
+        },
+      },
+      { status: 500 }
+    );
   }
 }
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { nickname: string } }
-): Promise<NextResponse | undefined> {
+  { params }: { params: Promise<{ nickname: string }> }
+): Promise<NextResponse> {
   try {
-    const { nickname } = params;
+    const { nickname } = await params;
 
     if (!nickname) throw new Error('사용자 닉네임이 존재하지 않습니다!');
 
@@ -101,5 +111,15 @@ export async function DELETE(
         },
         { status: 500 }
       );
+    return NextResponse.json(
+      {
+        success: false,
+        error: {
+          code: 'DELETE_FAILED',
+          message: 'fail',
+        },
+      },
+      { status: 500 }
+    );
   }
 }

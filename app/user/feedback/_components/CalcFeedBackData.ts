@@ -5,6 +5,7 @@ import { CATEGORY_CONFIG } from '@/public/consts/categoryConfig';
 import { getDateString } from '@/public/utils/dateUtils';
 import { ReadRoutineResponseDto } from '@/backend/routines/applications/dtos/RoutineDto';
 
+
 // 단일 챌린지의 진행률 계산
 export const calculateSingleChallengeProgress = (
   challenge: ChallengeDto,

@@ -1,4 +1,6 @@
-export const FeedBackSkeleton = () => {
+'use client';
+
+export const FeedBackSkeleton: React.FC = () => {
   return (
     <section className='flex flex-col mt-10 w-full'>
       <div className='flex flex-col gap-10 w-6/7 mx-auto'>
@@ -81,7 +83,7 @@ export const FeedBackSkeleton = () => {
   );
 };
 
-export const FeedBackDetailSkeleton = () => {
+export const FeedBackDetailSkeleton: React.FC = () => {
   return (
     <section className='flex flex-col w-10/11 mx-auto gap-6 mt-10'>
       {/* 카테고리 칩 스켈레톤 */}

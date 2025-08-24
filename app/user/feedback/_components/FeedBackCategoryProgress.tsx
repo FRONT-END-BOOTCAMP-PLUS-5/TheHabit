@@ -1,8 +1,9 @@
+'use client';
 import { DashboardDto } from '@/backend/dashboards/application/dtos/DashboardDto';
 import { Progress } from 'antd';
 import { calculateAllCategoriesProgress } from '@/app/user/feedback/_components/CalcFeedBackData';
 
-export const FeedBackCategoryProgress = ({ dashBoardData }: { dashBoardData: DashboardDto }) => {
+export const FeedBackCategoryProgress: React.FC<{ dashBoardData: DashboardDto }> = ({ dashBoardData }) => {
   const { challenge, routines, routineCompletions } = dashBoardData;
 
   const categoryData = calculateAllCategoriesProgress(challenge, routines, routineCompletions);

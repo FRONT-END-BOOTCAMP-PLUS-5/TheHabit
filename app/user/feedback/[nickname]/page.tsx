@@ -1,11 +1,11 @@
 import { FeedBackList } from '@/app/user/feedback/_components/FeedBackList';
 
 interface FeedbackByNicknamePageProps {
-  params: { nickname: string };
+  params: Promise<{ nickname: string }>;
 }
 
-const FeedbackByNicknamePage = ({ params }: FeedbackByNicknamePageProps) => {
-  const { nickname } = params;
+const FeedbackByNicknamePage = async ({ params }: FeedbackByNicknamePageProps) => {
+  const { nickname } = await params;
 
   return <FeedBackList nickname={nickname} />;
 };

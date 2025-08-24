@@ -1,16 +1,24 @@
 'use client';
 import CustomInput from '@/app/_components/inputs/CustomInput';
 import { useState, useEffect, useMemo } from 'react';
-import { ContentComponent } from '@/app/user/search/_components/Content';
+import { useSearchParams } from 'next/navigation';
+
+import { BackComponent } from '@/app/_components/back/Back';
+import { FollowCategoryComponent } from '@/app/user/follow/components/FollowCategory';
+import { ContentComponent } from '@/app/user/follow/components/Content';
 import { useGetUserInfo } from '@/libs/hooks/user-hooks/useGetUserInfo';
+import { useGetFollowing } from '@/libs/hooks/user-hooks/useGetFollowing';
+import { useGetFollower } from '@/libs/hooks/user-hooks/useGetFollower';
 import { useFollowMutation } from '@/libs/hooks/user-hooks/useCreateFollow';
 import { useUnfollowMutation } from '@/libs/hooks/user-hooks/useDeleteFollow';
 import { debounce } from 'lodash';
 import { AvatarSkeleton, ButtonSkeleton, TextSkeleton } from '@/app/_components/skeleton/Skeleton';
 import { COMPLETION_SKELETON } from '@/public/consts/completionSkeleton';
-import { useGetUsers } from '@/libs/hooks/user-hooks/useGetUsers';
 
-const SearchPage = () => {
+export const FollowPageContent = () => {
+  const searchParams = useSearchParams();
+  const type = searchParams.get('t');
+
   const { userInfo } = useGetUserInfo();
 
   const [searchTerm, setSearchTerm] = useState<string>('');
@@ -28,12 +36,20 @@ const SearchPage = () => {
     };
   }, [debounceSearch]);
 
-  const { data: users, isLoading } = useGetUsers(
-    userInfo?.nickname || '',
+  const { data: followerData, isLoading: isFollowerLoading } = useGetFollower(
     userInfo?.id || '',
-    getValue
+    getValue,
+    {
+      enabled: !!userInfo?.id && type === 'follower',
+    }
   );
-
+  const { data: followingData, isLoading: isFollowingLoading } = useGetFollowing(
+    userInfo?.id || '',
+    getValue,
+    {
+      enabled: !!userInfo?.id && type === 'following',
+    }
+  );
   const followMutation = useFollowMutation();
   const unfollowMutation = useUnfollowMutation();
 
@@ -45,12 +61,36 @@ const SearchPage = () => {
     else followMutation.mutate({ fromUserId: userInfo?.id || '', toUserId: targetUserId });
   };
 
+  const followData = type === 'follower' ? followerData?.data : followingData?.data;
+  const isLoading = type === 'follower' ? isFollowerLoading : isFollowingLoading;
+
+  const init = () => {
+    setSearchTerm('');
+    setValue('');
+  };
+
   return (
     <main className='px-5'>
-      <section id='head' className='mt-[40px]'>
-        <div id='follow_wrapper' className='flex items-center gap-[5.8rem]'></div>
+      <section id='head'>
+        <div id='follow_wrapper' className='flex items-center gap-[5.8rem]'>
+          <BackComponent
+            nickname={userInfo?.nickname || ''}
+            className={
+              'text-[40px] text-[#93d50b] cursor-pointer inline pl-[20px] absolute top-[-4px] left-0'
+            }
+          />
+        </div>
+        <FollowCategoryComponent
+          init={init}
+          type={type as 'follower' | 'following'}
+          nickname={userInfo?.nickname || ''}
+        />
         <CustomInput
-          placeholder='원하는 사람을 찾아보세요'
+          placeholder={
+            type === 'follower'
+              ? '팔로워한 사람들을 검색해보세요'
+              : '팔로잉한 사람들을 검색해보세요'
+          }
           className='border-t-0 border-l-0 border-r-0 border-b-2 focus:!border-[#07bc0c] rounded-[0px] hover:border-[#07bc0c] !shadow-none '
           onChange={evt => {
             setSearchTerm(evt.target.value);
@@ -59,7 +99,7 @@ const SearchPage = () => {
           value={searchTerm}
         />
         <p className='mt-10 font-semibold'>
-          친구 찾기 / <span>{users?.data ? users?.data.length : 0}명</span>
+          {type === 'follower' ? '나를 팔로워한 사람들' : '내가 팔로잉한 사람들'}
         </p>
       </section>
       <section id='content' className='h-[450px] overflow-scroll'>
@@ -79,11 +119,9 @@ const SearchPage = () => {
             );
           })
         ) : (
-          <ContentComponent data={users?.data} onToggleFollow={handleToggleFollow} />
+          <ContentComponent data={followData} onToggleFollow={handleToggleFollow} />
         )}
       </section>
     </main>
   );
 };
-
-export default SearchPage;

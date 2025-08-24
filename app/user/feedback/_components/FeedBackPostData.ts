@@ -2,6 +2,7 @@ import { FeedbackApi, getFeedBackByChallengeId } from '@/libs/api/feedback.api';
 import { requestGPT } from '@/libs/api/gpt.api';
 import { RoutineCompletionDto } from '@/backend/routine-completions/applications/dtos/RoutineCompletionDto';
 import { ValidateFeedBackGPTResponse } from '@/app/user/feedback/_components/ValidateFeedBackGPTResponse';
+import { AxiosError } from 'axios';
 
 export const FeedBackPostData = async (
   challengeId: number,
@@ -46,6 +47,9 @@ export const FeedBackPostData = async (
 
     return feedBack.data?.gptResponseContent || [];
   } catch (error) {
+    if (error instanceof AxiosError) {
+      return error.response?.data.message;
+    }
     return;
   }
 };
