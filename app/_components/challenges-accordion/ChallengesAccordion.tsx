@@ -17,6 +17,7 @@ import {
   getChallengeProgress,
   calculateCompletionRatio,
   isSameDate,
+  getChallengeDurationInfo,
 } from '@/public/utils/dateUtils';
 
 // ChallengesAccordion 컴포넌트는 피드백 및 분석에도 사용되므로 공통으로 분리하였습니다.
@@ -64,6 +65,9 @@ const ChallengesAccordion: React.FC<ChallengesAccordionProps> = ({
 
   // 챌린지 진행 일수 계산
   const progressInfo = getChallengeProgress(challenge.createdAt, challenge.endAt);
+
+  // 챌린지 기간 정보 계산
+  const durationInfo = getChallengeDurationInfo(challenge.createdAt, challenge.endAt);
 
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const contentRef = useRef<HTMLDivElement>(null);
@@ -113,16 +117,24 @@ const ChallengesAccordion: React.FC<ChallengesAccordionProps> = ({
                 <div className='w-full text-xl font-bold text-white truncate min-w-0 overflow-hidden flex-shrink-0'>
                   {challenge.name}
                 </div>
-                {/* 챌린지 진행 일수 표시 */}
-                <div className='text-xs text-white/80'>
-                  {progressInfo.status === 'not-started' && <span>시작 예정</span>}
-                  {progressInfo.status === 'in-progress' && (
-                    <span>
-                      <span className='font-bold'>{progressInfo.days}일째</span> 진행 중
-                    </span>
-                  )}
-                  {progressInfo.status === 'completed' && <span>완료됨</span>}
-                  {progressInfo.status === 'error' && <span>진행 정보 오류</span>}
+                {/* 챌린지 기간 뱃지 */}
+                <div className='flex items-center gap-2'>
+                  <span
+                    className={`px-2 py-1 text-xs font-bold text-white rounded-full ${durationInfo.badgeColor}`}
+                  >
+                    {durationInfo.badge}
+                  </span>
+                  {/* 챌린지 진행 일수 표시 */}
+                  <div className='text-xs text-white/80'>
+                    {progressInfo.status === 'not-started' && <span>시작 예정</span>}
+                    {progressInfo.status === 'in-progress' && (
+                      <span>
+                        <span className='font-bold'>{progressInfo.days}일째</span> 진행 중
+                      </span>
+                    )}
+                    {progressInfo.status === 'completed' && <span>완료됨</span>}
+                    {progressInfo.status === 'error' && <span>진행 정보 오류</span>}
+                  </div>
                 </div>
               </div>
             </div>
