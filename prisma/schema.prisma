@@ -43,7 +43,6 @@ model Challenge {
   color      String
   userId     String            @map("user_id")
   categoryId Int               @map("category_id")
-  active     Boolean           @default(true)
   active     Boolean           @default(true) @map("active")
   feedbacks  Feedback[]
   category   ChallengeCategory @relation(fields: [categoryId], references: [id])

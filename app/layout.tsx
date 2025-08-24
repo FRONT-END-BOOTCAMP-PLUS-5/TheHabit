@@ -6,7 +6,7 @@ import NextAuthSessionProvider from '@/app/_components/providers/NextAuthSession
 import Header from '@/app/_components/layouts/Header';
 import { pretendard } from '@/public/fonts/font';
 import { TabNavigation } from '@/app/_components/tab-navigations/TabNavigation';
-import ToastProvider from './_components/providers/ToastProvider';
+import ToastProvider from '@/app/_components/providers/ToastProvider';
 
 export const metadata: Metadata = {
   title: 'TheHabit - 습관 관리 앱',
