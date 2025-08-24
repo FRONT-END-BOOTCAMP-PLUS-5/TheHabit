@@ -12,17 +12,22 @@ import { BUTTON_CLASS, CATEGORY_COLOR } from '@/public/consts/userRoutineComplet
 import { useModalStore } from '@/libs/stores/modalStore';
 import { CreateRoutineCompletionResponseDto } from '@/backend/routine-completions/applications/dtos/RoutineCompletionDto';
 import UserRoutineCompletion from '@/app/user/profile/components/UserRoutineCompletion';
+import NoneImg from '@/app/_components/none/NoneImg';
+import { ButtonSkeleton, Skeleton } from '@/app/_components/skeleton/Skeleton';
+import { COMPLETION_SKELETON } from '@/public/consts/completionSkeleton';
 
 export const CompletionComponent = ({
   profileImg,
   username,
   nickname,
   userId,
+  propLoading,
 }: {
   profileImg?: string | null;
   username: string;
   nickname: string;
   userId: string | null;
+  propLoading?: boolean;
 }) => {
   const [getSelectedCategory, setSelectedCategory] = useState<string>('All');
   const [getUserClicked, setUserClicked] = useState<boolean>(false);
@@ -31,7 +36,6 @@ export const CompletionComponent = ({
     nickname,
     getSelectedCategory,
     userId!
-
   );
 
   const rootRef = useRef<HTMLUListElement>(null);
@@ -50,7 +54,7 @@ export const CompletionComponent = ({
 
   const handleOpenModal = (
     profileImg: string | null,
-    { proofImgUrl, content, createdAt, routineId }: CreateRoutineCompletionResponseDto
+    { proofImgUrl, content, createdAt, id }: CreateRoutineCompletionResponseDto
   ) => {
     openModal(
       <UserRoutineCompletion
@@ -60,8 +64,7 @@ export const CompletionComponent = ({
         profileImg={profileImg}
         username={username}
         nickname={nickname}
-        routineCompletionId={routineId.toString()}
-        userId={userId}
+        routineCompletionId={id.toString()}
       />,
       'floating'
     );
@@ -71,7 +74,7 @@ export const CompletionComponent = ({
     if (inView && hasNextPage) {
       fetchNextPage();
     }
-  }, [inView]);
+  }, [inView, hasNextPage, fetchNextPage]);
 
   const allCompletions = data?.pages.flatMap(page => page.data) || [];
 
@@ -79,12 +82,17 @@ export const CompletionComponent = ({
 
   if (isLoading && userId != 'edit') {
     contentToRender = (
-      // 임시 ㅋ
-      <div className='flex items-center justify-center h-[450px] text-gray-500'>
-        <p>데이터를 불러오는 중...</p>
+      <div className='grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 gap-1 overflow-y-scroll scroll-smooth max-h-[450px]'>
+        {COMPLETION_SKELETON.map((_, idx) => (
+          <Skeleton key={idx} width={'w-[144px]'} height={'h-[144px]'} />
+        ))}
       </div>
     );
-  } else if ((allCompletions.length === 0 && getUserClicked) || userId === 'edit') {
+  } else if (
+    (allCompletions.length === 0 && getUserClicked) ||
+    allCompletions.length === 0 ||
+    userId === 'edit'
+  ) {
     contentToRender = <None userId={userId!} />;
   } else {
     contentToRender = (
@@ -101,13 +109,17 @@ export const CompletionComponent = ({
               ref={isLastItem ? ref : null}
               onClick={() => handleOpenModal(profileImg || null, item)}
             >
-              <Image
-                src={item.proofImgUrl || ''}
-                alt='유저 컴플리션 인증 사진들'
-                fill
-                className='object-cover rounded-sm'
-                sizes='(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 33vw'
-              />
+              {item.proofImgUrl ? (
+                <Image
+                  src={item.proofImgUrl}
+                  alt='유저 컴플리션 인증 사진들'
+                  fill
+                  className='object-cover rounded-sm'
+                  sizes='(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 33vw'
+                />
+              ) : (
+                <NoneImg rounded={'12px'} />
+              )}
             </li>
           );
         })}
@@ -125,7 +137,9 @@ export const CompletionComponent = ({
           const isSelected = getSelectedCategory === item.id;
           const selectedClass = isSelected ? CATEGORY_COLOR[item.id] : 'bg-white text-[#333]';
 
-          return (
+          return propLoading ? (
+            <ButtonSkeleton key={item.id} width={'w-[80px] rounded-full'} />
+          ) : (
             <Button
               key={item.id}
               className={`${BUTTON_CLASS} ${selectedClass}`}
@@ -134,7 +148,6 @@ export const CompletionComponent = ({
               }}
               disabled={userId === 'edit'}
             >
-
               {item.id !== 'All' && (
                 <Image
                   src={item.icon}

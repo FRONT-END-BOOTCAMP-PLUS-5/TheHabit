@@ -14,10 +14,10 @@ interface IUserCompletions {
 const PAGE_SIZE = 9;
 
 const fetchUserCompletions = async ({
-  pageParam = 1,
-  nickname,
-  category,
-}: {
+                                      pageParam = 1,
+                                      nickname,
+                                      category,
+                                    }: {
   pageParam?: number;
   nickname: string;
   category: string;
