@@ -1,7 +1,7 @@
 'use client';
 
 import { FeedBackDetailSkeleton } from '@/app/user/feedback/_components/FeedBackSkeleton';
-import { useGetDashboardByNickname } from '@/libs/hooks';
+import { useGetDashboardByNickname } from '@/libs/hooks/dashboard-hooks/useGetDashboardByNickname';
 import { useGetFeedBackById } from '@/libs/hooks/feedback-hooks/useGetFeedBackById';
 import { CATEGORY_CONFIG } from '@/public/consts/categoryConfig';
 import React from 'react';

@@ -14,12 +14,15 @@ import { CHALLENGE_COLORS } from '@/public/consts/challengeColors';
 import ChallengesAccordionContent from '@/app/_components/challenges-accordion/ChallengesAccordionContent';
 import { StaticImageData } from 'next/image';
 
-//props 임시임 -승민
+// ChallengesAccordion 컴포넌트는 피드백 및 분석에도 사용되므로 공통으로 분리하였습니다.
+// - 승민 2025.08.23
 interface ChallengesAccordionProps {
   challenge: ChallengeDto;
   routines: ReadRoutineResponseDto[];
   routineCompletions: RoutineCompletionDto[];
   onFeedbackClick?: (challengeId: number) => void;
+  selectedDate: Date; // 선택된 날짜 추가
+  onRoutineAdded?: () => void;
 }
 
 const CATEGORY_ICON: Record<number, { icon: StaticImageData; alt: string }> = {
@@ -46,10 +49,85 @@ const ChallengesAccordion: React.FC<ChallengesAccordionProps> = ({
   routines,
   routineCompletions,
   onFeedbackClick,
+  selectedDate,
+  onRoutineAdded,
 }) => {
   // 완료된 루틴 비율에 따라 동적으로 너비 계산
-  const completedRatio =
-    routines.length > 0 ? (routineCompletions.length / routines.length) * 100 : 0;
+  const completedRatio = (() => {
+    if (routines.length === 0) return 0;
+
+    // 이미 필터링된 routineCompletions를 사용
+    const filteredRoutines = routines.filter(routine => routine.challengeId === challenge.id);
+    const filteredCompletions = routineCompletions.filter(completion => {
+      // 해당 챌린지의 루틴인지 확인
+      const isRoutineInChallenge = filteredRoutines.some(
+        routine => routine.id === completion.routineId
+      );
+
+      if (!isRoutineInChallenge) return false;
+
+      // 선택된 날짜에 완료된 루틴인지 확인
+      const completionDate = new Date(completion.createdAt);
+      const selectedDateOnly = new Date(
+        selectedDate.getFullYear(),
+        selectedDate.getMonth(),
+        selectedDate.getDate()
+      );
+      const completionDateOnly = new Date(
+        completionDate.getFullYear(),
+        completionDate.getMonth(),
+        completionDate.getDate()
+      );
+
+      const isSameDate = completionDateOnly.getTime() === selectedDateOnly.getTime();
+
+      return isSameDate;
+    });
+
+    const ratio = (filteredCompletions.length / filteredRoutines.length) * 100;
+
+    return ratio;
+  })();
+
+  // 챌린지 진행 일수 계산
+  const getChallengeProgressDays = () => {
+    try {
+      const startDate = new Date(challenge.createdAt);
+      const endDate = new Date(challenge.endAt);
+      const today = new Date();
+
+      // 날짜만 비교 (시간 제거)
+      const startDateOnly = new Date(
+        startDate.getFullYear(),
+        startDate.getMonth(),
+        startDate.getDate()
+      );
+      const endDateOnly = new Date(endDate.getFullYear(), endDate.getMonth(), endDate.getDate());
+      const todayOnly = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+
+      // 챌린지가 아직 시작되지 않았거나 종료된 경우
+      if (todayOnly < startDateOnly) {
+        return { status: 'not-started', days: 0, totalDays: 0 };
+      }
+
+      if (todayOnly > endDateOnly) {
+        return { status: 'completed', days: 0, totalDays: 0 };
+      }
+
+      // 진행 중인 챌린지
+      const totalDays =
+        Math.ceil((endDateOnly.getTime() - startDateOnly.getTime()) / (1000 * 60 * 60 * 24)) + 1;
+      const currentDay =
+        Math.ceil((todayOnly.getTime() - startDateOnly.getTime()) / (1000 * 60 * 60 * 24)) + 1;
+
+      return { status: 'in-progress', days: currentDay, totalDays };
+    } catch (error) {
+      console.error('챌린지 진행 일수 계산 오류:', error);
+      return { status: 'error', days: 0, totalDays: 0 };
+    }
+  };
+
+  const progressInfo = getChallengeProgressDays();
 
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const contentRef = useRef<HTMLDivElement>(null);
@@ -86,8 +164,8 @@ const ChallengesAccordion: React.FC<ChallengesAccordionProps> = ({
 
         <div className='flex items-center justify-between relative z-10 w-full'>
           <div className='flex flex-col gap-1 p-2'>
-            <div className='flex items-center gap-2'>
-              <div className='flex justify-center items-center rounded-full bg-white p-1 w-10 h-10 border-primary border-2'>
+            <div className='flex items-center gap-2 min-w-0'>
+              <div className='flex justify-center items-center rounded-full bg-white p-1 w-10 h-10 border-primary border-2 flex-shrink-0'>
                 <Image
                   src={CATEGORY_ICON[challenge.categoryId].icon}
                   alt={CATEGORY_ICON[challenge.categoryId].alt}
@@ -95,7 +173,22 @@ const ChallengesAccordion: React.FC<ChallengesAccordionProps> = ({
                   height={24}
                 />
               </div>
-              <div className='text-xl font-bold text-white'>{challenge.name}</div>
+              <div className='flex flex-col gap-1 min-w-0'>
+                <div className='w-full text-xl font-bold text-white truncate min-w-0 overflow-hidden flex-shrink-0'>
+                  {challenge.name}
+                </div>
+                {/* 챌린지 진행 일수 표시 */}
+                <div className='text-xs text-white/80'>
+                  {progressInfo.status === 'not-started' && <span>시작 예정</span>}
+                  {progressInfo.status === 'in-progress' && (
+                    <span>
+                      <span className='font-bold'>{progressInfo.days}일째</span> 진행 중
+                    </span>
+                  )}
+                  {progressInfo.status === 'completed' && <span>완료됨</span>}
+                  {progressInfo.status === 'error' && <span>진행 정보 오류</span>}
+                </div>
+              </div>
             </div>
           </div>
           <button
@@ -125,12 +218,32 @@ const ChallengesAccordion: React.FC<ChallengesAccordionProps> = ({
             challenge={challenge}
             challengeId={challenge.id as number}
             routines={routines.filter(routine => routine.challengeId === challenge.id)}
-            routineCompletions={routineCompletions.filter(completion =>
-              routines.some(
+            routineCompletions={routineCompletions.filter(completion => {
+              // 해당 챌린지의 루틴인지 확인
+              const isRoutineInChallenge = routines.some(
                 routine =>
                   routine.id === completion.routineId && routine.challengeId === challenge.id
-              )
-            )}
+              );
+
+              if (!isRoutineInChallenge) return false;
+
+              // 선택된 날짜에 완료된 루틴인지 확인
+              const completionDate = new Date(completion.createdAt);
+              const selectedDateOnly = new Date(
+                selectedDate.getFullYear(),
+                selectedDate.getMonth(),
+                selectedDate.getDate()
+              );
+              const completionDateOnly = new Date(
+                completionDate.getFullYear(),
+                completionDate.getMonth(),
+                completionDate.getDate()
+              );
+
+              return completionDateOnly.getTime() === selectedDateOnly.getTime();
+            })}
+            selectedDate={selectedDate}
+            onRoutineAdded={onRoutineAdded}
             onFeedbackClick={onFeedbackClick}
           />
         </div>

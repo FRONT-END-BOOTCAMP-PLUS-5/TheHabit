@@ -1,11 +1,11 @@
 'use client';
 
-import { useGetDashboardByNickname } from '@/libs/hooks';
-import React, { useState } from 'react';
-import { useRouter } from 'next/navigation';
 import CategoryChallengeList from '@/app/user/dashboard/_components/CategoryChallengeList';
 import ConfirmModal from '@/app/_components/modals/ConfirmModal';
+import { useGetDashboardByNickname } from '@/libs/hooks/dashboard-hooks/useGetDashboardByNickname';
 import { useGenerateFeedback } from '@/libs/hooks/feedback-hooks/useGenerateFeedback';
+import { useRouter } from 'next/navigation';
+import React, { useState } from 'react';
 
 export const FeedBackDetail = ({ nickname }: { nickname: string }) => {
   const { data } = useGetDashboardByNickname(nickname || '');

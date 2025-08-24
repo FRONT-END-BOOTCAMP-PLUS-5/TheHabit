@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { FeedBackStatistics } from '@/app/user/feedback/_components/FeedBackStatistics';
-import { useGetDashboardByNickname } from '@/libs/hooks';
+import { useGetDashboardByNickname } from '@/libs/hooks/dashboard-hooks/useGetDashboardByNickname';
 import { FeedBackCategoryProgress } from '@/app/user/feedback/_components/FeedBackCategoryProgress';
 import { FeedBackDescription } from '@/app/user/feedback/_components/FeedBackDescription';
 import { FeedBackDetail } from '@/app/user/feedback/_components/FeedBackDetail';
