@@ -10,7 +10,7 @@ const nextConfig: NextConfig = {
     disable: process.env.NODE_ENV === 'development',
   }),
   images: {
-    domains: ['images.unsplash.com'],
+    domains: ['images.unsplash.com', 'k.kakaocdn.net'],
     remotePatterns: [
       {
         protocol: 'https',

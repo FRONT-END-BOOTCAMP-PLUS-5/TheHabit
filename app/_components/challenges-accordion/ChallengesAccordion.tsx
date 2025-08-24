@@ -1,6 +1,7 @@
 'use client';
 import Image from 'next/image';
 import { useRef, useState, useEffect } from 'react';
+import { useModalStore } from '@/libs/stores/modalStore';
 import HealthIcon from '@/public/icons/icon_health.png';
 import BookIcon from '@/public/icons/icon_study.svg';
 import DevelopIcon from '@/public/icons/icon_develop.png';
@@ -19,7 +20,9 @@ import {
   isSameDate,
   getChallengeDurationInfo,
 } from '@/public/utils/dateUtils';
+import { shouldShowExtensionModal } from '@/public/utils/challengeUtils';
 import ChallengeBadge from './ChallengeBadge';
+import ChallengeExtensionContent from './ChallengeExtensionContent';
 
 // ChallengesAccordion 컴포넌트는 피드백 및 분석에도 사용되므로 공통으로 분리하였습니다.
 // - 승민 2025.08.23
@@ -57,6 +60,9 @@ const ChallengesAccordion: React.FC<ChallengesAccordionProps> = ({
   selectedDate,
   onRoutineAdded,
 }) => {
+  const { openModal } = useModalStore();
+  const [hasShownExtensionModal, setHasShownExtensionModal] = useState<boolean>(false);
+
   // 완료된 루틴 비율에 따라 동적으로 너비 계산
   const completedRatio = calculateCompletionRatio(
     routines.filter(routine => routine.challengeId === challenge.id),
@@ -73,6 +79,38 @@ const ChallengesAccordion: React.FC<ChallengesAccordionProps> = ({
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const contentRef = useRef<HTMLDivElement>(null);
   const [contentHeight, setContentHeight] = useState<number>(0);
+
+  // 챌린지 완료 감지 및 연장 모달 표시
+  useEffect(() => {
+    // 이미 연장 모달을 보여줬다면 다시 표시하지 않음
+    if (hasShownExtensionModal) return;
+
+    // 연장 모달을 표시해야 하는지 확인
+    const shouldShow = shouldShowExtensionModal(challenge, routines, routineCompletions);
+
+    if (shouldShow) {
+      // 연장 모달 표시
+      openModal(
+        <ChallengeExtensionContent
+          challengeName={challenge.name}
+          onExtend={() => {
+            alert('🚀 66일로 연장되었습니다!');
+            setHasShownExtensionModal(true);
+          }}
+          onComplete={() => {
+            alert('✅ 챌린지가 완료되었습니다!');
+            setHasShownExtensionModal(true);
+          }}
+        />,
+        'floating',
+        '챌린지 연장',
+        '21일 챌린지 완료'
+      );
+
+      // 연장 모달을 보여줬다고 표시
+      setHasShownExtensionModal(true);
+    }
+  }, [challenge, routines, routineCompletions, hasShownExtensionModal, openModal]);
 
   const openHandler = () => {
     setIsOpen(!isOpen);
