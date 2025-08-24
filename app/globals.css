@@ -62,6 +62,22 @@
   }
 }
 
+/* 뱃지 반짝임 효과 */
+@keyframes glow {
+  from {
+    box-shadow:
+      0 0 2px currentColor,
+      0 0 4px currentColor,
+      0 0 6px currentColor;
+  }
+  to {
+    box-shadow:
+      0 0 4px currentColor,
+      0 0 8px currentColor,
+      0 0 12px currentColor;
+  }
+}
+
 .animate-slide-up {
   animation: slide-up 0.3s ease-out forwards;
 }

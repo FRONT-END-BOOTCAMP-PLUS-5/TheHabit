@@ -137,7 +137,7 @@ export const calculateCompletionRatio = (
 export const getChallengeDurationInfo = (
   createdAt: string,
   endAt: string
-): { duration: number; badge: string; badgeColor: string } => {
+): { duration: number; badge: string } => {
   try {
     const startDate = new Date(createdAt);
     const endDate = new Date(endAt);
@@ -147,28 +147,24 @@ export const getChallengeDurationInfo = (
     if (duration <= 21) {
       return {
         duration,
-        badge: '21일',
-        badgeColor: 'bg-blue-500'
+        badge: '21일'
       };
     } else if (duration <= 66) {
       return {
         duration,
-        badge: '66일',
-        badgeColor: 'bg-purple-500'
+        badge: '66일'
       };
     } else {
       return {
         duration,
-        badge: '무제한',
-        badgeColor: 'bg-green-500'
+        badge: '무제한'
       };
     }
   } catch (error) {
     console.error('챌린지 기간 계산 오류:', error);
     return {
       duration: 0,
-      badge: '알 수 없음',
-      badgeColor: 'bg-gray-500'
+      badge: '알 수 없음'
     };
   }
 };
