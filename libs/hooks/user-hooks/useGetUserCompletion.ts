@@ -3,7 +3,7 @@ import {
   UseInfiniteQueryResult,
   InfiniteData, // InfiniteData를 import 합니다.
 } from '@tanstack/react-query';
-import { usersApi } from '@/libs/api/users.api';
+import { getUserRoutineCompletion } from '@/libs/api/routines.api';
 import { CreateRoutineCompletionResponseDto } from '@/backend/routine-completions/applications/dtos/RoutineCompletionDto';
 
 interface IUserCompletions {
@@ -14,16 +14,14 @@ interface IUserCompletions {
 const PAGE_SIZE = 9;
 
 const fetchUserCompletions = async ({
-                                      pageParam = 1,
-                                      nickname,
-                                      category,
-                                    }: {
+  pageParam = 1,
+  nickname,
+  category,
+}: {
   pageParam?: number;
   nickname: string;
   category: string;
 }): Promise<IUserCompletions> => {
-  const { getUserRoutineCompletion } = usersApi;
-
   const response = await getUserRoutineCompletion(
     nickname,
     pageParam as number,

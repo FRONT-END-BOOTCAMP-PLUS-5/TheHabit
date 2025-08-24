@@ -5,18 +5,20 @@ import {
 } from '@/backend/routine-completions/applications/dtos/RoutineCompletionDto';
 
 // 루틴 완료 생성 (이미지 업로드 포함)
-export const createRoutineCompletion = async (
-  nickname: string,
-  routineId: number,
-  content: string,
-  photoFile?: File
-): Promise<RoutineCompletionDto> => {
+export const createRoutineCompletion = async (params: {
+  nickname: string;
+  routineId: number;
+  content: string;
+  photoFile?: File;
+}): Promise<RoutineCompletionDto> => {
+  const { nickname, routineId, content, photoFile } = params;
+
   try {
     const formData = new FormData();
     formData.append('nickname', nickname);
     formData.append('routineId', routineId.toString());
     formData.append('content', content);
-    
+
     if (photoFile) {
       formData.append('file', photoFile);
     }
