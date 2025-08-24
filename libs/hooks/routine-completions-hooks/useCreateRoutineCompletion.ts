@@ -1,8 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-
 import { RoutineCompletionDto, CreateRoutineCompletionRequestDto } from '@/backend/routine-completions/applications/dtos/RoutineCompletionDto';
 import { createRoutineCompletion } from '@/libs/api/routine-completions.api';
-
+import { ApiResponse } from '@/backend/shared/types/ApiResponse';
 
 /**
  * 루틴 완료를 생성하는 훅
@@ -11,11 +10,10 @@ import { createRoutineCompletion } from '@/libs/api/routine-completions.api';
 export const useCreateRoutineCompletion = () => {
   const queryClient = useQueryClient();
 
-  return useMutation({
+  return useMutation<ApiResponse<RoutineCompletionDto>, Error, FormData | CreateRoutineCompletionRequestDto>({
     mutationFn: (data: FormData | CreateRoutineCompletionRequestDto) => 
       createRoutineCompletion(data),
-    onSuccess: (data) => {
-
+    onSuccess: () => {
       // 루틴 완료 생성 성공 시 관련 캐시 무효화
       queryClient.invalidateQueries({ queryKey: ['routine-completions'] });
       queryClient.invalidateQueries({
@@ -24,8 +22,6 @@ export const useCreateRoutineCompletion = () => {
       queryClient.invalidateQueries({
         queryKey: ['routine-completions', 'user'],
       });
-
-      console.log('루틴 완료 생성 성공:', data);
     },
     onError: error => {
       console.error('루틴 완료 생성 실패:', error);

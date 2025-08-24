@@ -1,0 +1,1 @@
+export const ROUTINE_ARR = new Array(4).fill(1);
