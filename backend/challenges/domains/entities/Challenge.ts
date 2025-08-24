@@ -8,5 +8,5 @@ export class Challenge {
     public readonly categoryId: number,
     public readonly active: boolean,
     public readonly id?: number
-  ) { }
+  ) {}
 }

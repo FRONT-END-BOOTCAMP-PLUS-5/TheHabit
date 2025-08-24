@@ -2,20 +2,27 @@
 
 import { useState } from 'react';
 import { FeedBackStatistics } from '@/app/user/feedback/_components/FeedBackStatistics';
-import { useGetAllChallenges } from '@/libs/hooks';
+import { useGetDashboardByNickname } from '@/libs/hooks/dashboard-hooks/useGetDashboardByNickname';
 import { FeedBackCategoryProgress } from '@/app/user/feedback/_components/FeedBackCategoryProgress';
 import { FeedBackDescription } from '@/app/user/feedback/_components/FeedBackDescription';
 import { FeedBackDetail } from '@/app/user/feedback/_components/FeedBackDetail';
 import { FeedBackBarChart } from '@/app/user/feedback/_components/FeedBackBarChart';
+import { useGetUserInfo } from '@/libs/hooks/user-hooks/useGetUserInfo';
+import { FeedBackSkeleton } from '@/app/user/feedback/_components/FeedBackSkeleton';
 
 const FEEDBACK_CATEGORIES = [
   { id: 1, name: '통계' },
   { id: 2, name: '분석' },
 ] as const;
 
-export const FeedBackList = () => {
-  const { data: challenges } = useGetAllChallenges();
+interface FeedBackListProps {
+  nickname?: string;
+}
 
+export const FeedBackList = ({ nickname: nicknameProp }: FeedBackListProps) => {
+  const { userInfo } = useGetUserInfo();
+  const nickname = nicknameProp ?? userInfo?.nickname;
+  const { data: dashBoardData, isLoading } = useGetDashboardByNickname(nickname || '');
   const [selectedCategoryName, setSelectedCategoryName] = useState<string>('통계');
 
   const handleModal = (name: string) => {
@@ -46,15 +53,25 @@ export const FeedBackList = () => {
           })}
         </div>
       </nav>
-      {selectedCategoryName === '통계' ? (
-        <div className='flex flex-col gap-10 w-6/7 mx-auto'>
-          <FeedBackStatistics challenges={challenges || []} />
-          <FeedBackDescription />
-          <FeedBackCategoryProgress challenges={challenges || []} />
-          <FeedBackBarChart challenges={challenges || []} />
-        </div>
+      {isLoading || !nickname ? (
+        <FeedBackSkeleton />
       ) : (
-        <FeedBackDetail />
+        <>
+          {selectedCategoryName === '통계' ? (
+            <div className='flex flex-col gap-10 w-6/7 mx-auto'>
+              {dashBoardData && (
+                <>
+                  <FeedBackStatistics dashBoardData={dashBoardData} />
+                  <FeedBackDescription />
+                  <FeedBackCategoryProgress dashBoardData={dashBoardData} />
+                  <FeedBackBarChart dashBoardData={dashBoardData} />
+                </>
+              )}
+            </div>
+          ) : (
+            <FeedBackDetail nickname={nickname} />
+          )}
+        </>
       )}
     </section>
   );

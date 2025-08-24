@@ -25,6 +25,17 @@ export const getKoreanDateFromDate = (selectedDate: Date): string => {
   return `${year}년 ${month}월 ${date}일 ${dayName}요일`;
 };
 
+
+// 날짜 반환 함수
+export const getDateString = (dateValue: Date | string): string => {
+    if (!dateValue) return '';
+    try {
+      return new Date(dateValue).toISOString().split('T')[0];
+    } catch (error) {
+      console.error('날짜 변환 오류:', error, dateValue);
+      return '';
+    }
+  };
 // 문자 T를 기준으로 제거해서 앞부분 예를들어 2025-08-18T~ 현재 데이터가 이렇게 나오는데
 // 이때 T앞부분만을 가져오는 경우가 필요할때가 있음 ㅇㅈ?, ㅇ ㅇㅈ 내가 필요해
 // 그렇기때문에 해당 함수를 제작함

@@ -3,5 +3,5 @@
 import { OnBoardingStep } from '@/app/(onboarding)/_components/onBoardingStep';
 
 export const OnBoardingClient = () => {
-  return <OnBoardingStep onBoardingList={onBoardingList} />;
+  return <OnBoardingStep />;
 };

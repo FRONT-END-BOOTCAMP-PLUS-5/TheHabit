@@ -131,12 +131,12 @@ model UserAchievement {
 }
 
 model PushSubscription {
-  id       Int    @id @default(autoincrement())
-  endpoint String @unique
-  p256dh   String
-  auth     String
-
+  id        Int      @id @default(autoincrement())
+  endpoint  String   @unique
+  p256dh    String
+  auth      String
   createdAt DateTime @default(now()) @map("created_at")
+  user_id   String
 
   @@map("push_subscriptions")
 }

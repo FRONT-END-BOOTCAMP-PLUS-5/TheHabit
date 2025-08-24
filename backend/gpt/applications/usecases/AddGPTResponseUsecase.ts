@@ -6,8 +6,6 @@ export class AddGPTResponseUsecase {
   constructor(public readonly GPTRepository: IGPTRepository) {}
 
   async execute(gptRequestContent: GPTRequestDto) {
-    return this.GPTRepository.create(
-      new GPTEntity(gptRequestContent.gptResponseContent.join('\n'))
-    );
+    return this.GPTRepository.create(new GPTEntity(gptRequestContent.gptResponseContent));
   }
 }

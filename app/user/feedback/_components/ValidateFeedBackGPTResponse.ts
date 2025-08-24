@@ -19,13 +19,13 @@ export const ValidateFeedBackGPTResponse = async (
       };
     });
 
+    // 루틴이 없으면 진행 중단
     if (routineWithCompletion.length === 0) {
-      console.log('루틴이 없습니다.');
-      return [];
+      return undefined;
     }
 
     const routineStatusMessages = routineWithCompletion?.map(routine => {
-      const isSuccess = routine.content !== null && routine.content !== undefined; // 콘텐츠가 없으면? 실패
+      const isSuccess = routine.content !== null && routine.content !== undefined;
       const status = isSuccess ? '성공' : '실패';
       return `${routine.routineTitle}: ${status}`;
     });
