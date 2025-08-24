@@ -32,3 +32,24 @@ export const getYearAndMonthAndDay = (date: string): string => {
   const formatDate = date.split('T')[0];
   return formatDate;
 }
+
+/**
+ * 두 날짜가 같은 날짜인지 확인 (시간 제외)
+ * @param date1 첫 번째 날짜
+ * @param date2 두 번째 날짜
+ * @returns 같은 날짜인지 여부
+ */
+export const isSameDate = (date1: Date, date2: Date): boolean => {
+  const date1Only = new Date(date1.getFullYear(), date1.getMonth(), date1.getDate());
+  const date2Only = new Date(date2.getFullYear(), date2.getMonth(), date2.getDate());
+  return date1Only.getTime() === date2Only.getTime();
+};
+
+/**
+ * 날짜에서 시간 정보를 제거하고 날짜만 반환
+ * @param date 날짜
+ * @returns 시간이 제거된 날짜
+ */
+export const getDateOnly = (date: Date): Date => {
+  return new Date(date.getFullYear(), date.getMonth(), date.getDate());
+};
