@@ -24,36 +24,21 @@ export class CreateUserUsecase {
             let finalProfileImg = profileImg;
             let finalProfileImgPath = profileImgPath;
 
-            console.log('🖼️ [CreateUserUsecase] 프로필 이미지 정보:', { 
-                profileImg, 
-                profileImgPath, 
-                hasProfileFile: !!profileFile 
-            });
-
             // profileImage와 profileImagePath가 이미 설정되어 있으면 사용
             if (profileImg && profileImgPath) {
                 finalProfileImg = profileImg;
                 finalProfileImgPath = profileImgPath;
-                console.log('✅ [CreateUserUsecase] 폼에서 설정된 프로필 이미지 사용:', { finalProfileImg, finalProfileImgPath });
             } else if (profileFile) {
-                console.log('🔄 [CreateUserUsecase] S3 업로드 시작:', profileFile.name);
                 try {
                     const uploadResult = await this.userRepository.createProfileImg(profileFile);
-                    console.log('📤 [CreateUserUsecase] S3 업로드 결과:', uploadResult);
                     
                     if (uploadResult && uploadResult.length >= 2) {
                         finalProfileImg = uploadResult[0]; // S3 URL
                         finalProfileImgPath = uploadResult[1]; // S3 Key
-                        console.log('✅ [CreateUserUsecase] S3 업로드 성공:', { finalProfileImg, finalProfileImgPath });
-                    } else {
-                        console.log('❌ [CreateUserUsecase] S3 업로드 실패: uploadResult가 올바르지 않음');
                     }
                 } catch (error) {
-                    console.error('💥 [CreateUserUsecase] S3 업로드 중 에러 발생:', error);
                 }
-            } else {
-                console.log('ℹ️ [CreateUserUsecase] 프로필 이미지 없음');
-            }
+          };
 
             // 비밀번호 해싱
             const hashedPassword = await bcrypt.hash(password, 10);
