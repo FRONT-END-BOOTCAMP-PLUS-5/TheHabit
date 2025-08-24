@@ -1,7 +1,6 @@
 'use client';
 import { ProfileImage } from '@/app/_components/profile-images/ProfileImage';
-import { useEffect, useState } from 'react';
-import { Toast } from '@/app/_components/toasts/Toast';
+import { useState } from 'react';
 import { useGetUserByNickname } from '@/libs/hooks/user-hooks/useGetUserByNickname';
 import { useParams } from 'next/navigation';
 
@@ -14,24 +13,7 @@ const UserProfileSection: React.FC<UserProfileSectionProps> = () => {
 
   // props로 받은 nickname이 없으면 빈 문자열로 설정 (훅에서 enabled: false가 되도록)
   const nickname = useParams().nickname || '';
-  const { data: userInfo, isLoading, error } = useGetUserByNickname(nickname as string);
-
-  // 훅 테스트를 위한 디버깅 정보
-  useEffect(() => {
-    console.log('=== useGetUserByNickname 훅 테스트 ===');
-    console.log('nickname prop:', nickname);
-    console.log('userInfo:', userInfo);
-    console.log('isLoading:', isLoading);
-    console.log('error:', error);
-    console.log('==============================');
-  }, [nickname, userInfo, isLoading, error]);
-
-  useEffect(() => {
-    if (error) {
-      setHasError(true);
-      Toast.error('사용자 정보를 불러올 수 없습니다');
-    }
-  }, [error]);
+  const { data: userInfo, isLoading } = useGetUserByNickname(nickname as string);
 
   // 에러 상태 처리
   if (hasError) {
