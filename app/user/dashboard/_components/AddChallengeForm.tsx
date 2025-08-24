@@ -56,7 +56,7 @@ const AddChallengeForm: React.FC = () => {
     if (watchCreatedAt) {
       const startDate = new Date(watchCreatedAt);
       const endDate = new Date(startDate);
-      endDate.setDate(startDate.getDate() + 21);
+      endDate.setDate(startDate.getDate() + 20);
 
       // YYYY-MM-DD 형식으로 변환
       const endDateString = endDate.toISOString().split('T')[0];

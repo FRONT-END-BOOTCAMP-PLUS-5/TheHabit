@@ -127,3 +127,48 @@ export const calculateCompletionRatio = (
   const ratio = (filteredCompletions.length / routines.length) * 100;
   return ratio;
 };
+
+/**
+ * 챌린지 기간을 계산하고 뱃지 정보를 반환
+ * @param createdAt 챌린지 시작일
+ * @param endAt 챌린지 종료일
+ * @returns 챌린지 기간 정보
+ */
+export const getChallengeDurationInfo = (
+  createdAt: string,
+  endAt: string
+): { duration: number; badge: string; badgeColor: string } => {
+  try {
+    const startDate = new Date(createdAt);
+    const endDate = new Date(endAt);
+
+    const duration = Math.ceil((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24)) + 1;
+
+    if (duration <= 21) {
+      return {
+        duration,
+        badge: '21일',
+        badgeColor: 'bg-blue-500'
+      };
+    } else if (duration <= 66) {
+      return {
+        duration,
+        badge: '66일',
+        badgeColor: 'bg-purple-500'
+      };
+    } else {
+      return {
+        duration,
+        badge: '무제한',
+        badgeColor: 'bg-green-500'
+      };
+    }
+  } catch (error) {
+    console.error('챌린지 기간 계산 오류:', error);
+    return {
+      duration: 0,
+      badge: '알 수 없음',
+      badgeColor: 'bg-gray-500'
+    };
+  }
+};
