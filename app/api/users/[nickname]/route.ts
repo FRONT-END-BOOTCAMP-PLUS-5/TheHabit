@@ -25,7 +25,7 @@ export async function GET(
   { params }: { params: { nickname: string } }
 ): Promise<NextResponse<UserResponse> | undefined> {
   try {
-    const { nickname } = await params;
+    const { nickname } = params;
     if (!nickname) {
       throw new Error('사용자 닉네임이 존재하지 않습니다!');
     }
@@ -74,7 +74,7 @@ export async function DELETE(
   { params }: { params: { nickname: string } }
 ): Promise<NextResponse | undefined> {
   try {
-    const { nickname } = await params;
+    const { nickname } = params;
 
     if (!nickname) throw new Error('사용자 닉네임이 존재하지 않습니다!');
 
