@@ -3,8 +3,8 @@ import { Button } from '@/app/user/profile/components/Button';
 import { CompletionComponent } from '@/app/user/profile/components/Completion';
 import { useRouter } from 'next/navigation';
 import { ProfileImage } from '@/app/_components/profile-images/ProfileImage';
-import { usersApi } from '@/libs/api/users.api';
-import { useEffect, useState, useRef, useMemo } from 'react';
+import { getUserChallengeAndRoutineAndFollowAndCompletion } from '@/libs/api/dashboards.api';
+import { useEffect, useState, useRef, useMemo, useCallback } from 'react';
 import { RoutineComponent } from '@/app/user/profile/components/Routine';
 import { UserChallengeAndRoutineAndFollowAndCompletionDto } from '@/backend/users/applications/dtos/UserChallengeAndRoutineAndFollowAndCompletion';
 import { ChallengeSelectComponent } from '@/app/user/profile/components/ChallengeSelect';
@@ -36,20 +36,22 @@ export const UserPage = ({
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const selectWrapperRef = useRef<HTMLDivElement>(null);
 
-  const { getUserAllData } = usersApi;
-
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     setIsLoading(true);
-    const response = await getUserAllData(userNickname || '');
+    const response = await getUserChallengeAndRoutineAndFollowAndCompletion(userNickname || '');
     if (response?.data) {
       setUserData({ ...response.data });
       setIsLoading(false);
     }
-  };
+  }, [userNickname]);
+
+  const shouldFetchData = useMemo(() => {
+    return userNickname && getUserData.challenges.length === 0;
+  }, [userNickname, getUserData.challenges.length]);
 
   useEffect(() => {
-    if (userNickname && getUserData.challenges.length === 0) fetchData();
-  }, [getUserData, userNickname]);
+    if (shouldFetchData) fetchData();
+  }, [shouldFetchData, fetchData]);
 
   useEffect(() => {
     if (getUserData.challenges.length > 0 && getSelectedChallengeId === null) {
@@ -57,7 +59,7 @@ export const UserPage = ({
       setSelectedChallengeId(firstChallenge.id);
       setSelectedChallengeName(firstChallenge.name);
     }
-  }, [getUserData, getSelectedChallengeId]);
+  }, [getUserData, getSelectedChallengeId, setSelectedChallengeId, setSelectedChallengeName]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -68,7 +70,7 @@ export const UserPage = ({
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [getShow]);
+  }, [getShow, setShow]);
 
   const filteredUserData = useMemo(() => {
     if (!getSelectedChallengeId) return getUserData;

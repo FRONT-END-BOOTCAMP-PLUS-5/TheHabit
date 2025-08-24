@@ -2,7 +2,7 @@
 
 import React, { forwardRef, useState } from 'react';
 import { EyeInvisibleOutlined, EyeTwoTone } from '@ant-design/icons';
-import '@ant-design/v5-patch-for-react-19'
+import '@ant-design/v5-patch-for-react-19';
 
 interface CustomInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label?: string;

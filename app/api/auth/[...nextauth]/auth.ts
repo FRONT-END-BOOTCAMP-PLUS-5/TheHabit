@@ -113,19 +113,9 @@ async function handleSocialLogin(
   userInfo: SocialUserInfo
 ): Promise<boolean> {
   try {
-    console.log(`🔐 [NextAuth] ${provider} 로그인 처리 시작:`, {
-      email: userInfo.email,
-      name: userInfo.name,
-      picture: userInfo.picture,
-      sub: userInfo.sub
-    });
-
     // 필수 필드 검증
     if (!userInfo.email || !userInfo.name) {
-      console.error(`❌ [NextAuth] ${provider} 사용자 정보 누락:`, { 
-        email: userInfo.email, 
-        name: userInfo.name 
-      });
+      
       return false;
     }
 
@@ -148,14 +138,11 @@ async function handleSocialLogin(
     }
 
     if (result?.success) {
-      console.log(`✅ [NextAuth] ${provider} 로그인 성공:`, result.message);
       return true;
     } else {
-      console.error(`❌ [NextAuth] ${provider} 로그인 처리 실패:`, result?.message);
       return false;
     }
   } catch (error) {
-    console.error(`💥 [NextAuth] ${provider} 로그인 처리 중 오류:`, error);
     return false;
   }
 }
@@ -174,41 +161,21 @@ export const authOptions = {
       },
 
       async authorize(credentials) {
-        console.log('🔐 [NextAuth] authorize 함수 시작');
         const { email, password } = credentials ?? {};
-
-        console.log('📝 [NextAuth] 입력된 credentials:', {
-          email,
-          password: password ? '***' : 'undefined',
-        });
+        
 
         if (!email || !password) {
-          console.log('❌ [NextAuth] 이메일 또는 비밀번호 누락');
           return null;
         }
 
-        console.log('✅ [NextAuth] 입력값 검증 통과');
 
         try {
-          console.log('🚀 [NextAuth] LoginUsecase 실행 시작');
           const loginUsecase = new LoginUsecase(new PrUserRepository());
           const loginRequestdto: LoginRequestDto = { email, password };
 
           const result = await loginUsecase.execute(loginRequestdto);
-          console.log('📊 [NextAuth] LoginUsecase 실행 결과:', {
-            success: result.success,
-            message: result.message,
-            hasUser: !!result.user,
-          });
 
           if (result.success && result.user) {
-            console.log('✅ [NextAuth] 로그인 성공, 사용자 정보:', {
-              id: result.user.id,
-              email: result.user.email,
-              username: result.user.username,
-              nickname: result.user.nickname,
-              profileImg: result.user.profileImg,
-            });
 
             const userData = {
               id: result.user.id,
@@ -219,14 +186,11 @@ export const authOptions = {
               profileImgPath: result.user.profileImgPath,
             };
 
-            console.log('📤 [NextAuth] authorize에서 반환할 사용자 데이터:', userData);
             return userData;
           } else {
-            console.log('❌ [NextAuth] 로그인 실패:', result.message);
             return null;
           }
         } catch (error) {
-          console.error('💥 [NextAuth] authorize 실행 중 오류:', error);
           return null;
         }
       },
@@ -258,18 +222,10 @@ export const authOptions = {
       account: Account | null;
       profile: Profile;
     }) {
-      console.log('🔐 [NextAuth] signIn callback 시작:', {
-        provider: account?.provider,
-        userId: user.id,
-        userEmail: user.email,
-        userName: user.name,
-        hasProfile: !!profile
-      });
-
+      
       // 소셜 로그인 처리
       if (account?.provider === 'google' || account?.provider === 'kakao') {
         const provider = account.provider as SocialProvider;
-        console.log(`🔐 [NextAuth] ${provider} 로그인 처리 시작`);
         
         const userInfo: SocialUserInfo = {
           email: user.email || '',
@@ -278,14 +234,11 @@ export const authOptions = {
           sub: (profile as { sub?: string }).sub || user.id || '',
         };
 
-        console.log(`🔐 [NextAuth] ${provider} 사용자 정보:`, userInfo);
         const result = await handleSocialLogin(provider, userInfo);
-        console.log(`🔐 [NextAuth] ${provider} 로그인 결과:`, result);
         
         return result;
       }
       
-      console.log('🔐 [NextAuth] 일반 로그인 또는 기타 처리');
       return true;
     },
 
@@ -300,15 +253,8 @@ export const authOptions = {
       trigger?: 'signIn' | 'signUp' | 'update';
       session?: ISessionUser;
     }) {
-      console.log('🔑 [NextAuth] JWT callback 시작');
       
       if (user) {
-        console.log('👤 [NextAuth] JWT callback - 사용자 정보 업데이트:', {
-          id: user.id,
-          email: user.email,
-          username: user.username,
-          nickname: user.nickname,
-        });
 
         // 타입가드를 사용한 토큰 업데이트
         updateTokenFromUser(token, user);
@@ -317,9 +263,6 @@ export const authOptions = {
           token.isNewUser = user.isNewUser;
         }
 
-        console.log('✅ [NextAuth] JWT token 업데이트 완료');
-      } else {
-        console.log('🔄 [NextAuth] JWT callback - 기존 token 반환');
       }
 
       // 세션 업데이트 시 토큰 업데이트
@@ -328,31 +271,21 @@ export const authOptions = {
         (session?.profileImg || session?.profileImgPath || session?.nickname || session?.username)
       ) {
         updateTokenFromSession(token, session);
-        console.log('🔄 [NextAuth] JWT token 업데이트 완료');
       }
 
       return token;
     },
 
     async session({ session, token }: { session: Session; token: JWT }) {
-      console.log('🔄 [NextAuth] Session callback 시작');
 
       if (session.user) {
-        console.log('👤 [NextAuth] Session callback - session.user 업데이트 시작');
-        
         // 타입가드를 사용한 세션 업데이트
         updateSessionFromToken(session, token);
-
-        console.log('✅ [NextAuth] Session callback - session.user 업데이트 완료');
-      } else {
-        console.log('⚠️ [NextAuth] Session callback - session.user가 없음');
       }
-
       return session;
     },
     
     async redirect({ url, baseUrl, session }: { url: string; baseUrl: string; session: Session }) {
-      console.log('🔄 [NextAuth] Redirect callback:', { url, baseUrl });
 
       // (로컬 및 소셜 로그인 후)닉네임이 있으면 대시보드로 리다이렉트
       if (session?.user?.nickname) {
@@ -363,17 +296,14 @@ export const authOptions = {
       // 로그인 후 리다이렉트
       if (url.startsWith('/')) {
         const redirectUrl = `${baseUrl}${url}`;
-        console.log('✅ [NextAuth] 상대 경로 리다이렉트:', redirectUrl);
         return redirectUrl;
       }
       
       // 외부 URL인 경우 홈으로 리다이렉트
       if (new URL(url).origin === baseUrl) {
-        console.log('✅ [NextAuth] 동일 도메인 리다이렉트:', url);
         return url;
       }
       
-      console.log('✅ [NextAuth] 홈으로 리다이렉트:', baseUrl);
       return baseUrl;
     },
   },
