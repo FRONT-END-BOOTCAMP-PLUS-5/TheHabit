@@ -29,6 +29,7 @@ export const TabNavigation = () => {
     return null;
   }
 
+  
   return (
     <nav className='sticky bottom-0'>
       <ul className=' w-11/12 h-22 flex justify-around bg-white shadow-[0_0_20px_rgba(0,0,0,0.3)] items-center rounded-xl mx-auto'>
