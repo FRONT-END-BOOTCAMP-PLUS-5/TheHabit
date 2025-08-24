@@ -26,7 +26,7 @@ const ChallengesAccordionContent: React.FC<ChallengesAccordionContentProps> = ({
   challengeId,
 }) => {
   const pathname = usePathname();
-  const isFeedback = pathname === '/user/feedback';
+  const isFeedback = pathname.startsWith('/user/feedback');
 
   return (
     <div className='px-3 py-3'>

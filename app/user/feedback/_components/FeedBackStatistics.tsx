@@ -68,7 +68,9 @@ export const FeedBackStatistics = ({ dashBoardData }: { dashBoardData: Dashboard
         {challengeCompletionData.map(data => (
           <SwiperSlide key={data.challenge.id}>
             <div className='p-5'>
-              <h3 className='text-xl font-bold mb-4'>{data.challenge.name}</h3>
+              <h3 className='text-xl font-bold mb-4 text-ellipsis overflow-hidden whitespace-nowrap'>
+                {data.challenge.name}
+              </h3>
               <div className='text-center grid gap-3 grid-cols-7'>
                 {data.dailyCompletions.map((isCompleted, dayIndex) => (
                   <div key={dayIndex} className={`rounded-full text-white text-xs font-bold`}>

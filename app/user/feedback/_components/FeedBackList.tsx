@@ -15,10 +15,14 @@ const FEEDBACK_CATEGORIES = [
   { id: 2, name: '분석' },
 ] as const;
 
-export const FeedBackList = () => {
-  // const { userInfo } = useGetUserInfo();
-  // const nickname = userInfo?.nickname;
-  const { data: dashBoardData, isLoading } = useGetDashboardByNickname('aiden0413');
+interface FeedBackListProps {
+  nickname?: string;
+}
+
+export const FeedBackList = ({ nickname: nicknameProp }: FeedBackListProps) => {
+  const { userInfo } = useGetUserInfo();
+  const nickname = nicknameProp ?? userInfo?.nickname;
+  const { data: dashBoardData, isLoading } = useGetDashboardByNickname(nickname || '');
   const [selectedCategoryName, setSelectedCategoryName] = useState<string>('통계');
 
   const handleModal = (name: string) => {
@@ -49,7 +53,7 @@ export const FeedBackList = () => {
           })}
         </div>
       </nav>
-      {isLoading ? (
+      {isLoading || !nickname ? (
         <FeedBackSkeleton />
       ) : (
         <>
@@ -65,7 +69,7 @@ export const FeedBackList = () => {
               )}
             </div>
           ) : (
-            <FeedBackDetail />
+            <FeedBackDetail nickname={nickname} />
           )}
         </>
       )}

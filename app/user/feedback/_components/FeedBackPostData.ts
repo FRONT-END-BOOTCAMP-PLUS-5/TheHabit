@@ -9,7 +9,7 @@ export const FeedBackPostData = async (
   nickname: string
 ) => {
   try {
-    const validateChallenge = await getFeedBackByChallengeId(challengeId);
+    const validateChallenge = await getFeedBackByChallengeId(challengeId, nickname);
 
     // 기존 피드백이 있는지 더 확실하게 체크
     const existingFeedback = validateChallenge?.data?.gptResponseContent;
@@ -36,10 +36,13 @@ export const FeedBackPostData = async (
       return [];
     }
 
-    const feedBack = await FeedbackApi({
-      gptResponseContent: gptResponse.data.gptResponseContent,
-      challengeId: challengeId,
-    });
+    const feedBack = await FeedbackApi(
+      {
+        gptResponseContent: gptResponse.data.gptResponseContent,
+        challengeId: challengeId,
+      },
+      nickname
+    );
 
     return feedBack.data?.gptResponseContent || [];
   } catch (error) {

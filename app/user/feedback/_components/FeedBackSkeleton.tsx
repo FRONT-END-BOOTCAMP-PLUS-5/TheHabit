@@ -80,3 +80,20 @@ export const FeedBackSkeleton = () => {
     </section>
   );
 };
+
+export const FeedBackDetailSkeleton = () => {
+  return (
+    <section className='flex flex-col w-10/11 mx-auto gap-6 mt-10'>
+      {/* 카테고리 칩 스켈레톤 */}
+      <div className='w-20 h-6 bg-gray-200 rounded animate-pulse'></div>
+      {/* 챌린지 제목 스켈레톤 */}
+      <div className='h-8 w-1/2 bg-gray-200 rounded animate-pulse'></div>
+      {/* 본문 스켈레톤 */}
+      <div className='space-y-3'>
+        {Array.from({ length: 6 }, (_, i) => (
+          <div key={i} className='h-4 bg-gray-100 rounded animate-pulse'></div>
+        ))}
+      </div>
+    </section>
+  );
+};

@@ -23,19 +23,19 @@ interface ChallengesAccordionProps {
 }
 
 const CATEGORY_ICON: Record<number, { icon: StaticImageData; alt: string }> = {
-  0: {
+  1: {
     icon: HealthIcon,
     alt: 'health',
   },
-  1: {
+  2: {
     icon: BookIcon,
     alt: 'book',
   },
-  2: {
+  3: {
     icon: DevelopIcon,
     alt: 'develop',
   },
-  3: {
+  4: {
     icon: GuitarIcon,
     alt: 'guitar',
   },

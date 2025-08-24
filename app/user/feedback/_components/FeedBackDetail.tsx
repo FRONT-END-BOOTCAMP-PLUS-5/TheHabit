@@ -2,27 +2,27 @@
 
 import { useGetDashboardByNickname } from '@/libs/hooks';
 import React, { useState } from 'react';
-import { FeedBackPostData } from '@/app/user/feedback/_components/FeedBackPostData';
 import { useRouter } from 'next/navigation';
-import { useGetUserInfo } from '@/libs/hooks/user-hooks/useGetUserInfo';
 import CategoryChallengeList from '@/app/user/dashboard/_components/CategoryChallengeList';
 import ConfirmModal from '@/app/_components/modals/ConfirmModal';
+import { useGenerateFeedback } from '@/libs/hooks/feedback-hooks/useGenerateFeedback';
 
-export const FeedBackDetail = () => {
-  const { userInfo } = useGetUserInfo();
-  const nickname = userInfo?.nickname;
-  const { data } = useGetDashboardByNickname('aiden0413');
+export const FeedBackDetail = ({ nickname }: { nickname: string }) => {
+  const { data } = useGetDashboardByNickname(nickname || '');
   const router = useRouter();
+
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
   const [selectedChallengeId, setSelectedChallengeId] = useState<number | null>(null);
 
+  const generateFeedback = useGenerateFeedback();
   const routineCompletion = data?.routineCompletions.map(routineCompletion => {
     return {
       ...routineCompletion,
       routineId: routineCompletion.routineId,
       createdAt: routineCompletion.createdAt.toString(),
       proofImgUrl: routineCompletion.proofImgUrl,
+      nickname: nickname,
     };
   });
 
@@ -35,8 +35,12 @@ export const FeedBackDetail = () => {
     if (isSubmitting || selectedChallengeId === null) return;
     setIsSubmitting(true);
     try {
-      await FeedBackPostData(selectedChallengeId, routineCompletion || [], nickname || '');
-      router.push(`/user/feedback/${selectedChallengeId}`);
+      await generateFeedback.mutateAsync({
+        challengeId: selectedChallengeId,
+        routineCompletions: routineCompletion || [],
+        nickname: nickname || '',
+      });
+      router.push(`/user/feedback/${nickname}/${selectedChallengeId}`);
     } catch (error) {
       console.error(error);
     } finally {
