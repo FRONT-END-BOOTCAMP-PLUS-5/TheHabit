@@ -1,26 +1,27 @@
-import homeIcon from '@/public/icons/home.svg';
 import searchIcon from '@/public/icons/search.svg';
+import feedbackIcon from '@/public/icons/feedback.svg';
 import alarmIcon from '@/public/icons/alarm.svg';
-import settingIcon from '@/public/icons/setting.svg';
-import activeHomeIcon from '@/public/icons/activeHome.svg';
+import profileIcon from '@/public/icons/profile.svg';
 import activeSearchIcon from '@/public/icons/activeSearch.svg';
+import activeFeedbackIcon from '@/public/icons/activeFeedback.svg';
 import activeAlarmIcon from '@/public/icons/activeAlarm.svg';
-import activeSettingIcon from '@/public/icons/activeSetting.svg';
+import activeProfileIcon from '@/public/icons/activeProfile.svg';
 
 export const tabItem = [
   {
-    name: 'home',
-    icon: homeIcon,
-    href: '/',
-    isHover: activeHomeIcon,
-  },
-  {
     name: 'search',
     icon: searchIcon,
-    href: '/search',
+    href: '/user/follow',
     isHover: activeSearchIcon,
   },
 
+  {
+    name: 'feedback',
+    icon: feedbackIcon,
+    href: '/user/feedback',
+    isHover: activeFeedbackIcon,
+  },
+  
   {
     name: 'alarm',
     icon: alarmIcon,
@@ -28,9 +29,9 @@ export const tabItem = [
     isHover: activeAlarmIcon,
   },
   {
-    name: 'setting',
-    icon: settingIcon,
-    href: '/setting',
-    isHover: activeSettingIcon,
+    name: 'profile',
+    icon: profileIcon,
+    href: '/user/profile/edit',
+    isHover: activeProfileIcon,
   },
 ];

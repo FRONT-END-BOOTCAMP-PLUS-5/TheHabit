@@ -14,6 +14,7 @@ import { useCreateChallenge } from '@/libs/hooks/challenges-hooks/useCreateChall
 import { useGetChallengesByNickname } from '@/libs/hooks/challenges-hooks/useGetChallengesByNickname';
 import { useGetUserInfo } from '@/libs/hooks/user-hooks/useGetUserInfo';
 import { useModalStore } from '@/libs/stores/modalStore';
+import { Toast } from '@/app/_components/toasts/Toast';
 
 const AddChallengeForm: React.FC = () => {
   const {
@@ -79,7 +80,7 @@ const AddChallengeForm: React.FC = () => {
     const selectedCategoryId = Number(data.categoryId);
     const selectedCategoryCount = categoryCounts[selectedCategoryId] || 0;
     if (selectedCategoryCount >= MAX_CHALLENGES_PER_CATEGORY) {
-      alert(
+      Toast.error(
         `한 카테고리에서는 최대 ${MAX_CHALLENGES_PER_CATEGORY}개까지만 챌린지를 만들 수 있습니다.`
       );
       return;
@@ -96,20 +97,22 @@ const AddChallengeForm: React.FC = () => {
       onSuccess: response => {
         if (response.success) {
           console.log('챌린지 생성 성공:', response.message);
-          // 챌린지 생성 성공 시 alert 표시 후 1초 뒤 모달 닫기
-          alert('챌린지 생성에 성공했습니다.');
-
+          // 챌린지 생성 성공 시 모달 닫기
           setTimeout(() => {
             closeModal();
+            // 페이지 새로고침하여 새로운 목록을 받아옴
+            setTimeout(() => {
+              window.location.reload();
+            }, 500); // 모달이 닫힌 후 0.5초 뒤 새로고침
           }, 500);
         } else {
           console.error('챌린지 생성 실패:', response.error?.message);
-          alert('챌린지 생성에 실패했습니다: ' + response.error?.message);
+          Toast.error('챌린지 생성에 실패했습니다: ' + response.error?.message);
         }
       },
       onError: (error: Error) => {
         console.error('챌린지 생성 중 오류 발생:', error);
-        alert('챌린지 생성 중 오류가 발생했습니다: ' + error.message);
+        Toast.error('챌린지 생성 중 오류가 발생했습니다: ' + error.message);
       },
     });
   };
@@ -133,13 +136,20 @@ const AddChallengeForm: React.FC = () => {
           챌린지 이름 <span className='text-red-500'>*</span>
         </label>
         <CustomInput
-          {...register('name', { required: '챌린지 이름을 입력해주세요' })}
+          {...register('name', {
+            required: '챌린지 이름을 입력해주세요',
+            maxLength: { value: 20, message: '챌린지 이름은 20자 이내로 입력해주세요' },
+          })}
           type='text'
           id='name'
-          placeholder='예: 매일 운동하기'
+          placeholder='예: 매일 운동하기 (20자 이내)'
+          maxLength={20}
           onBlur={() => {}}
         />
-        {errors.name && <span className='text-red-500 text-sm'>{errors.name.message}</span>}
+        <div className='flex justify-between items-center'>
+          {errors.name && <span className='text-red-500 text-sm'>{errors.name.message}</span>}
+          <span className='text-xs text-gray-400 ml-auto'>{watch('name')?.length || 0}/20</span>
+        </div>
       </div>
 
       {/* 시작 날짜 */}

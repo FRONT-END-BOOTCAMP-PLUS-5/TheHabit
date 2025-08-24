@@ -1,56 +1,84 @@
 'use client';
 
-import { useGetDashboardByNickname } from '@/libs/hooks';
-import React from 'react';
-import { FeedBackPostData } from '@/app/user/feedback/_components/FeedBackPostData';
+import CategoryChallengeList from '@/app/user/dashboard/_components/CategoryChallengeList';
+import ConfirmModal from '@/app/_components/modals/ConfirmModal';
+import { useGetDashboardByNickname } from '@/libs/hooks/dashboard-hooks/useGetDashboardByNickname';
+import { useGenerateFeedback } from '@/libs/hooks/feedback-hooks/useGenerateFeedback';
 import { useRouter } from 'next/navigation';
-import { useGetUserInfo } from '@/libs/hooks/user-hooks/useGetUserInfo';
+import React, { useState } from 'react';
 
-export const FeedBackDetail = () => {
-  const { userInfo } = useGetUserInfo();
-  const nickname = userInfo?.nickname;
+export const FeedBackDetail = ({ nickname }: { nickname: string }) => {
   const { data } = useGetDashboardByNickname(nickname || '');
   const router = useRouter();
 
-  //이제 챌린지를 돌면서 그에 맞는 루린틀 가져오기
-  const challenge = data?.challenge.map(challenge => {
-    const routine = data?.routines.filter(routine => routine.challengeId === challenge.id);
-    return {
-      ...challenge,
-      routine: routine,
-    };
-  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isConfirmOpen, setIsConfirmOpen] = useState(false);
+  const [selectedChallengeId, setSelectedChallengeId] = useState<number | null>(null);
 
-  const routineCompletion = data?.routineCompletion.map(routineCompletion => {
+  const generateFeedback = useGenerateFeedback();
+  const routineCompletion = data?.routineCompletions.map(routineCompletion => {
     return {
       ...routineCompletion,
       routineId: routineCompletion.routineId,
       createdAt: routineCompletion.createdAt.toString(),
       proofImgUrl: routineCompletion.proofImgUrl,
+      nickname: nickname,
     };
   });
-  const handleClick = async (challengeId: number) => {
-    await FeedBackPostData(challengeId, routineCompletion || [], nickname || '');
-    router.push(`/user/feedback/${challengeId}`);
+
+  const handleClick = (challengeId: number) => {
+    setSelectedChallengeId(challengeId);
+    setIsConfirmOpen(true);
+  };
+
+  const handleConfirm = async () => {
+    if (isSubmitting || selectedChallengeId === null) return;
+    setIsSubmitting(true);
+    try {
+      await generateFeedback.mutateAsync({
+        challengeId: selectedChallengeId,
+        routineCompletions: routineCompletion || [],
+        nickname: nickname || '',
+      });
+      router.push(`/user/feedback/${nickname}/${selectedChallengeId}`);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsSubmitting(false);
+      setIsConfirmOpen(false);
+      setSelectedChallengeId(null);
+    }
   };
 
   return (
-    <div>
-      {challenge?.map(challenge => (
-        <div key={challenge.id}>
-          <h1
-            className='text-2xl font-bold cursor-pointer'
-            onClick={() => handleClick(challenge.id ?? 0)}
-          >
-            {challenge.name}
-          </h1>
-          {challenge.routine?.map(routine => (
-            <div key={routine.id}>
-              <h2>{routine.routineTitle}</h2>
-            </div>
-          ))}
-        </div>
-      ))}
+    <div className='w-10/11 mx-auto mt-10'>
+      <CategoryChallengeList
+        onFeedbackClick={handleClick}
+        dashboard={
+          data || {
+            challenge: [],
+            routines: [],
+            routineCompletions: [],
+          }
+        }
+        challenges={data?.challenge || []}
+        routines={data?.routines || []}
+        routineCompletions={routineCompletion || []}
+      />
+      <ConfirmModal
+        type='positive'
+        title='피드백 생성'
+        description='챌린지의 진행 상황으로 피드백을 받을까요?'
+        isOpen={isConfirmOpen}
+        onClose={() => {
+          if (isSubmitting) return;
+          setIsConfirmOpen(false);
+          setSelectedChallengeId(null);
+        }}
+        onConfirm={handleConfirm}
+      >
+        <div className='text-sm text-gray-600'>확인을 누르면 피드백을 생성합니다.</div>
+      </ConfirmModal>
     </div>
   );
 };

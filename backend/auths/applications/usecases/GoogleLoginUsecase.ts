@@ -51,7 +51,6 @@ export class GoogleLoginUsecase {
       const user = await this.userRepository.findByEmail(email);
       return user;
     } catch (error) {
-      console.error('이메일로 사용자 검색 중 오류:', error);
       return null;
     }
   }
@@ -130,7 +129,6 @@ export class GoogleLoginUsecase {
       const savedUser = await this.userRepository.create(user);
       return savedUser;
     } catch (error) {
-      console.error('사용자 저장 중 오류:', error);
       throw new Error('사용자 저장에 실패했습니다.');
     }
   }

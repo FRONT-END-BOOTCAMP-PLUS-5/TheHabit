@@ -66,7 +66,6 @@ export class KakaoLoginUsecase {
       if (error instanceof Error && error.message.includes('사용자를 찾을 수 없습니다')) {
         return null;
       }
-      console.error('이메일로 사용자 검색 중 오류:', error);
       return null;
     }
   }
@@ -148,7 +147,6 @@ export class KakaoLoginUsecase {
       const savedUser = await this.userRepository.create(user);
       return savedUser;
     } catch (error) {
-      console.error('사용자 저장 중 오류:', error);
       throw new Error('사용자 저장에 실패했습니다.');
     }
   }

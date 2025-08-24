@@ -1,92 +1,126 @@
 'use client';
 import Input from '@/app/_components/inputs/Input';
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { debounce } from 'lodash';
-import { followsApi } from '@/libs/api/follows.api';
-import { FollowerDto } from '@/backend/follows/applications/dtos/FollowerDto';
-import { FollowingDto } from '@/backend/follows/applications/dtos/FollowingDto';
-import { BackComponent } from '@/app/user/follow/components/Back';
-import { CategoryComponent } from '@/app/user/follow/components/Category';
-import { ContentComponent } from '@/app/user/follow/components/Content';
 
-// 나중에 전역관리로 할꺼 같으니까 우선은 final화
-const NICK_NAME = '이게 도파민이지...';
-const ID = '88b3e620-52d9-4a5c-bb2b-1dfc9a2d1a10';
+import { BackComponent } from '@/app/_components/back/Back';
+import { FollowCategoryComponent } from '@/app/user/follow/components/FollowCategory';
+import { ContentComponent } from '@/app/user/follow/components/Content';
+import { useGetUserInfo } from '@/libs/hooks/user-hooks/useGetUserInfo';
+import { useGetFollowing } from '@/libs/hooks/user-hooks/useGetFollowing';
+import { useGetFollower } from '@/libs/hooks/user-hooks/useGetFollower';
+import { useFollowMutation } from '@/libs/hooks/user-hooks/useCreateFollow';
+import { useUnfollowMutation } from '@/libs/hooks/user-hooks/useDeleteFollow';
+import { debounce } from 'lodash';
+import { AvatarSkeleton, ButtonSkeleton, TextSkeleton } from '@/app/_components/skeleton/Skeleton';
+import { COMPLETION_SKELETON } from '@/public/consts/completionSkeleton';
 
 const FollowPage = () => {
   const searchParams = useSearchParams();
-  const nickname = searchParams.get('nickname');
   const type = searchParams.get('t');
 
-  const [getFollows, setFollows] = useState<FollowerDto | FollowingDto>();
-  const [getInputText, setInputText] = useState<string>('');
+  const { userInfo } = useGetUserInfo();
 
-  const { follower, following } = followsApi;
+  const [searchTerm, setSearchTerm] = useState<string>('');
+  const [getValue, setValue] = useState<string>('');
 
-  const isMounted = useRef(false);
-
-  const init = () => {
-    setInputText('');
-  };
-
-  const getFollow = useCallback(
-    async (type: 'follower' | 'following', keyword: string = '') => {
-      const response =
-        type === 'follower' ? await follower(ID, keyword) : await following(ID, keyword);
-      if (isMounted.current) {
-        setFollows(response?.data);
-      }
-    },
-    [follower, following]
-  );
-
-  const handleSearch = useCallback(
-    debounce(async (value: string) => {
-      if (type === 'follower' || type === 'following') await getFollow(type, value);
-    }, 500),
-    [type, getFollow]
-  );
+  const debounceSearch = useMemo(() => {
+    return debounce((value: string) => {
+      setValue(value);
+    }, 500);
+  }, []);
 
   useEffect(() => {
-    isMounted.current = true;
-
-    (async function () {
-      if (type === 'follower' || type === 'following') {
-        await getFollow(type);
-      }
-    })();
-
     return () => {
-      isMounted.current = false;
-      handleSearch.cancel();
+      debounceSearch.cancel();
     };
-  }, [type, getFollow, handleSearch]);
+  }, [debounceSearch]);
+
+  const { data: followerData, isLoading: isFollowerLoading } = useGetFollower(
+    userInfo?.id || '',
+    getValue,
+    {
+      enabled: !!userInfo?.id && type === 'follower',
+    }
+  );
+  const { data: followingData, isLoading: isFollowingLoading } = useGetFollowing(
+    userInfo?.id || '',
+    getValue,
+    {
+      enabled: !!userInfo?.id && type === 'following',
+    }
+  );
+  const followMutation = useFollowMutation();
+  const unfollowMutation = useUnfollowMutation();
+
+  const handleToggleFollow = (targetUserId: string, isFollowing: boolean | undefined) => {
+    if (!userInfo?.id) return;
+
+    if (isFollowing)
+      unfollowMutation.mutate({ fromUserId: userInfo?.id || '', toUserId: targetUserId });
+    else followMutation.mutate({ fromUserId: userInfo?.id || '', toUserId: targetUserId });
+  };
+
+  const followData = type === 'follower' ? followerData?.data : followingData?.data;
+  const isLoading = type === 'follower' ? isFollowerLoading : isFollowingLoading;
+
+  const init = () => {
+    setSearchTerm('');
+    setValue('');
+  };
 
   return (
     <main className='px-5'>
       <section id='head'>
         <div id='follow_wrapper' className='flex items-center gap-[5.8rem]'>
-          <BackComponent />
-          <p className='pt-2 font-bold text-[20px] w-[200] text-center whitespace-nowrap overflow-hidden text-ellipsis'>
-            {nickname}
-          </p>
+          <BackComponent
+            nickname={userInfo?.nickname || ''}
+            className={
+              'text-[40px] text-[#93d50b] cursor-pointer inline pl-[20px] absolute top-[-4px] left-0'
+            }
+          />
         </div>
-        <CategoryComponent init={init} type={type as 'follower' | 'following'} />
+        <FollowCategoryComponent
+          init={init}
+          type={type as 'follower' | 'following'}
+          nickname={userInfo?.nickname || ''}
+        />
         <Input
-          placeholder='Search'
+          placeholder={
+            type === 'follower'
+              ? '팔로워한 사람들을 검색해보세요'
+              : '팔로잉한 사람들을 검색해보세요'
+          }
+          className='border-t-0 border-l-0 border-r-0 border-b-2 focus:!border-[#07bc0c] rounded-[0px] hover:border-[#07bc0c] !shadow-none '
           onChange={evt => {
-            setInputText(evt.target.value);
-            handleSearch(evt.target.value);
+            setSearchTerm(evt.target.value);
+            debounceSearch(evt.target.value);
           }}
-          value={getInputText}
+          value={searchTerm}
         />
         <p className='mt-10 font-semibold'>
           {type === 'follower' ? '나를 팔로워한 사람들' : '내가 팔로잉한 사람들'}
         </p>
       </section>
-      <section id='content'>
-        <ContentComponent data={getFollows} />
+      <section id='content' className='h-[450px] overflow-scroll'>
+        {isLoading ? (
+          COMPLETION_SKELETON.map((_, idx) => {
+            return (
+              <div key={idx} className='flex justify-between items-center mb-8 mt-4'>
+                <div className='flex gap-2 items-center'>
+                  <AvatarSkeleton className='w-[80px] h-[80px]' />
+                  <div>
+                    <TextSkeleton className='w-[140px] mb-3' />
+                    <TextSkeleton className='w-[140px]' />
+                  </div>
+                </div>
+                <ButtonSkeleton />
+              </div>
+            );
+          })
+        ) : (
+          <ContentComponent data={followData} onToggleFollow={handleToggleFollow} />
+        )}
       </section>
     </main>
   );

@@ -10,7 +10,9 @@ interface CategoryChallengeListProps {
   challenges: ChallengeDto[];
   routines: ReadRoutineResponseDto[];
   routineCompletions: RoutineCompletionDto[];
-  selectedDate: Date;
+  selectedDate?: Date;
+  onFeedbackClick?: (challengeId: number) => void;
+  onRoutineAdded?: () => void;
 }
 
 const CategoryChallengeList: React.FC<CategoryChallengeListProps> = ({
@@ -19,6 +21,8 @@ const CategoryChallengeList: React.FC<CategoryChallengeListProps> = ({
   routines,
   routineCompletions,
   selectedDate,
+  onFeedbackClick,
+  onRoutineAdded,
 }) => {
   const renderCategory = (categoryId: number, categoryName: string) => {
     const categoryChallenges = challenges.filter(challenge => challenge.categoryId === categoryId);
@@ -41,11 +45,14 @@ const CategoryChallengeList: React.FC<CategoryChallengeListProps> = ({
                   challenge={challenge}
                   routines={routines}
                   routineCompletions={routineCompletions}
+                  onFeedbackClick={onFeedbackClick}
+                  selectedDate={selectedDate || new Date()}
+                  onRoutineAdded={onRoutineAdded}
                 />
               ))
             ) : (
               <div className='text-center py-4 text-gray-500 text-sm'>
-                {selectedDate.toLocaleDateString()}에 {categoryName} 카테고리의 챌린지가 없습니다
+                {selectedDate?.toLocaleDateString()}에 {categoryName} 카테고리의 챌린지가 없습니다
               </div>
             )
           ) : (

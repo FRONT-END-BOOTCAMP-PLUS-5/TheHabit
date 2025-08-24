@@ -1,4 +1,4 @@
-import { IRoutineCompletionsRepository } from '../../domains/repositories/IRoutineCompletionsRepository';
+import { IRoutineCompletionsRepository } from '@/backend/routine-completions/domains/repositories/IRoutineCompletionsRepository';
 import {
   CreateRoutineCompletionRequestDto,
   RoutineCompletionDto,
@@ -7,14 +7,14 @@ import {
 export class AddRoutineCompletionUseCase {
   constructor(
     private readonly routineCompletionsRepository: IRoutineCompletionsRepository
-  ) {}
+  ) { }
 
   async execute(request: CreateRoutineCompletionRequestDto): Promise<RoutineCompletionDto> {
     return this.executeByNickname({
       nickname: request.nickname,
       routineId: request.routineId,
       proofImgUrl: request.proofImgUrl,
-      content: request.content,
+      content: request.content || '',
     });
   }
 

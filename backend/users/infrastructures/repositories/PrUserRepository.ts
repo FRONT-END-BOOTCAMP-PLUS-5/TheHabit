@@ -1,20 +1,11 @@
 import prisma from '@/public/utils/prismaClient';
 import { IUserRepository } from '@/backend/users/domains/repositories/IUserRepository';
 import { User } from '@/backend/users/domains/entities/UserEntity';
-import { DeleteObjectCommand, PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
-import { RoutineCompletion } from '@/backend/routine-completions/domains/entities/routineCompletion';
-import { v4 as uuidv4 } from 'uuid';
+import { RoutineCompletion } from '@/backend/routine-completions/domains/entities/routine-completion/routineCompletion';
 import { UserReviewEntity } from '@/backend/users/domains/entities/UserReviewEntity';
+import { Prisma } from '@prisma/client';
 
 export class PrUserRepository implements IUserRepository {
-  private s3 = new S3Client({
-    region: process.env.AWS_REGION,
-    credentials: {
-      accessKeyId: process.env.AWS_ACCESS_KEY_ID as string,
-      secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY as string,
-    },
-  });
-
   async create(user: User): Promise<User> {
     try {
       const createdUser = await prisma.user.create({
@@ -43,39 +34,6 @@ export class PrUserRepository implements IUserRepository {
   }
 
   /**
-   * 해당 메소드는 s3에 이미지 생성
-   * @param fromUserId: string
-   * @param toUserId: string
-   * @return string
-   * */
-  async createProfileImg(file: File): Promise<string[] | undefined> {
-    try {
-      const { name, type } = file;
-
-      const key = `${uuidv4()}-${name}`;
-
-      const arrayBuffer = await file.arrayBuffer();
-      const buffer = Buffer.from(arrayBuffer);
-
-      const command = new PutObjectCommand({
-        Bucket: process.env.AMPLIFY_BUCKET as string,
-        Key: key,
-        ContentType: type,
-        Body: buffer,
-      });
-
-      await this.s3.send(command);
-
-      const signedUrl: string = `https://${process.env.AMPLIFY_BUCKET}.s3.${process.env.AWS_REGION}.amazonaws.com/${key}`;
-
-      return [signedUrl, key];
-    } catch (error) {
-      if (error instanceof Error) throw new Error(error.message);
-      return undefined;
-    }
-  }
-
-  /**
    * 해당 메소드는 reviews 테이블에 감정표현을 생성
    * @param reviewContent: string
    * @param routineCompletionId: number
@@ -97,6 +55,70 @@ export class PrUserRepository implements IUserRepository {
       });
 
       return createdReview;
+    } catch (error) {
+      if (error instanceof Error) throw new Error(error.message);
+    }
+  }
+
+  /**
+   * 해당 메소드는 challenges, routines, routines_completions 테이블을 inner 조인하여 가져옴
+   * 예시) 21일 챌린지 도전중 or 66일 챌린지 도전중 or 연속 챌린지 도전중
+   * 그러면 그 챌린지에 맞는 루틴을 가져오면서 해당 루틴이 실패했는지 안했는지도 completion으로 판단하면됨 아님말고~
+   * @param nickname: string
+   * @return UserChallengesAndRoutinesAndFollowAndCompletion
+   * */
+  async findByUserChallengesAndRoutinesAndFollowAndCompletion(nickname: string, userId: string) {
+    try {
+      const result = await prisma.user.findUnique({
+        where: {
+          nickname,
+        },
+        select: {
+          id: true,
+          nickname: true,
+          username: true,
+          profileImg: true,
+          profileImgPath: true,
+          challenges: {
+            select: {
+              id: true,
+              name: true,
+              createdAt: true,
+              endAt: true,
+              active: true,
+              routines: {
+                select: {
+                  id: true,
+                  routineTitle: true,
+                  emoji: true,
+                  createdAt: true,
+                  completions: {
+                    where: {
+                      userId,
+                    },
+                    select: {
+                      id: true,
+                      createdAt: true,
+                    },
+                  },
+                },
+              },
+            },
+          },
+          following: {
+            select: {
+              toUserId: true,
+            },
+          },
+          followers: {
+            select: {
+              fromUserId: true,
+            },
+          },
+        },
+      });
+
+      return result;
     } catch (error) {
       if (error instanceof Error) throw new Error(error.message);
     }
@@ -152,17 +174,27 @@ export class PrUserRepository implements IUserRepository {
     }
   }
 
-  async findAll(nickname: string = ''): Promise<User[] | undefined> {
+  async findAll(username: string = '', myNickName: string): Promise<User[] | undefined> {
     try {
       const users = await prisma.user.findMany({
         where: {
-          nickname: {
-            contains: nickname,
+          username: {
+            contains: username,
+          },
+          NOT: {
+            nickname: myNickName,
           },
         },
       });
       return users.map(
-        user => new User(user.username, user.nickname, user.profileImg || '', user.id || '')
+        user =>
+          new User(
+            user.username,
+            user.nickname,
+            user.profileImg || '',
+            user.profileImgPath || '',
+            user.id || ''
+          )
       );
     } catch (error) {
       if (error instanceof Error) throw new Error(error.message);
@@ -199,7 +231,7 @@ export class PrUserRepository implements IUserRepository {
         user.username,
         user.nickname,
         user.profileImg,
-        null, // profileImgPath
+        user.profileImgPath,
         user.id,
         user.password,
         user.email
@@ -275,7 +307,7 @@ export class PrUserRepository implements IUserRepository {
         user.username,
         user.nickname,
         user.profileImg,
-        null, // profileImgPath
+        user.profileImgPath,
         user.id,
         user.password,
         user.email
@@ -301,13 +333,18 @@ export class PrUserRepository implements IUserRepository {
     }
   }
 
-  async update(nickname: string, user: Partial<User>): Promise<User | null> {
+  async update(
+    user: Partial<User>,
+    beforeNickname?: string,
+    file?: File
+  ): Promise<User | { message: string } | undefined> {
     try {
-      if (user.nickname && user.nickname !== nickname) {
-        throw new Error('닉네임은 변경할 수 없습니다.');
-      }
-
       const updateData: Partial<User> = { ...user };
+      const nickname = beforeNickname
+        ? beforeNickname
+        : updateData?.nickname
+          ? updateData?.nickname
+          : '';
 
       const updatedUser = await prisma.user.update({
         where: { nickname },
@@ -318,44 +355,17 @@ export class PrUserRepository implements IUserRepository {
         updatedUser.username,
         updatedUser.nickname,
         updatedUser.profileImg,
-        null, // profileImgPath
+        updatedUser.profileImgPath,
         updatedUser.id,
         updatedUser.password,
         updatedUser.email
       );
     } catch (error) {
-      if (error instanceof Error) throw new Error(error.message);
-      return null;
-    }
-  }
-
-  /**
-   * 해당 메소드는 s3 이미지 업데이트
-   * @param fromUserId: string
-   * @param toUserId: string
-   * @return boolean
-   * */
-
-  async updateProfileImg(
-    nickname: string,
-    userProfilePath: string,
-    file: File,
-    type: 'create' | 'update'
-  ): Promise<User | undefined> {
-    try {
-      if (type === 'update') await this.deleteProfileImg(userProfilePath);
-
-      const signedUrl = await this.createProfileImg(file);
-      const img = (signedUrl?.length && signedUrl[0]) || '';
-      const path = (signedUrl?.length && signedUrl[1]) || '';
-
-      const updatedUserName = await prisma.user.update({
-        where: { nickname },
-        data: { profileImg: img, profileImgPath: path },
-      });
-
-      return updatedUserName;
-    } catch (error) {
+      if (error instanceof Prisma.PrismaClientKnownRequestError) {
+        if (error.code === 'P2002') {
+          return { message: '해당 닉네임은 이미 사용 중입니다.' };
+        }
+      }
       if (error instanceof Error) throw new Error(error.message);
     }
   }
@@ -370,28 +380,6 @@ export class PrUserRepository implements IUserRepository {
     } catch (error) {
       if (error instanceof Error) throw new Error(error.message);
       return false;
-    }
-  }
-
-  /**
-   * 해당 메소드는 s3 기존 이미지 삭제
-   * @param fromUserId: string
-   * @param toUserId: string
-   * @return boolean
-   * */
-  async deleteProfileImg(userProfileImgPath: string): Promise<boolean | undefined> {
-    try {
-      const userProfile = `${userProfileImgPath}`;
-      const deleteCommand = new DeleteObjectCommand({
-        Bucket: process.env.AMPLIFY_BUCKET as string,
-        Key: userProfile,
-      });
-
-      await this.s3.send(deleteCommand);
-
-      return true;
-    } catch (error) {
-      if (error instanceof Error) throw new Error(error.message);
     }
   }
 

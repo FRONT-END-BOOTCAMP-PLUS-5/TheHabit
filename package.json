@@ -17,6 +17,7 @@
     "@aws-sdk/s3-request-presigner": "^3.864.0",
     "@prisma/client": "^6.13.0",
     "@tanstack/react-query": "^5.84.1",
+    "@types/lodash": "^4.17.20",
     "antd": "^5.26.7",
     "axios": "^1.11.0",
     "bcryptjs": "^3.0.2",
@@ -34,7 +35,7 @@
     "react-intersection-observer": "^9.16.0",
     "react-toastify": "^11.0.5",
     "recharts": "^3.1.2",
-    "web-push": "^3.6.7",
+    "swiper": "^11.2.10",
     "zustand": "^5.0.7"
   },
   "devDependencies": {
@@ -47,7 +48,6 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "@types/web-push": "^3.6.4",
     "autoprefixer": "^10.4.21",
     "eslint": "^9",
     "eslint-config-next": "15.4.5",

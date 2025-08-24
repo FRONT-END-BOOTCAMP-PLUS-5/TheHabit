@@ -9,16 +9,13 @@ export const FeedBackPostData = async (
   nickname: string
 ) => {
   try {
-    const validateChallenge = await getFeedBackByChallengeId(challengeId);
+    const validateChallenge = await getFeedBackByChallengeId(challengeId, nickname);
 
     // 기존 피드백이 있는지 더 확실하게 체크
     const existingFeedback = validateChallenge?.data?.gptResponseContent;
     if (existingFeedback && existingFeedback.trim() !== '') {
-      console.log('🛑 기존 피드백이 있습니다. 새로 생성하지 않습니다:', existingFeedback);
-      return existingFeedback.split('\n');
+      return existingFeedback;
     }
-
-    console.log('✅ 기존 피드백이 없습니다. 새로 생성합니다.');
 
     // 피드백이 없으면 새로 생성
     const routineStatusMessagesGPTResponse = await ValidateFeedBackGPTResponse(
@@ -28,7 +25,6 @@ export const FeedBackPostData = async (
     );
 
     if (!routineStatusMessagesGPTResponse || routineStatusMessagesGPTResponse.length === 0) {
-      console.log('루틴 상태 메시지가 없습니다.');
       return;
     }
 
@@ -37,19 +33,19 @@ export const FeedBackPostData = async (
     });
 
     if (!gptResponse.data?.gptResponseContent) {
-      console.log('GPT 응답이 없습니다.');
       return [];
     }
 
-    const feedBack = await FeedbackApi({
-      gptResponseContent: gptResponse.data.gptResponseContent,
-      challengeId: challengeId,
-    });
+    const feedBack = await FeedbackApi(
+      {
+        gptResponseContent: gptResponse.data.gptResponseContent,
+        challengeId: challengeId,
+      },
+      nickname
+    );
 
-    console.log('새 피드백 생성:', feedBack);
     return feedBack.data?.gptResponseContent || [];
   } catch (error) {
-    console.error('피드백 데이터 처리 중 오류:', error);
     return;
   }
 };
