@@ -13,6 +13,11 @@ import { RoutineCompletionDto } from '@/backend/routine-completions/applications
 import { CHALLENGE_COLORS } from '@/public/consts/challengeColors';
 import ChallengesAccordionContent from '@/app/_components/challenges-accordion/ChallengesAccordionContent';
 import { StaticImageData } from 'next/image';
+import {
+  getChallengeProgress,
+  calculateCompletionRatio,
+  isSameDate,
+} from '@/public/utils/dateUtils';
 
 // ChallengesAccordion 컴포넌트는 피드백 및 분석에도 사용되므로 공통으로 분리하였습니다.
 // - 승민 2025.08.23
@@ -51,81 +56,14 @@ const ChallengesAccordion: React.FC<ChallengesAccordionProps> = ({
   onRoutineAdded,
 }) => {
   // 완료된 루틴 비율에 따라 동적으로 너비 계산
-  const completedRatio = (() => {
-    if (routines.length === 0) return 0;
-
-    // 이미 필터링된 routineCompletions를 사용
-    const filteredRoutines = routines.filter(routine => routine.challengeId === challenge.id);
-    const filteredCompletions = routineCompletions.filter(completion => {
-      // 해당 챌린지의 루틴인지 확인
-      const isRoutineInChallenge = filteredRoutines.some(
-        routine => routine.id === completion.routineId
-      );
-
-      if (!isRoutineInChallenge) return false;
-
-      // 선택된 날짜에 완료된 루틴인지 확인
-      const completionDate = new Date(completion.createdAt);
-      const selectedDateOnly = new Date(
-        selectedDate.getFullYear(),
-        selectedDate.getMonth(),
-        selectedDate.getDate()
-      );
-      const completionDateOnly = new Date(
-        completionDate.getFullYear(),
-        completionDate.getMonth(),
-        completionDate.getDate()
-      );
-
-      const isSameDate = completionDateOnly.getTime() === selectedDateOnly.getTime();
-
-      return isSameDate;
-    });
-
-    const ratio = (filteredCompletions.length / filteredRoutines.length) * 100;
-
-    return ratio;
-  })();
+  const completedRatio = calculateCompletionRatio(
+    routines.filter(routine => routine.challengeId === challenge.id),
+    routineCompletions,
+    selectedDate
+  );
 
   // 챌린지 진행 일수 계산
-  const getChallengeProgressDays = () => {
-    try {
-      const startDate = new Date(challenge.createdAt);
-      const endDate = new Date(challenge.endAt);
-      const today = new Date();
-
-      // 날짜만 비교 (시간 제거)
-      const startDateOnly = new Date(
-        startDate.getFullYear(),
-        startDate.getMonth(),
-        startDate.getDate()
-      );
-      const endDateOnly = new Date(endDate.getFullYear(), endDate.getMonth(), endDate.getDate());
-      const todayOnly = new Date(today.getFullYear(), today.getMonth(), today.getDate());
-
-      // 챌린지가 아직 시작되지 않았거나 종료된 경우
-      if (todayOnly < startDateOnly) {
-        return { status: 'not-started', days: 0, totalDays: 0 };
-      }
-
-      if (todayOnly > endDateOnly) {
-        return { status: 'completed', days: 0, totalDays: 0 };
-      }
-
-      // 진행 중인 챌린지
-      const totalDays =
-        Math.ceil((endDateOnly.getTime() - startDateOnly.getTime()) / (1000 * 60 * 60 * 24)) + 1;
-      const currentDay =
-        Math.ceil((todayOnly.getTime() - startDateOnly.getTime()) / (1000 * 60 * 60 * 24)) + 1;
-
-      return { status: 'in-progress', days: currentDay, totalDays };
-    } catch (error) {
-      console.error('챌린지 진행 일수 계산 오류:', error);
-      return { status: 'error', days: 0, totalDays: 0 };
-    }
-  };
-
-  const progressInfo = getChallengeProgressDays();
+  const progressInfo = getChallengeProgress(challenge.createdAt, challenge.endAt);
 
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const contentRef = useRef<HTMLDivElement>(null);
@@ -226,18 +164,7 @@ const ChallengesAccordion: React.FC<ChallengesAccordionProps> = ({
 
               // 선택된 날짜에 완료된 루틴인지 확인
               const completionDate = new Date(completion.createdAt);
-              const selectedDateOnly = new Date(
-                selectedDate.getFullYear(),
-                selectedDate.getMonth(),
-                selectedDate.getDate()
-              );
-              const completionDateOnly = new Date(
-                completionDate.getFullYear(),
-                completionDate.getMonth(),
-                completionDate.getDate()
-              );
-
-              return completionDateOnly.getTime() === selectedDateOnly.getTime();
+              return isSameDate(completionDate, selectedDate);
             })}
             selectedDate={selectedDate}
             onRoutineAdded={onRoutineAdded}
