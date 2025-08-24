@@ -297,3 +297,31 @@ select {
 .custom-radio-group.ant-radio-group .ant-radio-button-wrapper-checked span {
   color: white !important;
 }
+
+/* Swiper 커스텀 페이지네이션 */
+.custom-bullet {
+  width: 30px !important;
+  height: 30px !important;
+  background: #e2e8f0 !important;
+  border-radius: 50% !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-size: 14px !important;
+  font-weight: bold !important;
+  color: #64748b !important;
+  cursor: pointer !important;
+  transition: all 0.3s ease !important;
+}
+
+.custom-bullet.swiper-pagination-bullet-active {
+  background: var(--primary) !important;
+  color: white !important;
+  transform: scale(1.1) !important;
+}
+
+.challenge-swiper .swiper-pagination {
+  position: relative !important;
+  margin-top: 10px !important;
+  padding: 5px 0 !important;
+}

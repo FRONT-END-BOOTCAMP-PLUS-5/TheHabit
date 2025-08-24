@@ -8,6 +8,8 @@ interface ISignupForm {
   passwordConfirm: string;
   nickname: string;
   profileImage: string | null;
+  profileImagePath: string | null;
+  profileFile: File | null;
 }
 
 interface ISignupItem {

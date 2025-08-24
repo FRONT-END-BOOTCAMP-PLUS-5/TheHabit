@@ -1,9 +1,7 @@
 import prisma from '@/public/utils/prismaClient';
 import { IUserRepository } from '@/backend/users/domains/repositories/IUserRepository';
 import { User } from '@/backend/users/domains/entities/UserEntity';
-import { DeleteObjectCommand, PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
 import { RoutineCompletion } from '@/backend/routine-completions/domains/entities/routine-completion/routineCompletion';
-import { v4 as uuidv4 } from 'uuid';
 import { UserReviewEntity } from '@/backend/users/domains/entities/UserReviewEntity';
 import { Prisma } from '@prisma/client';
 
@@ -233,7 +231,7 @@ export class PrUserRepository implements IUserRepository {
         user.username,
         user.nickname,
         user.profileImg,
-        null, // profileImgPath
+        user.profileImgPath,
         user.id,
         user.password,
         user.email
@@ -309,7 +307,7 @@ export class PrUserRepository implements IUserRepository {
         user.username,
         user.nickname,
         user.profileImg,
-        user.profileImgPath, // null 대신 실제 값 사용
+        user.profileImgPath,
         user.id,
         user.password,
         user.email

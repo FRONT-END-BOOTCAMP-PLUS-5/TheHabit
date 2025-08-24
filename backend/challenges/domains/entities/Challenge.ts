@@ -9,5 +9,5 @@ export class Challenge {
     public readonly active: boolean,
     public readonly completionProgress?: string,
     public readonly id?: number
-  ) { }
+  ) {}
 }

@@ -13,8 +13,8 @@ export const PrevButton = ({ className }: { className?: string }) => {
       onClick={() => router.back()}
       src={prevIcon}
       alt='뒤로가기'
-      width={20}
-      height={20}
+      width={15}
+      height={15}
       className={className}
     />
   );
