@@ -2,17 +2,10 @@
 
 import { ProfileSection } from '@/app/signup/components/ProfileSection';
 import { SignupItem } from '@/public/consts/signupItem';
-import { CheckBoxItem } from '@/public/consts/checkBoxItem';
 import CustomInput from '@/app/_components/inputs/CustomInput';
 import { Controller, FormProvider, useForm } from 'react-hook-form';
 import { Button } from '@/app/_components/buttons/Button';
-import '@ant-design/v5-patch-for-react-19';
-import { CheckBoxList } from '@/app/_components/checkboxes/Checkbox';
 import { useSignUp } from '@/libs/hooks/signup/useSignUp';
-import { useState } from 'react';
-import Image from 'next/image';
-import eyeIcon from '@/public/icons/eye.svg';
-import eyeOffIcon from '@/public/icons/eye_off.svg';
 
 interface ISignupForm {
   username: string;
@@ -26,9 +19,6 @@ interface ISignupForm {
 }
 
 export const SignUpForm = () => {
-  const [showPassword, setShowPassword] = useState(false);
-  const [showPasswordConfirm, setShowPasswordConfirm] = useState(false);
-  const [checkedItems, setCheckedItems] = useState<{ [key: number]: boolean }>({});
   
   const methods = useForm<ISignupForm>({
     mode: 'onChange',
@@ -53,23 +43,6 @@ export const SignUpForm = () => {
 
   const { signUp, loading, error } = useSignUp();
 
-  const togglePasswordVisibility = () => {
-    setShowPassword(!showPassword);
-  };
-
-  const togglePasswordConfirmVisibility = () => {
-    setShowPasswordConfirm(!showPasswordConfirm);
-  };
-
-  const handleCheckboxChange = (checkedItems: { [key: number]: boolean }) => {
-    setCheckedItems(checkedItems);
-  };
-
-  const isAllRequiredChecked = () => {
-    const requiredItems = CheckBoxItem.filter(item => item.required);
-    return requiredItems.every(item => checkedItems[item.id]);
-  };
-
   const onSubmit = async (data: ISignupForm) => {
     try {
       // FormData로 데이터 전송
@@ -84,20 +57,17 @@ export const SignUpForm = () => {
       }
 
       await signUp(formData);
-    } catch (err) {
-      console.error(err);
+    } catch (error) {
+      console.error(error);
     }
   };
 
   return (
     <FormProvider {...methods}>
-      <form
-        className='flex flex-col gap-10 absolute top-1/6 left-1/2 -translate-x-1/2 w-11/12'
-        onSubmit={handleSubmit(onSubmit)}
-      >
+      <form className='flex flex-col gap-4 w-11/12 mx-auto pt-10' onSubmit={handleSubmit(onSubmit)}>
         <ProfileSection />
         {SignupItem.map(item => (
-          <div key={item.id} className='flex flex-col h-30 relative'>
+          <div key={item.id} className='flex flex-col h-30 relative font-bold'>
             <Controller
               control={control}
               name={item.name}
@@ -114,97 +84,6 @@ export const SignUpForm = () => {
                 },
               }}
               render={({ field }) => {
-                // 비밀번호 필드인 경우 눈 아이콘과 함께 렌더링
-                if (item.name === 'password') {
-                  return (
-                    <div className='flex flex-col gap-2'>
-                      {item.label && (
-                        <label className='w-full p-1 text-secondary'>
-                          {item.label}
-                        </label>
-                      )}
-                      <div className='relative'>
-                        <input
-                          {...field}
-                          type={showPassword ? 'text' : 'password'}
-                          placeholder={item.placeholder}
-                          className='w-full h-16 login-input pr-12 px-3 py-2 text-secondary placeholder:text-secondary-grey border-2 border-primary-grey rounded-md focus:border-primary focus:outline-none'
-                        />
-                        <button
-                          type='button'
-                          onClick={togglePasswordVisibility}
-                          className='absolute right-3 top-1/2 transform -translate-y-1/2 text-secondary-grey hover:text-secondary cursor-pointer'
-                          aria-label={showPassword ? '비밀번호 숨기기' : '비밀번호 보기'}
-                        >
-                          {showPassword ? (
-                            <Image
-                              src={eyeOffIcon}
-                              alt='비밀번호 숨기기'
-                              width='20'
-                              height='20'
-                              className='text-secondary-grey'
-                            />
-                          ) : (
-                            <Image
-                              src={eyeIcon}
-                              alt='비밀번호 보기'
-                              width='20'
-                              height='20'
-                              className='text-secondary-grey'
-                            />
-                          )}
-                        </button>
-                      </div>
-                    </div>
-                  );
-                }
-
-                // 비밀번호 확인 필드인 경우 눈 아이콘과 함께 렌더링
-                if (item.name === 'passwordConfirm') {
-                  return (
-                    <div className='flex flex-col gap-2'>
-                      {item.label && (
-                        <label className='w-full p-1 text-secondary'>
-                          {item.label}
-                        </label>
-                      )}
-                      <div className='relative'>
-                        <input
-                          {...field}
-                          type={showPasswordConfirm ? 'text' : 'password'}
-                          placeholder={item.placeholder}
-                          className='w-full h-16 login-input pr-12 px-3 py-2 text-secondary placeholder:text-secondary-grey border-2 border-primary-grey rounded-md focus:border-primary focus:outline-none'
-                        />
-                        <button
-                          type='button'
-                          onClick={togglePasswordConfirmVisibility}
-                          className='absolute right-3 top-1/2 transform -translate-y-1/2 text-secondary-grey hover:text-secondary cursor-pointer'
-                          aria-label={showPasswordConfirm ? '비밀번호 숨기기' : '비밀번호 보기'}
-                        >
-                          {showPasswordConfirm ? (
-                            <Image
-                              src={eyeOffIcon}
-                              alt='비밀번호 숨기기'
-                              width='20'
-                              height='20'
-                              className='text-secondary-grey'
-                            />
-                          ) : (
-                            <Image
-                              src={eyeIcon}
-                              alt='비밀번호 보기'
-                              width='20'
-                              height='20'
-                              className='text-secondary-grey'
-                            />
-                          )}
-                        </button>
-                      </div>
-                    </div>
-                  );
-                }
-
-                // 일반 필드는 CustomInput 사용
                 return (
                   <CustomInput
                     type={item.type}
@@ -219,15 +98,14 @@ export const SignUpForm = () => {
               }}
             />
             {errors[item.name] && (
-              <p className='text-red-500 text-xs'>{errors[item.name]?.message}</p>
+              <p className='text-xs text-red-500'>{errors[item.name]?.message}</p>
             )}
           </div>
         ))}
-        <CheckBoxList onChange={handleCheckboxChange} />
-        <Button className='login-button' htmlType='submit' disabled={loading || !isAllRequiredChecked()}>
+        <Button className='signup-button h-11 mt-4 mb-20' buttonType='primary' disabled={loading}>
           {loading ? '회원가입 중...' : '회원가입'}
         </Button>
-        {error && <p className='text-red-500 text-xs'>{error}</p>}
+        {error && <p className='text-xs text-red-500'>{error}</p>}
       </form>
     </FormProvider>
   );

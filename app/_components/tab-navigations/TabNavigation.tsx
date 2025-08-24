@@ -2,14 +2,19 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { tabItem } from '@/public/consts/tabItem';
 import homeIcon from '@/public/icons/home.svg';
 import { useGetUserInfo } from '@/libs/hooks/user-hooks/useGetUserInfo';
 
 export const TabNavigation = () => {
   const [isHover, setIsHover] = useState<string>('');
+  const [mounted, setMounted] = useState(false);
   const { userInfo } = useGetUserInfo();
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const isMouseHover = (name: string) => {
     setIsHover(name);
@@ -19,9 +24,14 @@ export const TabNavigation = () => {
     setIsHover('');
   };
 
+  // 서버사이드 렌더링 방지
+  if (!mounted) {
+    return null;
+  }
+
   return (
-    <nav>
-      <ul className=' w-11/12 h-22 flex justify-around shadow-2xl items-center absolute bottom-10 left-1/2 -translate-x-1/2 rounded-xl'>
+    <nav className='sticky bottom-0'>
+      <ul className=' w-11/12 h-22 flex justify-around bg-white shadow-[0_0_20px_rgba(0,0,0,0.3)] items-center rounded-xl mx-auto'>
         {tabItem.map((item, i) => (
           <li key={i}>
             <Link href={item.href || ''} className='w-12 h-12 flex justify-center items-center'>
@@ -35,8 +45,10 @@ export const TabNavigation = () => {
             </Link>
           </li>
         ))}
-        <div className='w-15 h-15 bg-[#93D50B] absolute bottom-1/2 cursor-pointer hover:scale-110 transition-all duration-300 hover:opacity-90 flex items-center justify-center rounded-full'>
-          <Link href={userInfo?.nickname ? `/user/dashboard/${userInfo.nickname}` : '/user/dashboard'}>
+        <div className='w-15 h-15 bg-[#93D50B] absolute bottom-7/11 cursor-pointer hover:scale-110 transition-all duration-300 hover:opacity-90 flex items-center justify-center rounded-full'>
+          <Link
+            href={userInfo?.nickname ? `/user/dashboard/${userInfo.nickname}` : '/user/dashboard'}
+          >
             <Image
               src={homeIcon}
               alt='홈으로 이동'
