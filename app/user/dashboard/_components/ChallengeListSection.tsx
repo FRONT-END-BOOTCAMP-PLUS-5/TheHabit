@@ -244,17 +244,18 @@ const ChallengeListSection: React.FC = () => {
             routines={dashboard?.routines || []}
             routineCompletions={dashboard?.routineCompletions || []}
             selectedDate={selectedDate}
+            nickname={nickname}
           />
         ) : (
           dashboard && (
             <CategoryChallengeList
-              dashboard={dashboard}
+              categoryId={0}
               challenges={getActiveChallengesForSelectedDate()}
               routines={dashboard?.routines || []}
               routineCompletions={dashboard?.routineCompletions || []}
               selectedDate={selectedDate}
-              onFeedbackClick={undefined}
               onRoutineAdded={undefined}
+              nickname={nickname}
             />
           )
         )}

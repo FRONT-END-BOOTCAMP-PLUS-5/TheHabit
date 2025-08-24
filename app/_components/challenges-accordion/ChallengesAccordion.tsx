@@ -33,6 +33,7 @@ interface ChallengesAccordionProps {
   onFeedbackClick?: (challengeId: number) => void;
   selectedDate: Date; // 선택된 날짜 추가
   onRoutineAdded?: () => void;
+  nickname: string; // 사용자 닉네임 추가
 }
 
 const CATEGORY_ICON: Record<number, { icon: StaticImageData; alt: string }> = {
@@ -61,6 +62,7 @@ const ChallengesAccordion: React.FC<ChallengesAccordionProps> = ({
   onFeedbackClick,
   selectedDate,
   onRoutineAdded,
+  nickname,
 }) => {
   const { openModal } = useModalStore();
   const [hasShownExtensionModal, setHasShownExtensionModal] = useState<boolean>(false);
@@ -95,12 +97,9 @@ const ChallengesAccordion: React.FC<ChallengesAccordionProps> = ({
       openModal(
         <ChallengeExtensionContent
           challengeName={challenge.name}
-          onExtend={() => {
-            alert('🚀 66일로 연장되었습니다!');
-            setHasShownExtensionModal(true);
-          }}
-          onComplete={() => {
-            alert('✅ 챌린지가 완료되었습니다!');
+          nickname={nickname}
+          challengeId={challenge.id || 0}
+          onSuccess={() => {
             setHasShownExtensionModal(true);
           }}
         />,
@@ -112,7 +111,7 @@ const ChallengesAccordion: React.FC<ChallengesAccordionProps> = ({
       // 연장 모달을 보여줬다고 표시
       setHasShownExtensionModal(true);
     }
-  }, [challenge, routines, routineCompletions, hasShownExtensionModal, openModal]);
+  }, [challenge, routines, routineCompletions, hasShownExtensionModal, openModal, nickname]);
 
   const openHandler = () => {
     setIsOpen(!isOpen);
