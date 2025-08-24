@@ -5,7 +5,7 @@ import { ProfileImage } from '@/app/_components/profile-images/ProfileImage';
 import Image from 'next/image';
 import { NameComponent } from '@/app/user/profile/edit/_components/Name';
 import { NicknameComponent } from '@/app/user/profile/edit/_components/Nickname';
-import { updateUser, deleteUserRegister } from '@/libs/api/users.api';
+import { usersApi } from '@/libs/api/users.api';
 import { useRouter } from 'next/navigation';
 import { BackComponent } from '@/app/_components/back/Back';
 import { CompletionComponent } from '@/app/user/profile/components/Completion';
@@ -22,8 +22,10 @@ const UserProfileEditPage = () => {
 
   const { handleImageClick, fileInputRef } = useUploadProfile();
 
+  const { updateUser, deleteRegister } = usersApi;
+
   const handleDeleteUserRegister = async () => {
-    const response = await deleteUserRegister(userInfo?.id || '');
+    const response = await deleteRegister(userInfo?.id || '');
     if (response.data) {
       setOpen(false);
       router.push('/login');

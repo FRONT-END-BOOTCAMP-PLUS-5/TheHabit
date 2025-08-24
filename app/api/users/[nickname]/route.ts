@@ -7,7 +7,6 @@ import {
   UserChallengeAndRoutineAndFollowAndCompletionDto,
   UserChallengeAndRoutineAndFollowAndCompletionDtoMapper,
 } from '@/backend/users/applications/dtos/UserChallengeAndRoutineAndFollowAndCompletion';
-
 const repository = new PrUserRepository();
 
 const createDeleteUser = () => {

@@ -97,13 +97,11 @@ const AddChallengeForm: React.FC = () => {
       onSuccess: response => {
         if (response.success) {
           console.log('챌린지 생성 성공:', response.message);
-          // 챌린지 생성 성공 시 모달 닫기
+          // 챌린지 생성 성공 시 alert 표시 후 1초 뒤 모달 닫기
+          Toast.success('챌린지 생성에 성공했습니다.');
+
           setTimeout(() => {
             closeModal();
-            // 페이지 새로고침하여 새로운 목록을 받아옴
-            setTimeout(() => {
-              window.location.reload();
-            }, 500); // 모달이 닫힌 후 0.5초 뒤 새로고침
           }, 500);
         } else {
           console.error('챌린지 생성 실패:', response.error?.message);
@@ -136,20 +134,13 @@ const AddChallengeForm: React.FC = () => {
           챌린지 이름 <span className='text-red-500'>*</span>
         </label>
         <CustomInput
-          {...register('name', {
-            required: '챌린지 이름을 입력해주세요',
-            maxLength: { value: 20, message: '챌린지 이름은 20자 이내로 입력해주세요' },
-          })}
+          {...register('name', { required: '챌린지 이름을 입력해주세요' })}
           type='text'
           id='name'
-          placeholder='예: 매일 운동하기 (20자 이내)'
-          maxLength={20}
+          placeholder='예: 매일 운동하기'
           onBlur={() => {}}
         />
-        <div className='flex justify-between items-center'>
-          {errors.name && <span className='text-red-500 text-sm'>{errors.name.message}</span>}
-          <span className='text-xs text-gray-400 ml-auto'>{watch('name')?.length || 0}/20</span>
-        </div>
+        {errors.name && <span className='text-red-500 text-sm'>{errors.name.message}</span>}
       </div>
 
       {/* 시작 날짜 */}

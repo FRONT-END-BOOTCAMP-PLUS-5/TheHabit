@@ -15,7 +15,7 @@ interface ApiResponse<T> {
 }
 
 /**
- * 해당 함수는 following 추가하기
+ * 해당 함수는 following 하기
  * @param fromUserId: string
  * @param toUserId: string
  * @return Promise<ApiResponse<boolean>>
@@ -26,7 +26,7 @@ export const addFollowing = async (
 ): Promise<ApiResponse<boolean>> => {
   try {
     const response = await axiosInstance.post<ApiResponse<boolean>>(
-      `/api/friends/following/${fromUserId}`,
+      `/api/users/following/${fromUserId}`,
       {
         fromUserId,
         toUserId,
@@ -51,7 +51,7 @@ export const getFollowerByToUserId = async (
 ): Promise<ApiResponse<FollowerDto>> => {
   try {
     const response = await axiosInstance.get<ApiResponse<FollowerDto>>(
-      `/api/friends/follower/${toUserId}`,
+      `/api/users/follower/${toUserId}`,
       {
         params: {
           toUserId,
@@ -78,7 +78,7 @@ export const getFollowingByToUserId = async (
 ): Promise<ApiResponse<FollowingDto>> => {
   try {
     const response = await axiosInstance.get<ApiResponse<FollowingDto>>(
-      `/api/friends/following/${fromUserId}`,
+      `/api/users/following/${fromUserId}`,
       {
         params: {
           fromUserId,
@@ -105,7 +105,7 @@ export const deleteUnfollow = async (
 ): Promise<ApiResponse<void>> => {
   try {
     const response = await axiosInstance.delete<ApiResponse<void>>(
-      `/api/friends/following/${fromUserId}`,
+      `/api/users/following/${fromUserId}`,
       {
         data: {
           fromUserId,

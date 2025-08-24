@@ -1,29 +1,20 @@
 import { IUserRepository } from '@/backend/users/domains/repositories/IUserRepository';
 import { User } from '@/backend/users/domains/entities/UserEntity';
 
-// 유저 Get 유스케이스 - 닉네임으로 유저 정보 조회
+// 유저 Get 유스케이스
 export class GetUserUsecase {
   // 리포지토리 주입
-  constructor(private readonly userRepo: IUserRepository) { }
+  constructor(private readonly userRepo: IUserRepository) {}
 
-  /**
-   * 닉네임으로 유저 정보 조회
-   * @param nickname 유저 닉네임
-   * @returns Promise<User | null>
-   */
-  async execute(nickname: string): Promise<User | null> {
+  //유저 Get 실행
+  async execute(user: User): Promise<User | null | undefined> {
     try {
-      if (!nickname || nickname.trim() === '') {
-        throw new Error('닉네임이 제공되지 않았습니다.');
-      }
+      const { id } = user;
+      const getUser = await this.userRepo.findById(id || '');
 
-      const user = await this.userRepo.findByNickname(nickname.trim());
-      return user;
+      return getUser;
     } catch (error) {
-      if (error instanceof Error) {
-        throw new Error(`유저 정보 조회 실패: ${error.message}`);
-      }
-      throw new Error('유저 정보 조회에 실패했습니다.');
+      throw new Error('회원 정보 가져오기 실패');
     }
   }
 }

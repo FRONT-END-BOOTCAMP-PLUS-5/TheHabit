@@ -119,7 +119,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     });
 
     console.log('루틴 완료 생성 성공:', result);
-
+    
     const successResponse: ApiResponse<RoutineCompletionDto> = {
       success: true,
       data: result,

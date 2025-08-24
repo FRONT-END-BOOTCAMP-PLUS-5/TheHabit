@@ -1,9 +1,8 @@
 export interface CreateRoutineRequestDto {
   routineTitle: string;
-  alertTime: string | null;
+  alertTime: Date | null;
   emoji: number;
   challengeId: number;
-  nickname: string;
 }
 
 export interface ReadRoutineResponseDto {

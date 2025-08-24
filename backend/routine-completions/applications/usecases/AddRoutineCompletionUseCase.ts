@@ -7,14 +7,14 @@ import {
 export class AddRoutineCompletionUseCase {
   constructor(
     private readonly routineCompletionsRepository: IRoutineCompletionsRepository
-  ) { }
+  ) {}
 
   async execute(request: CreateRoutineCompletionRequestDto): Promise<RoutineCompletionDto> {
     return this.executeByNickname({
       nickname: request.nickname,
       routineId: request.routineId,
       proofImgUrl: request.proofImgUrl,
-      content: request.content || '',
+      content: request.content,
     });
   }
 

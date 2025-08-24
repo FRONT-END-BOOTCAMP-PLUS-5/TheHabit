@@ -4,7 +4,6 @@ import { DashboardDto } from '@/backend/dashboards/application/dtos/DashboardDto
 import { ChallengeDto } from '@/backend/challenges/applications/dtos/ChallengeDto';
 import { ReadRoutineResponseDto } from '@/backend/routines/applications/dtos/RoutineDto';
 import { RoutineCompletionDto } from '@/backend/routine-completions/applications/dtos/RoutineCompletionDto';
-import { UserChallengeAndRoutineAndFollowAndCompletionDto } from '@/backend/users/applications/dtos/UserChallengeAndRoutineAndFollowAndCompletion';
 
 // Dashboard API 응답 타입  
 interface DashboardListResponse {
@@ -12,20 +11,6 @@ interface DashboardListResponse {
   routines: ReadRoutineResponseDto[];
   routineCompletions: RoutineCompletionDto[];
 }
-
-// 닉네임으로 유저의 챌린지, 루틴, 팔로우, 완료 정보 조회
-export const getUserChallengeAndRoutineAndFollowAndCompletion = async (
-  nickname: string
-): Promise<ApiResponse<UserChallengeAndRoutineAndFollowAndCompletionDto>> => {
-  try {
-    const response = await axiosInstance.get<
-      ApiResponse<UserChallengeAndRoutineAndFollowAndCompletionDto>
-    >(`/api/users/${nickname}`);
-    return response.data;
-  } catch (error) {
-    throw error;
-  }
-};
 
 // 닉네임으로 대시보드 조회
 export const getDashboardByNickname = async (nickname: string): Promise<DashboardDto> => {

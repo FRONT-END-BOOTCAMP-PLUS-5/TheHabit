@@ -11,7 +11,6 @@ interface CategoryChallengeListProps {
   routines: ReadRoutineResponseDto[];
   routineCompletions: RoutineCompletionDto[];
   selectedDate: Date;
-  onRoutineAdded?: () => void;
 }
 
 const CategoryChallengeList: React.FC<CategoryChallengeListProps> = ({
@@ -20,7 +19,6 @@ const CategoryChallengeList: React.FC<CategoryChallengeListProps> = ({
   routines,
   routineCompletions,
   selectedDate,
-  onRoutineAdded,
 }) => {
   const renderCategory = (categoryId: number, categoryName: string) => {
     const categoryChallenges = challenges.filter(challenge => challenge.categoryId === categoryId);
@@ -43,8 +41,6 @@ const CategoryChallengeList: React.FC<CategoryChallengeListProps> = ({
                   challenge={challenge}
                   routines={routines}
                   routineCompletions={routineCompletions}
-                  selectedDate={selectedDate}
-                  onRoutineAdded={onRoutineAdded}
                 />
               ))
             ) : (

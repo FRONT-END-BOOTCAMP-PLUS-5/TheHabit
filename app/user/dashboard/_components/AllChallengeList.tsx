@@ -10,7 +10,6 @@ interface AllChallengeListProps {
   routines: ReadRoutineResponseDto[];
   routineCompletions: RoutineCompletionDto[];
   selectedDate: Date;
-  onRoutineAdded?: () => void;
 }
 
 const AllChallengeList: React.FC<AllChallengeListProps> = ({
@@ -18,7 +17,6 @@ const AllChallengeList: React.FC<AllChallengeListProps> = ({
   routines,
   routineCompletions,
   selectedDate,
-  onRoutineAdded,
 }) => {
   return (
     <div className='flex flex-col gap-0.5'>
@@ -29,8 +27,6 @@ const AllChallengeList: React.FC<AllChallengeListProps> = ({
             challenge={challenge}
             routines={routines}
             routineCompletions={routineCompletions}
-            selectedDate={selectedDate}
-            onRoutineAdded={onRoutineAdded}
           />
         ))
       ) : (
