@@ -8,7 +8,7 @@ import AddChallengeButton from './AddChallengeButton';
 import '@ant-design/v5-patch-for-react-19';
 import { useModalStore } from '@/libs/stores/modalStore';
 import AddChallengeForm from './AddChallengeForm';
-import { useGetDashboardByNickname } from '@/libs/hooks';
+import { useGetDashboardByNickname } from '@/libs/hooks/dashboard-hooks/useGetDashboardByNickname';
 import { useParams } from 'next/navigation';
 import { ChallengeDto } from '@/backend/challenges/applications/dtos/ChallengeDto';
 import AllChallengeList from './AllChallengeList';
@@ -70,8 +70,8 @@ const ChallengeListSection: React.FC = () => {
     }
   };
 
-  // 선택된 날짜에 해당하는 챌린지들만 필터링
-  const getChallengesForSelectedDate = () => {
+  // 선택된 날짜에 해당하는 활성 챌린지들만 필터링
+  const getActiveChallengesForSelectedDate = () => {
     if (!dashboard?.challenge || !Array.isArray(dashboard.challenge)) {
       return [];
     }
@@ -87,11 +87,16 @@ const ChallengeListSection: React.FC = () => {
         return false;
       }
 
+      // active가 true인 챌린지만 필터링
+      if (challenge.active !== true) {
+        return false;
+      }
+
       return isDateInChallengePeriod(challenge, selectedDate);
     });
   };
 
-  const handleOpenModal = () => {
+  const handleOpenAddChallengeModal = () => {
     openModal(<AddChallengeForm />, 'toast');
   };
 
@@ -207,7 +212,7 @@ const ChallengeListSection: React.FC = () => {
         </div>
         {selectedSort === 'all' ? (
           <AllChallengeList
-            challenges={getChallengesForSelectedDate()}
+            challenges={getActiveChallengesForSelectedDate()}
             routines={dashboard?.routines || []}
             routineCompletions={dashboard?.routineCompletions || []}
             selectedDate={selectedDate}
@@ -216,7 +221,7 @@ const ChallengeListSection: React.FC = () => {
           dashboard && (
             <CategoryChallengeList
               dashboard={dashboard}
-              challenges={getChallengesForSelectedDate()}
+              challenges={getActiveChallengesForSelectedDate()}
               routines={dashboard?.routines || []}
               routineCompletions={dashboard?.routineCompletions || []}
               selectedDate={selectedDate}
@@ -224,7 +229,7 @@ const ChallengeListSection: React.FC = () => {
           )
         )}
       </div>
-      <AddChallengeButton onClick={handleOpenModal} />
+      <AddChallengeButton onClick={handleOpenAddChallengeModal} />
     </section>
   );
 };

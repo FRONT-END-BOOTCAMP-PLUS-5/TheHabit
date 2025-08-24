@@ -3,7 +3,7 @@
 import React, { useRef, useState } from 'react';
 import { Button } from '@/app/_components/buttons/Button';
 import { CameraOutlined, PictureOutlined } from '@ant-design/icons';
-import '@ant-desgin/v5-patch-for-react-19';
+import '@ant-design/v5-patch-for-react-19';
 
 interface FileUploadProps {
   onFileSelect: (file: File) => void;

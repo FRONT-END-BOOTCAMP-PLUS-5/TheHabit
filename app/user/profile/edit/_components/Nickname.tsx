@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { updateUser, usersApi } from '@/libs/api/users.api';
+import { updateUser } from '@/libs/api/users.api';
 import { useGetUserInfo } from '@/libs/hooks/user-hooks/useGetUserInfo';
 
 export const NicknameComponent = () => {
@@ -7,8 +7,6 @@ export const NicknameComponent = () => {
   const [getState, setState] = useState<boolean>(false);
   const [getValue, setValue] = useState<string>('');
   const [getNickname, setNickname] = useState<string>(userInfo?.nickname || '');
-
-  const { updateUser } = usersApi;
 
   const handleChangeState = () => {
     setState(prev => !prev);
