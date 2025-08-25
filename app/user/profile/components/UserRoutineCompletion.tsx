@@ -123,7 +123,7 @@ const UserRoutineCompletion = ({
             blurDataURL='data:image/jpeg;base64,...'
           />
         ) : (
-          <NoneImg height={'300px'} />
+          <NoneImg height={'300px'} type={false} />
         )}
 
         <div className='mt-3 line-clamp-4 text-[14px]'>{content}</div>

@@ -122,7 +122,7 @@ export const CompletionComponent = ({
                   sizes='(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 33vw'
                 />
               ) : (
-                <NoneImg rounded={'12px'} />
+                <NoneImg rounded={'md'} type={true} content={item.content || ''} />
               )}
             </li>
           );
