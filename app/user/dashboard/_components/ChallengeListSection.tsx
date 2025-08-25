@@ -267,6 +267,11 @@ const ChallengeListSection: React.FC = () => {
               </Radio.Button>
             </Radio.Group>
           </div>
+
+          {/* 새 챌린지 추가 버튼을 라디오 버튼 아래에 배치 */}
+          <div className='flex justify-center w-full'>
+            <AddChallengeButton onClick={handleOpenAddChallengeModal} />
+          </div>
         </div>
         {selectedSort === 'all' ? (
           <AllChallengeList
@@ -292,7 +297,6 @@ const ChallengeListSection: React.FC = () => {
           <HistoryChallengeList challenges={getHistoryChallenges()} nickname={nickname} />
         ) : null}
       </div>
-      <AddChallengeButton onClick={handleOpenAddChallengeModal} />
     </section>
   );
 };

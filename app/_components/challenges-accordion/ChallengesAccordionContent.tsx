@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import { CHALLENGE_COLORS } from '@/public/consts/challengeColors';
 import { ChallengeDto } from '@/backend/challenges/applications/dtos/ChallengeDto';
 import { ReadRoutineResponseDto } from '@/backend/routines/applications/dtos/RoutineDto';
@@ -8,9 +9,11 @@ import { EmojiDisplay } from '@/app/_components/emoji/EmojiDisplay';
 import { useModalStore } from '@/libs/stores/modalStore';
 import { useGetUserInfo } from '@/libs/hooks/user-hooks/useGetUserInfo';
 import { useCreateRoutineCompletion } from '@/libs/hooks/routine-completions-hooks/useCreateRoutineCompletion';
+import { useUpdateRoutine } from '@/libs/hooks/routines-hooks/useUpdateRoutine';
 import { useQueryClient } from '@tanstack/react-query';
 import AddRoutineForm from '@/app/user/dashboard/_components/AddRoutineForm';
 import RoutineCompletionForm from '@/app/_components/challenges-accordion/RoutineCompletionForm';
+import CustomInput from '@/app/_components/inputs/CustomInput';
 import { Toast } from '@/app/_components/toasts/Toast';
 
 // ChallengesAccordionContent 컴포넌트는 피드백 및 분석에도 사용되므로 공통으로 분리하였습니다.
@@ -36,7 +39,12 @@ export const ChallengesAccordionContent = ({
   const { openModal, closeModal } = useModalStore();
   const { userInfo } = useGetUserInfo();
   const createRoutineCompletionMutation = useCreateRoutineCompletion();
+  const updateRoutineMutation = useUpdateRoutine();
   const queryClient = useQueryClient();
+
+  // 루틴 수정 관련 상태
+  const [editingRoutineId, setEditingRoutineId] = useState<number | null>(null);
+  const [editingTitle, setEditingTitle] = useState<string>('');
 
   // 루틴 완료 생성 성공 시 추가 캐시 무효화
   const handleRoutineCompletionSuccess = () => {
@@ -180,6 +188,54 @@ export const ChallengesAccordionContent = ({
     );
   };
 
+  // 루틴 수정 시작
+  const handleStartEdit = (routine: ReadRoutineResponseDto) => {
+    setEditingRoutineId(routine.id);
+    setEditingTitle(routine.routineTitle);
+  };
+
+  // 루틴 수정 취소
+  const handleCancelEdit = () => {
+    setEditingRoutineId(null);
+    setEditingTitle('');
+  };
+
+  // 루틴 수정 저장
+  const handleSaveEdit = async (routine: ReadRoutineResponseDto) => {
+    if (!editingTitle.trim()) {
+      Toast.error('루틴 제목을 입력해주세요.');
+      return;
+    }
+
+    try {
+      await updateRoutineMutation.mutateAsync({
+        id: routine.id,
+        data: {
+          routineId: routine.id,
+          routineTitle: editingTitle.trim(),
+        },
+      });
+
+      Toast.success('루틴 제목이 수정되었습니다.');
+      setEditingRoutineId(null);
+      setEditingTitle('');
+
+      // 루틴 목록 새로고침
+      if (onRoutineAdded) {
+        onRoutineAdded();
+      }
+
+      // 더 포괄적인 쿼리 무효화
+      queryClient.invalidateQueries({ queryKey: ['routines'] });
+      queryClient.invalidateQueries({ queryKey: ['dashboard'] });
+      queryClient.invalidateQueries({ queryKey: ['routines', 'challenge'] });
+      queryClient.invalidateQueries({ queryKey: ['routines', 'all'] });
+    } catch (error) {
+      console.error('루틴 수정 실패:', error);
+      Toast.error('루틴 수정에 실패했습니다.');
+    }
+  };
+
   return (
     <div className='px-3 py-3'>
       {/* 루틴 목록 Todo List */}
@@ -238,13 +294,22 @@ export const ChallengesAccordionContent = ({
                 <div className='flex-1'>
                   <div className='flex items-center gap-2'>
                     <EmojiDisplay emojiNumber={routine.emoji} className='text-lg' />
-                    <span
-                      className={`font-medium ${
-                        isCompleted ? 'text-gray-500 line-through' : 'text-gray-900'
-                      }`}
-                    >
-                      {routine.routineTitle}
-                    </span>
+                    {editingRoutineId === routine.id ? (
+                      <CustomInput
+                        value={editingTitle}
+                        onChange={e => setEditingTitle(e.target.value)}
+                        className='w-48 text-sm'
+                        placeholder='루틴 제목'
+                      />
+                    ) : (
+                      <span
+                        className={`font-medium ${
+                          isCompleted ? 'text-gray-500 line-through' : 'text-gray-900'
+                        }`}
+                      >
+                        {routine.routineTitle}
+                      </span>
+                    )}
                   </div>
 
                   {/* 알림 시간 표시 */}
@@ -255,10 +320,31 @@ export const ChallengesAccordionContent = ({
                   )}
                 </div>
 
-                {/* 완료 상태 표시 */}
-                <div className={`text-xs ${isCompleted ? 'text-primary' : 'text-red-500'}`}>
-                  {isCompleted ? '완료' : '미완료'}
-                </div>
+                {/* 루틴 수정 버튼 */}
+                {editingRoutineId === routine.id ? (
+                  <div className='flex items-center gap-3'>
+                    <button
+                      onClick={() => handleSaveEdit(routine)}
+                      disabled={updateRoutineMutation.isPending}
+                      className='mr-5 text-green-600 text-xs font-medium hover:text-green-700 disabled:opacity-50 disabled:cursor-not-allowed'
+                    >
+                      {updateRoutineMutation.isPending ? '저장 중...' : '저장'}
+                    </button>
+                    <button
+                      onClick={handleCancelEdit}
+                      className='text-gray-500 text-xs font-medium hover:text-gray-700'
+                    >
+                      취소
+                    </button>
+                  </div>
+                ) : (
+                  <button
+                    onClick={() => handleStartEdit(routine)}
+                    className='text-blue-600 text-xs font-medium hover:text-blue-700 transition-colors'
+                  >
+                    수정
+                  </button>
+                )}
               </div>
             );
           })}
@@ -270,7 +356,7 @@ export const ChallengesAccordionContent = ({
       {/* 새로운 루틴 추가 버튼 */}
       <div className='flex justify-center'>
         <button
-          className={`rounded-full flex items-center justify-center text-sm font-bold py-2 px-4 cursor-pointer ${
+          className={`px-6 py-3 rounded-full text-base font-bold shadow-lg cursor-pointer hover:animate-float transition-all duration-300 hover:scale-110 ${
             challengeLimit.canAddMore
               ? 'bg-primary text-white hover:bg-primary/90'
               : 'bg-gray-300 text-gray-500 cursor-not-allowed'
