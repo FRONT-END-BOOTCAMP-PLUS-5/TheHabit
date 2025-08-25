@@ -8,9 +8,8 @@ import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
 export const FeedBackDetail: React.FC<{ nickname: string }> = ({ nickname }) => {
-  const { data, isLoading } = useGetDashboardByNickname(nickname || '');
+  const { data } = useGetDashboardByNickname(nickname || '');
   const router = useRouter();
-  console.log(isLoading);
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
