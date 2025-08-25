@@ -27,15 +27,49 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
   try {
     console.log('=== POST /api/routine-completions 요청 시작 ===');
 
-    // FormData 파싱
-    const formData = await request.formData();
+    // 요청 정보 상세 로깅
+    console.log('요청 URL:', request.url);
+    console.log('요청 메서드:', request.method);
+    console.log('요청 헤더:', Object.fromEntries(request.headers.entries()));
+
+    // Content-Type 확인
+    const contentType = request.headers.get('content-type');
+    console.log('Content-Type:', contentType);
+
+    // FormData 파싱 시도
+    let formData;
+    try {
+      formData = await request.formData();
+      console.log('FormData 파싱 성공');
+    } catch (formDataError) {
+      console.error('FormData 파싱 실패:', formDataError);
+      console.error('FormData 에러 상세:', {
+        name: formDataError instanceof Error ? formDataError.name : 'Unknown',
+        message: formDataError instanceof Error ? formDataError.message : String(formDataError),
+        stack: formDataError instanceof Error ? formDataError.stack : 'No stack trace'
+      });
+
+      // Content-Type 문제일 수 있으므로 더 자세한 에러 메시지
+      const errorResponse: ApiResponse<null> = {
+        success: false,
+        error: {
+          code: 'INVALID_CONTENT_TYPE',
+          message: `FormData 형식이 올바르지 않습니다. Content-Type: ${contentType || 'undefined'}`
+        }
+      };
+      return NextResponse.json(errorResponse, { status: 400 });
+    }
+
     const file = formData.get('file');
     const routineIdValue = formData.get('routineId');
     const contentValue = formData.get('content');
     const nicknameValue = formData.get('nickname');
 
-    console.log('요청 데이터:', {
+    console.log('FormData 내용:', {
       hasFile: !!file,
+      fileType: file ? typeof file : 'undefined',
+      isFileInstance: file instanceof File,
+      fileSize: file instanceof File ? file.size : 'N/A',
       routineId: routineIdValue,
       content: contentValue,
       nickname: nicknameValue,
@@ -91,6 +125,12 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     // 이미지 업로드 처리 (선택사항)
     let proofImgUrl: string | null = null;
     if (file && file instanceof File) {
+      console.log('이미지 업로드 시작:', {
+        fileName: file.name,
+        fileSize: file.size,
+        fileType: file.type
+      });
+
       try {
         const uploadResult = await s3Service.uploadImage(file, 'routine-completions');
         proofImgUrl = uploadResult.imageUrl;
@@ -106,7 +146,16 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         };
         return NextResponse.json(errorResponse, { status: 500 });
       }
+    } else {
+      console.log('이미지 파일 없음 또는 유효하지 않은 파일');
     }
+
+    console.log('루틴 완료 데이터 생성 시작:', {
+      nickname: String(nicknameValue).trim(),
+      routineId: routineIdNumber,
+      content: String(contentValue).trim(),
+      proofImgUrl,
+    });
 
     // 루틴 완료 데이터 생성
     const addRoutineCompletionUseCase = createAddRoutineCompletionUseCase();
@@ -225,4 +274,3 @@ export async function DELETE(request: NextRequest): Promise<NextResponse<ApiResp
     return NextResponse.json(errorResponse, { status: 500 });
   }
 }
-

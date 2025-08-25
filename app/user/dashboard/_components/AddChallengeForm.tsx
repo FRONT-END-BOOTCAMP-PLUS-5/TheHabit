@@ -96,20 +96,13 @@ const AddChallengeForm: React.FC = () => {
 
     createChallengeMutation.mutate(formData, {
       onSuccess: response => {
-        if (response.success) {
-          console.log('챌린지 생성 성공:', response.message);
-          // 챌린지 생성 성공 시 모달 닫기
-          setTimeout(() => {
-            closeModal();
-            // 페이지 새로고침하여 새로운 목록을 받아옴
-            setTimeout(() => {
-              window.location.reload();
-            }, 500); // 모달이 닫힌 후 0.5초 뒤 새로고침
-          }, 500);
-        } else {
-          console.error('챌린지 생성 실패:', response.error?.message);
-          Toast.error('챌린지 생성에 실패했습니다: ' + response.error?.message);
-        }
+        console.log('챌린지 생성 성공:', response.message);
+        // 챌린지 생성 성공 시 모달 닫기
+        setTimeout(() => {
+          closeModal();
+          // React Query 캐시 무효화로 데이터 자동 업데이트
+          // 전체 페이지 새로고침 불필요
+        }, 500);
       },
       onError: (error: Error) => {
         console.error('챌린지 생성 중 오류 발생:', error);

@@ -22,17 +22,6 @@ export class PrDashboardRepository implements IDashboardRepository {
               },
               category: true, // 챌린지 카테고리 정보도 함께
             },
-            select: {
-              id: true,
-              name: true,
-              createdAt: true,
-              endAt: true,
-              color: true,
-              userId: true,
-              categoryId: true,
-              active: true,
-              completion_progress: true,
-            },
           },
         },
       });

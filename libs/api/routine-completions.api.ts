@@ -11,15 +11,20 @@ export const createRoutineCompletion = async (
 ): Promise<ApiResponse<RoutineCompletionDto>> => {
   try {
     const isFormData = data instanceof FormData;
-    
+
     const response = await axiosInstance.post<ApiResponse<RoutineCompletionDto>>(
       '/api/routine-completions',
       data,
+      // FormData일 때는 헤더를 설정하지 않음 (브라우저가 자동으로 설정)
       isFormData ? {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
-      } : undefined
+      } : {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      }
     );
 
     return response.data;

@@ -11,7 +11,7 @@ export const useCreateRoutineCompletion = () => {
   const queryClient = useQueryClient();
 
   return useMutation<ApiResponse<RoutineCompletionDto>, Error, FormData | CreateRoutineCompletionRequestDto>({
-    mutationFn: (data: FormData | CreateRoutineCompletionRequestDto) => 
+    mutationFn: (data: FormData | CreateRoutineCompletionRequestDto) =>
       createRoutineCompletion(data),
     onSuccess: () => {
       // 루틴 완료 생성 성공 시 관련 캐시 무효화
@@ -22,6 +22,10 @@ export const useCreateRoutineCompletion = () => {
       queryClient.invalidateQueries({
         queryKey: ['routine-completions', 'user'],
       });
+
+      // 대시보드와 챌린지 데이터도 무효화하여 UI 자동 업데이트
+      queryClient.invalidateQueries({ queryKey: ['dashboard'] });
+      queryClient.invalidateQueries({ queryKey: ['challenges'] });
     },
     onError: error => {
       console.error('루틴 완료 생성 실패:', error);

@@ -5,7 +5,6 @@ import { ChallengeDto } from '@/backend/challenges/applications/dtos/ChallengeDt
 import { ReadRoutineResponseDto } from '@/backend/routines/applications/dtos/RoutineDto';
 import { RoutineCompletionDto } from '@/backend/routine-completions/applications/dtos/RoutineCompletionDto';
 import { EmojiDisplay } from '@/app/_components/emoji/EmojiDisplay';
-import { usePathname } from 'next/navigation';
 import { useModalStore } from '@/libs/stores/modalStore';
 import { useGetUserInfo } from '@/libs/hooks/user-hooks/useGetUserInfo';
 import AddRoutineForm from '@/app/user/dashboard/_components/AddRoutineForm';
@@ -19,8 +18,6 @@ interface ChallengesAccordionContentProps {
   challenge: ChallengeDto;
   routines: ReadRoutineResponseDto[];
   routineCompletions: RoutineCompletionDto[];
-  onFeedbackClick?: (challengeId: number) => void;
-  challengeId: number;
   selectedDate: Date; // 선택된 날짜 추가
   onRoutineAdded?: () => void; // 루틴 추가 후 새로고침을 위한 콜백
 }
@@ -32,16 +29,39 @@ export const ChallengesAccordionContent = ({
   challenge,
   routines,
   routineCompletions,
-  onFeedbackClick,
-  challengeId,
   selectedDate,
   onRoutineAdded,
 }: ChallengesAccordionContentProps) => {
-  const { openModal } = useModalStore();
-  const pathname = usePathname();
-  const isFeedback = pathname.startsWith('/user/feedback');
+  const { openModal, closeModal } = useModalStore();
+
   const { userInfo } = useGetUserInfo();
   const createRoutineCompletionMutation = useCreateRoutineCompletion();
+
+  // 카테고리별 챌린지 제한 계산 (완료/실패된 챌린지 고려)
+  const getCategoryChallengeLimit = () => {
+    // 기본 제한: 3개
+    const baseLimit = 3;
+
+    // 현재 카테고리의 활성 챌린지 개수
+    const activeChallenges = routines.length;
+
+    // 현재 카테고리의 완료/실패된 챌린지 개수 (대시보드에서 가져와야 함)
+    // 임시로 0으로 설정 (실제로는 props로 받아야 함)
+    const completedOrFailedChallenges = 0;
+
+    // 생성 가능한 챌린지 개수 = 기본 제한 + 완료/실패된 챌린지 개수
+    const availableSlots = baseLimit + completedOrFailedChallenges;
+
+    return {
+      baseLimit,
+      activeChallenges,
+      completedOrFailedChallenges,
+      availableSlots,
+      canAddMore: activeChallenges < availableSlots,
+    };
+  };
+
+  const challengeLimit = getCategoryChallengeLimit();
 
   const handleOpenAddRoutineModal = () => {
     if (!challenge.id || !userInfo?.nickname) {
@@ -59,10 +79,8 @@ export const ChallengesAccordionContent = ({
             onRoutineAdded();
           }
 
-          // 페이지 새로고침하여 새로운 목록을 받아옴
-          setTimeout(() => {
-            window.location.reload();
-          }, 1000); // 토스트 메시지가 보인 후 1초 뒤 새로고침
+          // React Query 캐시 무효화로 데이터 자동 업데이트
+          // 전체 페이지 새로고침 불필요
         }}
       />,
       'floating',
@@ -71,7 +89,7 @@ export const ChallengesAccordionContent = ({
     );
   };
 
-  const handleRoutineCompletion = (routineId: number) => {
+  const handleRoutineCompletion = (routine: ReadRoutineResponseDto) => {
     if (!userInfo?.nickname) {
       Toast.error('사용자 정보를 불러올 수 없습니다.');
       return;
@@ -79,7 +97,7 @@ export const ChallengesAccordionContent = ({
 
     // 선택된 날짜에 해당 루틴의 완료 데이터가 있는지 확인
     const hasCompletionOnSelectedDate = routineCompletions.some(completion => {
-      if (completion.routineId !== routineId) return false;
+      if (completion.routineId !== routine.id) return false;
 
       // 완료 날짜가 선택된 날짜와 같은지 확인
       const completionDate = new Date(completion.createdAt);
@@ -104,19 +122,42 @@ export const ChallengesAccordionContent = ({
 
     openModal(
       <RoutineCompletionForm
+        selectedRoutine={routine}
         onSubmit={async (reviewText: string, photoFile?: File) => {
           try {
-            await createRoutineCompletionMutation.mutateAsync({
-              nickname: userInfo.nickname,
-              routineId,
-              content: reviewText,
-              proofImgUrl: photoFile ? photoFile.name : null,
-            });
+            console.log('루틴 완료 처리 시작:', { reviewText, hasPhotoFile: !!photoFile });
 
-            // 페이지 새로고침하여 완료 상태 반영
-            setTimeout(() => {
-              window.location.reload();
-            }, 1000);
+            // 이미지가 있든 없든 FormData로 전송 (서버에서 FormData를 기대함)
+            const formData = new FormData();
+            formData.append('nickname', userInfo.nickname);
+            formData.append('routineId', routine.id.toString());
+            formData.append('content', reviewText);
+
+            // 이미지가 있는 경우에만 file 필드 추가
+            if (photoFile) {
+              formData.append('file', photoFile);
+            }
+
+            console.log('FormData 전송 시작');
+            await createRoutineCompletionMutation.mutateAsync(formData, {
+              onSuccess: () => {
+                console.log('루틴 완료 성공 - 토스트 메시지 표시');
+                // 성공 토스트 메시지 표시
+                Toast.success('루틴 소감이 성공적으로 저장되었습니다! 🎉');
+
+                // React Query 캐시 무효화로 데이터 자동 업데이트
+                // 전체 페이지 새로고침 불필요
+                console.log('캐시 무효화 완료 - UI 자동 업데이트 예상');
+
+                // 모달 자동 닫기
+                closeModal();
+              },
+              onError: error => {
+                console.error('루틴 완료 처리 실패:', error);
+                Toast.error('루틴 완료 처리에 실패했습니다. 다시 시도해주세요.');
+              },
+            });
+            console.log('루틴 완료 처리 완료');
           } catch (error) {
             console.error('루틴 완료 처리 실패:', error);
           }
@@ -127,7 +168,7 @@ export const ChallengesAccordionContent = ({
       />,
       'floating',
       '루틴 완료',
-      '루틴 완료 소감을 작성해주세요'
+      '루틴 수행 소감을 작성해주세요'
     );
   };
 
@@ -169,7 +210,7 @@ export const ChallengesAccordionContent = ({
               >
                 {/* 체크박스 버튼 */}
                 <button
-                  onClick={() => handleRoutineCompletion(routine.id)}
+                  onClick={() => handleRoutineCompletion(routine)}
                   className={`w-8 h-8 rounded-full border-2 flex items-center justify-center transition-all duration-200 hover:scale-110 ${
                     isCompleted
                       ? 'bg-primary border-primary hover:bg-primary/90'
@@ -221,22 +262,25 @@ export const ChallengesAccordionContent = ({
       {/* 새로운 루틴 추가 버튼 */}
       <div className='flex justify-center'>
         <button
-          onClick={() => {
-            if (pathname.includes('feedback')) {
-              onFeedbackClick?.(challengeId);
-            } else {
-              handleOpenAddRoutineModal();
-            }
-          }}
           className={`rounded-full flex items-center justify-center text-sm font-bold py-2 px-4 cursor-pointer ${
-            routines.length >= 3
-              ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-              : 'bg-primary text-white hover:bg-primary/90'
+            challengeLimit.canAddMore
+              ? 'bg-primary text-white hover:bg-primary/90'
+              : 'bg-gray-300 text-gray-500 cursor-not-allowed'
           }`}
-          disabled={routines.length >= 3}
+          disabled={!challengeLimit.canAddMore}
+          onClick={handleOpenAddRoutineModal}
         >
-          {isFeedback ? '피드백 받기' : '+ 루틴 추가하기'}
-          {routines.length >= 3 && <span className='ml-1 text-xs'>(최대 3개)</span>}
+          + 루틴 추가하기
+          {!challengeLimit.canAddMore && (
+            <span className='ml-1 text-xs'>
+              (최대 {challengeLimit.availableSlots}개, 현재 {challengeLimit.activeChallenges}개)
+            </span>
+          )}
+          {challengeLimit.canAddMore && (
+            <span className='ml-1 text-xs'>
+              ({challengeLimit.activeChallenges}/{challengeLimit.availableSlots})
+            </span>
+          )}
         </button>
       </div>
     </div>

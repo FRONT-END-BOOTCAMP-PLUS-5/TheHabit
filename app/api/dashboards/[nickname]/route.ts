@@ -76,6 +76,8 @@ export async function GET(
     };
     return NextResponse.json(successResponse);
   } catch (error) {
+    console.error('대시보드 조회 에러:', error);
+
     const errorResponse: ApiResponse<null> = {
       success: false,
       error: {
@@ -84,9 +86,6 @@ export async function GET(
       },
     };
 
-    if (error instanceof Error) {
-      return NextResponse.json(errorResponse, { status: 500 });
-    }
-
+    return NextResponse.json(errorResponse, { status: 500 });
   }
 }
