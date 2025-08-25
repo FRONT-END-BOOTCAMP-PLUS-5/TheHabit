@@ -1,4 +1,15 @@
 // 푸시 알림 전용 서비스 워커
+console.log('🚀 Push Service Worker 로드됨');
+
+self.addEventListener('install', () => {
+  console.log('📦 Push Service Worker 설치됨');
+  self.skipWaiting();
+});
+
+self.addEventListener('activate', event => {
+  console.log('✅ Push Service Worker 활성화됨');
+  event.waitUntil(self.clients.claim());
+});
 
 self.addEventListener('push', event => {
   if (!event.data) {
