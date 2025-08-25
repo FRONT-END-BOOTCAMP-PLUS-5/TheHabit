@@ -13,18 +13,24 @@ import {
 } from '@/app/user/feedback/_components/FeedbackIcon';
 import { calculateSingleChallengeProgress } from '@/app/user/feedback/_components/CalcFeedBackData';
 
-export const FeedBackStatistics: React.FC<{ dashBoardData: DashboardDto }> = ({ dashBoardData }) => {
+export const FeedBackStatistics: React.FC<{ dashBoardData: DashboardDto }> = ({
+  dashBoardData,
+}) => {
   const { challenge, routines, routineCompletions } = dashBoardData;
 
   // 각 챌린지별 완료 데이터를 미리 계산 (메모이제이션)
   const challengeCompletionData = useMemo(
     () =>
       challenge.map(currentChallenge => {
+        const start = new Date(currentChallenge.createdAt);
+        const end = new Date(currentChallenge.endAt);
+        const days = Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24));
+
         const { dailyCompletions } = calculateSingleChallengeProgress(
           currentChallenge,
           routines,
           routineCompletions,
-          21
+          days
         );
 
         return {
