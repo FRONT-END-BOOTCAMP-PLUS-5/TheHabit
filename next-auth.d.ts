@@ -16,7 +16,6 @@ declare module 'next-auth' {
       profileImgPath: string | null;
       createdAt?: Date;
       updatedAt?: Date;
-      isNewUser?: boolean;
     } & DefaultSession['user']; // 기존 name, image 등을 유지하기 위함
   }
 
@@ -30,7 +29,6 @@ declare module 'next-auth' {
     profileImgPath?: string | null;
     createdAt?: Date;
     updatedAt?: Date;
-    isNewUser?: boolean;
   }
 }
 
