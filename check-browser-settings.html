@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>브라우저 알림 설정 확인</title>
+</head>
+<body>
+    <h1>🔍 브라우저 알림 설정 확인</h1>
+    <div id="status"></div>
+    <button onclick="checkAllSettings()">전체 설정 확인</button>
+    <button onclick="testDirectNotification()">직접 알림 테스트</button>
+    
+    <script>
+        function log(msg) {
+            document.getElementById('status').innerHTML += '<div>' + msg + '</div>';
+            console.log(msg);
+        }
+        
+        function checkAllSettings() {
+            document.getElementById('status').innerHTML = '';
+            
+            log('🔍 브라우저 알림 설정 확인 중...');
+            
+            // 1. 기본 지원 확인
+            if ('Notification' in window) {
+                log('✅ Notification API 지원됨');
+            } else {
+                log('❌ Notification API 지원 안됨');
+                return;
+            }
+            
+            // 2. 권한 상태 확인
+            log('📋 현재 알림 권한: ' + Notification.permission);
+            
+            if (Notification.permission === 'granted') {
+                log('✅ 알림 권한 허용됨');
+            } else if (Notification.permission === 'denied') {
+                log('❌ 알림 권한 거부됨 - 브라우저 설정에서 수동으로 허용하세요');
+            } else {
+                log('⏳ 알림 권한 대기 중');
+            }
+            
+            // 3. Service Worker 확인
+            if ('serviceWorker' in navigator) {
+                log('✅ Service Worker 지원됨');
+                
+                navigator.serviceWorker.getRegistration('/sw.js').then(reg => {
+                    if (reg) {
+                        log('✅ Service Worker 등록됨: ' + reg.scope);
+                    } else {
+                        log('❌ Service Worker 등록 안됨');
+                    }
+                });
+            } else {
+                log('❌ Service Worker 지원 안됨');
+            }
+            
+            // 4. 브라우저 포커스 상태
+            log('📱 현재 페이지 포커스: ' + (document.hasFocus() ? 'Yes' : 'No'));
+            if (document.hasFocus()) {
+                log('⚠️ 알림 테스트를 위해 다른 탭으로 전환하거나 브라우저를 최소화하세요');
+            }
+        }
+        
+        async function testDirectNotification() {
+            if (Notification.permission !== 'granted') {
+                const permission = await Notification.requestPermission();
+                if (permission !== 'granted') {
+                    log('❌ 알림 권한이 필요합니다');
+                    return;
+                }
+            }
+            
+            log('🧪 직접 알림 테스트 시작...');
+            log('💡 이 탭을 다른 탭으로 전환하세요!');
+            
+            setTimeout(() => {
+                const notification = new Notification('🧪 직접 테스트 알림', {
+                    body: '이 알림이 보이면 브라우저 설정이 정상입니다!',
+                    icon: '/images/icons/notification-icon.png',
+                    requireInteraction: true
+                });
+                
+                notification.onclick = () => {
+                    log('📱 알림 클릭됨');
+                    notification.close();
+                    window.focus();
+                };
+                
+                log('📤 직접 알림 발송됨');
+            }, 2000);
+        }
+        
+        // 페이지 로드 시 자동 확인
+        window.onload = checkAllSettings;
+    </script>
+</body>
+</html>
