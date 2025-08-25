@@ -233,8 +233,6 @@ export const authOptions = {
       // 소셜 로그인 처리
       if (account?.provider === 'google' || account?.provider === 'kakao') {
         const provider = account.provider as SocialProvider;
-
-        // Google과 Kakao의 profile 구조가 다르므로 통합 처리
         const userInfo: SocialUserInfo = {
           email: user.email || '',
           name: user.name || '',
@@ -292,8 +290,14 @@ export const authOptions = {
       }
       return session;
     },
+    
+    async redirect({ url, baseUrl, session }: { url: string; baseUrl: string; session: Session }) {
 
-    async redirect({ url, baseUrl }: { url: string; baseUrl: string }) {
+      // (로컬 및 소셜 로그인 후)닉네임이 있으면 대시보드로 리다이렉트
+      if (session?.user?.nickname) {
+        const dashboardUrl = `${baseUrl}/user/dashboard/${session.user.nickname}`;
+        return dashboardUrl;
+      }
 
       // 로그인 후 리다이렉트
       if (url.startsWith('/')) {
