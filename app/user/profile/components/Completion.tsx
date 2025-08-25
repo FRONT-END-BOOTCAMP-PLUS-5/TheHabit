@@ -133,7 +133,7 @@ export const CompletionComponent = ({
         id='btn_section'
         className='flex justify-center gap-[10px] mb-[10px] font-semibold text-[12px]'
       >
-        {USER_ROUTINE_COMPLETION_BTN.map((item, _) => {
+        {USER_ROUTINE_COMPLETION_BTN.map(item => {
           const isSelected = getSelectedCategory === item.id;
           const selectedClass = isSelected ? CATEGORY_COLOR[item.id] : 'bg-white text-[#333]';
 

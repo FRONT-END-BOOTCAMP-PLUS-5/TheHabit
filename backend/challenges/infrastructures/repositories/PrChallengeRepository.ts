@@ -25,7 +25,8 @@ export class PrChallengeRepository implements IChallengeRepository {
       createdChallenge.userId,
       createdChallenge.categoryId,
       createdChallenge.active,
-      createdChallenge.completion_progress
+      createdChallenge.completion_progress,
+      createdChallenge.id
     );
   }
 

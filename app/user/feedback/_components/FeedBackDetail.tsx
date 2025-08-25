@@ -7,7 +7,7 @@ import { useGenerateFeedback } from '@/libs/hooks/feedback-hooks/useGenerateFeed
 import { useRouter } from 'next/navigation';
 import React, { useState } from 'react';
 
-export const FeedBackDetail = ({ nickname }: { nickname: string }) => {
+export const FeedBackDetail: React.FC<{ nickname: string }> = ({ nickname }) => {
   const { data } = useGetDashboardByNickname(nickname || '');
   const router = useRouter();
 

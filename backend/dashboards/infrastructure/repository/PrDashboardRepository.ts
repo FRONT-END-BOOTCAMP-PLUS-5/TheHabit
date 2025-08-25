@@ -2,7 +2,7 @@ import { IDashboardRepository } from '@/backend/dashboards/domain/repository/IDa
 import { Dashboard } from '@/backend/dashboards/domain/entity/Dashboard';
 import { Challenge } from '@/backend/challenges/domains/entities/Challenge';
 import { Routine } from '@/backend/routines/domains/entities/routine';
-import { RoutineCompletion } from '@/backend/routine-completions/domains/entities/routine-completion/routineCompletion';
+import { RoutineCompletion } from '@/backend/routine-completions/domains/entities/routineCompletion';
 import prisma from '@/public/utils/prismaClient';
 
 export class PrDashboardRepository implements IDashboardRepository {
@@ -21,6 +21,17 @@ export class PrDashboardRepository implements IDashboardRepository {
                 },
               },
               category: true, // 챌린지 카테고리 정보도 함께
+            },
+            select: {
+              id: true,
+              name: true,
+              createdAt: true,
+              endAt: true,
+              color: true,
+              userId: true,
+              categoryId: true,
+              active: true,
+              completion_progress: true,
             },
           },
         },
@@ -56,6 +67,17 @@ export class PrDashboardRepository implements IDashboardRepository {
               },
               category: true,
             },
+            select: {
+              id: true,
+              name: true,
+              createdAt: true,
+              endAt: true,
+              color: true,
+              userId: true,
+              categoryId: true,
+              active: true,
+              completion_progress: true,
+            },
           },
         },
       });
@@ -83,6 +105,7 @@ export class PrDashboardRepository implements IDashboardRepository {
       userId: string;
       categoryId: number;
       active: boolean;
+      completion_progress: string;
       routines: Array<{
         id: number;
         routineTitle: string;
@@ -118,7 +141,7 @@ export class PrDashboardRepository implements IDashboardRepository {
         challengeData.userId,
         challengeData.categoryId,
         challengeData.active,
-        'in_progress', // completionProgress 기본값
+        challengeData.completion_progress || 'in_progress',
         challengeData.id // id
       )
     );
@@ -167,7 +190,7 @@ export class PrDashboardRepository implements IDashboardRepository {
         routineData.completions.forEach(completionData => {
           const completion = new RoutineCompletion(
             completionData.id,
-            "",
+            '',
             completionData.routineId,
             completionData.createdAt,
             completionData.proofImgUrl,

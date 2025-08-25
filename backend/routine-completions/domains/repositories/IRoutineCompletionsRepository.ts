@@ -6,6 +6,9 @@ export interface IRoutineCompletionsRepository {
     routineCompletion: Omit<RoutineCompletion, 'id' | 'createdAt'>
   ): Promise<RoutineCompletion>;
 
+  // 이미지 업로드
+  uploadImage(file: File): Promise<{ imageUrl: string; key: string }>;
+
   // 닉네임으로 루틴 완료 생성
   createByNickname(request: {
     nickname: string;

@@ -2,7 +2,7 @@
 import { ProfileImage } from '@/app/_components/profile-images/ProfileImage';
 import Image from 'next/image';
 import { Button } from '@/app/user/profile/components/Button';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { getKoreanDateFromDate } from '@/public/utils/dateUtils';
 import { REVIEW_ARR, REVIEW_EMOTION } from '@/public/consts/userCompletionIcon';
 import {
@@ -44,7 +44,7 @@ const UserRoutineCompletion = ({
     return getKoreanDateFromDate(date);
   };
 
-  const getReviewEmoji = async () => {
+  const getReviewEmoji = useCallback(async () => {
     const response = await getUserRoutineCompletionReview(nickname, routineCompletionId);
     const reviews = response.data || [];
     setReviewEmotion([...reviews]);
@@ -54,11 +54,11 @@ const UserRoutineCompletion = ({
       .map(item => item.reviewContent);
 
     setSelectedEmojis(userSelected);
-  };
+  }, [nickname, routineCompletionId, userInfo?.nickname]);
 
   useEffect(() => {
     getReviewEmoji();
-  }, []);
+  }, [getReviewEmoji]);
 
   const selectEmoji = async (explain: string) => {
     const isSelected = selectedEmojis.includes(explain);
@@ -98,10 +98,6 @@ const UserRoutineCompletion = ({
       return `${visibleUsers},${' '} 그외${remainingCount}명`;
     }
   };
-
-  useEffect(() => {
-    getReviewEmoji();
-  }, []);
 
   return (
     <section id='user_routine_completion_modal_wrapper' className='pb-2'>

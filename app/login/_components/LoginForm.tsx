@@ -10,6 +10,7 @@ import { useRouter } from 'next/navigation';
 import { SocialLogin } from '@/app/login/_components/SocialLogin';
 import { signIn } from 'next-auth/react';
 import { useGetUserInfo } from '@/libs/hooks/user-hooks/useGetUserInfo';
+import { AxiosError } from 'axios';
 
 interface ILoginForm {
   email: string;
@@ -36,7 +37,6 @@ export const LoginForm = () => {
 
   // 이미 로그인된 경우 메인 페이지로 리다이렉트
   useEffect(() => {
-
     const nickname = userInfo?.nickname;
     if (userInfo && !isUserInfoLoading) {
       router.push(`/user/dashboard/${nickname}`);
@@ -62,6 +62,10 @@ export const LoginForm = () => {
         setError('로그인 처리 중 예상치 못한 오류가 발생했습니다.');
       }
     } catch (error) {
+      if (error instanceof AxiosError) {
+        // 음 여기다 뭐넣지...
+        alert(error.response?.data.message);
+      }
       setError('로그인 처리 중 오류가 발생했습니다.');
     } finally {
       setIsLoading(false);
@@ -91,7 +95,6 @@ export const LoginForm = () => {
                   },
                 }}
                 render={({ field }) => {
-
                   return (
                     <CustomInput
                       {...field}
@@ -99,7 +102,6 @@ export const LoginForm = () => {
                       placeholder={item.placeholder}
                       label={item.label}
                       className='w-full h-16 login-input'
-                      labelStyle='text-base font-bold'
                     />
                   );
                 }}

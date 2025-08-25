@@ -19,7 +19,7 @@ interface FeedBackListProps {
   nickname?: string;
 }
 
-export const FeedBackList = ({ nickname: nicknameProp }: FeedBackListProps) => {
+export const FeedBackList: React.FC<FeedBackListProps> = ({ nickname: nicknameProp }) => {
   const { userInfo } = useGetUserInfo();
   const nickname = nicknameProp ?? userInfo?.nickname;
   const { data: dashBoardData, isLoading } = useGetDashboardByNickname(nickname || '');
