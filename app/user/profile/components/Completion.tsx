@@ -84,7 +84,11 @@ export const CompletionComponent = ({
     contentToRender = (
       <div className='grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 gap-1 overflow-y-scroll scroll-smooth max-h-[450px]'>
         {COMPLETION_SKELETON.map((_, idx) => (
-          <Skeleton key={idx} width={'w-[144px]'} height={'h-[144px]'} />
+          <Skeleton
+            key={idx}
+            width={'w-[144px]  max-sm:w-[186px]'}
+            height={'h-[144px] max-sm:h-[186px]'}
+          />
         ))}
       </div>
     );
