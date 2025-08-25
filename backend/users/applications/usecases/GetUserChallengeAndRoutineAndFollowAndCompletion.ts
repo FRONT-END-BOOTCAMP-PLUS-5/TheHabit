@@ -22,7 +22,7 @@ export class GetUserChallengeAndRoutineAndFollowAndCompletion {
 
           return {
             ...challenge,
-            durationInDays: durationInDays + 1,
+            durationInDays: durationInDays,
           };
         });
 

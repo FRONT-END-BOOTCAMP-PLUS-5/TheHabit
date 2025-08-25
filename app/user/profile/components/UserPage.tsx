@@ -118,10 +118,23 @@ export const UserPage = ({
                   <TextSkeleton lines={2} className='mb-2' />
                 ) : (
                   <>
-                    <p className='font-bold text-xl sm:text-[19px] text-left truncate w-[130px]'>
-                      {getUserData?.username}
-                    </p>
-                    <p className='font-semibold mb-3 text-xs sm:text-[13px] w-[130px] text-[#CCC] text-left truncate'>{`${getUserData?.nickname ? '(' + getUserData?.nickname + ')' : ''}`}</p>
+                    <div className='relative group'>
+                      <span className='font-bold text-xl sm:text-[19px] text-left block w-[130px] truncate'>
+                        {getUserData?.username}
+                      </span>
+                      {getUserData?.username && (
+                        <span
+                          className='absolute top-full left-1/2 -translate-x-1/2 mt-2
+                     invisible opacity-0 group-hover:visible group-hover:opacity-100 transition-opacity duration-300
+                     bg-gray-800 text-white text-xs rounded py-1 px-2 z-50 whitespace-nowrap'
+                        >
+                          {getUserData?.username}
+                        </span>
+                      )}
+                    </div>
+                    <p className='font-semibold mb-3 text-xs sm:text-[13px] w-[130px] text-[#CCC] text-left truncate'>{`${
+                      getUserData?.nickname ? '(' + getUserData?.nickname + ')' : ''
+                    }`}</p>{' '}
                   </>
                 )}
                 <div
