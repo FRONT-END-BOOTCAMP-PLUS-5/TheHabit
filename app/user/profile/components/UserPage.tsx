@@ -40,7 +40,7 @@ export const UserPage = ({
     setIsLoading(true);
     const response = await getUserChallengeAndRoutineAndFollowAndCompletion(userNickname || '');
     if (response?.data) {
-      setUserData({ ...response.data });
+      setUserData({ ...response.data, nickname: decodeURIComponent(response.data.nickname) });
       setIsLoading(false);
     }
   }, [userNickname]);
@@ -86,140 +86,170 @@ export const UserPage = ({
 
   return (
     <main>
-      <section id='top' className='flex mt-10 justify-center items-center px-5'>
-        <section id='top_wrapper' className='flex flex-col  w-[100%]'>
+      <section id='top' className='flex mt-10 justify-center px-4 sm:px-5'>
+        <section id='top_wrapper' className='flex flex-col w-full max-w-lg'>
           {sessionNickname != userNickname && <BackComponent />}
-          <div id='user_wrapper' className='flex text-center items-end justify-between px-5'>
-            {isLoading ? (
-              <AvatarSkeleton size={'large'} className='w-[120px] h-[120px]' />
-            ) : getUserData?.profileImg ? (
-              <div className='w-[120px]'>
-                <ProfileImage
-                  imageSrc={getUserData?.profileImg}
-                  wrapperWidth={30}
-                  wrapperHeight={30}
-                />
-              </div>
-            ) : (
-              <NoneProfile
-                className={`w-[120] h-[120] rounded-full overflow-hidden border-primary border-2`}
-              />
-            )}
-
-            <div
-              id='challenge'
-              className={`relative ${sessionNickname === userNickname ? '' : 'ml-2'}`}
-              ref={selectWrapperRef}
-            >
+          <div
+            id='user_wrapper'
+            className='flex flex-col items-center sm:flex-row sm:items-end justify-between gap-4 px-1 sm:px-5'
+          >
+            <div className='flex items-end gap-4 w-full sm:w-auto max-sm:px-[40px]'>
               {isLoading ? (
-                <TextSkeleton lines={2} className='mb-[30px]' />
+                <AvatarSkeleton
+                  size={'large'}
+                  className='w-[100px] h-[100px] sm:w-[120px] sm:h-[120px] shrink-0'
+                />
+              ) : getUserData?.profileImg ? (
+                <div className='w-[120px] h-[100px] sm:w-[120px] sm:h-[120px] shrink-0'>
+                  <ProfileImage
+                    imageSrc={getUserData?.profileImg}
+                    wrapperWidth={30}
+                    wrapperHeight={30}
+                  />
+                </div>
               ) : (
-                <>
-                  <p className='font-bold text-[19px] text-left'>{getUserData?.username}</p>
-                  <p className='font-semibold mb-5 text-[13px] text-[#CCC] text-left'>{`${getUserData?.nickname ? '(' + getUserData?.nickname + ')' : ''}`}</p>
-                </>
+                <NoneProfile
+                  className={`w-[100px] h-[100px] sm:w-[120px] sm:h-[120px] rounded-full overflow-hidden border-primary border-2 shrink-0`}
+                />
               )}
 
-              <div className='cursor-pointer w-[110px] min-h-[54px] line-clamp-2'>
+              <div id='user_text_and_challenge' className='flex flex-col flex-grow min-w-0 '>
                 {isLoading ? (
-                  <TextSkeleton lines={2} className='w-[100px] mt-[12px]' />
-                ) : getUserData.challenges.length > 0 ? (
-                  <div
-                    onClick={() => {
-                      setShow(prev => !prev);
-                    }}
-                  >
-                    <span className='font-bold text-[15px]'>
-                      {getSelectedChallengeName ? `${getSelectedChallengeName}` : '챌린지'}
-                    </span>
-                    <br />
-                    <span className='font-bold [word-break: break-all]'>
-                      {getSelectedChallengeName && '챌린지 선택'}
-                    </span>
-                  </div>
+                  <TextSkeleton lines={2} className='mb-2' />
                 ) : (
                   <>
-                    <span className='font-bold'>아직 챌린지가</span>
-                    <br />
-                    <span className='font-bold'>없어요</span>
+                    <div className='relative group'>
+                      <span className='font-bold text-xl sm:text-[19px] text-left block w-[130px] truncate'>
+                        {getUserData?.username}
+                      </span>
+                      {getUserData?.username && (
+                        <span
+                          className='absolute top-full left-1/2 -translate-x-1/2 mt-2
+                     invisible opacity-0 group-hover:visible group-hover:opacity-100 transition-opacity duration-300
+                     bg-gray-800 text-white text-xs rounded py-1 px-2 z-50 whitespace-nowrap'
+                        >
+                          {getUserData?.username}
+                        </span>
+                      )}
+                    </div>
+                    <p className='font-semibold mb-3 text-xs sm:text-[13px] w-[130px] text-[#CCC] text-left truncate'>{`${
+                      getUserData?.nickname ? '(' + getUserData?.nickname + ')' : ''
+                    }`}</p>{' '}
                   </>
                 )}
+                <div
+                  id='challenge'
+                  className={`relative ${sessionNickname === userNickname ? '' : 'ml-0'} w-full`}
+                  ref={selectWrapperRef}
+                >
+                  <div className='w-full min-h-[54px] line-clamp-2'>
+                    {isLoading ? (
+                      <TextSkeleton lines={2} className='w-[100px] mt-2' />
+                    ) : getUserData.challenges.length > 0 ? (
+                      <div
+                        className='max-w-[142px] cursor-pointer'
+                        onClick={() => {
+                          setShow(prev => !prev);
+                        }}
+                      >
+                        <span className='font-bold text-[15px]'>
+                          {getSelectedChallengeName ? `${getSelectedChallengeName}` : '챌린지'}
+                        </span>
+                        <br />
+                        <span className='font-bold [word-break: break-all] max-w-[130px] max-h-[82px]'>
+                          {getSelectedChallengeName && '챌린지 선택'}
+                        </span>
+                      </div>
+                    ) : (
+                      <>
+                        <span className='font-bold'>아직 챌린지가</span>
+                        <br />
+                        <span className='font-bold'>없어요</span>
+                      </>
+                    )}
+                  </div>
+                  {getShow && (
+                    <ChallengeSelectComponent
+                      getUserData={getUserData}
+                      selectedChallengeId={getSelectedChallengeId}
+                      onSelectChallenge={(id, name) => {
+                        setSelectedChallengeId(id);
+                        setSelectedChallengeName(name);
+                        setShow(false);
+                      }}
+                    />
+                  )}
+                </div>
               </div>
-              {getShow && (
-                <ChallengeSelectComponent
-                  getUserData={getUserData}
-                  selectedChallengeId={getSelectedChallengeId}
-                  onSelectChallenge={(id, name) => {
-                    setSelectedChallengeId(id);
-                    setSelectedChallengeName(name);
-                    setShow(false);
+            </div>
+            <div
+              id='follow_counts'
+              className='flex justify-around w-full sm:w-auto mt-4 sm:mt-0 gap-4 sm:gap-6'
+            >
+              {isLoading ? (
+                <TextSkeleton lines={2} className='w-[60px]' />
+              ) : sessionNickname === userNickname ? (
+                <div
+                  className='cursor-pointer text-center'
+                  onClick={() => {
+                    const query = new URLSearchParams({
+                      nickname: getUserData?.nickname || '',
+                      t: 'follower',
+                    }).toString();
+                    router.push(`/user/follow?${query}`);
                   }}
-                />
+                >
+                  <span className='font-bold text-lg'>{getUserData?.followers?.length}</span>
+                  <br />
+                  <span className='text-sm'>팔로워</span>
+                </div>
+              ) : (
+                <div className='text-[10px] text-[#ccc] text-center'>
+                  <span>
+                    유저의 팔로워를
+                    <br />
+                    이용하실 수 없어요.
+                  </span>
+                </div>
+              )}
+              {isLoading ? (
+                <TextSkeleton lines={2} className='w-[60px]' />
+              ) : sessionNickname === userNickname ? (
+                <div
+                  className='cursor-pointer text-center'
+                  onClick={() => {
+                    const query = new URLSearchParams({
+                      nickname: getUserData?.nickname || '',
+                      t: 'following',
+                    }).toString();
+                    router.push(`/user/follow?${query}`);
+                  }}
+                >
+                  <span className='font-bold text-lg'>{getUserData?.following?.length}</span>
+                  <br />
+                  <span className='text-sm'>팔로잉</span>
+                </div>
+              ) : (
+                <div className='text-[10px] text-[#ccc] text-center'>
+                  <span>
+                    유저의 팔로잉을
+                    <br />
+                    이용하실 수 없어요.
+                  </span>
+                </div>
               )}
             </div>
-            {isLoading ? (
-              <TextSkeleton lines={2} className='w-[60px]' />
-            ) : sessionNickname === userNickname ? (
-              <div
-                className='cursor-pointer mr-[20px]'
-                onClick={() => {
-                  const query = new URLSearchParams({
-                    nickname: getUserData?.nickname || '',
-                    t: 'follower',
-                  }).toString();
-                  router.push(`/user/follow?${query}`);
-                }}
-              >
-                <span className='font-bold'>{getUserData?.followers?.length}</span>
-                <br />
-                <span>팔로워</span>
-              </div>
-            ) : (
-              <div className='text-[10px] text-[#ccc]'>
-                <span>
-                  유저의 팔로워를
-                  <br />
-                  이용하실 수 없어요.
-                </span>
-              </div>
-            )}
-            {isLoading ? (
-              <TextSkeleton lines={2} className='w-[60px]' />
-            ) : sessionNickname === userNickname ? (
-              <div
-                className='cursor-pointer'
-                onClick={() => {
-                  const query = new URLSearchParams({
-                    nickname: getUserData?.nickname || '',
-                    t: 'following',
-                  }).toString();
-                  router.push(`/user/follow?${query}`);
-                }}
-              >
-                <span className='font-bold'>{getUserData?.following?.length}</span>
-                <br />
-                <span>팔로잉</span>
-              </div>
-            ) : (
-              <div className='text-[10px] text-[#ccc]'>
-                <span>
-                  유저의 팔로잉을
-                  <br />
-                  이용하실 수 없어요.
-                </span>
-              </div>
-            )}
           </div>
           <div
             id='button_wrapper'
-            className={`flex gap-10 mt-10 px-5 ${sessionNickname != userNickname ? 'justify-end' : 'justify-center'}`}
+            className={`flex flex-col gap-3 mt-8 px-1 sm:px-5 sm:flex-row ${sessionNickname != userNickname ? 'justify-end' : 'justify-center'}`}
           >
             {isLoading ? (
-              <ButtonSkeleton width={'w-[200px]'} className='h-[44px] rounded-[10px]' />
+              <ButtonSkeleton width={'w-full sm:w-[200px]'} className='h-[44px] rounded-[10px]' />
             ) : (
               <Button
                 className={
-                  'w-[200px] z-20 bg-[#FFC70A] text-white px-4 py-2 rounded-[10px] text-lg font-bold shadow-lg cursor-pointer hover:animate-float transition-all duration-300 hover:scale-110'
+                  'w-full sm:w-[200px] z-20 bg-[#FFC70A] text-white px-4 py-2 rounded-[10px] text-lg font-bold shadow-lg cursor-pointer hover:animate-float transition-all duration-300 hover:scale-105 sm:hover:scale-110'
                 }
                 onClick={() => {
                   router.push(`/user/dashboard/${userNickname}`);
@@ -229,11 +259,11 @@ export const UserPage = ({
               </Button>
             )}
             {isLoading ? (
-              <ButtonSkeleton width={'w-[200px]'} className='h-[44px] rounded-[10px]' />
+              <ButtonSkeleton width={'w-full sm:w-[200px]'} className='h-[44px] rounded-[10px]' />
             ) : sessionNickname === userNickname ? (
               <Button
                 className={
-                  'w-[200px] z-20 bg-[#48a9a0] text-white px-4 py-2 rounded-[10px] text-lg font-bold shadow-lg cursor-pointer hover:animate-float transition-all duration-300 hover:scale-110'
+                  'w-full sm:w-[200px] z-20 bg-[#48a9a0] text-white px-4 py-2 rounded-[10px] text-lg font-bold shadow-lg cursor-pointer hover:animate-float transition-all duration-300 hover:scale-105 sm:hover:scale-110'
                 }
                 onClick={() => {
                   router.push(`/user/profile/edit/${sessionNickname}`);
@@ -245,7 +275,8 @@ export const UserPage = ({
               <></>
             )}
           </div>
-          <div id='routine_wrapper' className='flex flex-col py-8 gap-1'>
+
+          <div id='routine_wrapper' className='flex flex-col py-8 gap-1 px-1 sm:px-5 pt-0'>
             <RoutineComponent getUserData={filteredUserData} isLoading={isLoading} />
           </div>
           <div id='achievement_wrapper'>
@@ -253,7 +284,7 @@ export const UserPage = ({
           </div>
         </section>
       </section>
-      <section id='bottom' className='px-5 h-[550px]'>
+      <section id='bottom' className='px-4 sm:px-5 h-auto min-h-[550px]'>
         <CompletionComponent
           profileImg={getUserData?.profileImg || null}
           username={getUserData?.username || ''}
