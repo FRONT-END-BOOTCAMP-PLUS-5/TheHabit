@@ -1,69 +1,59 @@
+import React from 'react';
+
 interface ChallengeBadgeProps {
-  badge: string;
-  size?: 'sm' | 'md' | 'lg';
-  showAnimation?: boolean;
+  challengeType: '21일' | '66일' | '무제한';
+  className?: string;
 }
 
-export default function ChallengeBadge({
-  badge,
-  size = 'md',
-  showAnimation = true,
-}: ChallengeBadgeProps) {
-  const getBadgeStyles = (badge: string) => {
-    switch (badge) {
+const ChallengeBadge: React.FC<ChallengeBadgeProps> = ({ challengeType, className = '' }) => {
+  const getBadgeStyle = () => {
+    switch (challengeType) {
       case '21일':
         return {
-          className:
-            'bg-gradient-to-r from-gray-300 to-gray-500 border-gray-200 shadow-gray-200/50',
-          boxShadow: 'rgba(156, 163, 175, 0.5)',
+          background: 'linear-gradient(135deg, #c0c0c0, #e5e5e5)',
+          borderColor: '#a0a0a0',
+          textColor: '#4a5568',
         };
       case '66일':
         return {
-          className:
-            'bg-gradient-to-r from-yellow-400 to-yellow-600 border-yellow-300 shadow-yellow-300/50',
-          boxShadow: 'rgba(234, 179, 8, 0.5)',
+          background: 'linear-gradient(135deg, #ffd700, #ffed4e)',
+          borderColor: '#d4af37',
+          textColor: '#744210',
         };
       case '무제한':
         return {
-          className: 'bg-gradient-to-r from-red-400 to-red-600 border-red-300 shadow-red-300/50',
-          boxShadow: 'rgba(239, 68, 68, 0.5)',
+          background: 'linear-gradient(135deg, #ff6b6b, #ff8e8e)',
+          borderColor: '#e53e3e',
+          textColor: '#742a2a',
         };
       default:
         return {
-          className:
-            'bg-gradient-to-r from-gray-400 to-gray-600 border-gray-300 shadow-gray-300/50',
-          boxShadow: 'rgba(156, 163, 175, 0.5)',
+          background: 'linear-gradient(135deg, #c0c0c0, #e5e5e5)',
+          borderColor: '#a0a0a0',
+          textColor: '#4a5568',
         };
     }
   };
 
-  const getSizeClasses = (size: string) => {
-    switch (size) {
-      case 'sm':
-        return 'px-1.5 py-0.5 text-xs';
-      case 'md':
-        return 'px-2.5 py-0.5 text-sm';
-      case 'lg':
-        return 'px-3 py-1 text-base';
-      default:
-        return 'px-2.5 py-0.5 text-sm';
-    }
-  };
-
-  const styles = getBadgeStyles(badge);
-  const sizeClasses = getSizeClasses(size);
+  const style = getBadgeStyle();
 
   return (
-    <span
-      className={`${sizeClasses} font-bold text-white rounded-full shadow-lg border-2 ${
-        showAnimation ? 'animate-pulse' : ''
-      } ${styles.className}`}
-      style={{
-        boxShadow: `0 0 10px ${styles.boxShadow}`,
-        animation: showAnimation ? 'glow 2s ease-in-out infinite alternate' : 'none',
-      }}
+    <div
+      className={`inline-flex items-center justify-center px-3 py-1 rounded-full text-xs font-semibold shadow-lg min-w-[4rem] ${className}`}
+      style={
+        {
+          background: style.background,
+          color: style.textColor,
+          border: `2px solid ${style.borderColor}`,
+          boxShadow: `0 0 10px ${style.borderColor}40, inset 0 1px 0 ${style.borderColor}20`,
+          animation: 'glow 2s ease-in-out infinite',
+          '--glow-color': '#ffd700', // 노란색 glow 효과
+        } as React.CSSProperties
+      }
     >
-      {badge}
-    </span>
+      {challengeType}
+    </div>
   );
-}
+};
+
+export default ChallengeBadge;

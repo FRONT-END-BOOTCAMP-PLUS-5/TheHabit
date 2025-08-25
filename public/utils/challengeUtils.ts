@@ -147,6 +147,42 @@ export const detectChallengeCompletion = (
 };
 
 /**
+ * 챌린지 타입을 결정하는 함수 (21일, 66일, 무제한)
+ * @param createdAt 챌린지 시작일
+ * @param endAt 챌린지 종료일
+ * @returns 챌린지 타입
+ */
+export const getChallengeType = (createdAt: string, endAt: string): '21일' | '66일' | '무제한' => {
+  try {
+    const startDate = new Date(createdAt);
+    const endDate = new Date(endAt);
+
+    // 날짜만 비교 (시간 제거)
+    const startDateOnly = new Date(
+      startDate.getFullYear(),
+      startDate.getMonth(),
+      startDate.getDate()
+    );
+    const endDateOnly = new Date(
+      endDate.getFullYear(),
+      endDate.getMonth(),
+      endDate.getDate()
+    );
+
+    const totalDays = Math.ceil(
+      (endDateOnly.getTime() - startDateOnly.getTime()) / (1000 * 60 * 60 * 24)
+    ) + 1;
+
+    if (totalDays <= 21) return '21일';
+    if (totalDays <= 66) return '66일';
+    return '무제한';
+  } catch (error) {
+    console.error('챌린지 타입 결정 오류:', error);
+    return '21일'; // 기본값
+  }
+};
+
+/**
  * 챌린지 완료 상태를 확인하고 연장 모달 표시 여부를 결정하는 함수
  * @param challenge 챌린지 정보
  * @param routines 해당 챌린지에 속한 루틴들

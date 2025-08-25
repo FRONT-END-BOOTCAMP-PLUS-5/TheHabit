@@ -64,17 +64,23 @@
 
 /* 뱃지 반짝임 효과 */
 @keyframes glow {
-  from {
+  0% {
     box-shadow:
-      0 0 2px currentColor,
-      0 0 4px currentColor,
-      0 0 6px currentColor;
+      0 0 2px #ffd700,
+      0 0 4px #ffd700,
+      0 0 6px #ffd700;
   }
-  to {
+  50% {
     box-shadow:
-      0 0 4px currentColor,
-      0 0 8px currentColor,
-      0 0 12px currentColor;
+      0 0 4px #ffd700,
+      0 0 8px #ffd700,
+      0 0 12px #ffd700;
+  }
+  100% {
+    box-shadow:
+      0 0 2px #ffd700,
+      0 0 4px #ffd700,
+      0 0 6px #ffd700;
   }
 }
 

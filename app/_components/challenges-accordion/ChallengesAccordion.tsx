@@ -12,6 +12,8 @@ import { ReadRoutineResponseDto } from '@/backend/routines/applications/dtos/Rou
 import { RoutineCompletionDto } from '@/backend/routine-completions/applications/dtos/RoutineCompletionDto';
 import { CHALLENGE_COLORS } from '@/public/consts/challengeColors';
 import ChallengesAccordionContent from '@/app/_components/challenges-accordion/ChallengesAccordionContent';
+import ChallengeBadge from '@/app/_components/challenges-accordion/ChallengeBadge';
+import { getChallengeType } from '@/public/utils/challengeUtils';
 import { StaticImageData } from 'next/image';
 
 // ChallengesAccordion 컴포넌트는 피드백 및 분석에도 사용되므로 공통으로 분리하였습니다.
@@ -127,6 +129,9 @@ const ChallengesAccordion: React.FC<ChallengesAccordionProps> = ({
 
   const progressInfo = getChallengeProgressDays();
 
+  // 챌린지 타입 결정 (21일, 66일, 무제한)
+  const challengeType = getChallengeType(challenge.createdAt, challenge.endAt);
+
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const contentRef = useRef<HTMLDivElement>(null);
   const [contentHeight, setContentHeight] = useState<number>(0);
@@ -176,12 +181,15 @@ const ChallengesAccordion: React.FC<ChallengesAccordionProps> = ({
                   {challenge.name}
                 </div>
                 {/* 챌린지 진행 일수 표시 */}
-                <div className='text-xs text-white/80'>
+                <div className='flex items-center gap-2 text-xs text-white/80'>
                   {progressInfo.status === 'not-started' && <span>시작 예정</span>}
                   {progressInfo.status === 'in-progress' && (
-                    <span>
-                      <span className='font-bold'>{progressInfo.days}일째</span> 진행 중
-                    </span>
+                    <>
+                      <ChallengeBadge challengeType={challengeType} />
+                      <span>
+                        <span className='font-bold'>{progressInfo.days}일째</span> 진행 중
+                      </span>
+                    </>
                   )}
                   {progressInfo.status === 'completed' && <span>완료됨</span>}
                   {progressInfo.status === 'error' && <span>진행 정보 오류</span>}
