@@ -4,7 +4,7 @@ import { PushSubscription } from '@/backend/notifications/domains/entities/PushS
 export interface PushSubscriptionDto {
   readonly id: number;
   readonly endpoint: string;
-  readonly userId: string;
+  readonly userId: string | null;
   readonly createdAt: string;
 }
 
@@ -19,7 +19,7 @@ export interface CreatePushSubscriptionRequestDto {
 // 구독 해제 요청 DTO
 export interface UnsubscribePushNotificationRequestDto {
   readonly endpoint: string;
-  readonly userId: string;
+  readonly userId: string | null;
 }
 
 // PushSubscription Entity에서 DTO로 변환하는 유틸리티 함수들
@@ -29,7 +29,7 @@ export class PushSubscriptionDtoMapper {
       id: subscription.id,
       endpoint: subscription.endpoint,
       userId: subscription.userId,
-      createdAt: subscription.createdAt.toISOString(),
+      createdAt: subscription.createdAt ? subscription.createdAt.toISOString() : new Date().toISOString(),
     };
   }
 

@@ -7,7 +7,7 @@ export class SendPushNotificationUseCase {
     private readonly pushNotificationService: IPushNotificationService
   ) {}
 
-  async execute(userId: string, payload: NotificationPayload): Promise<void> {
+  async execute(userId: string | null, payload: NotificationPayload): Promise<void> {
     try {
       const subscriptions = await this.pushSubscriptionRepo.findByUserId(userId);
       
@@ -29,9 +29,13 @@ export class SendPushNotificationUseCase {
         } catch (error) {
           console.error(`알림 전송 실패: ${userId}`, error);
           
-          if (error instanceof Error && error.message.includes('410')) {
+          // WebPushError의 statusCode가 410 (Gone)이면 만료된 구독
+          if (
+            (error && typeof error === 'object' && 'statusCode' in error && error.statusCode === 410) ||
+            (error instanceof Error && error.message.includes('410'))
+          ) {
+            console.log(`⚠️ 만료된 구독 발견, DB에서 삭제: ${subscription.endpoint.substring(0, 50)}...`);
             await this.pushSubscriptionRepo.deleteByEndpoint(subscription.endpoint);
-            console.log(`만료된 구독 삭제: ${subscription.endpoint}`);
           }
         }
       });

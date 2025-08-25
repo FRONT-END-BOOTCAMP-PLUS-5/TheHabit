@@ -24,18 +24,50 @@ export const NotificationSettings = () => {
 
     if (supported) {
       setPermission(Notification.permission);
+      // 초기 로딩 시에만 체크
       checkSubscriptionStatus();
     }
-  }, [isPushSupported]);
+  }, []); // 의존성 배열 비움 - 초기 로딩 시에만 실행
 
   const checkSubscriptionStatus = async () => {
     try {
-      const registration = await navigator.serviceWorker.getRegistration('/push-sw.js');
+      // Service Worker가 준비될 때까지 기다림
+      await navigator.serviceWorker.ready;
+      
+      const registration = await navigator.serviceWorker.getRegistration('/sw.js');
       
       if (registration) {
         const subscription = await registration.pushManager.getSubscription();
-        setIsSubscribed(!!subscription);
+        if (subscription) {
+          console.log('🔍 브라우저 구독 발견, 서버와 동기화 확인 중...');
+          // 서버에서도 구독이 유효한지 확인
+          try {
+            const response = await fetch('/api/notifications/check-subscription', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ endpoint: subscription.endpoint }),
+            });
+            const data = await response.json();
+            console.log('✅ 서버 구독 상태:', data.isSubscribed);
+            
+            if (!data.isSubscribed) {
+              console.log('⚠️ 서버와 불일치 - 브라우저 구독 제거');
+              await subscription.unsubscribe();
+              setIsSubscribed(false);
+            } else {
+              console.log('🎉 구독 상태 동기화 완료!');
+              setIsSubscribed(true);
+            }
+          } catch (error) {
+            console.error('🚨 서버 확인 실패:', error);
+            setIsSubscribed(false);
+          }
+        } else {
+          console.log('❌ 브라우저 구독 없음');
+          setIsSubscribed(false);
+        }
       } else {
+        console.log('❌ Service Worker 등록 없음');
         setIsSubscribed(false);
       }
     } catch (error) {
@@ -46,20 +78,48 @@ export const NotificationSettings = () => {
 
   const handleSubscribe = async () => {
     try {
-      await subscribeToNotifications();
+      console.log('🔔 구독 시작...');
+      const subscription = await subscribeToNotifications();
+      console.log('✅ 구독 성공, 상태를 true로 설정');
       setIsSubscribed(true);
       setPermission('granted');
+      
+      // 구독 성공 - 서버 API가 성공했으므로 상태는 true
+      console.log('🎉 구독 완료!');
     } catch (error) {
       console.error('구독 실패:', error);
+      setIsSubscribed(false);
     }
   };
 
   const handleUnsubscribe = async () => {
     try {
-      await unsubscribeFromNotifications();
+      console.log('🔕 구독 해제 시작...');
+      
+      // 먼저 브라우저 구독 제거
+      const registration = await navigator.serviceWorker.getRegistration('/sw.js');
+      if (registration) {
+        const subscription = await registration.pushManager.getSubscription();
+        if (subscription) {
+          await subscription.unsubscribe();
+          console.log('✅ 브라우저 구독 해제 완료');
+        }
+      }
+      
+      // 서버에서도 구독 제거 시도 (실패해도 무관)
+      try {
+        await unsubscribeFromNotifications();
+        console.log('✅ 서버 구독 해제 완료');
+      } catch (serverError) {
+        console.log('⚠️ 서버 구독 해제 실패 (무관):', serverError instanceof Error ? serverError.message : '알 수 없는 오류');
+      }
+      
+      console.log('✅ 구독 해제 완료, 상태 false로 설정');
       setIsSubscribed(false);
     } catch (error) {
       console.error('구독 해제 실패:', error);
+      // 에러가 발생해도 프론트엔드 상태는 초기화
+      setIsSubscribed(false);
     }
   };
 

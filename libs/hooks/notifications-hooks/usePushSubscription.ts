@@ -72,9 +72,23 @@ export const usePushSubscription = () => {
         throw new Error('알림 권한이 거부되었습니다.');
       }
 
-      // 3. 서비스 워커 등록
-      const registration = await navigator.serviceWorker.register('/push-sw.js');
+      // 3. 서비스 워커 등록 및 준비 대기
+      const registration = await navigator.serviceWorker.register('/sw.js');
       await navigator.serviceWorker.ready;
+      
+      // 서비스 워커가 활성 상태가 될 때까지 추가 대기
+      if (registration.active === null) {
+        await new Promise((resolve) => {
+          const checkActive = () => {
+            if (registration.active) {
+              resolve(void 0);
+            } else {
+              setTimeout(checkActive, 100);
+            }
+          };
+          checkActive();
+        });
+      }
 
       // 4. VAPID 공개 키 (환경변수에서 가져와야 함)
       const vapidPublicKey = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY;
@@ -96,6 +110,7 @@ export const usePushSubscription = () => {
         auth: subscriptionJson.keys!.auth!,
       });
 
+      console.log('📤 서버 구독 등록 완료, 구독 객체 반환');
       return subscription;
     } catch (error) {
       throw error;
@@ -105,7 +120,7 @@ export const usePushSubscription = () => {
   // 구독 해제
   const unsubscribeFromNotifications = async () => {
     try {
-      const registration = await navigator.serviceWorker.getRegistration('/push-sw.js');
+      const registration = await navigator.serviceWorker.getRegistration('/sw.js');
       if (!registration) {
         throw new Error('서비스 워커를 찾을 수 없습니다.');
       }

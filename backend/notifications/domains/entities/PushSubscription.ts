@@ -4,7 +4,7 @@ export class PushSubscription {
     public readonly endpoint: string,
     public readonly p256dh: string,
     public readonly auth: string,
-    public readonly userId: string,
+    public readonly userId: string | null,
     public readonly createdAt: Date
   ) {}
 }
