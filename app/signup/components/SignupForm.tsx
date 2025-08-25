@@ -19,7 +19,6 @@ interface ISignupForm {
 }
 
 export const SignUpForm = () => {
-  
   const methods = useForm<ISignupForm>({
     mode: 'onChange',
     defaultValues: {
@@ -51,7 +50,7 @@ export const SignUpForm = () => {
       formData.append('password', data.password);
       formData.append('username', data.username);
       formData.append('nickname', data.nickname);
-      
+
       if (data.profileFile) {
         formData.append('profileImage', data.profileFile);
       }
@@ -92,7 +91,6 @@ export const SignUpForm = () => {
                     label={item.label}
                     labelHtmlFor={item.name}
                     className='w-full h-16 login-input'
-                    labelStyle='text-base font-bold'
                   />
                 );
               }}

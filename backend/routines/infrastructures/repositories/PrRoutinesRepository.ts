@@ -1,6 +1,6 @@
+import { IRoutinesRepository } from '@/backend/routines/domains/repositories/IRoutinesRepository';
+import { Routine } from '@/backend/routines/domains/entities/routine';
 import prisma from '@/public/utils/prismaClient';
-import { IRoutinesRepository } from '../../domains/repositories/IRoutinesRepository';
-import { Routine } from '../../domains/entities/routine';
 
 export class PrRoutinesRepository implements IRoutinesRepository {
   async create(routine: Omit<Routine, 'id' | 'createdAt'>): Promise<Routine> {
@@ -14,15 +14,15 @@ export class PrRoutinesRepository implements IRoutinesRepository {
       },
     });
 
-    return {
-      id: createdRoutine.id,
-      routineTitle: createdRoutine.routineTitle,
-      alertTime: createdRoutine.alertTime,
-      emoji: createdRoutine.emoji,
-      challengeId: createdRoutine.challengeId,
-      createdAt: createdRoutine.createdAt,
-      updatedAt: createdRoutine.updatedAt,
-    };
+    return new Routine(
+      createdRoutine.id,
+      createdRoutine.routineTitle,
+      createdRoutine.alertTime,
+      createdRoutine.emoji,
+      createdRoutine.challengeId,
+      createdRoutine.createdAt,
+      createdRoutine.updatedAt
+    );
   }
 
   async createByNickname(request: {
@@ -32,9 +32,6 @@ export class PrRoutinesRepository implements IRoutinesRepository {
     challengeId: number;
     nickname: string;
   }): Promise<Routine> {
-    console.log('🔍 createByNickname 요청:', request);
-
-    // Challenge가 해당 nickname의 사용자 것인지 확인
     const challenge = await prisma.challenge.findFirst({
       where: {
         id: request.challengeId,
@@ -42,28 +39,11 @@ export class PrRoutinesRepository implements IRoutinesRepository {
           nickname: request.nickname,
         },
       },
-      include: {
-        user: {
-          select: {
-            nickname: true,
-          },
-        },
-      },
     });
 
     if (!challenge) {
-      console.log(
-        '❌ 챌린지 검증 실패 - challengeId:',
-        request.challengeId,
-        'nickname:',
-        request.nickname
-      );
-      throw new Error(
-        `챌린지 ID ${request.challengeId}는 사용자 '${request.nickname}'의 챌린지가 아닙니다.`
-      );
+      throw new Error(`챌린지 ID ${request.challengeId}는 사용자 '${request.nickname}'의 챌린지가 아닙니다.`);
     }
-
-    console.log('✅ 챌린지 검증 성공:', challenge);
 
     const createdRoutine = await prisma.routine.create({
       data: {
@@ -74,8 +54,6 @@ export class PrRoutinesRepository implements IRoutinesRepository {
         updatedAt: new Date(),
       },
     });
-
-    console.log('✅ 루틴 생성 완료:', createdRoutine);
 
     return new Routine(
       createdRoutine.id,
@@ -131,44 +109,25 @@ export class PrRoutinesRepository implements IRoutinesRepository {
   }
 
   async findByNickname(nickname: string): Promise<Routine[]> {
-    console.log('🔍 닉네임으로 루틴 조회 시작:', nickname);
-    try {
-      const routines = await prisma.routine.findMany({
-        where: {
-          challenge: {
-            user: { nickname },
-          },
+    const routines = await prisma.routine.findMany({
+      where: {
+        challenge: {
+          user: { nickname },
         },
-        include: {
-          challenge: {
-            include: {
-              user: {
-                select: {
-                  nickname: true,
-                },
-              },
-            },
-          },
-        },
-      });
+      },
+    });
 
-      return routines.map(routine =>
-        new Routine(
-          routine.id,
-          routine.routineTitle,
-          routine.alertTime,
-          routine.emoji,
-          routine.challengeId,
-          routine.createdAt,
-          routine.updatedAt
-        )
-      );
-    } catch (error) {
-      console.error('닉네임으로 루틴 조회 중 오류:', error);
-      throw new Error(
-        `닉네임 '${nickname}'으로 루틴 조회에 실패했습니다: ${error instanceof Error ? error.message : '알 수 없는 오류'}`
-      );
-    }
+    return routines.map(routine =>
+      new Routine(
+        routine.id,
+        routine.routineTitle,
+        routine.alertTime,
+        routine.emoji,
+        routine.challengeId,
+        routine.createdAt,
+        routine.updatedAt
+      )
+    );
   }
 
   async findById(routineId: number): Promise<Routine | null> {

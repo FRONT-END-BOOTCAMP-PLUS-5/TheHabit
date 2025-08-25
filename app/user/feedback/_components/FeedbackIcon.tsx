@@ -1,4 +1,6 @@
-export const FeedBackSuccessIcon = () => {
+'use client';
+
+export const FeedBackSuccessIcon: React.FC = () => {
   return (
     <svg width='30' height='31' viewBox='0 0 30 31' fill='none' xmlns='http://www.w3.org/2000/svg'>
       <g filter='url(#filter0_d_1381_992)'>
@@ -45,7 +47,7 @@ export const FeedBackSuccessIcon = () => {
   );
 };
 
-export const FeedBackEmptyIcon = () => {
+export const FeedBackEmptyIcon: React.FC = () => {
   return (
     <svg width='32' height='32' viewBox='0 0 32 32' fill='none' xmlns='http://www.w3.org/2000/svg'>
       <g filter='url(#filter0_d_1381_1007)'>
@@ -100,7 +102,7 @@ export const FeedBackEmptyIcon = () => {
   );
 };
 
-export const FeedBackErrorIcon = () => {
+export const FeedBackErrorIcon: React.FC = () => {
   return (
     <svg width='32' height='31' viewBox='0 0 32 31' fill='none' xmlns='http://www.w3.org/2000/svg'>
       <g filter='url(#filter0_d_1381_1000)'>

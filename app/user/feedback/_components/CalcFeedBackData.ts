@@ -10,7 +10,7 @@ export const calculateSingleChallengeProgress = (
   challenge: ChallengeDto,
   routines: ReadRoutineResponseDto[],
   routineCompletions: RoutineCompletionDto[],
-  days: number = 21
+  days: number
 ) => {
   const today = new Date();
   const dateData = getChallengeDays(days, challenge.createdAt);

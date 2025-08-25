@@ -1,5 +1,4 @@
 import { useRouter } from 'next/navigation';
-import { useGetUserInfo } from '@/libs/hooks/user-hooks/useGetUserInfo';
 
 export const BackComponent = ({
   nickname,

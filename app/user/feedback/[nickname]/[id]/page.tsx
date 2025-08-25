@@ -2,11 +2,11 @@ import React from 'react';
 import { FeedBackById } from '@/app/user/feedback/[nickname]/[id]/_components/FeedBackById';
 
 interface FeedbackDetailByNicknamePageProps {
-  params: { id: string; nickname: string };
+  params: Promise<{ id: string; nickname: string }>;
 }
 
-const FeedbackPage = ({ params }: FeedbackDetailByNicknamePageProps) => {
-  const { id, nickname } = params;
+const FeedbackPage = async ({ params }: FeedbackDetailByNicknamePageProps) => {
+  const { id, nickname } = await params;
 
   return (
     <div>

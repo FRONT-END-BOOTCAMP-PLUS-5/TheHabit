@@ -1,8 +1,18 @@
-import prisma from '@/public/utils/prismaClient';
 import { IRoutineCompletionsRepository } from '@/backend/routine-completions/domains/repositories/IRoutineCompletionsRepository';
 import { RoutineCompletion } from '@/backend/routine-completions/domains/entities/routine-completion/routineCompletion';
+import { s3Service } from '@/backend/shared/services/s3.service';
+import prisma from '@/public/utils/prismaClient';
 
 export class PrRoutineCompletionsRepository implements IRoutineCompletionsRepository {
+  async uploadImage(file: File): Promise<{ imageUrl: string; key: string }> {
+    try {
+      return await s3Service.uploadImage(file, 'routine-completions');
+    } catch (error) {
+      if (error instanceof Error) throw new Error(error.message);
+      throw new Error('루틴 완료 이미지 업로드에 실패했습니다.');
+    }
+  }
+
   async create(
     routineCompletion: Omit<RoutineCompletion, 'id' | 'createdAt'>
   ): Promise<RoutineCompletion> {
@@ -99,10 +109,10 @@ export class PrRoutineCompletionsRepository implements IRoutineCompletionsReposi
         include: {
           user: {
             select: {
-              nickname: true
-            }
-          }
-        }
+              nickname: true,
+            },
+          },
+        },
       });
 
       return completions.map(completion => new RoutineCompletion(
@@ -115,7 +125,9 @@ export class PrRoutineCompletionsRepository implements IRoutineCompletionsReposi
       ));
     } catch (error) {
       console.error('닉네임으로 루틴 완료 조회 중 오류:', error);
-      throw new Error(`닉네임 '${nickname}'으로 루틴 완료 조회에 실패했습니다: ${error instanceof Error ? error.message : '알 수 없는 오류'}`);
+      throw new Error(
+        `닉네임 '${nickname}'으로 루틴 완료 조회에 실패했습니다: ${error instanceof Error ? error.message : '알 수 없는 오류'}`
+      );
     }
   }
 
@@ -137,21 +149,24 @@ export class PrRoutineCompletionsRepository implements IRoutineCompletionsReposi
     ));
   }
 
-  async findByNicknameAndRoutineId(nickname: string, routineId: number): Promise<RoutineCompletion[]> {
+  async findByNicknameAndRoutineId(
+    nickname: string,
+    routineId: number
+  ): Promise<RoutineCompletion[]> {
     console.log('🔍 닉네임과 루틴ID로 완료 조회 시작:', nickname, routineId);
     try {
       const completions = await prisma.routineCompletion.findMany({
         where: {
           user: { nickname },
-          routineId
+          routineId,
         },
         include: {
           user: {
             select: {
-              nickname: true
-            }
-          }
-        }
+              nickname: true,
+            },
+          },
+        },
       });
 
       return completions.map(completion => new RoutineCompletion(
@@ -164,7 +179,9 @@ export class PrRoutineCompletionsRepository implements IRoutineCompletionsReposi
       ));
     } catch (error) {
       console.error('닉네임과 루틴ID로 완료 조회 중 오류:', error);
-      throw new Error(`닉네임 '${nickname}'과 루틴ID '${routineId}'로 조회에 실패했습니다: ${error instanceof Error ? error.message : '알 수 없는 오류'}`);
+      throw new Error(
+        `닉네임 '${nickname}'과 루틴ID '${routineId}'로 조회에 실패했습니다: ${error instanceof Error ? error.message : '알 수 없는 오류'}`
+      );
     }
   }
 
