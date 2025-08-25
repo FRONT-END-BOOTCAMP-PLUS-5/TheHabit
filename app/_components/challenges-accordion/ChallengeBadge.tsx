@@ -45,9 +45,7 @@ const ChallengeBadge: React.FC<ChallengeBadgeProps> = ({ challengeType, classNam
           background: style.background,
           color: style.textColor,
           border: `2px solid ${style.borderColor}`,
-          boxShadow: `0 0 10px ${style.borderColor}40, inset 0 1px 0 ${style.borderColor}20`,
-          animation: 'glow 2s ease-in-out infinite',
-          '--glow-color': '#ffd700', // 노란색 glow 효과
+          boxShadow: `0 0 8px #ffd700, 0 0 12px #ffd700, 0 0 16px #ffd700, inset 0 1px 0 ${style.borderColor}20`,
         } as React.CSSProperties
       }
     >
