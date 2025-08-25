@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import '@/app/globals.css';
-import { QueryProvider } from '@/app/_components/query-providers/QueryProvider';
+import QueryProvider from '@/app/_components/providers/QueryProvider';
 import ModalProvider from '@/app/_components/providers/ModalProvider';
 import NextAuthSessionProvider from '@/app/_components/providers/NextAuthSessionProvider';
 import { pretendard } from '@/public/fonts/font';
