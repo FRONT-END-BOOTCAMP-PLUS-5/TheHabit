@@ -39,9 +39,10 @@ export class UserChallengeAndRoutineAndFollowAndCompletionDtoMapper {
     entity: UserChallengeAndRoutineAndFollowAndCompletion
   ): UserChallengeAndRoutineAndFollowAndCompletionDto {
     const challengesDto = entity.challenges.map(challenge => {
-      const durationInDays = Math.floor(
-        (challenge.endAt.getTime() - challenge.createdAt.getTime()) / (1000 * 60 * 60 * 24)
-      );
+      const durationInDays =
+        Math.floor(
+          (challenge.endAt.getTime() - challenge.createdAt.getTime()) / (1000 * 60 * 60 * 24)
+        ) + 1;
 
       const routinesDto = challenge.routines.map(routine => ({
         id: routine.id,
