@@ -15,6 +15,7 @@ import { useGetChallengesByNickname } from '@/libs/hooks/challenges-hooks/useGet
 import { useGetUserInfo } from '@/libs/hooks/user-hooks/useGetUserInfo';
 import { useModalStore } from '@/libs/stores/modalStore';
 import { Toast } from '@/app/_components/toasts/Toast';
+import { useQueryClient } from '@tanstack/react-query';
 
 const AddChallengeForm: React.FC = () => {
   const {
@@ -32,6 +33,7 @@ const AddChallengeForm: React.FC = () => {
 
   // 챌린지 생성 훅 사용
   const createChallengeMutation = useCreateChallenge();
+  const queryClient = useQueryClient();
 
   // 모달 닫기 함수
   const { closeModal } = useModalStore();
@@ -96,13 +98,18 @@ const AddChallengeForm: React.FC = () => {
 
     createChallengeMutation.mutate(formData, {
       onSuccess: response => {
-        console.log('챌린지 생성 성공:', response.message);
-        // 챌린지 생성 성공 시 모달 닫기
-        setTimeout(() => {
-          closeModal();
-          // React Query 캐시 무효화로 데이터 자동 업데이트
-          // 전체 페이지 새로고침 불필요
-        }, 500);
+        if (response.success) {
+          console.log('챌린지 생성 성공:', response.message);
+          // 챌린지 생성 성공 시 모달 닫기
+          setTimeout(() => {
+            closeModal();
+            // TanStack Query 캐시 무효화로 자동 데이터 업데이트
+            queryClient.invalidateQueries({ queryKey: ['challenges', userNickname] });
+          }, 500);
+        } else {
+          console.error('챌린지 생성 실패:', response.error?.message);
+          Toast.error('챌린지 생성에 실패했습니다: ' + response.error?.message);
+        }
       },
       onError: (error: Error) => {
         console.error('챌린지 생성 중 오류 발생:', error);

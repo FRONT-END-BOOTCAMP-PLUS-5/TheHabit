@@ -145,7 +145,20 @@ const ChallengesAccordion: React.FC<ChallengesAccordionProps> = ({
       const height = contentRef.current.scrollHeight;
       setContentHeight(height);
     }
-  }, [isOpen]);
+  }, [isOpen, routines, routineCompletions]);
+
+  // 루틴이 추가된 후 높이 재계산
+  useEffect(() => {
+    if (contentRef.current && isOpen) {
+      // 약간의 지연을 두어 DOM 업데이트 후 높이 계산
+      const timer = setTimeout(() => {
+        const height = contentRef.current?.scrollHeight || 0;
+        setContentHeight(height);
+      }, 100);
+
+      return () => clearTimeout(timer);
+    }
+  }, [routines.length, isOpen]);
 
   return (
     <div className='px-1 py-0.5 w-full rounded-lg'>

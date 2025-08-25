@@ -151,15 +151,15 @@ const ChallengeListSection: React.FC = () => {
           <button
             onClick={() => {
               setHasError(false);
-              refetch(); // 전체 페이지 새로고침 대신 데이터만 다시 불러오기
+              refetch();
             }}
             className='px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors text-sm font-medium'
           >
             다시 시도
           </button>
           <button
-            onClick={() => refetch()} // 전체 페이지 새로고침 대신 데이터만 다시 불러오기
-            className='px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700 transition-colors text-sm font-medium'
+            onClick={() => refetch()}
+            className='px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-600 transition-colors text-sm font-medium'
           >
             데이터 새로고침
           </button>

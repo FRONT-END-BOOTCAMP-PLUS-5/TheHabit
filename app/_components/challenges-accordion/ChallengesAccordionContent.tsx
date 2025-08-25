@@ -7,9 +7,10 @@ import { RoutineCompletionDto } from '@/backend/routine-completions/applications
 import { EmojiDisplay } from '@/app/_components/emoji/EmojiDisplay';
 import { useModalStore } from '@/libs/stores/modalStore';
 import { useGetUserInfo } from '@/libs/hooks/user-hooks/useGetUserInfo';
+import { useCreateRoutineCompletion } from '@/libs/hooks/routine-completions-hooks/useCreateRoutineCompletion';
+import { useQueryClient } from '@tanstack/react-query';
 import AddRoutineForm from '@/app/user/dashboard/_components/AddRoutineForm';
 import RoutineCompletionForm from '@/app/_components/challenges-accordion/RoutineCompletionForm';
-import { useCreateRoutineCompletion } from '@/libs/hooks/routine-completions-hooks/useCreateRoutineCompletion';
 import { Toast } from '@/app/_components/toasts/Toast';
 
 // ChallengesAccordionContent 컴포넌트는 피드백 및 분석에도 사용되므로 공통으로 분리하였습니다.
@@ -33,9 +34,15 @@ export const ChallengesAccordionContent = ({
   onRoutineAdded,
 }: ChallengesAccordionContentProps) => {
   const { openModal, closeModal } = useModalStore();
-
   const { userInfo } = useGetUserInfo();
   const createRoutineCompletionMutation = useCreateRoutineCompletion();
+  const queryClient = useQueryClient();
+
+  // 루틴 완료 생성 성공 시 추가 캐시 무효화
+  const handleRoutineCompletionSuccess = () => {
+    queryClient.invalidateQueries({ queryKey: ['dashboard'] });
+    queryClient.invalidateQueries({ queryKey: ['challenges'] });
+  };
 
   // 카테고리별 챌린지 제한 계산 (완료/실패된 챌린지 고려)
   const getCategoryChallengeLimit = () => {
@@ -79,8 +86,9 @@ export const ChallengesAccordionContent = ({
             onRoutineAdded();
           }
 
-          // React Query 캐시 무효화로 데이터 자동 업데이트
-          // 전체 페이지 새로고침 불필요
+          // TanStack Query 캐시 무효화로 자동 데이터 업데이트
+          queryClient.invalidateQueries({ queryKey: ['routines'] });
+          queryClient.invalidateQueries({ queryKey: ['dashboard'] });
         }}
       />,
       'floating',
@@ -125,39 +133,20 @@ export const ChallengesAccordionContent = ({
         selectedRoutine={routine}
         onSubmit={async (reviewText: string, photoFile?: File) => {
           try {
-            console.log('루틴 완료 처리 시작:', { reviewText, hasPhotoFile: !!photoFile });
-
-            // 이미지가 있든 없든 FormData로 전송 (서버에서 FormData를 기대함)
-            const formData = new FormData();
-            formData.append('nickname', userInfo.nickname);
-            formData.append('routineId', routine.id.toString());
-            formData.append('content', reviewText);
-
-            // 이미지가 있는 경우에만 file 필드 추가
-            if (photoFile) {
-              formData.append('file', photoFile);
-            }
-
-            console.log('FormData 전송 시작');
-            await createRoutineCompletionMutation.mutateAsync(formData, {
-              onSuccess: () => {
-                console.log('루틴 완료 성공 - 토스트 메시지 표시');
-                // 성공 토스트 메시지 표시
-                Toast.success('루틴 소감이 성공적으로 저장되었습니다! 🎉');
-
-                // React Query 캐시 무효화로 데이터 자동 업데이트
-                // 전체 페이지 새로고침 불필요
-                console.log('캐시 무효화 완료 - UI 자동 업데이트 예상');
-
-                // 모달 자동 닫기
-                closeModal();
+            await createRoutineCompletionMutation.mutateAsync(
+              {
+                nickname: userInfo.nickname,
+                routineId: routine.id,
+                content: reviewText,
+                photoFile,
               },
-              onError: error => {
-                console.error('루틴 완료 처리 실패:', error);
-                Toast.error('루틴 완료 처리에 실패했습니다. 다시 시도해주세요.');
-              },
-            });
-            console.log('루틴 완료 처리 완료');
+              {
+                onSuccess: handleRoutineCompletionSuccess,
+              }
+            );
+
+            // 모달 자동 닫기
+            closeModal();
           } catch (error) {
             console.error('루틴 완료 처리 실패:', error);
           }
