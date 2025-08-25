@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { getRoutineCompletionsByChallenge } from '@/libs/api/routine-completions.api';
+import { getRoutineCompletions } from '@/libs/api/routine-completions.api';
 import { RoutineCompletionDto } from '@/backend/routine-completions/applications/dtos/RoutineCompletionDto';
 
 /**
@@ -16,7 +16,10 @@ export const useGetRoutineCompletionsByChallenge = (
 ) => {
   return useQuery<RoutineCompletionDto[]>({
     queryKey: ['routine-completions', 'challenge', challengeId, nickname],
-    queryFn: () => getRoutineCompletionsByChallenge(challengeId, nickname),
+    queryFn: async () => {
+      const response = await getRoutineCompletions(challengeId, nickname);
+      return response.data || [];
+    },
     enabled: enabled && challengeId > 0 && !!nickname,
     staleTime: 1 * 60 * 1000, // 1분간 데이터를 fresh로 유지 (자주 변경되는 완료 상태)
     gcTime: 3 * 60 * 1000, // 3분간 캐시 유지

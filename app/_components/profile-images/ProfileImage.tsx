@@ -3,7 +3,6 @@ import React from 'react';
 
 export const ProfileImage = ({
   imageSrc,
-  className,
   wrapperWidth = 20,
   wrapperHeight = 20,
 }: {

@@ -13,6 +13,7 @@ export class PrChallengeRepository implements IChallengeRepository {
         userId: challenge.userId,
         categoryId: challenge.categoryId,
         active: challenge.active,
+        completion_progress: 'in_progress', // 기본값 in_progress로 설정
       },
     });
 
@@ -24,7 +25,7 @@ export class PrChallengeRepository implements IChallengeRepository {
       createdChallenge.userId,
       createdChallenge.categoryId,
       createdChallenge.active,
-      createdChallenge.id
+      createdChallenge.id,
     );
   }
 

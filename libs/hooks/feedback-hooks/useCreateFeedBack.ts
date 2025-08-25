@@ -14,9 +14,13 @@ export const useCreateFeedBack = () => {
       error?: { code: string; message: string };
     },
     Error,
-    AddFeedbackDto
+    AddFeedbackDto & { nickname: string },
+    {
+      nickname: string;
+    }
   >({
-    mutationFn: FeedbackApi,
+    mutationFn: ({ gptResponseContent, challengeId, nickname }) =>
+      FeedbackApi({ gptResponseContent, challengeId }, nickname),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['feedBack'] });
     },

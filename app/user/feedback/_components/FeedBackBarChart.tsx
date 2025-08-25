@@ -1,30 +1,50 @@
-import { ChallengeDto } from '@/backend/challenges/applications/dtos/ChallengeDto';
+'use client';
+import { DashboardDto } from '@/backend/dashboards/application/dtos/DashboardDto';
 import React from 'react';
-import { Bar, BarChart, CartesianGrid, Tooltip, XAxis, YAxis } from 'recharts';
+import { Bar, BarChart, CartesianGrid, Tooltip, XAxis, YAxis, Cell } from 'recharts';
+import { calculateAllCategoriesProgress } from '@/app/user/feedback/_components/CalcFeedBackData';
 
-export const FeedBackBarChart = ({ challenges }: { challenges: ChallengeDto[] }) => {
-  console.log(challenges);
+export const FeedBackBarChart: React.FC<{ dashBoardData: DashboardDto }> = ({ dashBoardData }) => {
+  const { challenge, routines, routineCompletions } = dashBoardData;
 
-  const data = [
-    { name: 'Page A', uv: 400, pv: 2400, amt: 2400 },
-    { name: 'Page B', uv: 300, pv: 1398, amt: 2210 },
-    { name: 'Page C', uv: 200, pv: 9800, amt: 2290 },
-    { name: 'Page D', uv: 278, pv: 3908, amt: 2000 },
-    { name: 'Page E', uv: 189, pv: 4800, amt: 2181 },
-  ];
+  const allCategoryData = calculateAllCategoriesProgress(challenge, routines, routineCompletions);
+
+  const challengeData = allCategoryData.map(category => {
+    return {
+      name: category.name,
+      total: category.challengeCount,
+      completionRate: category.categoryProgressPercent,
+      color: category.color,
+      challengesWithProgress: category.challengesWithProgress,
+    };
+  });
+
   return (
-    <div className='w-full flex'>
-      <BarChart
-        className='border-2 border-gray-300 rounded-md'
-        width={500}
-        height={300}
-        data={data}>
-        <CartesianGrid strokeDasharray='3 3' />
-        <XAxis dataKey='name' />
-        <YAxis />
-        <Tooltip />
-        <Bar dataKey='uv' fill='#8884d8' />
-      </BarChart>
+    <div className='w-full flex flex-col gap-4 rounded-lg'>
+      <h3 className='text-2xl font-bold'>카테고리별 챌린지 현황</h3>
+      <div className='w-full flex justify-center rounded-lg shadow-md'>
+        <BarChart
+          width={500}
+          height={350}
+          data={challengeData}
+          margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+        >
+          <CartesianGrid stroke='#D9D9D9' strokeDasharray='1 1' vertical={false} />
+          <XAxis dataKey='name' tickLine={false} />
+          <YAxis allowDecimals={false} tickLine={false} domain={[0, 100]} />
+          <Tooltip
+            formatter={(value, name) => {
+              if (name === 'completionRate') return [`${value}%`, '진행률'];
+              return [value, name];
+            }}
+          />
+          <Bar dataKey='completionRate' name='진행률'>
+            {challengeData.map((entry, index) => (
+              <Cell key={`cell-${index}`} fill={entry.color} />
+            ))}
+          </Bar>
+        </BarChart>
+      </div>
     </div>
   );
 };

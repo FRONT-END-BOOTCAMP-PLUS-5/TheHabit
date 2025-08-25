@@ -1,5 +1,5 @@
 'use client';
-import Input from '@/app/_components/inputs/Input';
+import CustomInput from '@/app/_components/inputs/CustomInput';
 import { useState, useEffect, useMemo } from 'react';
 import { ContentComponent } from '@/app/user/search/_components/Content';
 import { useGetUserInfo } from '@/libs/hooks/user-hooks/useGetUserInfo';
@@ -49,7 +49,7 @@ const SearchPage = () => {
     <main className='px-5'>
       <section id='head' className='mt-[40px]'>
         <div id='follow_wrapper' className='flex items-center gap-[5.8rem]'></div>
-        <Input
+        <CustomInput
           placeholder='원하는 사람을 찾아보세요'
           className='border-t-0 border-l-0 border-r-0 border-b-2 focus:!border-[#07bc0c] rounded-[0px] hover:border-[#07bc0c] !shadow-none '
           onChange={evt => {

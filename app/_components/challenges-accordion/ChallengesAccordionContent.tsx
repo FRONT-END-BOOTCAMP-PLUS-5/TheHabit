@@ -5,6 +5,7 @@ import { ChallengeDto } from '@/backend/challenges/applications/dtos/ChallengeDt
 import { ReadRoutineResponseDto } from '@/backend/routines/applications/dtos/RoutineDto';
 import { RoutineCompletionDto } from '@/backend/routine-completions/applications/dtos/RoutineCompletionDto';
 import { EmojiDisplay } from '@/app/_components/emoji/EmojiDisplay';
+import { usePathname } from 'next/navigation';
 import { useModalStore } from '@/libs/stores/modalStore';
 import { useGetUserInfo } from '@/libs/hooks/user-hooks/useGetUserInfo';
 import AddRoutineForm from '@/app/user/dashboard/_components/AddRoutineForm';
@@ -18,6 +19,8 @@ interface ChallengesAccordionContentProps {
   challenge: ChallengeDto;
   routines: ReadRoutineResponseDto[];
   routineCompletions: RoutineCompletionDto[];
+  onFeedbackClick?: (challengeId: number) => void;
+  challengeId: number;
   selectedDate: Date; // 선택된 날짜 추가
   onRoutineAdded?: () => void; // 루틴 추가 후 새로고침을 위한 콜백
 }
@@ -29,10 +32,14 @@ export const ChallengesAccordionContent = ({
   challenge,
   routines,
   routineCompletions,
+  onFeedbackClick,
+  challengeId,
   selectedDate,
   onRoutineAdded,
 }: ChallengesAccordionContentProps) => {
   const { openModal } = useModalStore();
+  const pathname = usePathname();
+  const isFeedback = pathname.startsWith('/user/feedback');
   const { userInfo } = useGetUserInfo();
   const createRoutineCompletionMutation = useCreateRoutineCompletion();
 
@@ -103,7 +110,7 @@ export const ChallengesAccordionContent = ({
               nickname: userInfo.nickname,
               routineId,
               content: reviewText,
-              photoFile,
+              proofImgUrl: photoFile ? photoFile.name : null,
             });
 
             // 페이지 새로고침하여 완료 상태 반영
@@ -214,15 +221,21 @@ export const ChallengesAccordionContent = ({
       {/* 새로운 루틴 추가 버튼 */}
       <div className='flex justify-center'>
         <button
+          onClick={() => {
+            if (pathname.includes('feedback')) {
+              onFeedbackClick?.(challengeId);
+            } else {
+              handleOpenAddRoutineModal();
+            }
+          }}
           className={`rounded-full flex items-center justify-center text-sm font-bold py-2 px-4 cursor-pointer ${
             routines.length >= 3
               ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
               : 'bg-primary text-white hover:bg-primary/90'
           }`}
           disabled={routines.length >= 3}
-          onClick={handleOpenAddRoutineModal}
         >
-          + 루틴 추가하기
+          {isFeedback ? '피드백 받기' : '+ 루틴 추가하기'}
           {routines.length >= 3 && <span className='ml-1 text-xs'>(최대 3개)</span>}
         </button>
       </div>

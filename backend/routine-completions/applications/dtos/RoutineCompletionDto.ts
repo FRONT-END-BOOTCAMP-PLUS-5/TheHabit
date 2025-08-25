@@ -1,4 +1,4 @@
-import { RoutineCompletion } from '@/backend/routine-completions/domains/entities/routine-completion/routineCompletion';
+import { RoutineCompletion } from '@/backend/routine-completions/domains/entities/routineCompletion';
 
 export interface CreateRoutineCompletionRequestDto {
   nickname: string;

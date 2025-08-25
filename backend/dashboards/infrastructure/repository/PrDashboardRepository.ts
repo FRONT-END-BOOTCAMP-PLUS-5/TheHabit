@@ -2,7 +2,7 @@ import { IDashboardRepository } from '@/backend/dashboards/domain/repository/IDa
 import { Dashboard } from '@/backend/dashboards/domain/entity/Dashboard';
 import { Challenge } from '@/backend/challenges/domains/entities/Challenge';
 import { Routine } from '@/backend/routines/domains/entities/routine';
-import { RoutineCompletion } from '@/backend/routine-completions/domains/entities/routine-completion/routineCompletion';
+import { RoutineCompletion } from '@/backend/routine-completions/domains/entities/routineCompletion';
 import prisma from '@/public/utils/prismaClient';
 
 export class PrDashboardRepository implements IDashboardRepository {
@@ -109,17 +109,18 @@ export class PrDashboardRepository implements IDashboardRepository {
     }
 
     // 모든 챌린지들을 Challenge 엔티티로 변환
-    const challengeEntities = challenges.map(challengeData =>
-      new Challenge(
-        challengeData.name,
-        challengeData.createdAt,
-        challengeData.endAt,
-        challengeData.color,
-        challengeData.userId,
-        challengeData.categoryId,
-        challengeData.active,
-        challengeData.id
-      )
+    const challengeEntities = challenges.map(
+      challengeData =>
+        new Challenge(
+          challengeData.name,
+          challengeData.createdAt,
+          challengeData.endAt,
+          challengeData.color,
+          challengeData.userId,
+          challengeData.categoryId,
+          challengeData.active,
+          challengeData.id
+        )
     );
 
     // 모든 챌린지의 루틴들을 수집
@@ -166,7 +167,7 @@ export class PrDashboardRepository implements IDashboardRepository {
         routineData.completions.forEach(completionData => {
           const completion = new RoutineCompletion(
             completionData.id,
-            "",
+            '',
             completionData.routineId,
             completionData.createdAt,
             completionData.proofImgUrl,

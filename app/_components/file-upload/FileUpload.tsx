@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useRef, useState } from 'react';
+import Image from 'next/image';
 import { Button } from '@/app/_components/buttons/Button';
 import { CameraOutlined, PictureOutlined } from '@ant-design/icons';
 import '@ant-design/v5-patch-for-react-19';
@@ -81,9 +82,11 @@ export const FileUpload: React.FC<FileUploadProps> = ({
       {/* 미리보기 */}
       {previewUrl && (
         <div className='mb-4'>
-          <img
+          <Image
             src={previewUrl}
             alt='미리보기'
+            width={400}
+            height={192}
             className='w-full h-48 object-cover rounded-lg border border-gray-200'
           />
         </div>

@@ -24,6 +24,7 @@ export const ChallengeSelectComponent = ({
     left-[-5px]
     w-[110px]
     max-w-[110px]
+    max-sm:min-w-[160px]
     max-h-[320px]
     [overflow-wrap: break-word]
     z-99
@@ -55,6 +56,7 @@ export const ChallengeSelectComponent = ({
             transition-colors 
             duration-150 
             first:border-b-0 
+            px-2
             border-[#e5831d] ${isSelected ? 'font-bold bg-[#93d50b] text-[#fff]' : ''}`}
             onClick={() => onSelectChallenge(challenge.id, challenge.name)}
           >

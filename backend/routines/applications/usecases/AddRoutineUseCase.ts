@@ -2,12 +2,12 @@ import { IRoutinesRepository } from '@/backend/routines/domains/repositories/IRo
 import { CreateRoutineRequestDto, ReadRoutineResponseDto } from '@/backend/routines/applications/dtos/RoutineDto';
 
 export class AddRoutineUseCase {
-  constructor(private readonly routinesRepository: IRoutinesRepository) {}
+  constructor(private readonly routinesRepository: IRoutinesRepository) { }
 
   async execute(request: CreateRoutineRequestDto): Promise<ReadRoutineResponseDto> {
     const routineToCreate = {
       routineTitle: request.routineTitle,
-      alertTime: request.alertTime,
+      alertTime: request.alertTime ? new Date(request.alertTime) : null,
       emoji: request.emoji,
       challengeId: request.challengeId,
       updatedAt: new Date(),
@@ -31,7 +31,7 @@ export class AddRoutineUseCase {
   ): Promise<ReadRoutineResponseDto> {
     const createdRoutine = await this.routinesRepository.createByNickname({
       routineTitle: request.routineTitle,
-      alertTime: request.alertTime,
+      alertTime: request.alertTime ? new Date(request.alertTime) : null,
       emoji: request.emoji,
       challengeId: request.challengeId,
       nickname: request.nickname,
