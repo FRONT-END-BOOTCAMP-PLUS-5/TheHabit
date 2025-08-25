@@ -1,0 +1,24 @@
+'use client';
+
+import { useGetUserInfo } from '@/libs/hooks/user-hooks/useGetUserInfo';
+import { usePathname } from 'next/navigation';
+import React from 'react';
+
+export const FeedBackHeader = () => {
+  const { userInfo } = useGetUserInfo();
+  const nickname = userInfo?.nickname;
+  const username = userInfo?.username;
+  const pathname = usePathname();
+
+  const isFeedbackPage = pathname.includes(`/feedback/${nickname}`);
+
+  if (isFeedbackPage) {
+    return null;
+  }
+
+  return (
+    <header className='flex items-center h-1/12 gap-2 justify-center relative'>
+      <h1 className='text-2xl font-bold'>'{username}'님의 성장 기록</h1>
+    </header>
+  );
+};
