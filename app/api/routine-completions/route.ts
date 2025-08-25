@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { AddRoutineCompletionUseCase } from '@/backend/routine-completions/applications/usecases/AddRoutineCompletionUseCase';
 import { UpdateRoutineCompletionUseCase } from '@/backend/routine-completions/applications/usecases/UpdateRoutineCompletionUseCase';
 import { DeleteRoutineCompletionUseCase } from '@/backend/routine-completions/applications/usecases/DeleteRoutineCompletionUseCase';
+import { GetRoutineCompletionsUseCase } from '@/backend/routine-completions/applications/usecases/GetRoutineCompletionsUseCase';
 import { PrRoutineCompletionsRepository } from '@/backend/routine-completions/infrastructures/repositories/PrRoutineCompletionsRepository';
 import { s3Service } from '@/backend/shared/services/s3.service';
 import { RoutineCompletionDto, RoutineCompletionDtoMapper } from '@/backend/routine-completions/applications/dtos/RoutineCompletionDto';
@@ -22,16 +23,56 @@ const createDeleteRoutineCompletionUseCase = () => {
   return new DeleteRoutineCompletionUseCase(repository);
 };
 
+const createGetRoutineCompletionsUseCase = () => {
+  const repository = new PrRoutineCompletionsRepository();
+  return new GetRoutineCompletionsUseCase(repository);
+};
+
+// 루틴 완료 조회 (GET)
+export async function GET(request: NextRequest): Promise<NextResponse<ApiResponse<RoutineCompletionDto[] | null>>> {
+  try {
+    const { searchParams } = new URL(request.url);
+    const nickname = searchParams.get('nickname');
+
+    // nickname이 제공되지 않은 경우
+    if (!nickname || nickname.trim() === '') {
+      const errorResponse: ApiResponse<null> = {
+        success: false,
+        error: {
+          code: 'INVALID_NICKNAME',
+          message: '닉네임이 제공되지 않았습니다.',
+        },
+      };
+      return NextResponse.json(errorResponse, { status: 400 });
+    }
+
+    const getRoutineCompletionsUseCase = createGetRoutineCompletionsUseCase();
+
+    // 해당 닉네임의 모든 루틴 완료 조회
+    const completions = await getRoutineCompletionsUseCase.getByNickname(nickname.trim());
+
+    const successResponse: ApiResponse<RoutineCompletionDto[]> = {
+      success: true,
+      data: completions,
+      message: '루틴 완료 목록을 성공적으로 조회했습니다.',
+    };
+    return NextResponse.json(successResponse);
+  } catch (error) {
+    console.error('루틴 완료 목록 조회 오류:', error);
+    const errorResponse: ApiResponse<null> = {
+      success: false,
+      error: {
+        code: 'FETCH_FAILED',
+        message: '루틴 완료 목록 조회에 실패했습니다.',
+      },
+    };
+    return NextResponse.json(errorResponse, { status: 500 });
+  }
+}
+
 // 루틴 완료 생성 (POST)
 export async function POST(request: NextRequest): Promise<NextResponse> {
   try {
-    console.log('=== POST /api/routine-completions 요청 시작 ===');
-
-    // 요청 정보 상세 로깅
-    console.log('요청 URL:', request.url);
-    console.log('요청 메서드:', request.method);
-    console.log('요청 헤더:', Object.fromEntries(request.headers.entries()));
-
     // Content-Type 확인
     const contentType = request.headers.get('content-type');
     console.log('Content-Type:', contentType);
