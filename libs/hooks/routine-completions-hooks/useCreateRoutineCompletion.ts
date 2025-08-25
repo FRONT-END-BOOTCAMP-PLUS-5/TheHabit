@@ -23,8 +23,15 @@ export const useCreateRoutineCompletion = () => {
         queryKey: ['routine-completions', 'user'],
       });
 
-      // 대시보드 캐시 무효화 (정확한 쿼리 키 사용)
-      if (typeof variables === 'object' && 'nickname' in variables) {
+      // 대시보드 캐시 무효화 (FormData와 일반 객체 구분 처리)
+      if (variables instanceof FormData) {
+        // FormData인 경우
+        const nickname = variables.get('nickname');
+        if (nickname) {
+          queryClient.invalidateQueries({ queryKey: ['dashboard', 'nickname', nickname] });
+        }
+      } else if (typeof variables === 'object' && 'nickname' in variables) {
+        // 일반 객체인 경우
         queryClient.invalidateQueries({ queryKey: ['dashboard', 'nickname', variables.nickname] });
       }
 

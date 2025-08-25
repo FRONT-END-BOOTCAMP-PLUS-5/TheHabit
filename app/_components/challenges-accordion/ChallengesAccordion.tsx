@@ -15,6 +15,8 @@ import ChallengesAccordionContent from '@/app/_components/challenges-accordion/C
 import ChallengeBadge from '@/app/_components/challenges-accordion/ChallengeBadge';
 import { getChallengeType } from '@/public/utils/challengeUtils';
 import { StaticImageData } from 'next/image';
+import { useModalStore } from '@/libs/stores/modalStore';
+import { ChallengeExtensionContent } from '@/app/_components/challenges-accordion/ChallengeExtensionContent';
 
 // ChallengesAccordion 컴포넌트는 피드백 및 분석에도 사용되므로 공통으로 분리하였습니다.
 // - 승민 2025.08.23
@@ -24,6 +26,7 @@ interface ChallengesAccordionProps {
   routineCompletions: RoutineCompletionDto[];
   selectedDate: Date; // 선택된 날짜 추가
   onRoutineAdded?: () => void;
+  nickname: string; // 사용자 닉네임 추가
 }
 
 const CATEGORY_ICON: Record<number, { icon: StaticImageData; alt: string }> = {
@@ -51,7 +54,10 @@ const ChallengesAccordion: React.FC<ChallengesAccordionProps> = ({
   routineCompletions,
   selectedDate,
   onRoutineAdded,
+  nickname,
 }) => {
+  const { openModal } = useModalStore();
+
   // 완료된 루틴 비율에 따라 동적으로 너비 계산
   const completedRatio = (() => {
     if (routines.length === 0) return 0;
@@ -133,6 +139,42 @@ const ChallengesAccordion: React.FC<ChallengesAccordionProps> = ({
   const challengeType = getChallengeType(challenge.createdAt, challenge.endAt);
 
   const [isOpen, setIsOpen] = useState<boolean>(false);
+
+  // 챌린지 연장 모달 표시 조건 확인
+  useEffect(() => {
+    // 21일 또는 66일 챌린지이고, 오늘이 종료일 이후이고, 아직 진행 중인 상태일 때
+    if (
+      (challengeType === '21일' || challengeType === '66일') &&
+      challenge.completionProgress === 'in_progress'
+    ) {
+      const today = new Date();
+      const endDate = new Date(challenge.endAt);
+
+      // 날짜만 비교 (시간 제거)
+      const todayOnly = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+      const endDateOnly = new Date(endDate.getFullYear(), endDate.getMonth(), endDate.getDate());
+
+      // 오늘이 종료일 이후이고, 모든 루틴이 완료되었을 때 연장 모달 표시
+      if (todayOnly >= endDateOnly && completedRatio === 100) {
+        // 연장 모달 표시
+        openModal(
+          <ChallengeExtensionContent
+            challenge={challenge}
+            nickname={nickname}
+            onSuccess={() => {
+              // 성공 시 아코디언 새로고침
+              if (onRoutineAdded) {
+                onRoutineAdded();
+              }
+            }}
+          />,
+          'floating',
+          '챌린지 완료!',
+          '연장하시겠습니까?'
+        );
+      }
+    }
+  }, [challenge, challengeType, completedRatio, nickname, openModal, onRoutineAdded]);
   const contentRef = useRef<HTMLDivElement>(null);
   const [contentHeight, setContentHeight] = useState<number>(0);
 

@@ -68,6 +68,36 @@ export class PrChallengeRepository implements IChallengeRepository {
     );
   }
 
+  async findByIdWithUser(id: number): Promise<{ challenge: Challenge; userNickname: string } | null> {
+    const challenge = await prisma.challenge.findUnique({
+      where: { id },
+      include: {
+        user: {
+          select: {
+            nickname: true,
+          },
+        },
+      },
+    });
+
+    if (!challenge) return null;
+
+    return {
+      challenge: new Challenge(
+        challenge.name,
+        challenge.createdAt,
+        challenge.endAt,
+        challenge.color,
+        challenge.userId,
+        challenge.categoryId,
+        challenge.active,
+        challenge.completion_progress,
+        challenge.id
+      ),
+      userNickname: challenge.user.nickname
+    };
+  }
+
   async findByNickname(nickname: string): Promise<Challenge[]> {
     console.log('🔍 닉네임으로 챌린지 조회 시작:', nickname);
     try {

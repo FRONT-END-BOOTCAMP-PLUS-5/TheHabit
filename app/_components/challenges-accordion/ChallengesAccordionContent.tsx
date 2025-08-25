@@ -133,17 +133,36 @@ export const ChallengesAccordionContent = ({
         selectedRoutine={routine}
         onSubmit={async (reviewText: string, photoFile?: File) => {
           try {
-            await createRoutineCompletionMutation.mutateAsync(
-              {
-                nickname: userInfo.nickname,
-                routineId: routine.id,
-                content: reviewText,
-                photoFile,
-              },
-              {
-                onSuccess: handleRoutineCompletionSuccess,
-              }
-            );
+            console.log('루틴 완료 처리 시작:', { reviewText, hasPhotoFile: !!photoFile });
+
+            // FormData로 변환
+            const formData = new FormData();
+            formData.append('nickname', userInfo.nickname);
+            formData.append('routineId', routine.id.toString());
+            formData.append('content', reviewText);
+
+            if (photoFile) {
+              formData.append('file', photoFile);
+            }
+
+            // FormData 내용 확인
+            console.log('FormData 내용:', {
+              nickname: formData.get('nickname'),
+              routineId: formData.get('routineId'),
+              content: formData.get('content'),
+              hasFile: !!formData.get('file'),
+            });
+
+            // FormData 타입 확인
+            console.log('FormData 타입 확인:', {
+              isFormData: formData instanceof FormData,
+              constructor: formData.constructor.name,
+              entries: Array.from(formData.entries()),
+            });
+
+            await createRoutineCompletionMutation.mutateAsync(formData, {
+              onSuccess: handleRoutineCompletionSuccess,
+            });
 
             // 모달 자동 닫기
             closeModal();

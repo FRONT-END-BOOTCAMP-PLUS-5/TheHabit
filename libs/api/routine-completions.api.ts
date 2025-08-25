@@ -11,21 +11,40 @@ export const createRoutineCompletion = async (
 ): Promise<ApiResponse<RoutineCompletionDto>> => {
   try {
     const isFormData = data instanceof FormData;
+    console.log('createRoutineCompletion - 데이터 타입 확인:', {
+      isFormData,
+      dataType: typeof data,
+      constructor: data?.constructor?.name,
+      isFormDataInstance: data instanceof FormData
+    });
 
-    const response = await axiosInstance.post<ApiResponse<RoutineCompletionDto>>(
-      '/api/routine-completions',
-      data,
-      // FormData일 때는 헤더를 설정하지 않음 (브라우저가 자동으로 설정)
-      isFormData ? {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      } : {
-        headers: {
-          'Content-Type': 'application/json',
-        },
+    let response;
+
+    if (isFormData) {
+      // FormData일 때는 fetch API 사용 (axios의 FormData 문제 우회)
+      const fetchResponse = await fetch('/api/routine-completions', {
+        method: 'POST',
+        body: data,
+        credentials: 'include'
+      });
+
+      if (!fetchResponse.ok) {
+        throw new Error(`HTTP error! status: ${fetchResponse.status}`);
       }
-    );
+
+      response = { data: await fetchResponse.json() };
+    } else {
+      // JSON일 때는 axios 사용
+      response = await axiosInstance.post<ApiResponse<RoutineCompletionDto>>(
+        '/api/routine-completions',
+        data,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+    }
 
     return response.data;
   } catch (error) {

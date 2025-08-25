@@ -80,22 +80,20 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     // FormData 파싱 시도
     let formData;
     try {
+      // request.clone() 없이 직접 파싱
       formData = await request.formData();
       console.log('FormData 파싱 성공');
     } catch (formDataError) {
       console.error('FormData 파싱 실패:', formDataError);
-      console.error('FormData 에러 상세:', {
-        name: formDataError instanceof Error ? formDataError.name : 'Unknown',
-        message: formDataError instanceof Error ? formDataError.message : String(formDataError),
-        stack: formDataError instanceof Error ? formDataError.stack : 'No stack trace'
-      });
+      console.error('Content-Type:', contentType);
+      console.error('Headers:', Object.fromEntries(request.headers.entries()));
 
-      // Content-Type 문제일 수 있으므로 더 자세한 에러 메시지
+      // 더 간단한 에러 응답
       const errorResponse: ApiResponse<null> = {
         success: false,
         error: {
-          code: 'INVALID_CONTENT_TYPE',
-          message: `FormData 형식이 올바르지 않습니다. Content-Type: ${contentType || 'undefined'}`
+          code: 'FORM_DATA_PARSE_ERROR',
+          message: 'FormData 파싱에 실패했습니다. 다시 시도해주세요.'
         }
       };
       return NextResponse.json(errorResponse, { status: 400 });
