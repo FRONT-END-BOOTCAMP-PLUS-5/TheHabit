@@ -45,11 +45,19 @@ const ConfirmModal: React.FC<ConfirmModalProps> = ({
 
   if (!isVisible) return null;
 
+  const accentBar =
+    type === 'negative' ? 'from-rose-400 to-red-500' : 'from-lime-400 to-emerald-500';
+  const titleColor = type === 'negative' ? 'text-red-600' : 'text-emerald-700';
+
   return (
-    <div className='fixed inset-0 z-50 flex items-center justify-center'>
+    <div
+      className='fixed inset-0 z-50 flex items-center justify-center p-4'
+      role='dialog'
+      aria-modal='true'
+    >
       {/* 배경 오버레이 */}
       <div
-        className={`absolute inset-0 bg-black/50 transition-opacity duration-300 ease-in-out ${
+        className={`absolute inset-0 bg-black/40 backdrop-blur-[2px] transition-opacity duration-300 ease-in-out ${
           isAnimating ? 'opacity-100' : 'opacity-0'
         }`}
         onClick={onClose}
@@ -57,24 +65,29 @@ const ConfirmModal: React.FC<ConfirmModalProps> = ({
 
       {/* 모달 컨테이너 */}
       <div
-        className={`relative w-11/12 max-w-[440px] bg-white rounded-2xl shadow-lg mx-auto transition-all duration-300 ease-in-out ${
+        className={`relative w-11/12 max-w-[480px] bg-white rounded-2xl shadow-2xl border border-gray-100 mx-auto transition-all duration-300 ease-out overflow-hidden ${
           isAnimating ? 'transform scale-100 opacity-100' : 'transform scale-95 opacity-0'
         }`}
       >
+        {/* 상단 그라디언트 액센트 바 */}
+        <div className={`h-1.5 w-full bg-gradient-to-r ${accentBar}`} />
+
         {/* 모달 내용 */}
-        <div className='flex flex-col gap-1 p-6 w-full'>
+        <div className='flex flex-col gap-4 p-6 w-full'>
           <div className='flex justify-end items-end w-full'>
             <button onClick={onClose} className='cursor-pointer'>
               <Image src={CloseModal} alt='close' width={16} height={16} />
             </button>
           </div>
 
-          <div className='flex justify-between items-end'>
-            <div className='text-2xl font-bold text-primary'>{title}</div>
-            <div className='text-sm text-secondary'>{description}</div>
+          <div className='flex flex-col justify-between'>
+            <div className={`text-2xl font-bold ${titleColor}`}>{title}</div>
+            <div className='text-sm text-gray-500 mt-1'>{description}</div>
           </div>
-          {children}
-          <div className='flex items-center justify-end gap-2'>
+
+          <div>{children}</div>
+
+          <div className='flex items-center justify-end gap-2 pt-4 border-t border-gray-100'>
             <Button type='button' onClick={onClose} buttonType='tertiary'>
               취소
             </Button>

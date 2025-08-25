@@ -5,13 +5,12 @@ import { CATEGORY_CONFIG } from '@/public/consts/categoryConfig';
 import { getDateString } from '@/public/utils/dateUtils';
 import { ReadRoutineResponseDto } from '@/backend/routines/applications/dtos/RoutineDto';
 
-
 // 단일 챌린지의 진행률 계산
 export const calculateSingleChallengeProgress = (
   challenge: ChallengeDto,
   routines: ReadRoutineResponseDto[],
   routineCompletions: RoutineCompletionDto[],
-  days: number = 21
+  days: number
 ) => {
   const today = new Date();
   const dateData = getChallengeDays(days, challenge.createdAt);
