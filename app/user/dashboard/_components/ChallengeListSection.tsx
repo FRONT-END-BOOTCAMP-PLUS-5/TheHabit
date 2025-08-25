@@ -13,6 +13,7 @@ import { useParams } from 'next/navigation';
 import { ChallengeDto } from '@/backend/challenges/applications/dtos/ChallengeDto';
 import AllChallengeList from './AllChallengeList';
 import CategoryChallengeList from './CategoryChallengeList';
+import HistoryChallengeList from './HistoryChallengeList';
 import { Toast } from '@/app/_components/toasts/Toast';
 
 const ChallengeListSection: React.FC = () => {
@@ -124,6 +125,23 @@ const ChallengeListSection: React.FC = () => {
     return filteredChallenges;
   };
 
+  // 완료/실패된 챌린지들 필터링 (in_progress가 아닌 챌린지들 + active가 false인 챌린지들)
+  const getHistoryChallenges = () => {
+    if (!dashboard?.challenge || !Array.isArray(dashboard.challenge)) {
+      return [];
+    }
+
+    return dashboard.challenge.filter(challenge => {
+      // challenge 객체가 유효한지 확인
+      if (!challenge || typeof challenge !== 'object') {
+        return false;
+      }
+
+      // completionProgress가 'in_progress'가 아니면서 동시에 active가 false인 챌린지들
+      return challenge.completionProgress !== 'in_progress' && challenge.active === false;
+    });
+  };
+
   const handleOpenAddChallengeModal = () => {
     openModal(<AddChallengeForm />, 'toast');
   };
@@ -223,17 +241,29 @@ const ChallengeListSection: React.FC = () => {
               style={{
                 marginBottom: 8,
                 display: 'flex',
-                width: '50%',
+                width: '70%', // 50%에서 70%로 증가
                 justifyContent: 'center',
               }}
               buttonStyle='solid'
-              className='custom-radio-group w-full max-w-md'
+              className='custom-radio-group w-full max-w-lg' // max-w-md에서 max-w-lg로 증가
             >
-              <Radio.Button value='all' className='flex-1 text-center'>
+              <Radio.Button
+                value='all'
+                className='flex-1 flex justify-center items-center text-center px-3 py-3 text-base font-medium whitespace-nowrap leading-tight'
+              >
                 전체
               </Radio.Button>
-              <Radio.Button value='category' className='flex-1 text-center'>
+              <Radio.Button
+                value='category'
+                className='flex-1 flex justify-center items-center text-center px-3 py-3 text-base font-medium whitespace-nowrap leading-tight'
+              >
                 카테고리
+              </Radio.Button>
+              <Radio.Button
+                value='history'
+                className='flex-1 flex justify-center items-center text-center px-3 py-3 text-base font-medium whitespace-nowrap leading-tight'
+              >
+                완료/실패
               </Radio.Button>
             </Radio.Group>
           </div>
@@ -246,7 +276,7 @@ const ChallengeListSection: React.FC = () => {
             selectedDate={selectedDate}
             nickname={nickname}
           />
-        ) : (
+        ) : selectedSort === 'category' ? (
           dashboard && (
             <CategoryChallengeList
               categoryId={0}
@@ -258,7 +288,9 @@ const ChallengeListSection: React.FC = () => {
               nickname={nickname}
             />
           )
-        )}
+        ) : selectedSort === 'history' ? (
+          <HistoryChallengeList challenges={getHistoryChallenges()} nickname={nickname} />
+        ) : null}
       </div>
       <AddChallengeButton onClick={handleOpenAddChallengeModal} />
     </section>
