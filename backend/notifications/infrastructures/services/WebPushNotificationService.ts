@@ -1,5 +1,8 @@
 import webPush from 'web-push';
-import { IPushNotificationService, NotificationPayload } from '@/backend/notifications/domains/services/IPushNotificationService';
+import {
+  IPushNotificationService,
+  NotificationPayload,
+} from '@/backend/notifications/domains/services/IPushNotificationService';
 
 export class WebPushNotificationService implements IPushNotificationService {
   constructor() {
@@ -10,7 +13,12 @@ export class WebPushNotificationService implements IPushNotificationService {
     );
   }
 
-  async send(endpoint: string, p256dh: string, auth: string, payload: NotificationPayload): Promise<void> {
+  async send(
+    endpoint: string,
+    p256dh: string,
+    auth: string,
+    payload: NotificationPayload
+  ): Promise<void> {
     const pushSubscription = {
       endpoint,
       keys: { p256dh, auth },

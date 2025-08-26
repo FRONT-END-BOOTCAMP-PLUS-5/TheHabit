@@ -26,6 +26,7 @@ const CategoryChallengeList: React.FC<CategoryChallengeListProps> = props => {
     onRoutineAdded,
     nickname = '',
     isOwner = false,
+    onFeedbackClick,
   } = props;
   const renderCategory = (categoryId: number, categoryName: string) => {
     const categoryChallenges = challenges.filter(challenge => challenge.categoryId === categoryId);
@@ -47,6 +48,7 @@ const CategoryChallengeList: React.FC<CategoryChallengeListProps> = props => {
                 onRoutineAdded={onRoutineAdded}
                 nickname={nickname}
                 isOwner={isOwner}
+                onFeedbackClick={onFeedbackClick}
               />
             ))
           ) : (
