@@ -36,8 +36,11 @@ self.addEventListener('push', (event) => {
     data: data.data || {}
   };
 
+  // 제목에 앱 이름 추가하여 localhost 표시 최소화
+  const notificationTitle = `TheHabit - ${data.title || '새 알림'}`;
+  
   event.waitUntil(
-    self.registration.showNotification(data.title || '새 알림', options)
+    self.registration.showNotification(notificationTitle, options)
   );
 });
 
