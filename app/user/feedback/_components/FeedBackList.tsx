@@ -30,7 +30,7 @@ export const FeedBackList: React.FC<FeedBackListProps> = ({ nickname: nicknamePr
   };
 
   return (
-    <section className='flex flex-col mt-5 w-full'>
+    <section className='flex flex-col mt-10 w-full mb-20'>
       <nav className='flex flex-1 items-center justify-between w-full h-1/3'>
         <div className='w-full flex justify-center'>
           {FEEDBACK_CATEGORIES.map(linkItem => {
