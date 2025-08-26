@@ -16,9 +16,9 @@ export const NotificationList: React.FC<NotificationListProps> = ({
   onMarkAsRead,
   onMarkAllAsRead,
 }) => {
-  const [showUnreadOnly, setShowUnreadOnly] = useState(false);
+  const [activeTab, setActiveTab] = useState<'all' | 'unread'>('all');
 
-  const filteredNotifications = showUnreadOnly
+  const filteredNotifications = activeTab === 'unread'
     ? notifications.filter(n => !n.isRead)
     : notifications;
 
@@ -34,30 +34,44 @@ export const NotificationList: React.FC<NotificationListProps> = ({
 
   return (
     <div className='w-full'>
-      <div className='flex items-center justify-between p-4 bg-gray-50 border-b'>
-        <div className='flex items-center gap-4'>
+      <div className='bg-white border-b border-gray-200'>
+        <div className='flex'>
           <button
-            onClick={() => setShowUnreadOnly(!showUnreadOnly)}
-            className={`px-3 py-1 rounded-full text-sm transition-colors ${
-              showUnreadOnly
-                ? 'bg-green-100 text-green-700 border border-green-300'
-                : 'bg-gray-100 text-gray-700 border border-gray-300'
+            onClick={() => setActiveTab('all')}
+            className={`flex-1 py-3 text-center font-medium transition-colors ${
+              activeTab === 'all'
+                ? 'text-black border-b-2 border-black'
+                : 'text-gray-500 border-b-2 border-transparent'
             }`}
           >
-            {showUnreadOnly ? '읽지 않음' : '전체'}
+            전체
           </button>
-          {unreadCount > 0 && (
-            <span className='text-xs text-gray-500'>읽지 않은 알림 {unreadCount}개</span>
-          )}
-        </div>
-
-        {unreadCount > 0 && (
           <button
-            onClick={onMarkAllAsRead}
-            className='text-sm text-blue-600 hover:text-blue-800 transition-colors'
+            onClick={() => setActiveTab('unread')}
+            className={`flex-1 py-3 text-center font-medium relative transition-colors ${
+              activeTab === 'unread'
+                ? 'text-black border-b-2 border-black'
+                : 'text-gray-500 border-b-2 border-transparent'
+            }`}
           >
-            모두 읽음
+            읽지 않음
+            {unreadCount > 0 && (
+              <span className='ml-1 bg-red-500 text-white text-xs rounded-full px-1.5 py-0.5 min-w-[18px] h-4 flex items-center justify-center'>
+                {unreadCount}
+              </span>
+            )}
           </button>
+        </div>
+        
+        {unreadCount > 0 && (
+          <div className='px-4 py-2 bg-gray-50 border-b'>
+            <button
+              onClick={onMarkAllAsRead}
+              className='text-sm text-blue-600 hover:text-blue-800 transition-colors font-medium'
+            >
+              모두 읽음 처리
+            </button>
+          </div>
         )}
       </div>
 
@@ -65,7 +79,7 @@ export const NotificationList: React.FC<NotificationListProps> = ({
         {filteredNotifications.length === 0 ? (
           <div className='p-8 text-center'>
             <p className='text-gray-500 text-sm'>
-              {showUnreadOnly ? '읽지 않은 알림이 없어요' : '알림이 없어요'}
+              {activeTab === 'unread' ? '읽지 않은 알림이 없어요' : '알림이 없어요'}
             </p>
           </div>
         ) : (
