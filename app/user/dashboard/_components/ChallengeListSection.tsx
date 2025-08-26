@@ -229,6 +229,26 @@ const ChallengeListSection: React.FC = () => {
     );
   }
 
+  // 데이터 비어있음 처리 (에러가 아닌 정상 응답이지만 비어있는 경우)
+  const isEmpty =
+    !dashboard || !Array.isArray(dashboard.challenge) || dashboard.challenge.length === 0;
+  if (isEmpty) {
+    return (
+      <section className='flex flex-col gap-2 px-3 py-2 w-full relative mb-10'>
+        <WeeklySlide onDateSelect={handleDateSelect} />
+        <div className='flex flex-col gap-4 items-center justify-center text-center py-8'>
+          <div className='text-2xl font-bold text-secondary'>아직 등록된 챌린지가 없어요</div>
+          <div className='text-gray-500'>새 챌린지를 만들어 오늘부터 시작해보세요.</div>
+          {isOwner && (
+            <div className='mt-2'>
+              <AddChallengeButton onClick={handleOpenAddChallengeModal} />
+            </div>
+          )}
+        </div>
+      </section>
+    );
+  }
+
   return (
     <section className='flex flex-col gap-2 px-3 py-2 w-full relative mb-10'>
       <WeeklySlide onDateSelect={handleDateSelect} />

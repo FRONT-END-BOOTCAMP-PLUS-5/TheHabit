@@ -49,7 +49,7 @@ const ToastModal: React.FC<ToastModalProps> = ({ children, isOpen = false, onClo
 
       {/* 모달 컨테이너 - mobile-wrapper와 동일한 width 제약 적용 */}
       <div
-        className={`relative w-full max-w-[480px] bg-white rounded-t-2xl shadow-lg mx-auto mb-2 transition-all duration-300 ease-in-out ${
+        className={`relative w-full max-w-[480px] bg-white rounded-t-2xl shadow-lg mx-auto transition-all duration-300 ease-in-out ${
           isAnimating
             ? 'transform translate-y-0 opacity-100'
             : 'transform translate-y-full opacity-0'

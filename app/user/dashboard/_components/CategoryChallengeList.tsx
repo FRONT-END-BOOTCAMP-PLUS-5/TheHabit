@@ -4,25 +4,29 @@ import ChallengesAccordion from '@/app/_components/challenges-accordion/Challeng
 import { ChallengeDto } from '@/backend/challenges/applications/dtos/ChallengeDto';
 import { ReadRoutineResponseDto } from '@/backend/routines/applications/dtos/RoutineDto';
 import { RoutineCompletionDto } from '@/backend/routine-completions/applications/dtos/RoutineCompletionDto';
+import type { DashboardDto } from '@/backend/dashboards/application/dtos/DashboardDto';
 interface CategoryChallengeListProps {
   challenges: ChallengeDto[];
   routines: ReadRoutineResponseDto[];
   routineCompletions: RoutineCompletionDto[];
-  selectedDate: Date;
+  selectedDate?: Date;
   onRoutineAdded?: () => void;
-  nickname: string; // 사용자 닉네임 추가
-  isOwner: boolean;
+  nickname?: string; // 사용자 닉네임 추가
+  isOwner?: boolean;
+  onFeedbackClick?: (challengeId: number) => void;
+  dashboard?: DashboardDto;
 }
 
-const CategoryChallengeList: React.FC<CategoryChallengeListProps> = ({
-  challenges,
-  routines,
-  routineCompletions,
-  selectedDate,
-  onRoutineAdded,
-  nickname,
-  isOwner,
-}) => {
+const CategoryChallengeList: React.FC<CategoryChallengeListProps> = props => {
+  const {
+    challenges,
+    routines,
+    routineCompletions,
+    selectedDate = new Date(),
+    onRoutineAdded,
+    nickname = '',
+    isOwner = false,
+  } = props;
   const renderCategory = (categoryId: number, categoryName: string) => {
     const categoryChallenges = challenges.filter(challenge => challenge.categoryId === categoryId);
 

@@ -9,14 +9,13 @@ import { UI_MESSAGES, FORM_LIMITS } from '@/public/consts/routineItem';
 import { showError, ROUTINE_ERRORS } from '@/public/utils/errorUtils';
 
 interface RoutineCompletionFormProps {
-  selectedRoutine: ReadRoutineResponseDto | null;
+  selectedRoutine?: ReadRoutineResponseDto;
   onSubmit: (reviewText: string, photoFile?: File) => Promise<void>;
   onCancel: () => void;
   loading?: boolean;
 }
 
 export const RoutineCompletionForm = ({
-  selectedRoutine,
   onSubmit,
   onCancel,
   loading = false,
