@@ -3,14 +3,17 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import React, { useState, useEffect } from 'react';
-import { tabItem } from '@/public/consts/tabItem';
+import { getTabItems } from '@/public/consts/tabItem';
 import homeIcon from '@/public/icons/home.svg';
 import { useGetUserInfo } from '@/libs/hooks/user-hooks/useGetUserInfo';
+
 
 export const TabNavigation = () => {
   const [isHover, setIsHover] = useState<string>('');
   const [mounted, setMounted] = useState(false);
   const { userInfo } = useGetUserInfo();
+  const tabItems = getTabItems(userInfo?.nickname || '');
+  
 
   useEffect(() => {
     setMounted(true);
@@ -32,7 +35,7 @@ export const TabNavigation = () => {
   return (
     <nav className='sticky bottom-0'>
       <ul className=' w-11/12 h-22 flex justify-around bg-white shadow-[0_0_20px_rgba(0,0,0,0.3)] items-center rounded-xl mx-auto'>
-        {tabItem.map((item, i) => (
+        {tabItems.map((item, i) => (
           <li key={i}>
             <Link href={item.href || ''} className='w-12 h-12 flex justify-center items-center'>
               <Image
@@ -47,7 +50,7 @@ export const TabNavigation = () => {
         ))}
         <div className='w-15 h-15 bg-[#93D50B] absolute bottom-7/11 cursor-pointer hover:scale-110 transition-all duration-300 hover:opacity-90 flex items-center justify-center rounded-full'>
           <Link
-            href={userInfo?.nickname ? `/user/dashboard/${userInfo.nickname}` : '/user/dashboard'}
+            href={userInfo?.nickname ? '/user/dashboard/' : '/login'}
           >
             <Image
               src={homeIcon}

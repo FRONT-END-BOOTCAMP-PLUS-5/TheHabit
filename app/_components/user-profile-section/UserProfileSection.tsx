@@ -3,6 +3,7 @@ import { ProfileImage } from '@/app/_components/profile-images/ProfileImage';
 import { useState } from 'react';
 import { useGetUserByNickname } from '@/libs/hooks/user-hooks/useGetUserByNickname';
 import { useParams } from 'next/navigation';
+import { useSession } from 'next-auth/react';
 
 interface UserProfileSectionProps {
   nickname?: string; // 옵셔널로 유저 닉네임 받기
@@ -10,6 +11,12 @@ interface UserProfileSectionProps {
 
 const UserProfileSection: React.FC<UserProfileSectionProps> = () => {
   const [hasError, setHasError] = useState(false);
+
+  // 세션 정보 가져오기
+  const { data: session } = useSession();
+  
+  // 세션 정보 콘솔 로그로 확인
+  console.log('🏷️ Session Nickname:', session?.user?.nickname);
 
   // props로 받은 nickname이 없으면 빈 문자열로 설정 (훅에서 enabled: false가 되도록)
   const nickname = useParams().nickname || '';

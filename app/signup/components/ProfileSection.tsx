@@ -1,21 +1,33 @@
 'use client';
 
 import Image from 'next/image';
-import { Controller, useFormContext } from 'react-hook-form';
+import { useFormContext } from 'react-hook-form';
 import { ProfileImage } from '@/app/_components/profile-images/ProfileImage';
 import { useUploadProfile } from '@/libs/hooks/signup/useUploadProfile';
 import { useEffect } from 'react';
-import { Rex } from '@/public/consts/Rex';
 import CustomInput from '@/app/_components/inputs/CustomInput';
+
+// 닉네임 자동 생성 함수
+const generateRandomNickname = (): string => {
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  let result = '';
+  
+  // 6글자 랜덤 조합
+  for (let i = 0; i < 6; i++) {
+    result += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  
+  return result;
+};
 
 export const ProfileSection = () => {
   const {
-    control,
-    formState: { errors },
     setValue,
+    watch,
   } = useFormContext();
 
   const { profilePreview, handleImageClick, fileInputRef, profileFile, handleFileChange } = useUploadProfile();
+  const username = watch('username');
 
   useEffect(() => {
     if (profileFile) {
@@ -24,6 +36,12 @@ export const ProfileSection = () => {
       setValue('profileFile', profileFile); 
     }
   }, [profileFile, setValue]);
+
+  // 컴포넌트 마운트 시 닉네임 자동 생성
+  useEffect(() => {
+    const randomNickname = generateRandomNickname();
+    setValue('nickname', randomNickname);
+  }, [setValue]);
 
   return (
     <section className='grid grid-cols-[1fr_3fr] items-center gap-5 w-full mt-6 mb-6'>
@@ -46,33 +64,16 @@ export const ProfileSection = () => {
         />
       </div>
 
-      <Controller
-        control={control}
-        name='nickname'
-        rules={{
-          required: '닉네임을 입력해주세요',
-          pattern: {
-            value: Rex.nickname.standard,
-            message: '닉네임은 한글, 영문, 숫자를 포함해 2자 이상 10자여야 합니다',
-          },
-        }}
-        render={({ field }) => (
-          <div className='relative font-bold'>
-            <CustomInput
-              label='닉네임'
-              labelHtmlFor='nickname'
-              placeholder='ex) 홍길동'
-              className='login-input relative'
-              {...field}
-            />
-            {errors.nickname && (
-              <p className='text-red-500 text-xs absolute left-0'>
-                {errors.nickname?.message?.toString()}
-              </p>
-            )}
-          </div>
-        )}
-      />
+      <div className='relative font-bold'>
+        <CustomInput
+          label='이름'
+          labelHtmlFor='username'
+          placeholder='이름을 입력해주세요'
+          className='login-input relative'
+          value={username || ''}
+          onChange={e => setValue('username', e.target.value)}
+        />
+      </div>
     </section>
   );
 };
