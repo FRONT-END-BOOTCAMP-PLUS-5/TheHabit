@@ -139,3 +139,15 @@ model push_subscriptions {
   created_at DateTime @default(now())
   user_id    String?
 }
+
+model notifications {
+  id           Int      @id @default(autoincrement())
+  type         String
+  title        String
+  message      String
+  is_read      Boolean  @default(false)
+  created_at   DateTime @default(now())
+  user_id      String
+  from_user_id String?
+  metadata     Json?
+}
