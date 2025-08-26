@@ -53,17 +53,17 @@ export const LoginForm = () => {
         password: data.password,
         redirect: false, // 자동 리다이렉트 방지
       });
-
+      console.log('result', result);
       if (result?.error) {
         setError('이메일 또는 비밀번호가 올바르지 않습니다.');
       } else if (result?.ok) {
+        alert('로그인 성공');
         router.push(`/user/dashboard/${userInfo?.nickname}`);
       } else {
         setError('로그인 처리 중 예상치 못한 오류가 발생했습니다.');
       }
     } catch (error) {
       if (error instanceof AxiosError) {
-        // 음 여기다 뭐넣지...
         alert(error.response?.data.message);
       }
       setError('로그인 처리 중 오류가 발생했습니다.');

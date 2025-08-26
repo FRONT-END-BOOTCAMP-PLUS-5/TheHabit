@@ -7,7 +7,7 @@ import activeFeedbackIcon from '@/public/icons/activeFeedback.svg';
 import activeAlarmIcon from '@/public/icons/activeAlarm.svg';
 import activeProfileIcon from '@/public/icons/activeProfile.svg';
 
-export const tabItem = [
+export const getTabItems = (nickname: string) => ([
   {
     name: 'search',
     icon: searchIcon,
@@ -18,7 +18,7 @@ export const tabItem = [
   {
     name: 'feedback',
     icon: feedbackIcon,
-    href: '/user/feedback',
+    href: `/user/feedback/${nickname}`,
     isHover: activeFeedbackIcon,
   },
   
@@ -31,7 +31,10 @@ export const tabItem = [
   {
     name: 'profile',
     icon: profileIcon,
-    href: '/user/profile/edit',
+    href: `/user/profile/${nickname}`,
     isHover: activeProfileIcon,
   },
-];
+]);
+
+// 기존 코드와의 호환성을 위한 기본 export
+export const tabItem = getTabItems('');
