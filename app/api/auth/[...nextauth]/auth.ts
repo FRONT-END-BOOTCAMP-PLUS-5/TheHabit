@@ -121,7 +121,7 @@ export const authOptions = {
 
     async jwt({ token, user }: { token: JWT; user: User }) {
       if (user) {
-        token.nickname = user.name || undefined;
+        token.nickname = user.nickname || undefined;
         token.email = user.email || undefined;
         token.id = user.id || undefined;
       }
