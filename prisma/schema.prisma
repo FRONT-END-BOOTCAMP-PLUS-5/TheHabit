@@ -52,7 +52,6 @@ model Challenge {
   @@map("challenges")
 }
 
-
 model Routine {
   id           Int                 @id @default(autoincrement())
   routineTitle String              @map("routine_title")
@@ -154,6 +153,4 @@ model Notification {
   metadata   Json?
 
   @@map("notifications")
-
 }
-

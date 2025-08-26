@@ -35,6 +35,21 @@ const createGetRoutineCompletionsUseCase = () => {
   return new GetRoutineCompletionsUseCase(repository);
 };
 
+const createNotificationUsecase = () => {
+  const notificationRepository = new PrNotificationRepository();
+  return new CreateNotificationUsecase(notificationRepository);
+};
+
+const createGetUserUsecase = () => {
+  const userRepository = new PrUserRepository();
+  return new GetUserUsecase(userRepository);
+};
+
+const createGetFollowerUsecase = () => {
+  const followRepository = new PrFollowRepository();
+  return new GetFollowerByToUserIdUsecase(followRepository);
+};
+
 // 루틴 완료 조회 (GET)
 export async function GET(request: NextRequest): Promise<NextResponse<ApiResponse<RoutineCompletionDto[] | null>>> {
   try {
@@ -80,57 +95,12 @@ export async function GET(request: NextRequest): Promise<NextResponse<ApiRespons
 // 루틴 완료 생성 (POST)
 export async function POST(request: NextRequest): Promise<NextResponse> {
   try {
-    // Content-Type 확인
-    const contentType = request.headers.get('content-type');
-    console.log('Content-Type:', contentType);
-
-    // FormData 파싱 시도
-    let formData;
-    try {
-      // request.clone() 없이 직접 파싱
-      formData = await request.formData();
-      console.log('FormData 파싱 성공');
-    } catch (formDataError) {
-      console.error('FormData 파싱 실패:', formDataError);
-      console.error('Content-Type:', contentType);
-      console.error('Headers:', Object.fromEntries(request.headers.entries()));
-
-      // 더 간단한 에러 응답
-      const errorResponse: ApiResponse<null> = {
-        success: false,
-        error: {
-          code: 'FORM_DATA_PARSE_ERROR',
-          message: 'FormData 파싱에 실패했습니다. 다시 시도해주세요.'
-        }
-      };
-      return NextResponse.json(errorResponse, { status: 400 });
-    }
-
-
-const createNotificationUsecase = () => {
-  const notificationRepository = new PrNotificationRepository();
-  return new CreateNotificationUsecase(notificationRepository);
-};
-
-const createGetUserUsecase = () => {
-  const userRepository = new PrUserRepository();
-  return new GetUserUsecase(userRepository);
-};
-
-const createGetFollowerUsecase = () => {
-  const followRepository = new PrFollowRepository();
-  return new GetFollowerByToUserIdUsecase(followRepository);
-};
-
-export async function POST(request: NextRequest): Promise<NextResponse> {
-  try {
     const formData = await request.formData();
 
     const file = formData.get('file');
     const routineIdValue = formData.get('routineId');
     const contentValue = formData.get('content');
     const nicknameValue = formData.get('nickname');
-
 
     console.log('FormData 내용:', {
       hasFile: !!file,
@@ -143,7 +113,6 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     });
 
     // 필수 필드 검증
-
     if (!nicknameValue || typeof nicknameValue !== 'string' || String(nicknameValue).trim() === '') {
       const errorResponse: ApiResponse<null> = {
         success: false,
@@ -236,11 +205,11 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     try {
       const getUserUsecase = createGetUserUsecase();
       const user = await getUserUsecase.execute(String(nicknameValue).trim());
-      
+
       if (user?.id) {
         const getFollowerUsecase = createGetFollowerUsecase();
         const followerResult = await getFollowerUsecase.execute(user.id, '');
-        
+
         if (followerResult?.followers && followerResult.followers.length > 0) {
           const notificationUsecase = createNotificationUsecase();
           const notificationPromises = followerResult.followers.map(follower =>
@@ -256,7 +225,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
               }
             })
           );
-          
+
           await Promise.all(notificationPromises);
         }
       }
