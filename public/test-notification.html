@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>푸시 알림 테스트</title>
+</head>
+<body>
+    <h1>🔔 푸시 알림 테스트</h1>
+    
+    <div id="status"></div>
+    <br>
+    
+    <button onclick="checkNotificationSupport()">1. 브라우저 지원 확인</button>
+    <button onclick="requestPermission()">2. 알림 권한 요청</button>
+    <button onclick="registerServiceWorker()">3. Service Worker 등록</button>
+    <button onclick="subscribeUser()">4. 푸시 구독</button>
+    <button onclick="sendTestNotification()">5. 테스트 알림 발송</button>
+    
+    <script>
+        const statusDiv = document.getElementById('status');
+        
+        function log(message) {
+            statusDiv.innerHTML += '<div>' + new Date().toLocaleTimeString() + ': ' + message + '</div>';
+            console.log(message);
+        }
+        
+        function checkNotificationSupport() {
+            if ('Notification' in window) {
+                log('✅ 브라우저가 알림을 지원합니다');
+                log('현재 권한: ' + Notification.permission);
+            } else {
+                log('❌ 브라우저가 알림을 지원하지 않습니다');
+            }
+            
+            if ('serviceWorker' in navigator) {
+                log('✅ Service Worker를 지원합니다');
+            } else {
+                log('❌ Service Worker를 지원하지 않습니다');
+            }
+            
+            if ('PushManager' in window) {
+                log('✅ Push API를 지원합니다');
+            } else {
+                log('❌ Push API를 지원하지 않습니다');
+            }
+        }
+        
+        async function requestPermission() {
+            try {
+                const permission = await Notification.requestPermission();
+                log('알림 권한: ' + permission);
+                
+                if (permission === 'granted') {
+                    log('✅ 알림 권한이 허용되었습니다');
+                } else if (permission === 'denied') {
+                    log('❌ 알림 권한이 거부되었습니다');
+                } else {
+                    log('⏳ 알림 권한이 보류 상태입니다');
+                }
+            } catch (error) {
+                log('❌ 권한 요청 실패: ' + error.message);
+            }
+        }
+        
+        async function registerServiceWorker() {
+            try {
+                if ('serviceWorker' in navigator) {
+                    const registration = await navigator.serviceWorker.register('/sw.js');
+                    await navigator.serviceWorker.ready;
+                    log('✅ Service Worker 등록 성공');
+                    log('Scope: ' + registration.scope);
+                    return registration;
+                }
+            } catch (error) {
+                log('❌ Service Worker 등록 실패: ' + error.message);
+            }
+        }
+        
+        async function subscribeUser() {
+            try {
+                const registration = await navigator.serviceWorker.getRegistration('/sw.js');
+                if (!registration) {
+                    log('❌ Service Worker가 등록되지 않았습니다');
+                    return;
+                }
+                
+                const vapidPublicKey = 'BBi1jqUqvyk3Aba94TeJKCslEt6Ex-Bs_dlyLmANtC6odleLD0a4CaDAn1UwZtg2pKbBsk8lz07unNIxcMgerH4';
+                
+                const subscription = await registration.pushManager.subscribe({
+                    userVisibleOnly: true,
+                    applicationServerKey: vapidPublicKey
+                });
+                
+                log('✅ 푸시 구독 성공');
+                log('Endpoint: ' + subscription.endpoint.substring(0, 50) + '...');
+                
+                // 서버에 구독 정보 전송
+                const response = await fetch('/api/notifications/subscribe', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        endpoint: subscription.endpoint,
+                        p256dh: btoa(String.fromCharCode.apply(null, new Uint8Array(subscription.getKey('p256dh')))),
+                        auth: btoa(String.fromCharCode.apply(null, new Uint8Array(subscription.getKey('auth'))))
+                    })
+                });
+                
+                const result = await response.json();
+                if (result.success) {
+                    log('✅ 서버 구독 등록 성공');
+                } else {
+                    log('❌ 서버 구독 등록 실패: ' + (result.error?.message || 'Unknown error'));
+                }
+                
+                return subscription;
+            } catch (error) {
+                log('❌ 구독 실패: ' + error.message);
+            }
+        }
+        
+        async function sendTestNotification() {
+            try {
+                // 직접 브라우저 알림 테스트
+                if (Notification.permission === 'granted') {
+                    const notification = new Notification('🧪 테스트 알림', {
+                        body: 'TheHabit 로컬 테스트 알림입니다!',
+                        icon: '/images/icons/manifest-192x192.png',
+                        badge: '/images/icons/manifest-192x192.png'
+                    });
+                    
+                    notification.onclick = function() {
+                        log('📱 알림이 클릭되었습니다');
+                        notification.close();
+                    };
+                    
+                    log('✅ 테스트 알림 발송됨');
+                } else {
+                    log('❌ 알림 권한이 없습니다');
+                }
+            } catch (error) {
+                log('❌ 테스트 알림 실패: ' + error.message);
+            }
+        }
+        
+        // 페이지 로드 시 상태 확인
+        window.onload = function() {
+            checkNotificationSupport();
+        };
+    </script>
+</body>
+</html>
