@@ -68,7 +68,9 @@ export class PrChallengeRepository implements IChallengeRepository {
     );
   }
 
-  async findByIdWithUser(id: number): Promise<{ challenge: Challenge; userNickname: string } | null> {
+  async findByIdWithUser(
+    id: number
+  ): Promise<{ challenge: Challenge; userNickname: string } | null> {
     const challenge = await prisma.challenge.findUnique({
       where: { id },
       include: {
@@ -94,7 +96,7 @@ export class PrChallengeRepository implements IChallengeRepository {
         challenge.completion_progress,
         challenge.id
       ),
-      userNickname: challenge.user.nickname
+      userNickname: challenge.user.nickname,
     };
   }
 

@@ -28,6 +28,7 @@ interface ChallengesAccordionProps {
   onRoutineAdded?: () => void;
   nickname: string; // 사용자 닉네임 추가
   isOwner: boolean;
+  onFeedbackClick?: (challengeId: number) => void;
 }
 
 const CATEGORY_ICON: Record<number, { icon: StaticImageData; alt: string }> = {
@@ -57,6 +58,7 @@ const ChallengesAccordion: React.FC<ChallengesAccordionProps> = ({
   onRoutineAdded,
   nickname,
   isOwner,
+  onFeedbackClick,
 }) => {
   const { openModal } = useModalStore();
 
@@ -307,6 +309,7 @@ const ChallengesAccordion: React.FC<ChallengesAccordionProps> = ({
             selectedDate={selectedDate}
             onRoutineAdded={onRoutineAdded}
             isOwner={isOwner}
+            onFeedbackClick={onFeedbackClick}
           />
         </div>
       </div>
