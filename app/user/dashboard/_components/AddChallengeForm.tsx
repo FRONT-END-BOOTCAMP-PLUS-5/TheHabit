@@ -15,6 +15,7 @@ import { useGetChallengesByNickname } from '@/libs/hooks/challenges-hooks/useGet
 import { useGetUserInfo } from '@/libs/hooks/user-hooks/useGetUserInfo';
 import { useModalStore } from '@/libs/stores/modalStore';
 import { Toast } from '@/app/_components/toasts/Toast';
+import { useQueryClient } from '@tanstack/react-query';
 
 const AddChallengeForm: React.FC = () => {
   const {
@@ -32,6 +33,7 @@ const AddChallengeForm: React.FC = () => {
 
   // 챌린지 생성 훅 사용
   const createChallengeMutation = useCreateChallenge();
+  const queryClient = useQueryClient();
 
   // 모달 닫기 함수
   const { closeModal } = useModalStore();
@@ -56,7 +58,7 @@ const AddChallengeForm: React.FC = () => {
     if (watchCreatedAt) {
       const startDate = new Date(watchCreatedAt);
       const endDate = new Date(startDate);
-      endDate.setDate(startDate.getDate() + 21);
+      endDate.setDate(startDate.getDate() + 20);
 
       // YYYY-MM-DD 형식으로 변환
       const endDateString = endDate.toISOString().split('T')[0];
@@ -91,6 +93,7 @@ const AddChallengeForm: React.FC = () => {
       ...data,
       categoryId: Number(data.categoryId),
       nickname: userNickname || '',
+      completionProgress: 'in_progress', // 자동으로 기본값 설정
     };
 
     createChallengeMutation.mutate(formData, {
@@ -100,10 +103,8 @@ const AddChallengeForm: React.FC = () => {
           // 챌린지 생성 성공 시 모달 닫기
           setTimeout(() => {
             closeModal();
-            // 페이지 새로고침하여 새로운 목록을 받아옴
-            setTimeout(() => {
-              window.location.reload();
-            }, 500); // 모달이 닫힌 후 0.5초 뒤 새로고침
+            // TanStack Query 캐시 무효화로 자동 데이터 업데이트
+            queryClient.invalidateQueries({ queryKey: ['challenges', userNickname] });
           }, 500);
         } else {
           console.error('챌린지 생성 실패:', response.error?.message);

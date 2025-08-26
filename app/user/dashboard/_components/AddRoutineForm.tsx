@@ -6,6 +6,7 @@ import { CreateRoutineRequestDto } from '@/backend/routines/applications/dtos/Ro
 import { getEmojiByNumber, getEmojiNumbers } from '@/public/consts/routineItem';
 import { useModalStore } from '@/libs/stores/modalStore';
 import { useCreateRoutine } from '@/libs/hooks/routines-hooks/useCreateRoutine';
+import { useQueryClient } from '@tanstack/react-query';
 import CustomInput from '@/app/_components/inputs/CustomInput';
 
 interface AddRoutineFormProps {
@@ -25,6 +26,7 @@ const AddRoutineForm: React.FC<AddRoutineFormProps> = ({ challengeId, nickname, 
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [enableAlert, setEnableAlert] = useState(false);
   const createRoutineMutation = useCreateRoutine();
+  const queryClient = useQueryClient();
 
   const {
     register,
@@ -78,9 +80,7 @@ const AddRoutineForm: React.FC<AddRoutineFormProps> = ({ challengeId, nickname, 
       onSuccess: () => {
         closeModal();
         // 루틴 생성 완료 후 페이지 새로고침하여 새로운 목록을 받아옴
-        setTimeout(() => {
-          window.location.reload();
-        }, 1000); // 토스트 메시지가 보인 후 1초 뒤 새로고침
+        queryClient.invalidateQueries({ queryKey: ['routines'] });
         onSuccess?.();
       },
     });

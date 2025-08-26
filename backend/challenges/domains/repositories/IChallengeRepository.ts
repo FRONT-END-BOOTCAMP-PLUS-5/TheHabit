@@ -6,6 +6,7 @@ export interface IChallengeRepository {
 
   // Read
   findById(id: number): Promise<Challenge | null>;
+  findByIdWithUser(id: number): Promise<{ challenge: Challenge; userNickname: string } | null>;
   findByNickname(nickname: string): Promise<Challenge[]>;
   findByCategoryId(categoryId: number): Promise<Challenge[]>;
   findAll(): Promise<Challenge[]>;

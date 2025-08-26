@@ -2,10 +2,17 @@ import { NextRequest, NextResponse } from 'next/server';
 import { AddRoutineCompletionUseCase } from '@/backend/routine-completions/applications/usecases/AddRoutineCompletionUseCase';
 import { UpdateRoutineCompletionUseCase } from '@/backend/routine-completions/applications/usecases/UpdateRoutineCompletionUseCase';
 import { DeleteRoutineCompletionUseCase } from '@/backend/routine-completions/applications/usecases/DeleteRoutineCompletionUseCase';
+import { GetRoutineCompletionsUseCase } from '@/backend/routine-completions/applications/usecases/GetRoutineCompletionsUseCase';
 import { PrRoutineCompletionsRepository } from '@/backend/routine-completions/infrastructures/repositories/PrRoutineCompletionsRepository';
 import { s3Service } from '@/backend/shared/services/s3.service';
 import { RoutineCompletionDto, RoutineCompletionDtoMapper } from '@/backend/routine-completions/applications/dtos/RoutineCompletionDto';
 import { ApiResponse } from '@/backend/shared/types/ApiResponse';
+import { PrNotificationRepository } from '@/backend/notifications/infrastructures/repositories/PrNotificationRepository';
+import { CreateNotificationUsecase } from '@/backend/notifications/applications/usecases/CreateNotificationUsecase';
+import { PrUserRepository } from '@/backend/users/infrastructures/repositories/PrUserRepository';
+import { GetUserUsecase } from '@/backend/users/applications/usecases/GetUserUsecase';
+import { PrFollowRepository } from '@/backend/follows/infrastructures/repositories/PrFollowRepository';
+import { GetFollowerByToUserIdUsecase } from '@/backend/follows/applications/usecases/GetFollowerByToUserIdUsecase';
 
 const createAddRoutineCompletionUseCase = () => {
   const repository = new PrRoutineCompletionsRepository();
@@ -22,26 +29,121 @@ const createDeleteRoutineCompletionUseCase = () => {
   return new DeleteRoutineCompletionUseCase(repository);
 };
 
+
+const createGetRoutineCompletionsUseCase = () => {
+  const repository = new PrRoutineCompletionsRepository();
+  return new GetRoutineCompletionsUseCase(repository);
+};
+
+// 루틴 완료 조회 (GET)
+export async function GET(request: NextRequest): Promise<NextResponse<ApiResponse<RoutineCompletionDto[] | null>>> {
+  try {
+    const { searchParams } = new URL(request.url);
+    const nickname = searchParams.get('nickname');
+
+    // nickname이 제공되지 않은 경우
+    if (!nickname || nickname.trim() === '') {
+      const errorResponse: ApiResponse<null> = {
+        success: false,
+        error: {
+          code: 'INVALID_NICKNAME',
+          message: '닉네임이 제공되지 않았습니다.',
+        },
+      };
+      return NextResponse.json(errorResponse, { status: 400 });
+    }
+
+    const getRoutineCompletionsUseCase = createGetRoutineCompletionsUseCase();
+
+    // 해당 닉네임의 모든 루틴 완료 조회
+    const completions = await getRoutineCompletionsUseCase.getByNickname(nickname.trim());
+
+    const successResponse: ApiResponse<RoutineCompletionDto[]> = {
+      success: true,
+      data: completions,
+      message: '루틴 완료 목록을 성공적으로 조회했습니다.',
+    };
+    return NextResponse.json(successResponse);
+  } catch (error) {
+    console.error('루틴 완료 목록 조회 오류:', error);
+    const errorResponse: ApiResponse<null> = {
+      success: false,
+      error: {
+        code: 'FETCH_FAILED',
+        message: '루틴 완료 목록 조회에 실패했습니다.',
+      },
+    };
+    return NextResponse.json(errorResponse, { status: 500 });
+  }
+}
+
 // 루틴 완료 생성 (POST)
 export async function POST(request: NextRequest): Promise<NextResponse> {
   try {
-    console.log('=== POST /api/routine-completions 요청 시작 ===');
+    // Content-Type 확인
+    const contentType = request.headers.get('content-type');
+    console.log('Content-Type:', contentType);
 
-    // FormData 파싱
+    // FormData 파싱 시도
+    let formData;
+    try {
+      // request.clone() 없이 직접 파싱
+      formData = await request.formData();
+      console.log('FormData 파싱 성공');
+    } catch (formDataError) {
+      console.error('FormData 파싱 실패:', formDataError);
+      console.error('Content-Type:', contentType);
+      console.error('Headers:', Object.fromEntries(request.headers.entries()));
+
+      // 더 간단한 에러 응답
+      const errorResponse: ApiResponse<null> = {
+        success: false,
+        error: {
+          code: 'FORM_DATA_PARSE_ERROR',
+          message: 'FormData 파싱에 실패했습니다. 다시 시도해주세요.'
+        }
+      };
+      return NextResponse.json(errorResponse, { status: 400 });
+    }
+
+
+const createNotificationUsecase = () => {
+  const notificationRepository = new PrNotificationRepository();
+  return new CreateNotificationUsecase(notificationRepository);
+};
+
+const createGetUserUsecase = () => {
+  const userRepository = new PrUserRepository();
+  return new GetUserUsecase(userRepository);
+};
+
+const createGetFollowerUsecase = () => {
+  const followRepository = new PrFollowRepository();
+  return new GetFollowerByToUserIdUsecase(followRepository);
+};
+
+export async function POST(request: NextRequest): Promise<NextResponse> {
+  try {
     const formData = await request.formData();
+
     const file = formData.get('file');
     const routineIdValue = formData.get('routineId');
     const contentValue = formData.get('content');
     const nicknameValue = formData.get('nickname');
 
-    console.log('요청 데이터:', {
+
+    console.log('FormData 내용:', {
       hasFile: !!file,
+      fileType: file ? typeof file : 'undefined',
+      isFileInstance: file instanceof File,
+      fileSize: file instanceof File ? file.size : 'N/A',
       routineId: routineIdValue,
       content: contentValue,
       nickname: nicknameValue,
     });
 
     // 필수 필드 검증
+
     if (!nicknameValue || typeof nicknameValue !== 'string' || String(nicknameValue).trim() === '') {
       const errorResponse: ApiResponse<null> = {
         success: false,
@@ -75,7 +177,6 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       return NextResponse.json(errorResponse, { status: 400 });
     }
 
-    // 루틴 ID 검증
     const routineIdNumber = Number(routineIdValue);
     if (isNaN(routineIdNumber) || !routineIdValue) {
       const errorResponse: ApiResponse<null> = {
@@ -91,12 +192,16 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     // 이미지 업로드 처리 (선택사항)
     let proofImgUrl: string | null = null;
     if (file && file instanceof File) {
+      console.log('이미지 업로드 시작:', {
+        fileName: file.name,
+        fileSize: file.size,
+        fileType: file.type
+      });
+
       try {
         const uploadResult = await s3Service.uploadImage(file, 'routine-completions');
         proofImgUrl = uploadResult.imageUrl;
-        console.log('이미지 업로드 성공:', proofImgUrl);
-      } catch (uploadError) {
-        console.error('이미지 업로드 실패:', uploadError);
+      } catch {
         const errorResponse: ApiResponse<null> = {
           success: false,
           error: {
@@ -106,7 +211,16 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         };
         return NextResponse.json(errorResponse, { status: 500 });
       }
+    } else {
+      console.log('이미지 파일 없음 또는 유효하지 않은 파일');
     }
+
+    console.log('루틴 완료 데이터 생성 시작:', {
+      nickname: String(nicknameValue).trim(),
+      routineId: routineIdNumber,
+      content: String(contentValue).trim(),
+      proofImgUrl,
+    });
 
     // 루틴 완료 데이터 생성
     const addRoutineCompletionUseCase = createAddRoutineCompletionUseCase();
@@ -118,7 +232,37 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       proofImgUrl,
     });
 
-    console.log('루틴 완료 생성 성공:', result);
+    // 루틴 완료 성공 시 팔로워들에게 알림 생성
+    try {
+      const getUserUsecase = createGetUserUsecase();
+      const user = await getUserUsecase.execute(String(nicknameValue).trim());
+      
+      if (user?.id) {
+        const getFollowerUsecase = createGetFollowerUsecase();
+        const followerResult = await getFollowerUsecase.execute(user.id, '');
+        
+        if (followerResult?.followers && followerResult.followers.length > 0) {
+          const notificationUsecase = createNotificationUsecase();
+          const notificationPromises = followerResult.followers.map(follower =>
+            notificationUsecase.execute({
+              type: 'routine_completion',
+              title: '루틴 완료',
+              message: `${user.nickname}님이 루틴을 완료했습니다!`,
+              userId: follower.fromUser.id,
+              fromUserId: user.id,
+              metadata: {
+                fromUserNickname: user.nickname,
+                fromUserProfileImg: user.profileImg
+              }
+            })
+          );
+          
+          await Promise.all(notificationPromises);
+        }
+      }
+    } catch {
+      // 알림 생성 실패해도 루틴 완료는 성공으로 처리
+    }
 
     const successResponse: ApiResponse<RoutineCompletionDto> = {
       success: true,
@@ -126,8 +270,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       message: '루틴이 성공적으로 완료되었습니다.'
     };
     return NextResponse.json(successResponse, { status: 201 });
-  } catch (error) {
-    console.error('루틴 완료 생성 오류:', error);
+  } catch {
     const errorResponse: ApiResponse<null> = {
       success: false,
       error: {
@@ -225,4 +368,3 @@ export async function DELETE(request: NextRequest): Promise<NextResponse<ApiResp
     return NextResponse.json(errorResponse, { status: 500 });
   }
 }
-

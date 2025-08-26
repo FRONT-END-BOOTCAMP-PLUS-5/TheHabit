@@ -75,7 +75,7 @@ export const updateRoutine = async (
 ): Promise<ApiResponse<ReadRoutineResponseDto>> => {
   try {
     const response = await axiosInstance.put<ApiResponse<ReadRoutineResponseDto>>(
-      `/api/routines/${id}`,
+      `/api/routines`,
       routineData
     );
     return response.data;
