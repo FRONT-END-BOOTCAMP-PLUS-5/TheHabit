@@ -24,6 +24,7 @@ export const ProfileImage = ({
             width={120}
             height={120}
             className={'w-full h-full object-cover'}
+            style={{ minHeight: '100%' }}
           />
         </div>
       )}
