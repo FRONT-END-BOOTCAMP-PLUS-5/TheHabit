@@ -4,17 +4,7 @@ import {
   CreatePushSubscriptionRequestDto,
   UnsubscribePushNotificationRequestDto 
 } from '@/backend/notifications/applications/dtos/PushSubscriptionDto';
-
-// API 응답 타입 정의
-interface ApiResponse<T> {
-  success: boolean;
-  data?: T;
-  message?: string;
-  error?: {
-    code: string;
-    message: string;
-  };
-}
+import { ApiResponse } from '@/backend/shared/types/ApiResponse';
 
 // 1. 푸시 알림 구독
 export const subscribePushNotification = async (
