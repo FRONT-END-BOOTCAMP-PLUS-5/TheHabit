@@ -24,7 +24,7 @@ export const calculateSingleChallengeProgress = (
   const dailyCompletions = dateData.map(date => {
     const isAfterToday = new Date(date) > today;
     if (isAfterToday) {
-      return null; // 오늘 이후는 미완료
+      return null; // 오늘 이후는 미완료로 집계 제외
     }
 
     const dailyRoutineCompletions = routineCompletions.filter(
@@ -45,9 +45,9 @@ export const calculateSingleChallengeProgress = (
     return allRoutinesCompleted;
   });
 
-  // 완료된 날짜 수 계산
+  // 완료된 날짜 수/유효 날짜 수 계산 (미래 날짜 제외)
   const completedDays = dailyCompletions.filter(completion => completion === true).length;
-  const totalValidDays = dailyCompletions.filter(completion => completion !== null).length;
+  const totalValidDays = days;
 
   // 진행률 계산
   const progressPercent =
