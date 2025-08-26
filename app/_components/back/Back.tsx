@@ -2,7 +2,7 @@ import { useRouter } from 'next/navigation';
 
 export const BackComponent = ({
   nickname,
-  className = 'text-[40px] text-[#93d50b] cursor-pointer inline pl-[20px] absolute top-[-6px] left-0',
+  className = 'text-[40px] text-[#000] cursor-pointer inline pl-[20px] absolute top-[-6px] left-0',
 }: {
   nickname?: string;
   className?: string;
