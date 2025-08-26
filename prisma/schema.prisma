@@ -143,18 +143,15 @@ model PushSubscription {
 }
 
 model Notification {
-  id        Int      @id @default(autoincrement())
-  type      String
-  title     String
-  message   String
-  isRead    Boolean  @default(false) @map("is_read")
-  createdAt DateTime @default(now()) @map("created_at")
-
-  userId String @map("user_id")
-
-  fromUserId String? @map("from_user_id")
-
-  metadata Json?
+  id         Int      @id @default(autoincrement())
+  type       String
+  title      String
+  message    String
+  isRead     Boolean  @default(false) @map("is_read")
+  createdAt  DateTime @default(now()) @map("created_at")
+  userId     String   @map("user_id")
+  fromUserId String?  @map("from_user_id")
+  metadata   Json?
 
   @@map("notifications")
 }
