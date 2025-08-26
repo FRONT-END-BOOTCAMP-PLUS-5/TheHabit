@@ -29,7 +29,7 @@ export const tabItem = (nickname?: string) => ([
   {
     name: 'profile',
     icon: profileIcon,
-    href: nickname ? `/user/profile/edit/${nickname}` : '/login',
+    href: nickname ? `/user/profile/${nickname}` : '/login',
     isHover: activeProfileIcon,
   },
 ]);
