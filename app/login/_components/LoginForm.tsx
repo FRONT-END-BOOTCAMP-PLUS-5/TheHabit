@@ -39,7 +39,6 @@ export const LoginForm = () => {
   useEffect(() => {
     const nickname = userInfo?.nickname;
     if (userInfo && !isUserInfoLoading) {
-      alert(userInfo);
       router.push(`/user/dashboard/${nickname}`);
     }
   }, [userInfo, isUserInfoLoading, router]);
@@ -65,7 +64,6 @@ export const LoginForm = () => {
       }
     } catch (error) {
       if (error instanceof AxiosError) {
-        // 음 여기다 뭐넣지...
         alert(error.response?.data.message);
       }
       setError('로그인 처리 중 오류가 발생했습니다.');
