@@ -53,6 +53,7 @@ model Challenge {
   @@map("challenges")
 }
 
+
 model Routine {
   id           Int                 @id @default(autoincrement())
   routineTitle String              @map("routine_title")
@@ -140,6 +141,21 @@ model PushSubscription {
   userId    String?  @map("user_id")
 
   @@map("push_subscriptions")
+}
+
+model Notification {
+  id         Int      @id @default(autoincrement())
+  type       String
+  title      String
+  message    String
+  isRead     Boolean  @default(false) @map("is_read")
+  createdAt  DateTime @default(now()) @map("created_at")
+  userId     String   @map("user_id")
+  fromUserId String?  @map("from_user_id")
+  metadata   Json?
+
+  @@map("notifications")
+
 }
 
 model Notification {

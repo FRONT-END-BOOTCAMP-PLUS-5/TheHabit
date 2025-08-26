@@ -7,6 +7,10 @@ import { PrNotificationRepository } from '@/backend/notifications/infrastructure
 import { CreateNotificationUsecase } from '@/backend/notifications/applications/usecases/CreateNotificationUsecase';
 import { PrUserRepository } from '@/backend/users/infrastructures/repositories/PrUserRepository';
 import { GetUserUsecase } from '@/backend/users/applications/usecases/GetUserUsecase';
+import { SendPushNotificationUseCase } from '@/backend/notifications/applications/usecases/SendPushNotificationUseCase';
+import { PrPushSubscriptionRepository } from '@/backend/notifications/infrastructures/repositories/PrPushSubscriptionRepository';
+import { WebPushNotificationService } from '@/backend/notifications/infrastructures/services/WebPushNotificationService';
+import { PrUserRepository } from '@/backend/users/infrastructures/repositories/PrUserRepository';
 
 const repository = new PrFollowRepository();
 const notificationRepository = new PrNotificationRepository();
@@ -96,6 +100,36 @@ export async function POST(request: NextRequest): Promise<NextResponse | undefin
       }
     } catch {
       // 알림 생성 실패해도 팔로우는 성공으로 처리
+    // 팔로우 성공 시 알림 전송
+    if (addfollowing) {
+      try {
+        const userRepository = new PrUserRepository();
+        const pushSubscriptionRepository = new PrPushSubscriptionRepository();
+        const pushNotificationService = new WebPushNotificationService();
+        
+        const sendNotificationUseCase = new SendPushNotificationUseCase(
+          pushSubscriptionRepository,
+          pushNotificationService
+        );
+        
+        // 팔로우한 사용자 정보 가져오기
+        const fromUser = await userRepository.findById(fromUserId);
+        
+        if (fromUser) {
+          await sendNotificationUseCase.execute(toUserId, {
+            title: '새로운 팔로워',
+            body: `${fromUser.nickname}님이 당신을 팔로우했습니다!`,
+            icon: '/images/icons/notification-icon.png',
+            data: {
+              type: 'follow',
+              userId: fromUserId,
+            }
+          });
+        }
+      } catch (notificationError) {
+        // 알림 전송 실패해도 팔로우는 성공으로 처리
+        console.error('팔로우 알림 전송 실패:', notificationError);
+      }
     }
 
     return NextResponse.json(

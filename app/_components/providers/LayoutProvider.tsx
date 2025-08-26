@@ -10,11 +10,11 @@ const LayoutProvider = ({ children }: { children: React.ReactNode }) => {
   const layout = useLayoutRoute(pathname);
 
   return (
-    <>
+    <div className='mb-14'>
       {layout.showHeader && <Header />}
       {children}
       {layout.showTab && <TabNavigation />}
-    </>
+    </div>
   );
 };
 

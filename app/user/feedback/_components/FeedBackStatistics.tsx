@@ -12,6 +12,8 @@ import {
   FeedBackSuccessIcon,
 } from '@/app/user/feedback/_components/FeedbackIcon';
 import { calculateSingleChallengeProgress } from '@/app/user/feedback/_components/CalcFeedBackData';
+import { CATEGORY_CONFIG } from '@/public/consts/categoryConfig';
+import Image from 'next/image';
 
 export const FeedBackStatistics: React.FC<{ dashBoardData: DashboardDto }> = ({
   dashBoardData,
@@ -24,7 +26,7 @@ export const FeedBackStatistics: React.FC<{ dashBoardData: DashboardDto }> = ({
       challenge.map(currentChallenge => {
         const start = new Date(currentChallenge.createdAt);
         const end = new Date(currentChallenge.endAt);
-        const days = Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24));
+        const days = Math.round((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24));
 
         const { dailyCompletions } = calculateSingleChallengeProgress(
           currentChallenge,
@@ -35,6 +37,7 @@ export const FeedBackStatistics: React.FC<{ dashBoardData: DashboardDto }> = ({
 
         return {
           challenge: currentChallenge,
+          days,
           dailyCompletions,
         };
       }),
@@ -50,13 +53,15 @@ export const FeedBackStatistics: React.FC<{ dashBoardData: DashboardDto }> = ({
   }
 
   return (
-    <section className='w-full mt-10 h-full rounded-lg shadow-md'>
+    <section className={`w-full mt-10 rounded-lg shadow-md`}>
       <Swiper
         modules={[Pagination, A11y]}
         spaceBetween={30}
         slidesPerView={1}
         speed={300}
-        threshold={5}
+        autoHeight={true}
+        observer={true}
+        observeParents={true}
         loop={true}
         touchRatio={1}
         resistance={false}
@@ -71,28 +76,53 @@ export const FeedBackStatistics: React.FC<{ dashBoardData: DashboardDto }> = ({
         }}
         className='challenge-swiper'
       >
-        {challengeCompletionData.map(data => (
-          <SwiperSlide key={data.challenge.id}>
-            <div className='p-5'>
-              <h3 className='text-xl font-bold mb-4 text-ellipsis overflow-hidden whitespace-nowrap'>
-                {data.challenge.name}
-              </h3>
-              <div className='text-center grid gap-3 grid-cols-7'>
-                {data.dailyCompletions.map((isCompleted, dayIndex) => (
-                  <div key={dayIndex} className={`rounded-full text-white text-xs font-bold`}>
-                    {isCompleted === null ? (
-                      <FeedBackEmptyIcon />
-                    ) : isCompleted ? (
-                      <FeedBackSuccessIcon />
-                    ) : (
-                      <FeedBackErrorIcon />
-                    )}
-                  </div>
-                ))}
+        {challengeCompletionData.map(data => {
+          const categoryInfo = CATEGORY_CONFIG.find(c => c.id === data.challenge.categoryId);
+          return (
+            <SwiperSlide key={data.challenge.id}>
+              <div className='p-5'>
+                <h3 className='text-xl font-bold flex items-center relative'>
+                  <p className='w-2/3 whitespace-nowrap overflow-hidden text-ellipsis'>
+                    {data.challenge.name}
+                  </p>
+                  {categoryInfo?.src && (
+                    <div
+                      className='absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-2 px-2.5 py-1 rounded-full shadow-md backdrop-blur-sm border'
+                      style={{
+                        backgroundColor: `${categoryInfo.color}22`,
+                        borderColor: categoryInfo.color,
+                      }}
+                    >
+                      <Image
+                        className='rounded-full border border-white/50 shadow-sm'
+                        src={categoryInfo.src}
+                        alt={categoryInfo.alt || ''}
+                        width={18}
+                        height={18}
+                      />
+                      <span className='text-sm font-bold' style={{ color: categoryInfo.color }}>
+                        {categoryInfo.name}
+                      </span>
+                    </div>
+                  )}
+                </h3>
+                <div className={`text-center grid grid-cols-7 gap-3 pt-10`}>
+                  {data.dailyCompletions.map((isCompleted, dayIndex) => (
+                    <div key={dayIndex} className={`rounded-full text-white text-xs font-bold `}>
+                      {isCompleted === null ? (
+                        <FeedBackEmptyIcon />
+                      ) : isCompleted ? (
+                        <FeedBackSuccessIcon />
+                      ) : (
+                        <FeedBackErrorIcon />
+                      )}
+                    </div>
+                  ))}
+                </div>
               </div>
-            </div>
-          </SwiperSlide>
-        ))}
+            </SwiperSlide>
+          );
+        })}
       </Swiper>
     </section>
   );

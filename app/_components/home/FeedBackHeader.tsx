@@ -17,7 +17,7 @@ export const FeedBackHeader = () => {
   }
 
   return (
-    <header className='flex items-center h-1/12 gap-2 justify-center relative'>
+    <header className='flex items-center h-1/12 gap-2 justify-center relative mt-5'>
       <h1 className='text-2xl font-bold'>{`'${username}'`}님의 성장 기록</h1>
     </header>
   );
