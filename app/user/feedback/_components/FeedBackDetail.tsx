@@ -5,7 +5,7 @@ import ConfirmModal from '@/app/_components/modals/ConfirmModal';
 import { useGetDashboardByNickname } from '@/libs/hooks/dashboard-hooks/useGetDashboardByNickname';
 import { useGenerateFeedback } from '@/libs/hooks/feedback-hooks/useGenerateFeedback';
 import { useRouter } from 'next/navigation';
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 export const FeedBackDetail: React.FC<{ nickname: string }> = ({ nickname }) => {
   const { data } = useGetDashboardByNickname(nickname || '');
@@ -70,6 +70,7 @@ export const FeedBackDetail: React.FC<{ nickname: string }> = ({ nickname }) => 
         title='피드백 생성'
         description='챌린지의 진행 상황으로 피드백을 받을까요?'
         isOpen={isConfirmOpen}
+        confirmDisabled={isSubmitting}
         onClose={() => {
           if (isSubmitting) return;
           setIsConfirmOpen(false);

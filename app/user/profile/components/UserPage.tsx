@@ -206,7 +206,7 @@ export const UserPage = ({
               ) : (
                 <div className='text-[10px] text-[#ccc] text-center'>
                   <span>
-                    유저의 팔로워를
+                    팔로워를
                     <br />
                     이용하실 수 없어요.
                   </span>
@@ -232,7 +232,7 @@ export const UserPage = ({
               ) : (
                 <div className='text-[10px] text-[#ccc] text-center'>
                   <span>
-                    유저의 팔로잉을
+                    팔로잉을
                     <br />
                     이용하실 수 없어요.
                   </span>

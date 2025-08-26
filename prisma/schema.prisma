@@ -36,19 +36,19 @@ model ChallengeCategory {
 }
 
 model Challenge {
-  id                  Int               @id @default(autoincrement())
-  name                String
-  createdAt           DateTime          @map("created_at")
-  endAt               DateTime          @map("end_at")
-  color               String
-  userId              String            @map("user_id")
-  categoryId          Int               @map("category_id")
-  active              Boolean           @default(true) @map("active")
-  completion_progress String
-  feedbacks           Feedback[]
-  category            ChallengeCategory @relation(fields: [categoryId], references: [id])
-  user                User              @relation(fields: [userId], references: [id], onDelete: Cascade)
-  routines            Routine[]
+  id                 Int               @id @default(autoincrement())
+  name               String
+  createdAt          DateTime          @map("created_at")
+  endAt              DateTime          @map("end_at")
+  color              String
+  userId             String            @map("user_id")
+  categoryId         Int               @map("category_id")
+  active             Boolean           @default(true) @map("active")
+  completionProgress String            @map("completion_progress")
+  feedbacks          Feedback[]
+  category           ChallengeCategory @relation(fields: [categoryId], references: [id])
+  user               User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  routines           Routine[]
 
   @@map("challenges")
 }
@@ -140,4 +140,21 @@ model PushSubscription {
   userId    String?  @map("user_id")
 
   @@map("push_subscriptions")
+}
+
+model Notification {
+  id        Int      @id @default(autoincrement())
+  type      String
+  title     String
+  message   String
+  isRead    Boolean  @default(false) @map("is_read")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  userId String @map("user_id")
+
+  fromUserId String? @map("from_user_id")
+
+  metadata Json?
+
+  @@map("notifications")
 }

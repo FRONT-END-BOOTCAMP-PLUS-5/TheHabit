@@ -35,6 +35,7 @@ export const FeedBackStatistics: React.FC<{ dashBoardData: DashboardDto }> = ({
 
         return {
           challenge: currentChallenge,
+          days,
           dailyCompletions,
         };
       }),
@@ -50,13 +51,15 @@ export const FeedBackStatistics: React.FC<{ dashBoardData: DashboardDto }> = ({
   }
 
   return (
-    <section className='w-full mt-10 h-full rounded-lg shadow-md'>
+    <section className='w-full mt-10 rounded-lg shadow-md'>
       <Swiper
         modules={[Pagination, A11y]}
         spaceBetween={30}
         slidesPerView={1}
         speed={300}
-        threshold={5}
+        autoHeight={true}
+        observer={true}
+        observeParents={true}
         loop={true}
         touchRatio={1}
         resistance={false}
@@ -77,9 +80,9 @@ export const FeedBackStatistics: React.FC<{ dashBoardData: DashboardDto }> = ({
               <h3 className='text-xl font-bold mb-4 text-ellipsis overflow-hidden whitespace-nowrap'>
                 {data.challenge.name}
               </h3>
-              <div className='text-center grid gap-3 grid-cols-7'>
+              <div className={`text-center grid grid-cols-7 gap-3`}>
                 {data.dailyCompletions.map((isCompleted, dayIndex) => (
-                  <div key={dayIndex} className={`rounded-full text-white text-xs font-bold`}>
+                  <div key={dayIndex} className={`rounded-full text-white text-xs font-bold `}>
                     {isCompleted === null ? (
                       <FeedBackEmptyIcon />
                     ) : isCompleted ? (

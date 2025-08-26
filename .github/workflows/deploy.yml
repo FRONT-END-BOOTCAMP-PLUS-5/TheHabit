@@ -1,27 +1,25 @@
-name: CI/CD Pipeline for New Project (Bun)
+name: CI/CD Pipeline for TheHabit (Bun)
 
 on:
-  # main 브랜치에 코드가 병합push되었을 때 검증
   push:
     branches:
       - main
-  # main 브랜치로 Pull Request가 생성/업데이트되었을 때 검증
   pull_request:
     branches:
       - main
 
 jobs:
   # =============================================================
-  # 1. 빌드 잡 (CI)
+  # 1. 빌드 잡 (CI) - 코드 검증
   # =============================================================
   build:
     runs-on: ubuntu-latest
-
+    
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # .env 파일 생성
+      # .env 파일 생성 (빌드용)
       - name: Create .env file for build
         run: |
           echo "NEXTAUTH_SECRET=${{ secrets.NEXTAUTH_SECRET }}" > .env
@@ -30,7 +28,7 @@ jobs:
           echo "GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }}" >> .env
           echo "GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }}" >> .env
           echo "NEXT_PUBLIC_API_URL=${{ secrets.NEXT_PUBLIC_API_URL }}" >> .env
-          # ...
+          echo "DATABASE_URL=${{ secrets.DATABASE_URL }}" >> .env
 
       # Bun v1.2.19 설치
       - name: Setup Bun
@@ -44,8 +42,17 @@ jobs:
           bun install
           bun run build
 
+      # 빌드 결과물 캐싱 (성능 향상)
+      - name: Cache build artifacts
+        uses: actions/cache@v3
+        with:
+          path: .next
+          key: ${{ runner.os }}-nextjs-${{ hashFiles('**/bun.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-nextjs-
+
   # =============================================================
-  # 2. 배포 잡 (CD)
+  # 2. 배포 잡 (CD) - 자동 배포
   # =============================================================
   deploy:
     needs: build
@@ -60,61 +67,164 @@ jobs:
           username: ${{ secrets.RLAND_USERNAME }}
           password: ${{ secrets.RLAND_PASSWORD }}
           port: ${{ secrets.RLAND_PORT }}
+          script_timeout: "15m"      # 스크립트 실행 시간 제한
+          command_timeout: "10m"     # 개별 명령어 실행 시간 제한
 
           script: |
-            # --- 서버 환경 설정 ---
+            # =============================================================
+            # 서버 환경 설정
+            # =============================================================
+            echo "🚀 서버 환경 설정 시작..."
+            
             export NVM_DIR="$HOME/.nvm"
             [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
             nvm use v22.4.0
-
+            
             export BUN_INSTALL="$HOME/.bun"
             export PATH="$BUN_INSTALL/bin:$PATH"
-            # --- 환경 설정 끝 ---
+            
+            echo "✅ Node.js $(node --version) 및 Bun $(bun --version) 설정 완료"
 
-            # 작업 디렉토리로 이동 및 코드 업데이트
+            # =============================================================
+            # 코드 업데이트
+            # =============================================================
+            echo "📥 코드 업데이트 시작..."
+            
             mkdir -p ~/www
             cd ~/www
+            
             if [ -d "TheHabit" ] ; then
+              echo "기존 TheHabit 디렉토리 발견, 업데이트 중..."
               cd TheHabit
-              git pull
+              git fetch origin
+              git reset --hard origin/main
+              echo "✅ 코드 업데이트 완료"
             else
+              echo "새로운 TheHabit 디렉토리 생성 중..."
               git clone https://github.com/FRONT-END-BOOTCAMP-PLUS-5/TheHabit.git
               cd TheHabit
+              echo "✅ 코드 클론 완료"
             fi
 
-            # 서버에 .env 파일 생성
-            echo "Creating .env file on server from GitHub Secrets..."
+            # =============================================================
+            # 환경 변수 설정
+            # =============================================================
+            echo "🔐 환경 변수 설정 중..."
+            
             cat << EOF > .env
             # NextAuth.js Secret
-
             NEXTAUTH_SECRET="${{ secrets.NEXTAUTH_SECRET }}"
-
+            
             # Kakao Login
             KAKAO_CLIENT_ID="${{ secrets.KAKAO_CLIENT_ID }}"
             KAKAO_CLIENT_SECRET="${{ secrets.KAKAO_CLIENT_SECRET }}"
-
+            
             # Google Login
             GOOGLE_CLIENT_ID="${{ secrets.GOOGLE_CLIENT_ID }}"
             GOOGLE_CLIENT_SECRET="${{ secrets.GOOGLE_CLIENT_SECRET }}"
-
+            
             # Database URL
             DATABASE_URL="${{ secrets.DATABASE_URL }}"
-
-            # 기타 API 키 등...
-            NEXT_PUBLIC_API_URL=="${{ secrets.NEXT_PUBLIC_API_URL }}"
-
+            
+            # API URL
+            NEXT_PUBLIC_API_URL="${{ secrets.NEXT_PUBLIC_API_URL }}"
             EOF
+            
+            echo "✅ .env 파일 생성 완료"
 
-            echo ".env file created successfully."
-
+            # =============================================================
             # 의존성 설치 및 빌드
+            # =============================================================
+            echo "🔨 의존성 설치 및 빌드 시작..."
+            
+            # 기존 node_modules 정리 (선택사항)
+            rm -rf node_modules bun.lockb
+            
             bun install
             bun run build
+            
+            echo "✅ 빌드 완료"
 
-            # PM2로 서비스 시작
+            # =============================================================
+            # PM2 서비스 배포
+            # =============================================================
+            echo "�� PM2 서비스 배포 시작..."
+            
+            # PM2 전역 설치
             npm install -g pm2
-            pm2 stop new-cafe || true
-            pm2 delete new-cafe || true
-            pm2 start bun --name "The-Habit" -- run start -- --port 4444
+            
+            # 기존 서비스 정리
+            pm2 stop The-Habit || true
+            pm2 delete The-Habit || true
+            
+            # 사용 가능한 포트 찾기 (포트 충돌 방지)
+            PORT=4444
+            MAX_PORT=4500
+            
+            while [ $PORT -le $MAX_PORT ]; do
+              if ! netstat -tuln | grep ":$PORT " > /dev/null 2>&1; then
+                echo "✅ 포트 $PORT 사용 가능"
+                break
+              fi
+              echo "⚠️ 포트 $PORT 사용 중, 다음 포트 시도..."
+              PORT=$((PORT + 1))
+            done
+            
+            if [ $PORT -gt $MAX_PORT ]; then
+              echo "❌ 사용 가능한 포트를 찾을 수 없습니다 (4444-4500)"
+              exit 1
+            fi
+            
+            # 서비스 시작
+            echo "�� TheHabit 서비스를 포트 $PORT에서 시작 중..."
+            pm2 start bun --name "The-Habit" -- run start -- --port $PORT
             pm2 save
-            echo "빌드 성공 및 배포 완료!"
+            
+            # =============================================================
+            # 배포 검증
+            # =============================================================
+            echo "🔍 배포 상태 검증 중..."
+            
+            # 서비스 상태 확인
+            sleep 10
+            
+            if pm2 list | grep "The-Habit" | grep "online" > /dev/null; then
+              echo "✅ 배포 성공!"
+              echo "�� TheHabit 서비스가 포트 $PORT에서 정상 실행 중입니다"
+              echo "📊 PM2 상태:"
+              pm2 list
+            else
+              echo "❌ 배포 실패!"
+              echo "📋 PM2 로그:"
+              pm2 logs The-Habit --lines 30
+              echo "📊 PM2 상태:"
+              pm2 list
+              exit 1
+            fi
+
+      # =============================================================
+      # 배포 결과 알림
+      # =============================================================
+      - name: Notify deployment status
+        if: always()
+        run: |
+          if [ "${{ job.status }}" == "success" ]; then
+            echo "�� TheHabit 배포가 성공적으로 완료되었습니다!"
+            echo "✅ 빌드: 성공"
+            echo "✅ 배포: 성공"
+            echo "�� 서비스가 정상적으로 실행 중입니다"
+          else
+            echo "💥 TheHabit 배포에 실패했습니다!"
+            echo "❌ 빌드: ${{ needs.build.result }}"
+            echo "❌ 배포: ${{ job.status }}"
+            echo "�� GitHub Actions 로그를 확인해주세요"
+          fi
+
+      # =============================================================
+      # 배포 성공 시 추가 작업 (선택사항)
+      # =============================================================
+      - name: Post-deployment tasks
+        if: success()
+        run: |
+          echo "🎯 배포 후 추가 작업 실행 중..."
+          echo "📧 알림 발송, 모니터링 설정 등..."
