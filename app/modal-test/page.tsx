@@ -2,24 +2,30 @@
 
 import { useState } from 'react';
 import { useModalStore } from '@/libs/stores/modalStore';
-import ChallengeExtensionContent from '@/app/_components/challenges-accordion/ChallengeExtensionContent';
+import { ChallengeExtensionContent } from '@/app/_components/challenges-accordion/ChallengeExtensionContent';
 
 export default function ModalTestPage() {
   const [selectedChallenge, setSelectedChallenge] = useState('운동하기');
   const [modalType, setModalType] = useState<'extension' | 'confirm'>('extension');
-  const { openModal, closeModal, isOpen, content, modalTitle, modalDescription } = useModalStore();
+  const { openModal, closeModal, isOpen, modalTitle, modalDescription } = useModalStore();
 
   const handleOpenExtensionModal = () => {
     setModalType('extension');
     openModal(
       <ChallengeExtensionContent
-        challengeName={selectedChallenge}
-        onExtend={() => {
-          alert('🚀 66일로 연장되었습니다!');
-          closeModal();
+        challenge={{
+          id: 1,
+          name: selectedChallenge,
+          createdAt: new Date().toISOString(),
+          endAt: new Date(Date.now() + 21 * 24 * 60 * 60 * 1000).toISOString(),
+          color: '#3B82F6',
+          categoryId: 1,
+          active: true,
+          completionProgress: 'in_progress',
         }}
-        onComplete={() => {
-          alert('✅ 챌린지가 완료되었습니다!');
+        nickname='test-user'
+        onSuccess={() => {
+          alert('🚀 챌린지가 성공적으로 처리되었습니다!');
           closeModal();
         }}
       />,

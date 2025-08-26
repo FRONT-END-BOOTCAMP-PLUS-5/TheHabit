@@ -10,6 +10,7 @@ import { useModalStore } from '@/libs/stores/modalStore';
 import AddChallengeForm from './AddChallengeForm';
 import { useGetDashboardByNickname } from '@/libs/hooks/dashboard-hooks/useGetDashboardByNickname';
 import { useParams } from 'next/navigation';
+import { useUserPage } from '@/libs/hooks/user-hooks/useUserPage';
 import { ChallengeDto } from '@/backend/challenges/applications/dtos/ChallengeDto';
 import AllChallengeList from './AllChallengeList';
 import CategoryChallengeList from './CategoryChallengeList';
@@ -23,6 +24,8 @@ const ChallengeListSection: React.FC = () => {
   const { openModal } = useModalStore();
   const params = useParams();
   const nickname = params.nickname as string;
+  const { getSessionNickname } = useUserPage(nickname);
+  const isOwner = getSessionNickname === nickname;
   const { data: dashboard, error, isLoading, refetch } = useGetDashboardByNickname(nickname);
 
   // 에러 처리
@@ -268,10 +271,12 @@ const ChallengeListSection: React.FC = () => {
             </Radio.Group>
           </div>
 
-          {/* 새 챌린지 추가 버튼을 라디오 버튼 아래에 배치 */}
-          <div className='flex justify-center w-full'>
-            <AddChallengeButton onClick={handleOpenAddChallengeModal} />
-          </div>
+          {/* 새 챌린지 추가 버튼을 라디오 버튼 아래에 배치 (소유자에게만 표시) */}
+          {isOwner && (
+            <div className='flex justify-center w-full'>
+              <AddChallengeButton onClick={handleOpenAddChallengeModal} />
+            </div>
+          )}
         </div>
         {selectedSort === 'all' ? (
           <AllChallengeList
@@ -280,17 +285,18 @@ const ChallengeListSection: React.FC = () => {
             routineCompletions={dashboard?.routineCompletions || []}
             selectedDate={selectedDate}
             nickname={nickname}
+            isOwner={isOwner}
           />
         ) : selectedSort === 'category' ? (
           dashboard && (
             <CategoryChallengeList
-              categoryId={0}
               challenges={getActiveChallengesForSelectedDate()}
               routines={dashboard?.routines || []}
               routineCompletions={dashboard?.routineCompletions || []}
               selectedDate={selectedDate}
               onRoutineAdded={undefined}
               nickname={nickname}
+              isOwner={isOwner}
             />
           )
         ) : selectedSort === 'history' ? (

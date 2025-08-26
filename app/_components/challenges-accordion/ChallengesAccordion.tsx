@@ -27,6 +27,7 @@ interface ChallengesAccordionProps {
   selectedDate: Date; // 선택된 날짜 추가
   onRoutineAdded?: () => void;
   nickname: string; // 사용자 닉네임 추가
+  isOwner: boolean;
 }
 
 const CATEGORY_ICON: Record<number, { icon: StaticImageData; alt: string }> = {
@@ -55,6 +56,7 @@ const ChallengesAccordion: React.FC<ChallengesAccordionProps> = ({
   selectedDate,
   onRoutineAdded,
   nickname,
+  isOwner,
 }) => {
   const { openModal } = useModalStore();
 
@@ -304,6 +306,7 @@ const ChallengesAccordion: React.FC<ChallengesAccordionProps> = ({
             })}
             selectedDate={selectedDate}
             onRoutineAdded={onRoutineAdded}
+            isOwner={isOwner}
           />
         </div>
       </div>

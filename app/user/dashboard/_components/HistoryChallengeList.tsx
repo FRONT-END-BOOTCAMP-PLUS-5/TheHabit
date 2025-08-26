@@ -81,6 +81,7 @@ const HistoryChallengeList: React.FC<HistoryChallengeListProps> = ({ challenges,
               routineCompletions={[]} // 히스토리에서는 루틴 완료가 필요 없음
               selectedDate={new Date()} // 현재 날짜 사용
               nickname={nickname}
+              isOwner={false}
             />
           </div>
         );

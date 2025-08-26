@@ -12,6 +12,7 @@ interface AllChallengeListProps {
   selectedDate: Date;
   onRoutineAdded?: () => void;
   nickname: string; // 사용자 닉네임 추가
+  isOwner: boolean;
 }
 
 const AllChallengeList: React.FC<AllChallengeListProps> = ({
@@ -21,6 +22,7 @@ const AllChallengeList: React.FC<AllChallengeListProps> = ({
   selectedDate,
   onRoutineAdded,
   nickname,
+  isOwner,
 }) => {
   return (
     <div className='flex flex-col gap-0.5'>
@@ -34,7 +36,7 @@ const AllChallengeList: React.FC<AllChallengeListProps> = ({
             selectedDate={selectedDate}
             onRoutineAdded={onRoutineAdded}
             nickname={nickname}
-            onFeedbackClick={undefined}
+            isOwner={isOwner}
           />
         ))
       ) : (

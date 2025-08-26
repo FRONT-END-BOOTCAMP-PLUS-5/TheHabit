@@ -24,6 +24,7 @@ interface ChallengesAccordionContentProps {
   routineCompletions: RoutineCompletionDto[];
   selectedDate: Date; // 선택된 날짜 추가
   onRoutineAdded?: () => void; // 루틴 추가 후 새로고침을 위한 콜백
+  isOwner?: boolean;
 }
 
 //TODO : 루틴 목록 TODO LIST 제공
@@ -35,6 +36,7 @@ export const ChallengesAccordionContent = ({
   routineCompletions,
   selectedDate,
   onRoutineAdded,
+  isOwner = false,
 }: ChallengesAccordionContentProps) => {
   const { openModal, closeModal } = useModalStore();
   const { userInfo } = useGetUserInfo();
@@ -79,6 +81,10 @@ export const ChallengesAccordionContent = ({
   const challengeLimit = getCategoryChallengeLimit();
 
   const handleOpenAddRoutineModal = () => {
+    if (!isOwner) {
+      Toast.info('본인 대시보드에서만 루틴을 추가할 수 있어요.');
+      return;
+    }
     if (!challenge.id || !userInfo?.nickname) {
       console.error('챌린지 ID 또는 사용자 닉네임이 없습니다');
       return;
@@ -106,6 +112,10 @@ export const ChallengesAccordionContent = ({
   };
 
   const handleRoutineCompletion = (routine: ReadRoutineResponseDto) => {
+    if (!isOwner) {
+      Toast.info('본인 대시보드에서만 루틴 완료가 가능해요.');
+      return;
+    }
     if (!userInfo?.nickname) {
       Toast.error('사용자 정보를 불러올 수 없습니다.');
       return;
@@ -280,8 +290,14 @@ export const ChallengesAccordionContent = ({
                       ? 'bg-primary border-primary hover:bg-primary/90'
                       : 'border-primary bg-white hover:bg-primary/10'
                   }`}
-                  disabled={isCompleted}
-                  title={isCompleted ? '이미 완료된 루틴입니다' : '루틴 완료하기'}
+                  disabled={isCompleted || !isOwner}
+                  title={
+                    !isOwner
+                      ? '본인 대시보드에서만 완료할 수 있어요'
+                      : isCompleted
+                        ? '이미 완료된 루틴입니다'
+                        : '루틴 완료하기'
+                  }
                 >
                   {isCompleted ? (
                     <div className='text-white text-xs font-bold'>✓</div>
@@ -353,30 +369,32 @@ export const ChallengesAccordionContent = ({
         <div className='text-center py-4 text-gray-500 text-sm mb-4'>등록된 루틴이 없습니다</div>
       )}
 
-      {/* 새로운 루틴 추가 버튼 */}
-      <div className='flex justify-center'>
-        <button
-          className={`px-6 py-3 rounded-full text-base font-bold shadow-lg cursor-pointer hover:animate-float transition-all duration-300 hover:scale-110 ${
-            challengeLimit.canAddMore
-              ? 'bg-primary text-white hover:bg-primary/90'
-              : 'bg-gray-300 text-gray-500 cursor-not-allowed'
-          }`}
-          disabled={!challengeLimit.canAddMore}
-          onClick={handleOpenAddRoutineModal}
-        >
-          + 루틴 추가하기
-          {!challengeLimit.canAddMore && (
-            <span className='ml-1 text-xs'>
-              (최대 {challengeLimit.availableSlots}개, 현재 {challengeLimit.activeChallenges}개)
-            </span>
-          )}
-          {challengeLimit.canAddMore && (
-            <span className='ml-1 text-xs'>
-              ({challengeLimit.activeChallenges}/{challengeLimit.availableSlots})
-            </span>
-          )}
-        </button>
-      </div>
+      {/* 새로운 루틴 추가 버튼: 소유자에게만 표시 */}
+      {isOwner && (
+        <div className='flex justify-center'>
+          <button
+            className={`px-6 py-3 rounded-full text-base font-bold shadow-lg cursor-pointer hover:animate-float transition-all duration-300 hover:scale-110 ${
+              challengeLimit.canAddMore
+                ? 'bg-primary text-white hover:bg-primary/90'
+                : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+            }`}
+            disabled={!challengeLimit.canAddMore}
+            onClick={handleOpenAddRoutineModal}
+          >
+            + 루틴 추가하기
+            {!challengeLimit.canAddMore && (
+              <span className='ml-1 text-xs'>
+                (최대 {challengeLimit.availableSlots}개, 현재 {challengeLimit.activeChallenges}개)
+              </span>
+            )}
+            {challengeLimit.canAddMore && (
+              <span className='ml-1 text-xs'>
+                ({challengeLimit.activeChallenges}/{challengeLimit.availableSlots})
+              </span>
+            )}
+          </button>
+        </div>
+      )}
     </div>
   );
 };
