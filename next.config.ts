@@ -7,7 +7,20 @@ const nextConfig: NextConfig = {
     dest: 'public',
     register: true,
     skipWaiting: true,
-    disable: process.env.NODE_ENV === 'development',
+    disable: true, // PWA 완전 비활성화 (테스트용)
+    sw: 'worker/index.ts',
+    runtimeCaching: [
+      {
+        urlPattern: /^https?.*/,
+        handler: 'NetworkFirst',
+        options: {
+          cacheName: 'offlineCache',
+          expiration: {
+            maxEntries: 200,
+          },
+        },
+      },
+    ],
   }),
   images: {
     domains: ['images.unsplash.com', 'k.kakaocdn.net', 'lh3.googleusercontent.com', 'img1.kakaocdn.net', 't1.kakaocdn.net',],
@@ -27,6 +40,26 @@ const nextConfig: NextConfig = {
         protocol: 'https',
         hostname: 'k.kakaocdn.net',
         pathname: '**',
+        port: '',
+        pathname: '/**',
+      },
+      {
+        protocol: 'http',
+        hostname: 'k.kakaocdn.net',
+        port: '',
+        pathname: '/**',
+      },
+      {
+        protocol: 'http',
+        hostname: 'img1.kakaocdn.net',
+        port: '',
+        pathname: '/**',
+      },
+      {
+        protocol: 'http',
+        hostname: 't1.kakaocdn.net',
+        port: '',
+        pathname: '/**',
       },
     ],
   },
