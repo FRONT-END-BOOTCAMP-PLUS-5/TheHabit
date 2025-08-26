@@ -7,31 +7,29 @@ import activeFeedbackIcon from '@/public/icons/activeFeedback.svg';
 import activeAlarmIcon from '@/public/icons/activeAlarm.svg';
 import activeProfileIcon from '@/public/icons/activeProfile.svg';
 
-export const tabItem = [
+export const tabItem = (nickname?: string) => ([
   {
     name: 'search',
     icon: searchIcon,
-    href: '/user/follow',
+    href: nickname ? '/user/follow' : '/login',
     isHover: activeSearchIcon,
   },
-
   {
     name: 'feedback',
     icon: feedbackIcon,
-    href: '/user/feedback',
+    href: nickname ? `/user/feedback/${nickname}` : '/login',
     isHover: activeFeedbackIcon,
   },
-  
   {
-    name: 'alarm',
+    name: 'notification',
     icon: alarmIcon,
-    href: '/alarm',
+    href: '/user/notifications',
     isHover: activeAlarmIcon,
   },
   {
     name: 'profile',
     icon: profileIcon,
-    href: '/user/profile/edit',
+    href: nickname ? `/user/profile/edit/${nickname}` : '/login',
     isHover: activeProfileIcon,
   },
-];
+]);
