@@ -13,6 +13,7 @@ interface ConfirmModalProps {
   isOpen?: boolean;
   onClose?: () => void;
   onConfirm?: () => void;
+  confirmDisabled?: boolean;
 }
 
 const ConfirmModal: React.FC<ConfirmModalProps> = ({
@@ -23,6 +24,7 @@ const ConfirmModal: React.FC<ConfirmModalProps> = ({
   description,
   type,
   onConfirm,
+  confirmDisabled = false,
 }) => {
   const [isVisible, setIsVisible] = useState<boolean>(false);
   const [isAnimating, setIsAnimating] = useState<boolean>(false);
@@ -95,6 +97,7 @@ const ConfirmModal: React.FC<ConfirmModalProps> = ({
               type='button'
               onClick={onConfirm}
               buttonType={type === 'negative' ? 'danger' : 'primary'}
+              disabled={confirmDisabled}
             >
               확인
             </Button>
