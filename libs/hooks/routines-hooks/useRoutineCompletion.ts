@@ -46,6 +46,7 @@ export const useRoutineCompletion = ({
           nickname: nickname,
           routineId: routine.id,
           content: '',
+          proofImgUrl: null,
         });
         onSuccess?.();
       } catch (error) {

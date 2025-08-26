@@ -21,7 +21,7 @@ export const useGetDashboardRoutines = (
     error?: { code: string; message: string };
   }>({
     queryKey: ['routines', 'dashboard', challengeId, userId],
-    queryFn: () => getDashboardRoutines(challengeId, userId),
+    queryFn: () => getDashboardRoutines(userId ?? '', challengeId),
     enabled: enabled,
     staleTime: 1 * 60 * 1000, // 1분간 데이터를 fresh로 유지 (자주 변경되는 완료 상태)
     gcTime: 3 * 60 * 1000, // 3분간 캐시 유지

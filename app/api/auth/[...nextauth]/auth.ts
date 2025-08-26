@@ -8,6 +8,7 @@ import GoogleProvider from "next-auth/providers/google";
 import { GoogleLoginUsecase } from '@/backend/auths/applications/usecases/GoogleLoginUsecase';
 import KakaoProvider from "next-auth/providers/kakao";
 import { KakaoLoginUsecase } from '@/backend/auths/applications/usecases/KakaoLoginUsecase';
+import { AxiosError } from 'axios';
 
 interface ISessionUser {
   profileImg?: string | null;
@@ -41,8 +42,8 @@ function isValidBoolean(value: unknown): value is boolean {
 
 // 토큰 필드 검증 및 기본값 설정 함수
 function validateTokenField<T>(
-  value: unknown, 
-  validator: (val: unknown) => val is T, 
+  value: unknown,
+  validator: (val: unknown) => val is T,
   defaultValue: T
 ): T {
   return validator(value) ? value : defaultValue;
@@ -94,7 +95,7 @@ function updateSessionFromToken(session: Session, token: JWT): void {
 // 세션 부분 업데이트 함수
 function updateTokenFromSession(token: JWT, session: ISessionUser): void {
   const sessionFields = ['username', 'nickname', 'profileImg', 'profileImgPath'] as const;
-  
+
   sessionFields.forEach(field => {
     const value = session[field];
     if (isValidString(value)) {
@@ -115,12 +116,12 @@ async function handleSocialLogin(
   try {
     // 필수 필드 검증
     if (!userInfo.email || !userInfo.name) {
-      
+
       return false;
     }
 
     let result;
-    
+
     if (provider === 'google') {
       result = await googleLoginUsecase.execute({
         email: userInfo.email,
@@ -143,6 +144,9 @@ async function handleSocialLogin(
       return false;
     }
   } catch (error) {
+    if (error instanceof AxiosError) {
+      return false;
+    }
     return false;
   }
 }
@@ -150,7 +154,7 @@ async function handleSocialLogin(
 export const authOptions = {
   secret: process.env.NEXTAUTH_SECRET,
   session: {
-    strategy: 'jwt',
+    strategy: 'jwt' as const,
   },
   providers: [
     CredentialsProvider({
@@ -162,7 +166,7 @@ export const authOptions = {
 
       async authorize(credentials) {
         const { email, password } = credentials ?? {};
-        
+
 
         if (!email || !password) {
           return null;
@@ -191,6 +195,9 @@ export const authOptions = {
             return null;
           }
         } catch (error) {
+          if (error instanceof AxiosError) {
+            return null;
+          }
           return null;
         }
       },
@@ -222,11 +229,11 @@ export const authOptions = {
       account: Account | null;
       profile: Profile;
     }) {
-      
+
       // 소셜 로그인 처리
       if (account?.provider === 'google' || account?.provider === 'kakao') {
         const provider = account.provider as SocialProvider;
-        
+
         // Google과 Kakao의 profile 구조가 다르므로 통합 처리
         const userInfo: SocialUserInfo = {
           email: user.email || '',
@@ -236,10 +243,10 @@ export const authOptions = {
         };
 
         const result = await handleSocialLogin(provider, userInfo);
-        
+
         return result;
       }
-      
+
       return true;
     },
 
@@ -254,7 +261,7 @@ export const authOptions = {
       trigger?: 'signIn' | 'signUp' | 'update';
       session?: ISessionUser;
     }) {
-      
+
       if (user) {
 
         // 타입가드를 사용한 토큰 업데이트
@@ -285,20 +292,20 @@ export const authOptions = {
       }
       return session;
     },
-    
+
     async redirect({ url, baseUrl }: { url: string; baseUrl: string }) {
-      
+
       // 로그인 후 리다이렉트
       if (url.startsWith('/')) {
         const redirectUrl = `${baseUrl}${url}`;
         return redirectUrl;
       }
-      
+
       // 외부 URL인 경우 홈으로 리다이렉트
       if (new URL(url).origin === baseUrl) {
         return url;
       }
-      
+
       return baseUrl;
     },
   },

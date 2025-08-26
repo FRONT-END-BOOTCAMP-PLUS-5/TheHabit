@@ -12,7 +12,7 @@ export const useUserPage = (slug: ParamValue) => {
 
   useEffect(() => {
     if (!isLoading && typeof slug === 'string') {
-      const sessionNickname = session?.user?.nickname;
+      const sessionNickname = decodeURIComponent(session?.user?.nickname || '');
       if (sessionNickname) setSessionNickname(sessionNickname);
 
       if (sessionNickname && sessionNickname === slug) {

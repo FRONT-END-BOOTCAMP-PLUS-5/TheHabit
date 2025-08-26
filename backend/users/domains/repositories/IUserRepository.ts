@@ -6,6 +6,7 @@ import { UserReviewEntity } from '@/backend/users/domains/entities/UserReviewEnt
 export interface IUserRepository {
   // Create
   create(user: User): Promise<User>;
+  createProfileImg(profileFile: File): Promise<string[]>;
   createUserReview(
     reviewContent: string,
     routineCompletionId: number,
@@ -38,6 +39,8 @@ export interface IUserRepository {
     user: Partial<User>,
     beforeNickname?: string
   ): Promise<User | { message: string } | undefined>;
+
+  updateUserName(id: string, username: string): Promise<User | undefined>;
 
   // Delete
   delete(nickname: string): Promise<boolean>;

@@ -1,9 +1,10 @@
-import { DashboardDto } from '@/backend/dashboards/application/dtos/DashboardDto';
+'use client';
+
 import { FEEDBACK_DESCRIPTION } from '@/public/consts/feedBackItem';
 import Image from 'next/image';
 import React from 'react';
 
-export const FeedBackDescription = () => {
+export const FeedBackDescription: React.FC = () => {
   return (
     <div className='flex justify-end gap-5'>
       {FEEDBACK_DESCRIPTION.map(item => (

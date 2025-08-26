@@ -22,8 +22,8 @@ type UserResponse = ApiResponse<UserChallengeAndRoutineAndFollowAndCompletionDto
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { nickname: string } }
-): Promise<NextResponse<UserResponse> | undefined> {
+  { params }: { params: Promise<{ nickname: string }> }
+): Promise<NextResponse<UserResponse>> {
   try {
     const { nickname } = await params;
     if (!nickname) {
@@ -66,13 +66,23 @@ export async function GET(
         },
         { status: 500 }
       );
+    return NextResponse.json(
+      {
+        success: false,
+        error: {
+          code: 'GET_FAILED',
+          message: 'fail',
+        },
+      },
+      { status: 500 }
+    );
   }
 }
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { nickname: string } }
-): Promise<NextResponse | undefined> {
+  { params }: { params: Promise<{ nickname: string }> }
+): Promise<NextResponse> {
   try {
     const { nickname } = await params;
 
@@ -101,5 +111,15 @@ export async function DELETE(
         },
         { status: 500 }
       );
+    return NextResponse.json(
+      {
+        success: false,
+        error: {
+          code: 'DELETE_FAILED',
+          message: 'fail',
+        },
+      },
+      { status: 500 }
+    );
   }
 }

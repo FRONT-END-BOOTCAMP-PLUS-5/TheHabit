@@ -23,7 +23,7 @@ const UserProfileEditPage = () => {
   const { handleImageClick, fileInputRef } = useUploadProfile();
 
   const handleDeleteUserRegister = async () => {
-    const response = await deleteUserRegister(userInfo?.id || '');
+    const response = await deleteUserRegister(userInfo?.nickname || '');
     if (response.data) {
       setOpen(false);
       router.push('/login');
@@ -85,7 +85,7 @@ const UserProfileEditPage = () => {
             id='user_wrapper'
             className='flex text-center items-end justify-between px-5 pt-[110px]'
           >
-            <div className='relative w-[190px] h-30 rounded-full bg-[#F5F5F5] bottom-[40px]'>
+            <div className='relative w-[190px] max-sm:w-[220px] h-30 rounded-full bg-[#F5F5F5] bottom-[40px]'>
               <ProfileImage
                 imageSrc={profilePreview || null}
                 className='w-full h-full object-cover'
@@ -108,8 +108,8 @@ const UserProfileEditPage = () => {
                 onChange={handleFileChange}
               />
             </div>
-            <div id='challenge' className='flex flex-col items-start ml-[40px]'>
-              <div className='flex flex-col mb-5 items-start absolute top-[100px] w-[240px] text-left ml-[10px] mt-[20px]'>
+            <div id='challenge' className='flex flex-col items-start ml-[40px] max-sm:ml-[0px]'>
+              <div className='flex flex-col mb-5 items-start absolute top-[100px] max-sm:top-[110px] w-[240px] text-left ml-[10px] mt-[20px]'>
                 <NameComponent />
                 <NicknameComponent />
               </div>

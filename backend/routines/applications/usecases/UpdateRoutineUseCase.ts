@@ -1,25 +1,31 @@
 import { IRoutinesRepository } from '@/backend/routines/domains/repositories/IRoutinesRepository';
 import { UpdateRoutineRequestDto, ReadRoutineResponseDto } from '@/backend/routines/applications/dtos/RoutineDto';
+import { Routine } from '@/backend/routines/domains/entities/routine';
 
 export class UpdateRoutineUseCase {
-  constructor(private readonly IRoutinesRepository: IRoutinesRepository) {}
+  constructor(private readonly routinesRepository: IRoutinesRepository) {}
 
   async execute(request: UpdateRoutineRequestDto): Promise<ReadRoutineResponseDto> {
     const { routineId, ...updateData } = request;
 
     // 루틴 존재여부 확인
-    const existingRoutine = await this.IRoutinesRepository.findById(routineId);
+    const existingRoutine = await this.routinesRepository.findById(routineId);
     if (!existingRoutine) {
       throw new Error(`ID ${routineId}인 루틴을 찾을 수 없습니다`);
     }
 
-    // 업데이트할 데이터 준비
-    const routineUpdateData = {
-      ...updateData,
-      updatedAt: new Date(),
-    };
+    // DTO → 도메인 엔티티 생성 (Clean Architecture)
+    const updatedRoutineEntity = new Routine(
+      existingRoutine.id,
+      updateData.routineTitle ?? existingRoutine.routineTitle,
+      updateData.alertTime !== undefined ? updateData.alertTime : existingRoutine.alertTime,
+      updateData.emoji ?? existingRoutine.emoji,
+      existingRoutine.challengeId,
+      existingRoutine.createdAt,
+      new Date() // updatedAt
+    );
 
-    const updatedRoutine = await this.IRoutinesRepository.update(routineId, routineUpdateData);
+    const updatedRoutine = await this.routinesRepository.update(routineId, updatedRoutineEntity);
 
     return {
       id: updatedRoutine.id,

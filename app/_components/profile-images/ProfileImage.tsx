@@ -3,7 +3,6 @@ import React from 'react';
 
 export const ProfileImage = ({
   imageSrc,
-  className,
   wrapperWidth = 20,
   wrapperHeight = 20,
 }: {
@@ -25,6 +24,7 @@ export const ProfileImage = ({
             width={120}
             height={120}
             className={'w-full h-full object-cover'}
+            style={{ minHeight: '100%' }}
           />
         </div>
       )}

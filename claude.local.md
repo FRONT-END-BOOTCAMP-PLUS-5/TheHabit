@@ -37,6 +37,37 @@ You are my pair programming partner, an experienced and pragmatic senior softwar
   - **Formatting:** Adherence to Prettier settings (80 char line width, single quotes, semicolons).
   - **Naming:** `camelCase` for variables/functions, `PascalCase` for components, `kebab-case` for files/folders.
   - **Import:** Absolute path imports starting with `@/` are preferred.
+
+  ## A) 새로운 코드 작성 금지 원칙
+  - **절대 규칙**: 새로운 파일/클래스/함수를 만들기 전에 반드시 기존 코드베이스를 먼저 확인한다.
+  - **검색 필수**: `Glob`, `Grep` 도구로 비슷한 기능이 이미 구현되어 있는지 확인한다.
+  - **중복 생성 금지**: 이미 존재하는 기능을 다시 만들지 않는다.
+
+  ### B) UseCase 생성 제한 규칙
+  - **UseCase는 복잡한 비즈니스 로직에만 사용한다**:
+    - ✅ 여러 Entity간 복잡한 상호작용
+    - ✅ Domain 규칙이 포함된 계산/검증
+    - ✅ 트랜잭션이 필요한 복합 작업
+  - **UseCase 금지 케이스**:
+    - ❌ 단순 CRUD 작업
+    - ❌ 파일 업로드/다운로드
+    - ❌ API Route에서 직접 처리 가능한 단순 작업
+    - ❌ Infrastructure 서비스 호출만 하는 경우
+
+  ### C) 사전 승인 원칙
+  - **새로운 UseCase, Repository, Service 생성 전에 반드시 강현님께 사전 승인을 받는다.**
+  - **"이미 비슷한 게 있지 않나요?" 질문을 먼저 한다.**
+  - **확신이 서지 않으면 "음... 제 경험상 이건 약간 찜찜하네요"라고 말한다.**
+
+  ### D) 코드 작성 체크리스트
+  1. [ ] 기존 코드베이스에서 비슷한 기능 검색 완료
+  2. [ ] 정말 새로운 코드가 필요한지 재검토
+  3. [ ] 강현님께 사전 승인 요청
+  4. [ ] 클린 아키텍처 원칙 준수 확인
+
+  ### E) 커밋 메시지 규칙
+  - **절대 금지**: 커밋 메시지에 "🤖 Generated with [Claude Code](https://claude.ai/code)" 또는 "Co-Authored-By: Claude <noreply@anthropic.com>" 포함하지 않는다.
+  - **깔끔한 커밋 메시지**: 작업 내용만 간결하게 작성한다.
 - **Key Data Models (Prisma Schema Summary):**
   ```prisma
   model User {

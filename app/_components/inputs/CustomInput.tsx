@@ -7,11 +7,10 @@ import '@ant-design/v5-patch-for-react-19';
 interface CustomInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label?: string;
   labelHtmlFor?: string;
-  labelStyle?: string;
 }
 
 const CustomInput = forwardRef<HTMLInputElement, CustomInputProps>(
-  ({ label, labelHtmlFor, labelStyle, className, type, ...props }, ref) => {
+  ({ label, labelHtmlFor, className, type, ...props }, ref) => {
     const [showPassword, setShowPassword] = useState(false);
     const isPassword = type === 'password';
 
@@ -33,9 +32,9 @@ const CustomInput = forwardRef<HTMLInputElement, CustomInputProps>(
           />
           {isPassword && (
             <button
-              type="button"
+              type='button'
               onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-3 top-1/2 transform -translate-y-1/2 text-secondary-grey hover:text-secondary transition-colors"
+              className='absolute right-3 top-1/2 transform -translate-y-1/2 text-secondary-grey hover:text-secondary transition-colors'
             >
               {showPassword ? <EyeTwoTone /> : <EyeInvisibleOutlined />}
             </button>

@@ -8,6 +8,10 @@ export class UpdateChallengeUsecase {
 
   // 챌린지 업데이트 실행
   async execute(challenge: Challenge): Promise<Challenge> {
+    if (!challenge.id) {
+      throw new Error('챌린지 ID가 없습니다.');
+    }
+
     const updatedChallenge = await this.challengeRepo.update(challenge.id, challenge);
     if (!updatedChallenge) {
       throw new Error('챌린지 업데이트 실패');

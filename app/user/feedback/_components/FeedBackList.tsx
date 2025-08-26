@@ -19,7 +19,7 @@ interface FeedBackListProps {
   nickname?: string;
 }
 
-export const FeedBackList = ({ nickname: nicknameProp }: FeedBackListProps) => {
+export const FeedBackList: React.FC<FeedBackListProps> = ({ nickname: nicknameProp }) => {
   const { userInfo } = useGetUserInfo();
   const nickname = nicknameProp ?? userInfo?.nickname;
   const { data: dashBoardData, isLoading } = useGetDashboardByNickname(nickname || '');
@@ -30,24 +30,22 @@ export const FeedBackList = ({ nickname: nicknameProp }: FeedBackListProps) => {
   };
 
   return (
-    <section className='flex flex-col mt-10 w-full'>
+    <section className='flex flex-col mt-5 w-full'>
       <nav className='flex flex-1 items-center justify-between w-full h-1/3'>
         <div className='w-full flex justify-center'>
           {FEEDBACK_CATEGORIES.map(linkItem => {
             return (
               <div key={linkItem.id} className='w-1/2 flex items-center justify-center'>
-                <div className='text-center w-1/3'>
-                  <button
-                    className={`text-xl font-bold cursor-pointer  ${
-                      selectedCategoryName === linkItem.name
-                        ? 'border-b-2 border-black'
-                        : 'border-b-2 border-transparent'
-                    }`}
-                    onClick={() => handleModal(linkItem.name)}
-                  >
-                    <p>{linkItem.name}</p>
-                  </button>
-                </div>
+                <button
+                  className={`text-xl font-bold cursor-pointer ${
+                    selectedCategoryName === linkItem.name
+                      ? 'border-b-3 border-primary w-1/3 pb-2'
+                      : 'border-b-3 border-transparent w-1/3 pb-2'
+                  }`}
+                  onClick={() => handleModal(linkItem.name)}
+                >
+                  <p>{linkItem.name}</p>
+                </button>
               </div>
             );
           })}
