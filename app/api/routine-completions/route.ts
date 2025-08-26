@@ -6,6 +6,12 @@ import { PrRoutineCompletionsRepository } from '@/backend/routine-completions/in
 import { s3Service } from '@/backend/shared/services/s3.service';
 import { RoutineCompletionDto, RoutineCompletionDtoMapper } from '@/backend/routine-completions/applications/dtos/RoutineCompletionDto';
 import { ApiResponse } from '@/backend/shared/types/ApiResponse';
+import { PrNotificationRepository } from '@/backend/notifications/infrastructures/repositories/PrNotificationRepository';
+import { CreateNotificationUsecase } from '@/backend/notifications/applications/usecases/CreateNotificationUsecase';
+import { PrUserRepository } from '@/backend/users/infrastructures/repositories/PrUserRepository';
+import { GetUserUsecase } from '@/backend/users/applications/usecases/GetUserUsecase';
+import { PrFollowRepository } from '@/backend/follows/infrastructures/repositories/PrFollowRepository';
+import { GetFollowerByToUserIdUsecase } from '@/backend/follows/applications/usecases/GetFollowerByToUserIdUsecase';
 
 const createAddRoutineCompletionUseCase = () => {
   const repository = new PrRoutineCompletionsRepository();
@@ -22,26 +28,29 @@ const createDeleteRoutineCompletionUseCase = () => {
   return new DeleteRoutineCompletionUseCase(repository);
 };
 
-// 루틴 완료 생성 (POST)
+const createNotificationUsecase = () => {
+  const notificationRepository = new PrNotificationRepository();
+  return new CreateNotificationUsecase(notificationRepository);
+};
+
+const createGetUserUsecase = () => {
+  const userRepository = new PrUserRepository();
+  return new GetUserUsecase(userRepository);
+};
+
+const createGetFollowerUsecase = () => {
+  const followRepository = new PrFollowRepository();
+  return new GetFollowerByToUserIdUsecase(followRepository);
+};
+
 export async function POST(request: NextRequest): Promise<NextResponse> {
   try {
-    console.log('=== POST /api/routine-completions 요청 시작 ===');
-
-    // FormData 파싱
     const formData = await request.formData();
     const file = formData.get('file');
     const routineIdValue = formData.get('routineId');
     const contentValue = formData.get('content');
     const nicknameValue = formData.get('nickname');
 
-    console.log('요청 데이터:', {
-      hasFile: !!file,
-      routineId: routineIdValue,
-      content: contentValue,
-      nickname: nicknameValue,
-    });
-
-    // 필수 필드 검증
     if (!nicknameValue || typeof nicknameValue !== 'string' || String(nicknameValue).trim() === '') {
       const errorResponse: ApiResponse<null> = {
         success: false,
@@ -75,7 +84,6 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       return NextResponse.json(errorResponse, { status: 400 });
     }
 
-    // 루틴 ID 검증
     const routineIdNumber = Number(routineIdValue);
     if (isNaN(routineIdNumber) || !routineIdValue) {
       const errorResponse: ApiResponse<null> = {
@@ -94,9 +102,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       try {
         const uploadResult = await s3Service.uploadImage(file, 'routine-completions');
         proofImgUrl = uploadResult.imageUrl;
-        console.log('이미지 업로드 성공:', proofImgUrl);
-      } catch (uploadError) {
-        console.error('이미지 업로드 실패:', uploadError);
+      } catch {
         const errorResponse: ApiResponse<null> = {
           success: false,
           error: {
@@ -118,7 +124,37 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       proofImgUrl,
     });
 
-    console.log('루틴 완료 생성 성공:', result);
+    // 루틴 완료 성공 시 팔로워들에게 알림 생성
+    try {
+      const getUserUsecase = createGetUserUsecase();
+      const user = await getUserUsecase.execute(String(nicknameValue).trim());
+      
+      if (user?.id) {
+        const getFollowerUsecase = createGetFollowerUsecase();
+        const followerResult = await getFollowerUsecase.execute(user.id, '');
+        
+        if (followerResult?.followers && followerResult.followers.length > 0) {
+          const notificationUsecase = createNotificationUsecase();
+          const notificationPromises = followerResult.followers.map(follower =>
+            notificationUsecase.execute({
+              type: 'routine_completion',
+              title: '루틴 완료',
+              message: `${user.nickname}님이 루틴을 완료했습니다!`,
+              userId: follower.fromUser.id,
+              fromUserId: user.id,
+              metadata: {
+                fromUserNickname: user.nickname,
+                fromUserProfileImg: user.profileImg
+              }
+            })
+          );
+          
+          await Promise.all(notificationPromises);
+        }
+      }
+    } catch {
+      // 알림 생성 실패해도 루틴 완료는 성공으로 처리
+    }
 
     const successResponse: ApiResponse<RoutineCompletionDto> = {
       success: true,
@@ -126,8 +162,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       message: '루틴이 성공적으로 완료되었습니다.'
     };
     return NextResponse.json(successResponse, { status: 201 });
-  } catch (error) {
-    console.error('루틴 완료 생성 오류:', error);
+  } catch {
     const errorResponse: ApiResponse<null> = {
       success: false,
       error: {

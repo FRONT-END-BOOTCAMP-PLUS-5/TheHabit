@@ -3,8 +3,14 @@ import { PrFollowRepository } from '@/backend/follows/infrastructures/repositori
 import { GetFollowingByToUserIdUsecase } from '@/backend/follows/applications/usecases/GetFollowingByFromUserIdUsecase';
 import { AddFollowingUsecase } from '@/backend/follows/applications/usecases/AddFollowingUsecase';
 import { DeleteUnfollowUsecase } from '@/backend/follows/applications/usecases/DeleteUnfollowUsecase';
+import { PrNotificationRepository } from '@/backend/notifications/infrastructures/repositories/PrNotificationRepository';
+import { CreateNotificationUsecase } from '@/backend/notifications/applications/usecases/CreateNotificationUsecase';
+import { PrUserRepository } from '@/backend/users/infrastructures/repositories/PrUserRepository';
+import { GetUserUsecase } from '@/backend/users/applications/usecases/GetUserUsecase';
 
 const repository = new PrFollowRepository();
+const notificationRepository = new PrNotificationRepository();
+const userRepository = new PrUserRepository();
 
 const createGetFollowingByFromUserIdUsecase = () => {
   return new GetFollowingByToUserIdUsecase(repository);
@@ -16,6 +22,14 @@ const createAddFollowingUsecase = () => {
 
 const createDeleteUnfollowUsecase = () => {
   return new DeleteUnfollowUsecase(repository);
+};
+
+const createNotificationUsecase = () => {
+  return new CreateNotificationUsecase(notificationRepository);
+};
+
+const createGetUserUsecase = () => {
+  return new GetUserUsecase(userRepository);
 };
 
 export async function GET(request: NextRequest): Promise<NextResponse | undefined> {
@@ -60,6 +74,29 @@ export async function POST(request: NextRequest): Promise<NextResponse | undefin
 
     const usecase = createAddFollowingUsecase();
     const addfollowing = await usecase.execute(fromUserId, toUserId);
+
+    // 팔로우 성공 시 알림 생성
+    try {
+      const getUserUsecase = createGetUserUsecase();
+      const fromUser = await getUserUsecase.execute(fromUserId);
+      
+      if (fromUser) {
+        const notificationUsecase = createNotificationUsecase();
+        await notificationUsecase.execute({
+          type: 'follow',
+          title: '새로운 팔로워',
+          message: `${fromUser.nickname}님이 회원님을 팔로우했습니다.`,
+          userId: toUserId,
+          fromUserId: fromUserId,
+          metadata: {
+            fromUserNickname: fromUser.nickname,
+            fromUserProfileImg: fromUser.profileImg
+          }
+        });
+      }
+    } catch {
+      // 알림 생성 실패해도 팔로우는 성공으로 처리
+    }
 
     return NextResponse.json(
       {
