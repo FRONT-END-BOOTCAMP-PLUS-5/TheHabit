@@ -20,7 +20,6 @@ export class LoginUsecase {
       
 
       const user = await this.userRepository.findByEmail(loginRequest.email);
-      console.log('user', user);
       if (!user?.id) {
         return null;
       }
@@ -34,12 +33,10 @@ export class LoginUsecase {
       // 로그인 성공 응답 생성
 
       const successResponse = {
-          id: user.id,
-          email: user.email || '',
-          username: user.username,
-          nickname: user.nickname,
-          profileImg: user.profileImg,
-          profileImgPath: user.profileImgPath,
+        id: user.id,
+        nickname: user.nickname,
+        name: user.username,
+        email: user.email || '',
       };
       return successResponse;
     } catch (error) {

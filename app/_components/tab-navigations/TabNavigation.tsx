@@ -50,7 +50,7 @@ export const TabNavigation = () => {
         ))}
         <div className='w-15 h-15 bg-[#93D50B] absolute bottom-7/11 cursor-pointer hover:scale-110 transition-all duration-300 hover:opacity-90 flex items-center justify-center rounded-full'>
           <Link
-            href={userInfo?.nickname ? `/user/dashboard/${userInfo.nickname}` : '/login'}
+            href={userInfo?.nickname ? '/user/dashboard/' : '/login'}
           >
             <Image
               src={homeIcon}

@@ -55,10 +55,7 @@ export class KakaoLoginUsecase {
     return {
         id: user.id || '',
         email: user.email || '',
-        username: user.username,
         nickname: user.nickname,
-        profileImg: user.profileImg,
-        profileImgPath: user.profileImgPath,
     };
   }
 
@@ -77,10 +74,7 @@ export class KakaoLoginUsecase {
       return {
           id: savedUser.id || '',
           email: savedUser.email || '',
-          username: savedUser.username,
           nickname: savedUser.nickname,
-          profileImg: savedUser.profileImg,
-          profileImgPath: savedUser.profileImgPath,
       };
     } catch (error) {
       throw new Error(

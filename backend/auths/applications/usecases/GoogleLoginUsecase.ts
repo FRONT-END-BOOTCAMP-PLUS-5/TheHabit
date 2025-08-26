@@ -46,10 +46,7 @@ export class GoogleLoginUsecase {
     return {
         id: user.id || '',
         email: user.email || '',
-        username: user.username,
         nickname: user.nickname,
-        profileImg: user.profileImg,
-        profileImgPath: user.profileImgPath
     };
   }
 
@@ -68,10 +65,7 @@ export class GoogleLoginUsecase {
       return {
         id: savedUser.id || '',
         email: savedUser.email || '',
-        username: savedUser.username,
         nickname: savedUser.nickname,
-        profileImg: savedUser.profileImg,
-        profileImgPath: savedUser.profileImgPath
       };
     } catch (error) {
       throw new Error(`신규 회원 처리 중 오류: ${error instanceof Error ? error.message : '알 수 없는 오류'}`);
