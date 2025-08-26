@@ -6,6 +6,7 @@ import CustomInput from '@/app/_components/inputs/CustomInput';
 import { Controller, FormProvider, useForm } from 'react-hook-form';
 import { Button } from '@/app/_components/buttons/Button';
 import { useSignUp } from '@/libs/hooks/signup/useSignUp';
+import { useRouter } from 'next/navigation';
 
 interface ISignupForm {
   username: string;
@@ -19,6 +20,7 @@ interface ISignupForm {
 }
 
 export const SignUpForm = () => {
+  const router = useRouter();
   const methods = useForm<ISignupForm>({
     mode: 'onChange',
     defaultValues: {
@@ -56,6 +58,8 @@ export const SignUpForm = () => {
       }
 
       await signUp(formData);
+      // 회원가입 성공 후 로그인 페이지로 이동
+      router.push('/login');
     } catch (error) {
       console.error(error);
     }

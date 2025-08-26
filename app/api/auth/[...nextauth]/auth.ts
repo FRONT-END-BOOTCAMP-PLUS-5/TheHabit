@@ -4,18 +4,11 @@ import { LoginRequestDto } from '@/backend/auths/applications/dtos/LoginRequestD
 import { Session, User, Account, Profile } from 'next-auth';
 import { JWT } from 'next-auth/jwt';
 import CredentialsProvider from 'next-auth/providers/credentials';
-import GoogleProvider from "next-auth/providers/google";
+import GoogleProvider from 'next-auth/providers/google';
 import { GoogleLoginUsecase } from '@/backend/auths/applications/usecases/GoogleLoginUsecase';
-import KakaoProvider from "next-auth/providers/kakao";
+import KakaoProvider from 'next-auth/providers/kakao';
 import { KakaoLoginUsecase } from '@/backend/auths/applications/usecases/KakaoLoginUsecase';
-import { AxiosError } from 'axios';
-
-interface ISessionUser {
-  profileImg?: string | null;
-  profileImgPath?: string | null;
-  nickname?: string;
-  username?: string;
-}
+import { LoginResponseDto } from '@/backend/auths/applications/dtos/LoginResponseDto';
 
 // 소셜 로그인 타입 정의
 type SocialProvider = 'google' | 'kakao';
@@ -25,130 +18,6 @@ interface SocialUserInfo {
   name: string;
   picture?: string;
   sub: string;
-}
-
-// 타입가드 함수들
-function isValidString(value: unknown): value is string {
-  return typeof value === 'string' && value.trim().length > 0;
-}
-
-function isValidDate(value: unknown): value is Date {
-  return value instanceof Date;
-}
-
-function isValidBoolean(value: unknown): value is boolean {
-  return typeof value === 'boolean';
-}
-
-// 토큰 필드 검증 및 기본값 설정 함수
-function validateTokenField<T>(
-  value: unknown,
-  validator: (val: unknown) => val is T,
-  defaultValue: T
-): T {
-  return validator(value) ? value : defaultValue;
-}
-
-// 토큰 업데이트 함수
-function updateTokenFromUser(token: JWT, user: User): void {
-  const updates = {
-    email: validateTokenField(user.email, isValidString, ''),
-    username: validateTokenField(user.username, isValidString, ''),
-    nickname: validateTokenField(user.nickname, isValidString, ''),
-    profileImg: validateTokenField(user.profileImg, isValidString, ''),
-    profileImgPath: validateTokenField(user.profileImgPath, isValidString, ''),
-    createdAt: validateTokenField(user.createdAt, isValidDate, new Date()),
-    updatedAt: validateTokenField(user.updatedAt, isValidDate, new Date()),
-  };
-
-  // undefined가 아닌 값만 토큰에 설정
-  Object.entries(updates).forEach(([key, value]) => {
-    if (value !== undefined) {
-      (token as Record<string, unknown>)[key] = value;
-    }
-  });
-
-  // isNewUser는 별도 처리
-  if (isValidBoolean(user.isNewUser)) {
-    token.isNewUser = user.isNewUser;
-  }
-}
-
-// 세션 업데이트 함수
-function updateSessionFromToken(session: Session, token: JWT): void {
-  if (!session.user) return;
-
-  const sessionUpdates = {
-    id: validateTokenField(token.sub, isValidString, ''),
-    email: validateTokenField(token.email, isValidString, ''),
-    username: validateTokenField(token.username, isValidString, ''),
-    nickname: validateTokenField(token.nickname, isValidString, ''),
-    profileImg: validateTokenField(token.profileImg, isValidString, ''),
-    profileImgPath: validateTokenField(token.profileImgPath, isValidString, ''),
-    createdAt: validateTokenField(token.createdAt, isValidDate, new Date()),
-    updatedAt: validateTokenField(token.updatedAt, isValidDate, new Date()),
-  };
-
-  Object.assign(session.user, sessionUpdates);
-}
-
-// 세션 부분 업데이트 함수
-function updateTokenFromSession(token: JWT, session: ISessionUser): void {
-  const sessionFields = ['username', 'nickname', 'profileImg', 'profileImgPath'] as const;
-
-  sessionFields.forEach(field => {
-    const value = session[field];
-    if (isValidString(value)) {
-      (token as Record<string, unknown>)[field] = value;
-    }
-  });
-}
-
-const userRepository = new PrUserRepository();
-const googleLoginUsecase = new GoogleLoginUsecase(userRepository);
-const kakaoLoginUsecase = new KakaoLoginUsecase(userRepository);
-
-// 소셜 로그인 처리 함수
-async function handleSocialLogin(
-  provider: SocialProvider,
-  userInfo: SocialUserInfo
-): Promise<boolean> {
-  try {
-    // 필수 필드 검증
-    if (!userInfo.email || !userInfo.name) {
-
-      return false;
-    }
-
-    let result;
-
-    if (provider === 'google') {
-      result = await googleLoginUsecase.execute({
-        email: userInfo.email,
-        name: userInfo.name,
-        picture: userInfo.picture,
-        sub: userInfo.sub,
-      });
-    } else if (provider === 'kakao') {
-      result = await kakaoLoginUsecase.execute({
-        id: userInfo.sub,
-        email: userInfo.email,
-        nickname: userInfo.name,
-        profile_image: userInfo.picture,
-      });
-    }
-
-    if (result?.success) {
-      return true;
-    } else {
-      return false;
-    }
-  } catch (error) {
-    if (error instanceof AxiosError) {
-      return false;
-    }
-    return false;
-  }
 }
 
 export const authOptions = {
@@ -167,37 +36,18 @@ export const authOptions = {
       async authorize(credentials) {
         const { email, password } = credentials ?? {};
 
-
         if (!email || !password) {
           return null;
         }
-
 
         try {
           const loginUsecase = new LoginUsecase(new PrUserRepository());
           const loginRequestdto: LoginRequestDto = { email, password };
 
           const result = await loginUsecase.execute(loginRequestdto);
-
-          if (result.success && result.user) {
-
-            const userData = {
-              id: result.user.id,
-              email: result.user.email,
-              username: result.user.username,
-              nickname: result.user.nickname,
-              profileImg: result.user.profileImg,
-              profileImgPath: result.user.profileImgPath,
-            };
-
-            return userData;
-          } else {
-            return null;
-          }
+          return result;
         } catch (error) {
-          if (error instanceof AxiosError) {
-            return null;
-          }
+          console.error('로그인 처리 중 오류가 발생했습니다:', error);
           return null;
         }
       },
@@ -224,77 +74,75 @@ export const authOptions = {
     }),
   ],
   callbacks: {
-    async signIn({ user, account, profile }: {
+    async signIn({
+      user,
+      account,
+      profile,
+    }: {
       user: User;
       account: Account | null;
       profile: Profile;
     }) {
-
       // 소셜 로그인 처리
       if (account?.provider === 'google' || account?.provider === 'kakao') {
         const provider = account.provider as SocialProvider;
 
-        // Google과 Kakao의 profile 구조가 다르므로 통합 처리
         const userInfo: SocialUserInfo = {
           email: user.email || '',
           name: user.name || '',
           picture: user.image || undefined,
           sub: (profile as { sub?: string }).sub || user.id || '',
         };
+        const userRepository = new PrUserRepository();
+        const googleLoginUsecase = new GoogleLoginUsecase(userRepository);
+        const kakaoLoginUsecase = new KakaoLoginUsecase(userRepository);
 
-        const result = await handleSocialLogin(provider, userInfo);
+        let result: LoginResponseDto | null = null;
 
+        if (provider === 'google') {
+          result = await googleLoginUsecase.execute({
+            email: userInfo.email,
+            name: userInfo.name,
+            picture: userInfo.picture,
+            sub: userInfo.sub,
+          });
+        } else if (provider === 'kakao') {
+          result = await kakaoLoginUsecase.execute({
+            id: userInfo.sub,
+            email: userInfo.email,
+            nickname: userInfo.name,
+            profile_image: userInfo.picture,
+          });
+        }
         return result;
       }
-
-      return true;
+      return !!user;
     },
 
-    async jwt({
-      token,
-      user,
-      trigger,
-      session,
-    }: {
-      token: JWT;
-      user?: User;
-      trigger?: 'signIn' | 'signUp' | 'update';
-      session?: ISessionUser;
-    }) {
-
+    async jwt({ token, user }: { token: JWT; user: User }) {
       if (user) {
-
-        // 타입가드를 사용한 토큰 업데이트
-        updateTokenFromUser(token, user);
-
-        if (user.isNewUser !== undefined) {
-          token.isNewUser = user.isNewUser;
-        }
-
+        token.nickname = user.nickname || undefined;
+        token.email = user.email || undefined;
+        token.id = user.id || undefined;
       }
-
-      // 세션 업데이트 시 토큰 업데이트
-      if (
-        trigger === 'update' &&
-        (session?.profileImg || session?.profileImgPath || session?.nickname || session?.username)
-      ) {
-        updateTokenFromSession(token, session);
-      }
-
       return token;
     },
 
     async session({ session, token }: { session: Session; token: JWT }) {
-
-      if (session.user) {
-        // 타입가드를 사용한 세션 업데이트
-        updateSessionFromToken(session, token);
+      if (token) {
+        session.user.nickname = token.nickname as string;
+        session.user.email = token.email as string;
+        session.user.id = token.id as string;
       }
       return session;
     },
 
-    async redirect({ url, baseUrl }: { url: string; baseUrl: string }) {
-
+    async redirect({ url, baseUrl}: { url: string; baseUrl: string;}) {
+      // Google 콜백 URL인 경우 처리
+      if (url.includes('/login/google-callback')) {
+        return `${baseUrl}/login/google-callback`;
+      }
+      
       // 로그인 후 리다이렉트
       if (url.startsWith('/')) {
         const redirectUrl = `${baseUrl}${url}`;
@@ -308,8 +156,5 @@ export const authOptions = {
 
       return baseUrl;
     },
-  },
-  pages: {
-    signIn: '/login', // 로그인 페이지 경로
   },
 };
