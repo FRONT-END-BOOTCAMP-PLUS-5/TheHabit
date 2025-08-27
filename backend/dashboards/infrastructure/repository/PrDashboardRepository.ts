@@ -56,6 +56,17 @@ export class PrDashboardRepository implements IDashboardRepository {
               },
               category: true,
             },
+            select: {
+              id: true,
+              name: true,
+              createdAt: true,
+              endAt: true,
+              color: true,
+              userId: true,
+              categoryId: true,
+              active: true,
+              completion_progress: true,
+            },
           },
         },
       });
@@ -83,6 +94,7 @@ export class PrDashboardRepository implements IDashboardRepository {
       userId: string;
       categoryId: number;
       active: boolean;
+      completion_progress: string;
       routines: Array<{
         id: number;
         routineTitle: string;
@@ -109,18 +121,18 @@ export class PrDashboardRepository implements IDashboardRepository {
     }
 
     // 모든 챌린지들을 Challenge 엔티티로 변환
-    const challengeEntities = challenges.map(
-      challengeData =>
-        new Challenge(
-          challengeData.name,
-          challengeData.createdAt,
-          challengeData.endAt,
-          challengeData.color,
-          challengeData.userId,
-          challengeData.categoryId,
-          challengeData.active,
-          challengeData.id
-        )
+    const challengeEntities = challenges.map(challengeData =>
+      new Challenge(
+        challengeData.name,
+        challengeData.createdAt,
+        challengeData.endAt,
+        challengeData.color,
+        challengeData.userId,
+        challengeData.categoryId,
+        challengeData.active,
+        challengeData.completion_progress || 'in_progress',
+        challengeData.id // id
+      )
     );
 
     // 모든 챌린지의 루틴들을 수집

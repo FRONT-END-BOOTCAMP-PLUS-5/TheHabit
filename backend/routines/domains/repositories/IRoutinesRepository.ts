@@ -2,7 +2,7 @@ import { Routine } from '@/backend/routines/domains/entities/routine';
 export interface IRoutinesRepository {
   // 루틴 생성
   create(routine: Omit<Routine, 'id' | 'createdAt'>): Promise<Routine>;
-  
+
   createByNickname(request: {
     routineTitle: string;
     alertTime: Date | null;
@@ -16,6 +16,8 @@ export interface IRoutinesRepository {
   findByNickname(nickname: string): Promise<Routine[]>;
   findById(routineId: number): Promise<Routine | null>;
   findAll(): Promise<Routine[]>;
+  // 알림 시간 기반 조회
+  findByAlertTime(alertTime: Date): Promise<Routine[]>;
   // 루틴 수정
   update(routineId: number, routine: Partial<Routine>): Promise<Routine>;
   // 루틴 삭제

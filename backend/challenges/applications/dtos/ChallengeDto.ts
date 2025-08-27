@@ -7,6 +7,7 @@ export interface ChallengeDto {
   readonly color: string;
   readonly categoryId: number;
   readonly active: boolean;
+  readonly completionProgress?: string;
 }
 
 // ChallengeEntity에서 DTO로 변환하는 유틸리티 함수들
@@ -20,6 +21,7 @@ export class ChallengeDtoMapper {
     userId: string;
     categoryId: number;
     active: boolean;
+    completionProgress?: string;
   }): ChallengeDto {
     return {
       id: challenge.id,
@@ -29,6 +31,7 @@ export class ChallengeDtoMapper {
       color: challenge.color,
       categoryId: challenge.categoryId,
       active: challenge.active,
+      completionProgress: challenge.completionProgress,
     };
   }
 
@@ -42,6 +45,7 @@ export class ChallengeDtoMapper {
       userId: string;
       categoryId: number;
       active: boolean;
+      completionProgress?: string;
     }[]
   ): ChallengeDto[] {
     return challenges.map(challenge => ChallengeDtoMapper.fromEntity(challenge));

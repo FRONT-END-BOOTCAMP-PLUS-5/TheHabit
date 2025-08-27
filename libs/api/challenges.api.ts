@@ -105,6 +105,38 @@ export const getChallengesByCategory = async (
   }
 };
 
+// 7. 챌린지 연장 (21일 → 66일, 66일 → 무제한)
+export const extendChallenge = async (
+  nickname: string,
+  challengeId: number
+): Promise<ApiResponse<ChallengeDto>> => {
+  try {
+    const response = await axiosInstance.put<ApiResponse<ChallengeDto>>(
+      `/api/challenges/${nickname}/${challengeId}?action=extend`
+    );
+    return response.data;
+  } catch (error) {
+    console.error('챌린지 연장 실패:', error);
+    throw error;
+  }
+};
+
+// 8. 챌린지 완료
+export const completeChallenge = async (
+  nickname: string,
+  challengeId: number
+): Promise<ApiResponse<ChallengeDto>> => {
+  try {
+    const response = await axiosInstance.put<ApiResponse<ChallengeDto>>(
+      `/api/challenges/${nickname}/${challengeId}?action=complete`
+    );
+    return response.data;
+  } catch (error) {
+    console.error('챌린지 완료 실패:', error);
+    throw error;
+  }
+};
+
 export const getChallengesByNickname = async (nickname: string): Promise<ChallengeDto[]> => {
   try {
     const response = await axiosInstance.get<ChallengeDto[]>(`/api/challenges/${nickname}`);
@@ -124,4 +156,6 @@ export const challengesApi = {
   delete: deleteChallenge,
   getByCategory: getChallengesByCategory,
   getByNickname: getChallengesByNickname,
+  extend: extendChallenge,
+  complete: completeChallenge,
 };

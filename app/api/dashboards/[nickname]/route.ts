@@ -49,6 +49,7 @@ export async function GET(
         color: challenge.color,
         active: challenge.active,
         categoryId: challenge.categoryId,
+        completionProgress: challenge.completionProgress,
       })),
       routines: dashboard.routines.map(routine => ({
         id: routine.id,
@@ -75,6 +76,8 @@ export async function GET(
     };
     return NextResponse.json(successResponse);
   } catch (error) {
+    console.error('대시보드 조회 에러:', error);
+
     const errorResponse: ApiResponse<null> = {
       success: false,
       error: {
@@ -83,9 +86,6 @@ export async function GET(
       },
     };
 
-    if (error instanceof Error) {
-      return NextResponse.json(errorResponse, { status: 500 });
-    }
-
+    return NextResponse.json(errorResponse, { status: 500 });
   }
 }

@@ -11,16 +11,40 @@ export const createRoutineCompletion = async (
 ): Promise<ApiResponse<RoutineCompletionDto>> => {
   try {
     const isFormData = data instanceof FormData;
-    
-    const response = await axiosInstance.post<ApiResponse<RoutineCompletionDto>>(
-      '/api/routine-completions',
-      data,
-      isFormData ? {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      } : undefined
-    );
+    console.log('createRoutineCompletion - 데이터 타입 확인:', {
+      isFormData,
+      dataType: typeof data,
+      constructor: data?.constructor?.name,
+      isFormDataInstance: data instanceof FormData
+    });
+
+    let response;
+
+    if (isFormData) {
+      // FormData일 때는 fetch API 사용 (axios의 FormData 문제 우회)
+      const fetchResponse = await fetch('/api/routine-completions', {
+        method: 'POST',
+        body: data,
+        credentials: 'include'
+      });
+
+      if (!fetchResponse.ok) {
+        throw new Error(`HTTP error! status: ${fetchResponse.status}`);
+      }
+
+      response = { data: await fetchResponse.json() };
+    } else {
+      // JSON일 때는 axios 사용
+      response = await axiosInstance.post<ApiResponse<RoutineCompletionDto>>(
+        '/api/routine-completions',
+        data,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+    }
 
     return response.data;
   } catch (error) {
@@ -29,16 +53,37 @@ export const createRoutineCompletion = async (
   }
 };
 
-// 루틴 완료 조회 (챌린지 ID와 닉네임 기반)
+// 루틴 완료 조회 (닉네임 기반 - 모든 루틴 완료)
+export const getRoutineCompletionsByNickname = async (
+  nickname: string
+): Promise<ApiResponse<RoutineCompletionDto[]>> => {
+  try {
+    const response = await axiosInstance.get<ApiResponse<RoutineCompletionDto[]>>(
+      `/api/routine-completions?nickname=${nickname}`
+    );
+
+    return response.data;
+  } catch (error) {
+    console.error('루틴 완료 조회 실패:', error);
+    throw error;
+  }
+};
+
+// 루틴 완료 조회 (챌린지 ID와 닉네임 기반 - 기존 호환성)
 export const getRoutineCompletions = async (
   challengeId: number,
   nickname: string
 ): Promise<ApiResponse<RoutineCompletionDto[]>> => {
   try {
+    // 새로운 API 구조에서는 nickname만 사용
+    // challengeId는 클라이언트에서 필터링하도록 변경
     const response = await axiosInstance.get<ApiResponse<RoutineCompletionDto[]>>(
-      `/api/routine-completions?challengeId=${challengeId}&nickname=${nickname}`
+      `/api/routine-completions?nickname=${nickname}`
     );
 
+    // 클라이언트에서 challengeId로 필터링
+    // 현재 DTO에는 routine 정보가 없으므로, 모든 루틴 완료를 반환
+    // 실제 필터링은 상위 컴포넌트에서 처리해야 함
     return response.data;
   } catch (error) {
     console.error('루틴 완료 조회 실패:', error);
@@ -81,6 +126,7 @@ export const deleteRoutineCompletion = async (completionId: number): Promise<voi
 export const routineCompletionsApi = {
   create: createRoutineCompletion,
   get: getRoutineCompletions,
+  getByNickname: getRoutineCompletionsByNickname,
   update: updateRoutineCompletion,
   delete: deleteRoutineCompletion,
 };

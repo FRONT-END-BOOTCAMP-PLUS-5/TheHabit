@@ -164,6 +164,32 @@ export class PrRoutinesRepository implements IRoutinesRepository {
     );
   }
 
+  async findByAlertTime(alertTime: Date): Promise<Routine[]> {
+    // 1분 범위로 조회 (alertTime ~ alertTime + 1분)
+    const endTime = new Date(alertTime.getTime() + 60000);
+
+    const routines = await prisma.routine.findMany({
+      where: {
+        alertTime: {
+          gte: alertTime,
+          lt: endTime,
+        },
+      },
+    });
+
+    return routines.map(routine =>
+      new Routine(
+        routine.id,
+        routine.routineTitle,
+        routine.alertTime,
+        routine.emoji,
+        routine.challengeId,
+        routine.createdAt,
+        routine.updatedAt
+      )
+    );
+  }
+
   async update(routineId: number, routine: Partial<Routine>): Promise<Routine> {
     const updatedRoutine = await prisma.routine.update({
       where: { id: routineId },

@@ -59,7 +59,14 @@ const UserProfileSection: React.FC<UserProfileSectionProps> = () => {
       <ProfileImage imageSrc={userInfo?.data?.profileImg} />
       <div className='flex flex-col justify-center'>
         {/* username */}
-        <div className='text-2xl font-bold'>{userInfo?.data?.username || '사용자'}</div>
+        <div className='relative group'>
+          <div className='w-80 text-2xl font-bold truncate'>
+            {userInfo?.data?.username || '사용자'}
+          </div>
+          <div className='absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-gray-800 text-white text-sm rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap z-10'>
+            {userInfo?.data?.username || '사용자'}
+          </div>
+        </div>
         {/* nickname */}
         <div className='text-sm font-bold text-primary-grey'>
           {userInfo?.data?.nickname ? `(${userInfo.data.nickname})` : ''}
