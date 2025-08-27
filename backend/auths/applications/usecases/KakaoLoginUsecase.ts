@@ -1,5 +1,6 @@
 import { User } from '@/backend/users/domains/entities/UserEntity';
 import { IUserRepository } from '@/backend/users/domains/repositories/IUserRepository';
+import { LoginResponseDto } from '../dtos/LoginResponseDto';
 
 export interface KakaoUserInfo {
   id: string; // 카카오 고유 ID (참고용, 실제 검색에는 사용하지 않음)
@@ -10,32 +11,15 @@ export interface KakaoUserInfo {
   email_needs_agreement?: boolean; // 이메일 동의 여부
 }
 
-export interface KakaoLoginResult {
-  success: boolean;
-  message?: string;
-  user?: {
-    id: string;
-    email: string;
-    username: string;
-    nickname: string;
-    profileImg?: string | null;
-    profileImgPath?: string | null;
-  };
-  isNewUser?: boolean;
-}
 
 export class KakaoLoginUsecase {
   constructor(private readonly userRepository: IUserRepository) {}
 
-  async execute(kakaoUserInfo: KakaoUserInfo): Promise<KakaoLoginResult> {
+  async execute(kakaoUserInfo: KakaoUserInfo): Promise<LoginResponseDto> {
     try {
       // 이메일이 없는 경우 처리
       if (!kakaoUserInfo.email) {
-        return {
-          success: false,
-          message:
-            '카카오 계정에서 이메일 정보를 제공받을 수 없습니다. 이메일 제공에 동의해주세요.',
-        };
+        throw new Error('카카오 계정에서 이메일 정보를 제공받을 수 없습니다. 이메일 제공에 동의해주세요.');
       }
 
       // 1. 이메일로 기존 회원 찾기
@@ -49,11 +33,8 @@ export class KakaoLoginUsecase {
         return await this.handleNewUser(kakaoUserInfo);
       }
     } catch (error) {
-      return {
-        success: false,
-        message:
-          error instanceof Error ? error.message : '카카오 로그인 처리 중 오류가 발생했습니다.',
-      };
+      console.error('카카오 로그인 처리 중 오류가 발생했습니다:', error);
+      throw new Error('카카오 로그인 처리 중 오류가 발생했습니다.');
     }
   }
 
@@ -70,23 +51,17 @@ export class KakaoLoginUsecase {
     }
   }
 
-  private handleExistingUser(user: User): KakaoLoginResult {
+  private handleExistingUser(user: User): LoginResponseDto {
     return {
-      success: true,
-      message: '기존 회원 로그인 성공',
-      user: {
         id: user.id || '',
         email: user.email || '',
-        username: user.username,
         nickname: user.nickname,
-        profileImg: user.profileImg,
-        profileImgPath: user.profileImgPath,
-      },
-      isNewUser: false,
+        name: user.username,
+        profileImg: user.profileImg || '',
     };
   }
 
-  private async handleNewUser(kakaoUserInfo: KakaoUserInfo): Promise<KakaoLoginResult> {
+  private async handleNewUser(kakaoUserInfo: KakaoUserInfo): Promise<LoginResponseDto> {
     try {
       // 2. 신규 회원 생성
       const newUser = this.createNewUser(kakaoUserInfo);
@@ -99,17 +74,11 @@ export class KakaoLoginUsecase {
       }
 
       return {
-        success: true,
-        message: '신규 회원 가입 및 로그인 성공',
-        user: {
           id: savedUser.id || '',
           email: savedUser.email || '',
-          username: savedUser.username,
           nickname: savedUser.nickname,
-          profileImg: savedUser.profileImg,
-          profileImgPath: savedUser.profileImgPath,
-        },
-        isNewUser: true,
+          name: savedUser.username,
+          profileImg: savedUser.profileImg || '',
       };
     } catch (error) {
       throw new Error(
@@ -147,6 +116,7 @@ export class KakaoLoginUsecase {
       const savedUser = await this.userRepository.create(user);
       return savedUser;
     } catch (error) {
+      console.error('사용자 저장에 실패했습니다:', error);
       throw new Error('사용자 저장에 실패했습니다.');
     }
   }

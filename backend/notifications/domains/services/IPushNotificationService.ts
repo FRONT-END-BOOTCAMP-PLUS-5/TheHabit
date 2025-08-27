@@ -1,5 +1,5 @@
 interface NotificationData {
-  type: 'follow' | 'routine_completion';
+  type: 'follow' | 'routine_completion' | 'routine_alert';
   userId?: string;
   routineId?: string;
   challengeId?: string;

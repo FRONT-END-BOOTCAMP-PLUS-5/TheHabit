@@ -1,13 +1,15 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
+import { useSession } from 'next-auth/react';
 import { ONBOARDING_LIST } from '@/public/consts/onboarding';
 
 export const OnBoardingStep = () => {
   const [currentStep, setCurrentStep] = useState(0);
   const router = useRouter();
+  const { data: session, status } = useSession();
 
   const currentOnboarding = ONBOARDING_LIST[currentStep];
 
@@ -17,7 +19,15 @@ export const OnBoardingStep = () => {
     } else {
       // 온보딩 완료 표시 쿠키 설정 후 로그인 페이지로 이동
       document.cookie = `onboarding=done; path=/; max-age=${60 * 60 * 24 * 365}`;
-      router.push('/login');
+      
+      // 로그인 상태에 따라 다른 페이지로 이동
+      if (session?.user) {
+        // 로그인이 되어있으면 대시보드로
+        router.push('/user/dashboard');
+      } else {
+        // 로그인이 안되어있으면 로그인 페이지로
+        router.push('/login');
+      }
     }
   };
 

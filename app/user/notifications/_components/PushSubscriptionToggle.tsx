@@ -58,7 +58,7 @@ export const PushSubscriptionToggle: React.FC = () => {
       applicationServerKey: process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY
     });
 
-    await fetch('/api/push/subscribe', {
+    await fetch('/api/notifications/subscribe', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(subscription)
@@ -74,7 +74,7 @@ export const PushSubscriptionToggle: React.FC = () => {
     if (subscription) {
       await subscription.unsubscribe();
       
-      await fetch('/api/push/unsubscribe', {
+      await fetch('/api/notifications/unsubscribe', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ endpoint: subscription.endpoint })

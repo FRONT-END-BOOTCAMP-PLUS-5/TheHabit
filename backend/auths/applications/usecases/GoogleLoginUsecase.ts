@@ -1,5 +1,6 @@
 import { User } from '@/backend/users/domains/entities/UserEntity';
 import { IUserRepository } from '@/backend/users/domains/repositories/IUserRepository';
+import { LoginResponseDto } from '@/backend/auths/applications/dtos/LoginResponseDto';
 
 export interface GoogleUserInfo {
   email: string;
@@ -8,40 +9,24 @@ export interface GoogleUserInfo {
   sub?: string;
 }
 
-export interface GoogleLoginResult {
-  success: boolean;
-  message?: string;
-  user?: {
-    id: string;
-    email: string;
-    username: string;
-    nickname: string;
-    profileImg?: string | null;
-    profileImgPath?: string | null;
-  };
-  isNewUser?: boolean;
-}
 
 export class GoogleLoginUsecase {
   constructor(private readonly userRepository: IUserRepository) {}
 
-  async execute(googleUserInfo: GoogleUserInfo): Promise<GoogleLoginResult> {
+  async execute(googleUserInfo: GoogleUserInfo): Promise<LoginResponseDto> {
     try {
       // 1. 이메일로 기존 회원 찾기
       const existingUser = await this.findUserByEmail(googleUserInfo.email);
       
       if (existingUser) {
-        // 기존 회원인 경우 로그인 처리
         return this.handleExistingUser(existingUser);
       } else {
         // 신규 회원인 경우 회원 생성 및 저장
         return await this.handleNewUser(googleUserInfo);
       }
     } catch (error) {
-      return {
-        success: false,
-        message: error instanceof Error ? error.message : '구글 로그인 처리 중 오류가 발생했습니다.'
-      };
+      console.error('구글 로그인 처리 중 오류가 발생했습니다:', error);
+      throw new Error('구글 로그인 처리 중 오류가 발생했습니다.');
     }
   }
 
@@ -51,27 +36,22 @@ export class GoogleLoginUsecase {
       const user = await this.userRepository.findByEmail(email);
       return user;
     } catch (error) {
+      console.error('이메일로 사용자 검색 중 오류가 발생했습니다:', error);
       return null;
     }
   }
 
-  private handleExistingUser(user: User): GoogleLoginResult {
+  private handleExistingUser(user: User): LoginResponseDto {
     return {
-      success: true,
-      message: '기존 회원 로그인 성공',
-      user: {
         id: user.id || '',
         email: user.email || '',
-        username: user.username,
         nickname: user.nickname,
-        profileImg: user.profileImg,
-        profileImgPath: user.profileImgPath
-      },
-      isNewUser: false
+        name: user.username,
+        profileImg: user.profileImg || '',
     };
   }
 
-  private async handleNewUser(googleUserInfo: GoogleUserInfo): Promise<GoogleLoginResult> {
+  private async handleNewUser(googleUserInfo: GoogleUserInfo): Promise<LoginResponseDto> {
     try {
       // 2. 신규 회원 생성
       const newUser = this.createNewUser(googleUserInfo);
@@ -84,17 +64,11 @@ export class GoogleLoginUsecase {
       }
 
       return {
-        success: true,
-        message: '신규 회원 가입 및 로그인 성공',
-        user: {
-          id: savedUser.id || '',
-          email: savedUser.email || '',
-          username: savedUser.username,
-          nickname: savedUser.nickname,
-          profileImg: savedUser.profileImg,
-          profileImgPath: savedUser.profileImgPath
-        },
-        isNewUser: true
+        id: savedUser.id || '',
+        email: savedUser.email || '',
+        nickname: savedUser.nickname,
+        name: savedUser.username,
+        profileImg: savedUser.profileImg || '',
       };
     } catch (error) {
       throw new Error(`신규 회원 처리 중 오류: ${error instanceof Error ? error.message : '알 수 없는 오류'}`);
@@ -129,6 +103,7 @@ export class GoogleLoginUsecase {
       const savedUser = await this.userRepository.create(user);
       return savedUser;
     } catch (error) {
+      console.error('사용자 저장에 실패했습니다:', error);
       throw new Error('사용자 저장에 실패했습니다.');
     }
   }
