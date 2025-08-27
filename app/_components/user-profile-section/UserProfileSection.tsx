@@ -49,7 +49,9 @@ const UserProfileSection: React.FC<UserProfileSectionProps> = () => {
 
   return (
     <div className='flex flex-row items-center gap-2 w-full px-4 py-4'>
-      <ProfileImage imageSrc={userInfo?.data?.profileImg} />
+      <div className='w-24 h-24'>
+        <ProfileImage imageSrc={userInfo?.data?.profileImg} />
+      </div>
       <div className='flex flex-col justify-center'>
         {/* username */}
         <div className='relative group'>
