@@ -52,7 +52,9 @@ export const PushSubscriptionToggle: React.FC = () => {
       return;
     }
 
-    const registration = await navigator.serviceWorker.ready;
+    // Service Worker 등록 및 준비 대기
+    const registration = await navigator.serviceWorker.register('/sw.js');
+    await navigator.serviceWorker.ready;
     const subscription = await registration.pushManager.subscribe({
       userVisibleOnly: true,
       applicationServerKey: process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY
