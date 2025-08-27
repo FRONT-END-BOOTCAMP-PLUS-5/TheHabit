@@ -56,6 +56,8 @@ export class KakaoLoginUsecase {
         id: user.id || '',
         email: user.email || '',
         nickname: user.nickname,
+        name: user.username,
+        profileImg: user.profileImg || '',
     };
   }
 
@@ -75,6 +77,8 @@ export class KakaoLoginUsecase {
           id: savedUser.id || '',
           email: savedUser.email || '',
           nickname: savedUser.nickname,
+          name: savedUser.username,
+          profileImg: savedUser.profileImg || '',
       };
     } catch (error) {
       throw new Error(

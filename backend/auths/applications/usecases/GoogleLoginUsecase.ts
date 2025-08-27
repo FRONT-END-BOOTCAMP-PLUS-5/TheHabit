@@ -19,7 +19,6 @@ export class GoogleLoginUsecase {
       const existingUser = await this.findUserByEmail(googleUserInfo.email);
       
       if (existingUser) {
-        // 기존 회원인 경우 로그인 처리
         return this.handleExistingUser(existingUser);
       } else {
         // 신규 회원인 경우 회원 생성 및 저장
@@ -47,6 +46,8 @@ export class GoogleLoginUsecase {
         id: user.id || '',
         email: user.email || '',
         nickname: user.nickname,
+        name: user.username,
+        profileImg: user.profileImg || '',
     };
   }
 
@@ -66,6 +67,8 @@ export class GoogleLoginUsecase {
         id: savedUser.id || '',
         email: savedUser.email || '',
         nickname: savedUser.nickname,
+        name: savedUser.username,
+        profileImg: savedUser.profileImg || '',
       };
     } catch (error) {
       throw new Error(`신규 회원 처리 중 오류: ${error instanceof Error ? error.message : '알 수 없는 오류'}`);
