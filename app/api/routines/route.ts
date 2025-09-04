@@ -3,7 +3,7 @@ import { AddRoutineUseCase } from '@/backend/routines/applications/usecases/AddR
 import { GetRoutinesUseCase } from '@/backend/routines/applications/usecases/GetRoutinesUseCase';
 import { DeleteRoutineUseCase } from '@/backend/routines/applications/usecases/DeleteRoutineUseCase';
 import { UpdateRoutineUseCase } from '@/backend/routines/applications/usecases/UpdateRoutineUseCase';
-import { PrRoutinesRepository } from '@/backend/routines/infrastructures/repositories/PrRoutinesRepository';
+import { PrRoutinesRepository } from '@/backend/routines/infrastructure/repositories/PrRoutinesRepository';
 import { IRoutinesRepository } from '@/backend/routines/domains/repositories/IRoutinesRepository';
 import {
   CreateRoutineRequestDto,

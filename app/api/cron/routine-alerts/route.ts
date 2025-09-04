@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { PrRoutinesRepository } from '@/backend/routines/infrastructures/repositories/PrRoutinesRepository';
+import { PrRoutinesRepository } from '@/backend/routines/infrastructure/repositories/PrRoutinesRepository';
 import { PrChallengeRepository } from '@/backend/challenges/infrastructures/repositories/PrChallengeRepository';
 import { PrPushSubscriptionRepository } from '@/backend/notifications/infrastructures/repositories/PrPushSubscriptionRepository';
 import { WebPushNotificationService } from '@/backend/notifications/infrastructures/services/WebPushNotificationService';
