@@ -3,7 +3,7 @@ import { AddRoutineCompletionUseCase } from '@/backend/routine-completions/appli
 import { UpdateRoutineCompletionUseCase } from '@/backend/routine-completions/applications/usecases/UpdateRoutineCompletionUseCase';
 import { DeleteRoutineCompletionUseCase } from '@/backend/routine-completions/applications/usecases/DeleteRoutineCompletionUseCase';
 import { GetRoutineCompletionsUseCase } from '@/backend/routine-completions/applications/usecases/GetRoutineCompletionsUseCase';
-import { PrRoutineCompletionsRepository } from '@/backend/routine-completions/infrastructures/repositories/PrRoutineCompletionsRepository';
+import { PrRoutineCompletionsRepository } from '@/backend/routine-completions/infrastructure/repositories/PrRoutineCompletionsRepository';
 import { s3Service } from '@/backend/shared/services/s3.service';
 import { RoutineCompletionDto, RoutineCompletionDtoMapper } from '@/backend/routine-completions/applications/dtos/RoutineCompletionDto';
 import { ApiResponse } from '@/backend/shared/types/ApiResponse';
