@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { GetUserRoutineCompletion } from '@/backend/users/applications/usecases/GetUserRoutineCompletion';
-import { PrUserRepository } from '@/backend/users/infrastructures/repositories/PrUserRepository';
+import { GetUserRoutineCompletion } from '@/backend/users/application/usecases/GetUserRoutineCompletion';
+import { PrUserRepository } from '@/backend/users/infrastructure/repositories/PrUserRepository';
 import { ApiResponse } from '@/backend/shared/types/ApiResponse';
 import { RoutineCompletionDto } from '@/backend/routine-completions/applications/dtos/RoutineCompletionDto';
 

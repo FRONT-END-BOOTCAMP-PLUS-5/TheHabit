@@ -1,5 +1,5 @@
 import { LoginUsecase } from '@/backend/auths/applications/usecases/LoginUsecase';
-import { PrUserRepository } from '@/backend/users/infrastructures/repositories/PrUserRepository';
+import { PrUserRepository } from '@/backend/users/infrastructure/repositories/PrUserRepository';
 import { LoginRequestDto } from '@/backend/auths/applications/dtos/LoginRequestDto';
 import { Session, User, Account, Profile } from 'next-auth';
 import { JWT } from 'next-auth/jwt';
@@ -105,7 +105,7 @@ export const authOptions = {
             name: userInfo.name,
             picture: userInfo.picture,
             sub: userInfo.sub,
-            
+
           });
           user.id = result?.id;
           user.nickname = result?.nickname;
@@ -144,18 +144,18 @@ export const authOptions = {
         session.user.profileImg = token.profileImg || null;
         session.user.profileImgPath = token.profileImgPath || null;
         session.user.username = token.username as string;
-        
-      
+
+
       }
       return session;
     },
 
-    async redirect({ url, baseUrl}: { url: string; baseUrl: string;}) {
+    async redirect({ url, baseUrl }: { url: string; baseUrl: string; }) {
       // Google 콜백 URL인 경우 처리
       if (url.includes('/login/google-callback')) {
         return `${baseUrl}/login/google-callback`;
       }
-      
+
       // 로그인 후 리다이렉트 - 대시보드로 이동
       if (url.startsWith('/')) {
         // 온보딩이 필요한 사용자를 위해 대시보드로 이동 (대시보드에서 온보딩 여부 판단)

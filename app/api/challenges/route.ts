@@ -2,7 +2,7 @@
 // POST /api/challenges - 챌린지 등록
 import { NextRequest, NextResponse } from 'next/server';
 import { PrChallengeRepository } from '@/backend/challenges/infrastructures/repositories/PrChallengeRepository';
-import { PrUserRepository } from '@/backend/users/infrastructures/repositories/PrUserRepository';
+import { PrUserRepository } from '@/backend/users/infrastructure/repositories/PrUserRepository';
 import { GetChallengeByIdUsecase } from '@/backend/challenges/applications/usecases/GetChallengeByIdUsecase';
 import { ChallengeDtoMapper } from '@/backend/challenges/applications/dtos/ChallengeDto';
 import { AddChallengeUseCase } from '@/backend/challenges/applications/usecases/AddChallengeUsecase';

@@ -5,8 +5,8 @@ import { AddFollowingUsecase } from '@/backend/follows/applications/usecases/Add
 import { DeleteUnfollowUsecase } from '@/backend/follows/applications/usecases/DeleteUnfollowUsecase';
 import { PrNotificationRepository } from '@/backend/notifications/infrastructures/repositories/PrNotificationRepository';
 import { CreateNotificationUsecase } from '@/backend/notifications/applications/usecases/CreateNotificationUsecase';
-import { PrUserRepository } from '@/backend/users/infrastructures/repositories/PrUserRepository';
-import { GetUserUsecase } from '@/backend/users/applications/usecases/GetUserUsecase';
+import { PrUserRepository } from '@/backend/users/infrastructure/repositories/PrUserRepository';
+import { GetUserUsecase } from '@/backend/users/application/usecases/GetUserUsecase';
 import { SendPushNotificationUseCase } from '@/backend/notifications/applications/usecases/SendPushNotificationUseCase';
 import { PrPushSubscriptionRepository } from '@/backend/notifications/infrastructures/repositories/PrPushSubscriptionRepository';
 import { WebPushNotificationService } from '@/backend/notifications/infrastructures/services/WebPushNotificationService';

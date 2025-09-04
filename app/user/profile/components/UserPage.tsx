@@ -6,7 +6,7 @@ import { ProfileImage } from '@/app/_components/profile-images/ProfileImage';
 import { getUserChallengeAndRoutineAndFollowAndCompletion } from '@/libs/api/dashboards.api';
 import { useEffect, useState, useRef, useMemo, useCallback } from 'react';
 import { RoutineComponent } from '@/app/user/profile/components/Routine';
-import { UserChallengeAndRoutineAndFollowAndCompletionDto } from '@/backend/users/applications/dtos/UserChallengeAndRoutineAndFollowAndCompletion';
+import { UserChallengeAndRoutineAndFollowAndCompletionDto } from '@/backend/users/application/dtos/UserChallengeAndRoutineAndFollowAndCompletion';
 import { ChallengeSelectComponent } from '@/app/user/profile/components/ChallengeSelect';
 import NoneProfile from '@/app/_components/none/NoneProfile';
 import { AvatarSkeleton, ButtonSkeleton, TextSkeleton } from '@/app/_components/skeleton/Skeleton';

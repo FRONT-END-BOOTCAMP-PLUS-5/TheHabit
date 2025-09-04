@@ -9,8 +9,8 @@ import { RoutineCompletionDto, RoutineCompletionDtoMapper } from '@/backend/rout
 import { ApiResponse } from '@/backend/shared/types/ApiResponse';
 import { PrNotificationRepository } from '@/backend/notifications/infrastructures/repositories/PrNotificationRepository';
 import { CreateNotificationUsecase } from '@/backend/notifications/applications/usecases/CreateNotificationUsecase';
-import { PrUserRepository } from '@/backend/users/infrastructures/repositories/PrUserRepository';
-import { GetUserUsecase } from '@/backend/users/applications/usecases/GetUserUsecase';
+import { PrUserRepository } from '@/backend/users/infrastructure/repositories/PrUserRepository';
+import { GetUserUsecase } from '@/backend/users/application/usecases/GetUserUsecase';
 import { PrFollowRepository } from '@/backend/follows/infrastructures/repositories/PrFollowRepository';
 import { GetFollowerByToUserIdUsecase } from '@/backend/follows/applications/usecases/GetFollowerByToUserIdUsecase';
 

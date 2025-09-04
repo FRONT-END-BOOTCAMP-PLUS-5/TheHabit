@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { PrUserRepository } from '@/backend/users/infrastructures/repositories/PrUserRepository';
-import { UpdateUserUsecase } from '@/backend/users/applications/usecases/UpdateUserUsecase';
+import { PrUserRepository } from '@/backend/users/infrastructure/repositories/PrUserRepository';
+import { UpdateUserUsecase } from '@/backend/users/application/usecases/UpdateUserUsecase';
 import { User } from '@/backend/users/domains/entities/UserEntity';
 import { s3Service } from '@/backend/shared/services/s3.service';
 

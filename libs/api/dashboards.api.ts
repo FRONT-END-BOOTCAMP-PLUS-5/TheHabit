@@ -4,7 +4,7 @@ import { DashboardDto } from '@/backend/dashboards/application/dtos/DashboardDto
 import { ChallengeDto } from '@/backend/challenges/applications/dtos/ChallengeDto';
 import { ReadRoutineResponseDto } from '@/backend/routines/applications/dtos/RoutineDto';
 import { RoutineCompletionDto } from '@/backend/routine-completions/applications/dtos/RoutineCompletionDto';
-import { UserChallengeAndRoutineAndFollowAndCompletionDto } from '@/backend/users/applications/dtos/UserChallengeAndRoutineAndFollowAndCompletion';
+import { UserChallengeAndRoutineAndFollowAndCompletionDto } from '@/backend/users/application/dtos/UserChallengeAndRoutineAndFollowAndCompletion';
 
 // Dashboard API 응답 타입  
 interface DashboardListResponse {
