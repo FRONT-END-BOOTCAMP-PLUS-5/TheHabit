@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { ApiResponse } from '@/backend/shared/types/ApiResponse';
-import { ExtendChallengeUsecase } from '@/backend/challenges/applications/usecases/ExtendChallengeUsecase';
-import { CompleteChallengeUsecase } from '@/backend/challenges/applications/usecases/CompleteChallengeUsecase';
-import { PrChallengeRepository } from '@/backend/challenges/infrastructures/repositories/PrChallengeRepository';
+import { ExtendChallengeUsecase } from '@/backend/challenges/application/usecases/ExtendChallengeUsecase';
+import { CompleteChallengeUsecase } from '@/backend/challenges/application/usecases/CompleteChallengeUsecase';
+import { PrChallengeRepository } from '@/backend/challenges/infrastructure/repositories/PrChallengeRepository';
 
 // UseCase 생성 함수
 const createExtendChallengeUsecase = () => {

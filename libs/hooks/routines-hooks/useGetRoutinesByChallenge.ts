@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { getRoutinesByChallenge } from '@/libs/api/routines.api';
-import { ReadRoutineResponseDto } from '@/backend/routines/applications/dtos/RoutineDto';
+import { ReadRoutineResponseDto } from '@/backend/routines/application/dtos/RoutineDto';
 
 /**
  * 특정 챌린지의 루틴 목록을 조회하는 훅

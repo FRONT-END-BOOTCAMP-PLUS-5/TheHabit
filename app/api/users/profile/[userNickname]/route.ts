@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { GetUserUsecase } from '@/backend/users/applications/usecases/GetUserUsecase';
-import { PrUserRepository } from '@/backend/users/infrastructures/repositories/PrUserRepository';
+import { GetUserUsecase } from '@/backend/users/application/usecases/GetUserUsecase';
+import { PrUserRepository } from '@/backend/users/infrastructure/repositories/PrUserRepository';
 import { ApiResponse } from '@/backend/shared/types/ApiResponse';
-import { UserProfileDto } from '@/backend/users/applications/dtos/UserProfileDto';
-import { UserProfileDtoMapper } from '@/backend/users/applications/dtos/UserProfileDtoMapper';
+import { UserProfileDto } from '@/backend/users/application/dtos/UserProfileDto';
+import { UserProfileDtoMapper } from '@/backend/users/application/dtos/UserProfileDtoMapper';
 import { AxiosError } from 'axios';
 
 const repository = new PrUserRepository();

@@ -1,5 +1,5 @@
-import { FollowerDto } from '@/backend/follows/applications/dtos/FollowerDto';
-import { FollowingDto } from '@/backend/follows/applications/dtos/FollowingDto';
+import { FollowerDto } from '@/backend/follows/application/dtos/FollowerDto';
+import { FollowingDto } from '@/backend/follows/application/dtos/FollowingDto';
 import { ListComponent } from '@/app/user/follow/components/List';
 import NoneSearchData from '@/app/_components/none/NoneSearchData';
 import React from 'react';

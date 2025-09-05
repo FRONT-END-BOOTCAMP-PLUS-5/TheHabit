@@ -1,15 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { AddRoutineUseCase } from '@/backend/routines/applications/usecases/AddRoutineUseCase';
-import { GetRoutinesUseCase } from '@/backend/routines/applications/usecases/GetRoutinesUseCase';
-import { DeleteRoutineUseCase } from '@/backend/routines/applications/usecases/DeleteRoutineUseCase';
-import { UpdateRoutineUseCase } from '@/backend/routines/applications/usecases/UpdateRoutineUseCase';
-import { PrRoutinesRepository } from '@/backend/routines/infrastructures/repositories/PrRoutinesRepository';
-import { IRoutinesRepository } from '@/backend/routines/domains/repositories/IRoutinesRepository';
+import { AddRoutineUseCase } from '@/backend/routines/application/usecases/AddRoutineUseCase';
+import { GetRoutinesUseCase } from '@/backend/routines/application/usecases/GetRoutinesUseCase';
+import { DeleteRoutineUseCase } from '@/backend/routines/application/usecases/DeleteRoutineUseCase';
+import { UpdateRoutineUseCase } from '@/backend/routines/application/usecases/UpdateRoutineUseCase';
+import { PrRoutinesRepository } from '@/backend/routines/infrastructure/repositories/PrRoutinesRepository';
+import { IRoutinesRepository } from '@/backend/routines/domain/repositories/IRoutinesRepository';
 import {
   CreateRoutineRequestDto,
   ReadRoutineResponseDto,
   UpdateRoutineRequestDto,
-} from '@/backend/routines/applications/dtos/RoutineDto';
+} from '@/backend/routines/application/dtos/RoutineDto';
 import { ApiResponse } from '@/backend/shared/types/ApiResponse';
 
 // 의존성 해결 함수들

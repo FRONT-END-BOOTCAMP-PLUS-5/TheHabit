@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { getUserProfileByNickname } from '@/libs/api/users.api';
-import { UserProfileDto } from '@/backend/users/applications/dtos/UserProfileDto';
+import { UserProfileDto } from '@/backend/users/application/dtos/UserProfileDto';
 
 /**
  * 닉네임으로 특정 유저의 프로필 정보를 가져오는 훅

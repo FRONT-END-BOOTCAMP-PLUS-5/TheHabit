@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/public/utils/prismaClient';
 import { ApiResponse } from '@/backend/shared/types/ApiResponse';
-import { AddFeedbackDto } from '@/backend/feedbacks/applications/dtos/AddfeedbackDto';
-import { FeedBackEntity } from '@/backend/feedbacks/domains/entities/FeedBackEntity';
-import { PrFeedBackRepository } from '@/backend/feedbacks/infrastructures/repositories/PrFeedBackRepository';
-import { AddFeedBackUsecase } from '@/backend/feedbacks/applications/usecases/AddFeedBackUsecase';
+import { AddFeedbackDto } from '@/backend/feedbacks/application/dtos/AddfeedbackDto';
+import { FeedBackEntity } from '@/backend/feedbacks/domain/entities/FeedBackEntity';
+import { PrFeedBackRepository } from '@/backend/feedbacks/infrastructure/repositories/PrFeedBackRepository';
+import { AddFeedBackUsecase } from '@/backend/feedbacks/application/usecases/AddFeedBackUsecase';
 
 export const POST = async (
   request: NextRequest,

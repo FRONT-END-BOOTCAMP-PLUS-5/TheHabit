@@ -1,4 +1,4 @@
-import { RoutineCompletionDto } from '@/backend/routine-completions/applications/dtos/RoutineCompletionDto';
+import { RoutineCompletionDto } from '@/backend/routine-completions/application/dtos/RoutineCompletionDto';
 import { getRoutinesByChallenge } from '@/libs/api/routines.api';
 
 export const ValidateFeedBackGPTResponse = async (

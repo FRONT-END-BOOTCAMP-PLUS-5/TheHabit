@@ -1,7 +1,7 @@
 import { axiosInstance } from '@/libs/axios/axiosInstance';
-import { FollowerDto } from '@/backend/follows/applications/dtos/FollowerDto';
-import { FollowingDto } from '@/backend/follows/applications/dtos/FollowingDto';
-import { ChallengeDto } from '@/backend/challenges/applications/dtos/ChallengeDto';
+import { FollowerDto } from '@/backend/follows/application/dtos/FollowerDto';
+import { FollowingDto } from '@/backend/follows/application/dtos/FollowingDto';
+import { ChallengeDto } from '@/backend/challenges/application/dtos/ChallengeDto';
 
 // API 응답 타입 정의
 interface ApiResponse<T> {

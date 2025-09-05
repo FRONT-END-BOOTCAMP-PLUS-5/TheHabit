@@ -4,7 +4,7 @@ import React from 'react';
 import { Button } from '@/app/_components/buttons/Button';
 import { useExtendChallenge } from '@/libs/hooks/challenges-hooks/useExtendChallenge';
 import { useCompleteChallenge } from '@/libs/hooks/challenges-hooks/useCompleteChallenge';
-import { ChallengeDto } from '@/backend/challenges/applications/dtos/ChallengeDto';
+import { ChallengeDto } from '@/backend/challenges/application/dtos/ChallengeDto';
 import { getChallengeType } from '@/public/utils/challengeUtils';
 
 interface ChallengeExtensionContentProps {

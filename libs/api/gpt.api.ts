@@ -1,4 +1,4 @@
-import { GPTRequestDto } from '@/backend/gpt/applications/dtos/GPTRequestDto';
+import { GPTRequestDto } from '@/backend/gpt/application/dtos/GPTRequestDto';
 import { axiosInstance } from '@/libs/axios/axiosInstance';
 import { ApiResponse } from '@/backend/shared/types/ApiResponse';
 

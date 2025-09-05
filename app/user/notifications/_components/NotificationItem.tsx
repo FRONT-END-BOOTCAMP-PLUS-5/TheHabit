@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Notification } from '@/backend/notifications/domains/entities/Notification';
+import { Notification } from '@/backend/notifications/domain/entities/Notification';
 import { ProfileImage } from '@/app/_components/profile-images/ProfileImage';
 
 interface NotificationItemProps {

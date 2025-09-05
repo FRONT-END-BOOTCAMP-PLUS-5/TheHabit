@@ -1,13 +1,13 @@
 // GET /api/challenges - 전체 챌린지 목록 조회
 // POST /api/challenges - 챌린지 등록
 import { NextRequest, NextResponse } from 'next/server';
-import { PrChallengeRepository } from '@/backend/challenges/infrastructures/repositories/PrChallengeRepository';
-import { PrUserRepository } from '@/backend/users/infrastructures/repositories/PrUserRepository';
-import { GetChallengeByIdUsecase } from '@/backend/challenges/applications/usecases/GetChallengeByIdUsecase';
-import { ChallengeDtoMapper } from '@/backend/challenges/applications/dtos/ChallengeDto';
-import { AddChallengeUseCase } from '@/backend/challenges/applications/usecases/AddChallengeUsecase';
-import { AddChallengeRequestDto } from '@/backend/challenges/applications/dtos/AddChallengeDto';
-import { ChallengeDto } from '@/backend/challenges/applications/dtos/ChallengeDto';
+import { PrChallengeRepository } from '@/backend/challenges/infrastructure/repositories/PrChallengeRepository';
+import { PrUserRepository } from '@/backend/users/infrastructure/repositories/PrUserRepository';
+import { GetChallengeByIdUsecase } from '@/backend/challenges/application/usecases/GetChallengeByIdUsecase';
+import { ChallengeDtoMapper } from '@/backend/challenges/application/dtos/ChallengeDto';
+import { AddChallengeUseCase } from '@/backend/challenges/application/usecases/AddChallengeUsecase';
+import { AddChallengeRequestDto } from '@/backend/challenges/application/dtos/AddChallengeDto';
+import { ChallengeDto } from '@/backend/challenges/application/dtos/ChallengeDto';
 import { ApiResponse } from '@/backend/shared/types/ApiResponse';
 
 const challengeRepository = new PrChallengeRepository();

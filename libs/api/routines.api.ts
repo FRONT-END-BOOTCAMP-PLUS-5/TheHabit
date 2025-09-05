@@ -5,8 +5,8 @@ import {
   ReadRoutineResponseDto,
   UpdateRoutineRequestDto,
   DashboardRoutineDto,
-} from '@/backend/routines/applications/dtos/RoutineDto';
-import { CreateRoutineCompletionResponseDto } from '@/backend/routine-completions/applications/dtos/RoutineCompletionDto';
+} from '@/backend/routines/application/dtos/RoutineDto';
+import { CreateRoutineCompletionResponseDto } from '@/backend/routine-completions/application/dtos/RoutineCompletionDto';
 
 // 1. 닉네임으로 루틴 조회
 export const getRoutinesByNickname = async (

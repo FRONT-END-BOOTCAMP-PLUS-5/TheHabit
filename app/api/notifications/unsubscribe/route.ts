@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/app/api/auth/[...nextauth]/auth';
-import { PrPushSubscriptionRepository } from '@/backend/notifications/infrastructures/repositories/PrPushSubscriptionRepository';
-import { UnsubscribePushNotificationUseCase } from '@/backend/notifications/applications/usecases/UnsubscribePushNotificationUseCase';
+import { PrPushSubscriptionRepository } from '@/backend/notifications/infrastructure/repositories/PrPushSubscriptionRepository';
+import { UnsubscribePushNotificationUseCase } from '@/backend/notifications/application/usecases/UnsubscribePushNotificationUseCase';
 import { ApiResponse } from '@/backend/shared/types/ApiResponse';
 
 // Repository와 UseCase 인스턴스 생성
