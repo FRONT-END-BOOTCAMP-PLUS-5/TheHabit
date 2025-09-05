@@ -1,14 +1,14 @@
-import { LoginUsecase } from '@/backend/auths/applications/usecases/LoginUsecase';
+import { LoginUsecase } from '@/backend/auths/application/usecases/LoginUsecase';
 import { PrUserRepository } from '@/backend/users/infrastructure/repositories/PrUserRepository';
-import { LoginRequestDto } from '@/backend/auths/applications/dtos/LoginRequestDto';
+import { LoginRequestDto } from '@/backend/auths/application/dtos/LoginRequestDto';
 import { Session, User, Account, Profile } from 'next-auth';
 import { JWT } from 'next-auth/jwt';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import GoogleProvider from 'next-auth/providers/google';
-import { GoogleLoginUsecase } from '@/backend/auths/applications/usecases/GoogleLoginUsecase';
+import { GoogleLoginUsecase } from '@/backend/auths/application/usecases/GoogleLoginUsecase';
 import KakaoProvider from 'next-auth/providers/kakao';
-import { KakaoLoginUsecase } from '@/backend/auths/applications/usecases/KakaoLoginUsecase';
-import { LoginResponseDto } from '@/backend/auths/applications/dtos/LoginResponseDto';
+import { KakaoLoginUsecase } from '@/backend/auths/application/usecases/KakaoLoginUsecase';
+import { LoginResponseDto } from '@/backend/auths/application/dtos/LoginResponseDto';
 
 // 소셜 로그인 타입 정의
 type SocialProvider = 'google' | 'kakao';

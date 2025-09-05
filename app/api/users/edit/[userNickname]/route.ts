@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { PrUserRepository } from '@/backend/users/infrastructure/repositories/PrUserRepository';
 import { UpdateUserUsecase } from '@/backend/users/application/usecases/UpdateUserUsecase';
-import { User } from '@/backend/users/domains/entities/UserEntity';
+import { User } from '@/backend/users/domain/entities/UserEntity';
 import { s3Service } from '@/backend/shared/services/s3.service';
 
 const repository = new PrUserRepository();

@@ -1,6 +1,6 @@
 // backend/users/signup/route.ts
 import { NextRequest, NextResponse } from 'next/server';
-import { CreateUserUsecase } from '@/backend/auths/applications/usecases/CreateUserUsecase';
+import { CreateUserUsecase } from '@/backend/auths/application/usecases/CreateUserUsecase';
 import { PrUserRepository } from '@/backend/users/infrastructure/repositories/PrUserRepository';
 
 const userRepository = new PrUserRepository();

@@ -1,6 +1,6 @@
-import { LoginRequestDto } from '@/backend/auths/applications/dtos/LoginRequestDto';
-import { LoginResponseDto } from '@/backend/auths/applications/dtos/LoginResponseDto';
-import { IUserRepository } from '@/backend/users/domains/repositories/IUserRepository';
+import { LoginRequestDto } from '@/backend/auths/application/dtos/LoginRequestDto';
+import { LoginResponseDto } from '@/backend/auths/application/dtos/LoginResponseDto';
+import { IUserRepository } from '@/backend/users/domain/repositories/IUserRepository';
 import { Rex } from '@/public/consts/Rex';
 import bcrypt from 'bcryptjs';
 
@@ -15,9 +15,9 @@ export class LoginUsecase {
 
       const isEmailValid = Rex.email.standard.test(loginRequest.email);
 
-      if (!isEmailValid) 
+      if (!isEmailValid)
         return null;
-      
+
 
       const user = await this.userRepository.findByEmail(loginRequest.email);
       if (!user?.id) {

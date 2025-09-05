@@ -1,7 +1,7 @@
-import { User } from '@/backend/users/domains/entities/UserEntity';
-import { UserChallengeAndRoutineAndFollowAndCompletion } from '@/backend/users/domains/entities/UserChallengeAndRoutineAndFollowAndCompletion';
+import { User } from '@/backend/users/domain/entities/UserEntity';
+import { UserChallengeAndRoutineAndFollowAndCompletion } from '@/backend/users/domain/entities/UserChallengeAndRoutineAndFollowAndCompletion';
 import { RoutineCompletion } from '@prisma/client';
-import { UserReviewEntity } from '@/backend/users/domains/entities/UserReviewEntity';
+import { UserReviewEntity } from '@/backend/users/domain/entities/UserReviewEntity';
 
 export interface IUserRepository {
   // Create

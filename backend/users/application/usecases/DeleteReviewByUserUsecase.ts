@@ -1,4 +1,4 @@
-import { IUserRepository } from '@/backend/users/domains/repositories/IUserRepository';
+import { IUserRepository } from '@/backend/users/domain/repositories/IUserRepository';
 
 // 유저 review 감정표현 Delete 유스케이스
 export class DeleteReviewEmotionByUserUsecase {

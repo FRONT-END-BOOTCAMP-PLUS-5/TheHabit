@@ -1,6 +1,6 @@
-import { User } from '@/backend/users/domains/entities/UserEntity';
-import { IUserRepository } from '@/backend/users/domains/repositories/IUserRepository';
-import { LoginResponseDto } from '../dtos/LoginResponseDto';
+import { User } from '@/backend/users/domain/entities/UserEntity';
+import { IUserRepository } from '@/backend/users/domain/repositories/IUserRepository';
+import { LoginResponseDto } from '@/backend/auths/application/dtos/LoginResponseDto';
 
 export interface KakaoUserInfo {
   id: string; // 카카오 고유 ID (참고용, 실제 검색에는 사용하지 않음)
@@ -13,7 +13,7 @@ export interface KakaoUserInfo {
 
 
 export class KakaoLoginUsecase {
-  constructor(private readonly userRepository: IUserRepository) {}
+  constructor(private readonly userRepository: IUserRepository) { }
 
   async execute(kakaoUserInfo: KakaoUserInfo): Promise<LoginResponseDto> {
     try {
@@ -53,11 +53,11 @@ export class KakaoLoginUsecase {
 
   private handleExistingUser(user: User): LoginResponseDto {
     return {
-        id: user.id || '',
-        email: user.email || '',
-        nickname: user.nickname,
-        name: user.username,
-        profileImg: user.profileImg || '',
+      id: user.id || '',
+      email: user.email || '',
+      nickname: user.nickname,
+      name: user.username,
+      profileImg: user.profileImg || '',
     };
   }
 
@@ -74,11 +74,11 @@ export class KakaoLoginUsecase {
       }
 
       return {
-          id: savedUser.id || '',
-          email: savedUser.email || '',
-          nickname: savedUser.nickname,
-          name: savedUser.username,
-          profileImg: savedUser.profileImg || '',
+        id: savedUser.id || '',
+        email: savedUser.email || '',
+        nickname: savedUser.nickname,
+        name: savedUser.username,
+        profileImg: savedUser.profileImg || '',
       };
     } catch (error) {
       throw new Error(

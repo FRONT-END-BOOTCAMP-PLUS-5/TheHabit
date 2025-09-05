@@ -1,6 +1,6 @@
-import { SignUpRequestDto } from '@/backend/auths/applications/dtos/SignUpRequestDto';
-import { SignUpResponseDto } from '@/backend/auths/applications/dtos/SignUpResponseDto';
-import { IUserRepository } from '@/backend/users/domains/repositories/IUserRepository';
+import { SignUpRequestDto } from '@/backend/auths/application/dtos/SignUpRequestDto';
+import { SignUpResponseDto } from '@/backend/auths/application/dtos/SignUpResponseDto';
+import { IUserRepository } from '@/backend/users/domain/repositories/IUserRepository';
 import bcrypt from 'bcryptjs';
 
 export class CreateUserUsecase {

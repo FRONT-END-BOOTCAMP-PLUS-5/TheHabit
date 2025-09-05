@@ -1,4 +1,4 @@
-import { PushSubscription } from '@/backend/notifications/domains/entities/PushSubscription';
+import { PushSubscription } from '@/backend/notifications/domain/entities/PushSubscription';
 
 // PushSubscription DTO (Data Transfer Object) Interface
 export interface PushSubscriptionDto {

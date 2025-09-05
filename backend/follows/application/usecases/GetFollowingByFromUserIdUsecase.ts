@@ -1,5 +1,5 @@
-import { IFollowRepository } from '@/backend/follows/domains/repositories/IFollowRepository';
-import { Following } from '@/backend/follows/domains/entities/FollowEntity';
+import { IFollowRepository } from '@/backend/follows/domain/repositories/IFollowRepository';
+import { Following } from '@/backend/follows/domain/entities/FollowEntity';
 
 export class GetFollowingByToUserIdUsecase {
   constructor(private readonly followRepo: IFollowRepository) {}

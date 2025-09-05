@@ -1,8 +1,8 @@
-import { IRoutineCompletionsRepository } from '@/backend/routine-completions/domains/repositories/IRoutineCompletionsRepository';
+import { IRoutineCompletionsRepository } from '@/backend/routine-completions/domain/repositories/IRoutineCompletionsRepository';
 import {
   CreateRoutineCompletionRequestDto,
   RoutineCompletionDto,
-} from '@/backend/routine-completions/applications/dtos/RoutineCompletionDto';
+} from '@/backend/routine-completions/application/dtos/RoutineCompletionDto';
 
 export class AddRoutineCompletionUseCase {
   constructor(

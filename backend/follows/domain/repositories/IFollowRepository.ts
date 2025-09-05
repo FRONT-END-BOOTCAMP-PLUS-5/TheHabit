@@ -2,7 +2,7 @@ import {
   Follower,
   FollowerFollowing,
   Following,
-} from '@/backend/follows/domains/entities/FollowEntity';
+} from '@/backend/follows/domain/entities/FollowEntity';
 
 export interface IFollowRepository {
   create(fromUserId: string, toUserId: string): Promise<boolean | undefined>;

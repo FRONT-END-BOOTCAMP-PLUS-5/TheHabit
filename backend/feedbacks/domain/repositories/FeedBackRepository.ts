@@ -1,4 +1,4 @@
-import { FeedBackEntity } from '@/backend/feedbacks/domains/entities/FeedBackEntity';
+import { FeedBackEntity } from '@/backend/feedbacks/domain/entities/FeedBackEntity';
 
 export interface FeedBackRepository {
   //create

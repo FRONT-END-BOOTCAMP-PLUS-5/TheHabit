@@ -1,5 +1,5 @@
-import { IUserRepository } from '@/backend/users/domains/repositories/IUserRepository';
-import { UserChallengeAndRoutineAndFollowAndCompletion } from '@/backend/users/domains/entities/UserChallengeAndRoutineAndFollowAndCompletion';
+import { IUserRepository } from '@/backend/users/domain/repositories/IUserRepository';
+import { UserChallengeAndRoutineAndFollowAndCompletion } from '@/backend/users/domain/entities/UserChallengeAndRoutineAndFollowAndCompletion';
 
 export class GetUserChallengeAndRoutineAndFollowAndCompletion {
   constructor(private readonly userRepo: IUserRepository) {}

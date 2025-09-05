@@ -1,8 +1,8 @@
 import { IDashboardRepository } from '@/backend/dashboards/domain/repository/IDashboardRepository';
-import { Dashboard } from '@/backend/dashboards/domain/entity/Dashboard';
-import { Challenge } from '@/backend/challenges/domains/entities/Challenge';
-import { Routine } from '@/backend/routines/domains/entities/routine';
-import { RoutineCompletion } from '@/backend/routine-completions/domains/entities/routineCompletion';
+import { Dashboard } from '@/backend/dashboards/domain/entities/Dashboard';
+import { Challenge } from '@/backend/challenges/domain/entities/Challenge';
+import { Routine } from '@/backend/routines/domain/entities/routine';
+import { RoutineCompletion } from '@/backend/routine-completions/domain/entities/routineCompletion';
 import prisma from '@/public/utils/prismaClient';
 
 export class PrDashboardRepository implements IDashboardRepository {

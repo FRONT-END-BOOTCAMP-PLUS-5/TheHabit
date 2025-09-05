@@ -1,4 +1,4 @@
-import { PrFeedBackRepository } from '@/backend/feedbacks/infrastructures/repositories/PrFeedBackRepository';
+import { PrFeedBackRepository } from '@/backend/feedbacks/infrastructure/repositories/PrFeedBackRepository';
 
 export class GetFeedBackUsecase {
   constructor(public readonly PrFeedBackRepository: PrFeedBackRepository) {}

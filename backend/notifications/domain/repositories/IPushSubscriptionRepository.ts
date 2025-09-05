@@ -1,4 +1,4 @@
-import { PushSubscription } from '@/backend/notifications/domains/entities/PushSubscription';
+import { PushSubscription } from '@/backend/notifications/domain/entities/PushSubscription';
 
 export interface IPushSubscriptionRepository {
   // 새로운 구독 생성

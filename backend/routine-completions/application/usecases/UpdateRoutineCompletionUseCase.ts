@@ -1,5 +1,5 @@
-import { IRoutineCompletionsRepository } from '@/backend/routine-completions/domains/repositories/IRoutineCompletionsRepository';
-import { RoutineCompletion } from '@/backend/routine-completions/domains/entities/routineCompletion';
+import { IRoutineCompletionsRepository } from '@/backend/routine-completions/domain/repositories/IRoutineCompletionsRepository';
+import { RoutineCompletion } from '@/backend/routine-completions/domain/entities/routineCompletion';
 
 export class UpdateRoutineCompletionUseCase {
   constructor(private readonly routineCompletionsRepository: IRoutineCompletionsRepository) {}

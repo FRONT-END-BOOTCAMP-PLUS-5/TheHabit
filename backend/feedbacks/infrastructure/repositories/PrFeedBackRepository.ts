@@ -1,5 +1,5 @@
-import { FeedBackEntity } from '@/backend/feedbacks/domains/entities/FeedBackEntity';
-import { FeedBackRepository } from '@/backend/feedbacks/domains/repositories/FeedBackRepository';
+import { FeedBackEntity } from '@/backend/feedbacks/domain/entities/FeedBackEntity';
+import { FeedBackRepository } from '@/backend/feedbacks/domain/repositories/FeedBackRepository';
 import prisma from '@/public/utils/prismaClient';
 
 export class PrFeedBackRepository implements FeedBackRepository {

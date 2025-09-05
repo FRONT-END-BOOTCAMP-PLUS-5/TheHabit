@@ -1,5 +1,5 @@
-import { IRoutinesRepository } from '@/backend/routines/domains/repositories/IRoutinesRepository';
-import { ReadRoutineResponseDto } from '@/backend/routines/applications/dtos/RoutineDto';
+import { IRoutinesRepository } from '@/backend/routines/domain/repositories/IRoutinesRepository';
+import { ReadRoutineResponseDto } from '@/backend/routines/application/dtos/RoutineDto';
 
 // 간단한 요청 인터페이스
 interface GetRoutineByIdRequest {

@@ -1,10 +1,10 @@
 import { NextResponse } from 'next/server';
 import { PrRoutinesRepository } from '@/backend/routines/infrastructure/repositories/PrRoutinesRepository';
-import { PrChallengeRepository } from '@/backend/challenges/infrastructures/repositories/PrChallengeRepository';
-import { PrPushSubscriptionRepository } from '@/backend/notifications/infrastructures/repositories/PrPushSubscriptionRepository';
-import { WebPushNotificationService } from '@/backend/notifications/infrastructures/services/WebPushNotificationService';
-import { SendPushNotificationUseCase } from '@/backend/notifications/applications/usecases/SendPushNotificationUseCase';
-import { ProcessRoutineAlertsUseCase } from '@/backend/routines/applications/usecases/ProcessRoutineAlertsUseCase';
+import { PrChallengeRepository } from '@/backend/challenges/infrastructure/repositories/PrChallengeRepository';
+import { PrPushSubscriptionRepository } from '@/backend/notifications/infrastructure/repositories/PrPushSubscriptionRepository';
+import { WebPushNotificationService } from '@/backend/notifications/infrastructure/services/WebPushNotificationService';
+import { SendPushNotificationUseCase } from '@/backend/notifications/application/usecases/SendPushNotificationUseCase';
+import { ProcessRoutineAlertsUseCase } from '@/backend/routines/application/usecases/ProcessRoutineAlertsUseCase';
 import { ApiResponse } from '@/backend/shared/types/ApiResponse';
 
 // Instantiate repositories and services

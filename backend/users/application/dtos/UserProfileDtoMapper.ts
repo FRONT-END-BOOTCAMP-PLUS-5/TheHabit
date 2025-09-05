@@ -1,4 +1,4 @@
-import { User } from '@/backend/users/domains/entities/UserEntity';
+import { User } from '@/backend/users/domain/entities/UserEntity';
 import { UserProfileDto } from './UserProfileDto';
 
 export class UserProfileDtoMapper {

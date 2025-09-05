@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { NotificationItem } from './NotificationItem';
-import { Notification } from '@/backend/notifications/domains/entities/Notification';
+import { Notification } from '@/backend/notifications/domain/entities/Notification';
 import NoneSearchData from '@/app/_components/none/NoneSearchData';
 
 interface NotificationListProps {

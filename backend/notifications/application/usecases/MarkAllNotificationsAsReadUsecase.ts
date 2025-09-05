@@ -1,4 +1,4 @@
-import { INotificationRepository } from '@/backend/notifications/domains/repositories/INotificationRepository';
+import { INotificationRepository } from '@/backend/notifications/domain/repositories/INotificationRepository';
 
 export class MarkAllNotificationsAsReadUsecase {
   constructor(private readonly notificationRepo: INotificationRepository) {}

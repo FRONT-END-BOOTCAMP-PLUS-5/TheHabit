@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { completeChallenge } from '@/libs/api/challenges.api';
-import { ChallengeDto } from '@/backend/challenges/applications/dtos/ChallengeDto';
+import { ChallengeDto } from '@/backend/challenges/application/dtos/ChallengeDto';
 import { Toast } from '@/app/_components/toasts/Toast';
 
 export const useCompleteChallenge = () => {

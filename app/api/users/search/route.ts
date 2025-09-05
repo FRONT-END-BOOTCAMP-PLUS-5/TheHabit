@@ -3,8 +3,8 @@ import { PrUserRepository } from '@/backend/users/infrastructure/repositories/Pr
 import { ApiResponse } from '@/backend/shared/types/ApiResponse';
 import { GetUsersUsecase } from '@/backend/users/application/usecases/GetUsersUsecase';
 import { UserDto } from '@/backend/users/application/dtos/UserDto';
-import { GetFollowingByToUserIdUsecase } from '@/backend/follows/applications/usecases/GetFollowingByFromUserIdUsecase';
-import { PrFollowRepository } from '@/backend/follows/infrastructures/repositories/PrFollowRepository';
+import { GetFollowingByToUserIdUsecase } from '@/backend/follows/application/usecases/GetFollowingByFromUserIdUsecase';
+import { PrFollowRepository } from '@/backend/follows/infrastructure/repositories/PrFollowRepository';
 const userRepository = new PrUserRepository();
 const followRepository = new PrFollowRepository();
 

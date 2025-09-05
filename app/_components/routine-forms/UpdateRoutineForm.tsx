@@ -5,7 +5,7 @@ import { useForm } from 'react-hook-form';
 import {
   UpdateRoutineRequestDto,
   ReadRoutineResponseDto,
-} from '@/backend/routines/applications/dtos/RoutineDto';
+} from '@/backend/routines/application/dtos/RoutineDto';
 import { getEmojiByNumber, getEmojiNumbers } from '@/public/consts/routineItem';
 import { useModalStore } from '@/libs/stores/modalStore';
 import { useUpdateRoutine } from '@/libs/hooks/routines-hooks/useUpdateRoutine';

@@ -1,5 +1,5 @@
-import { IUserRepository } from '@/backend/users/domains/repositories/IUserRepository';
-import { UserReviewEntity } from '@/backend/users/domains/entities/UserReviewEntity';
+import { IUserRepository } from '@/backend/users/domain/repositories/IUserRepository';
+import { UserReviewEntity } from '@/backend/users/domain/entities/UserReviewEntity';
 
 // 유저 리뷰 감정표현 Create 유스케이스
 export class CreateUserReviewUsecase {

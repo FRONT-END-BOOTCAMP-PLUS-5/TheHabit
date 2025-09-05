@@ -1,5 +1,5 @@
-import { IUserRepository } from '@/backend/users/domains/repositories/IUserRepository';
-import { RoutineCompletion } from '@/backend/routine-completions/domains/entities/routineCompletion';
+import { IUserRepository } from '@/backend/users/domain/repositories/IUserRepository';
+import { RoutineCompletion } from '@/backend/routine-completions/domain/entities/routineCompletion';
 
 // 유저 루틴 완료 Get 유스케이스
 export class GetUserRoutineCompletion {

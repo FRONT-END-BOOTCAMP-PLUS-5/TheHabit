@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { createChallenge } from '@/libs/api/challenges.api';
-import { AddChallengeRequestDto } from '@/backend/challenges/applications/dtos/AddChallengeDto';
-import { ChallengeDto } from '@/backend/challenges/applications/dtos/ChallengeDto';
+import { AddChallengeRequestDto } from '@/backend/challenges/application/dtos/AddChallengeDto';
+import { ChallengeDto } from '@/backend/challenges/application/dtos/ChallengeDto';
 import { Toast } from '@/app/_components/toasts/Toast';
 
 /**

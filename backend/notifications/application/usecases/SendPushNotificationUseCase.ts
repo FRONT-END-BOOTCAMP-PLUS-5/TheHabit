@@ -1,5 +1,5 @@
-import { IPushSubscriptionRepository } from '@/backend/notifications/domains/repositories/IPushSubscriptionRepository';
-import { IPushNotificationService, NotificationPayload } from '@/backend/notifications/domains/services/IPushNotificationService';
+import { IPushSubscriptionRepository } from '@/backend/notifications/domain/repositories/IPushSubscriptionRepository';
+import { IPushNotificationService, NotificationPayload } from '@/backend/notifications/domain/services/IPushNotificationService';
 
 export class SendPushNotificationUseCase {
   constructor(

@@ -1,4 +1,4 @@
-import { IRoutinesRepository } from '@/backend/routines/domains/repositories/IRoutinesRepository';
+import { IRoutinesRepository } from '@/backend/routines/domain/repositories/IRoutinesRepository';
 // 삭제 요청을 위한 간단한 인터페이스
 interface DeleteRoutineRequest {
   routineId: number;

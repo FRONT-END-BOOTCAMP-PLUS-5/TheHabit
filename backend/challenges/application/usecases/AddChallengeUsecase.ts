@@ -1,7 +1,7 @@
-import { IChallengeRepository } from '@/backend/challenges/domains/repositories/IChallengeRepository';
-import { IUserRepository } from '@/backend/users/domains/repositories/IUserRepository';
-import { Challenge } from '@/backend/challenges/domains/entities/Challenge';
-import { AddChallengeRequestDto } from '@/backend/challenges/applications/dtos/AddChallengeDto';
+import { IChallengeRepository } from '@/backend/challenges/domain/repositories/IChallengeRepository';
+import { IUserRepository } from '@/backend/users/domain/repositories/IUserRepository';
+import { Challenge } from '@/backend/challenges/domain/entities/Challenge';
+import { AddChallengeRequestDto } from '@/backend/challenges/application/dtos/AddChallengeDto';
 
 // 챌린지 등록 유스케이스
 export class AddChallengeUseCase {

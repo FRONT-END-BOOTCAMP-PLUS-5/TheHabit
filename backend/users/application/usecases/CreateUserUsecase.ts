@@ -1,5 +1,5 @@
-import { IUserRepository } from '@/backend/users/domains/repositories/IUserRepository';
-import { User } from '@/backend/users/domains/entities/UserEntity';
+import { IUserRepository } from '@/backend/users/domain/repositories/IUserRepository';
+import { User } from '@/backend/users/domain/entities/UserEntity';
 
 // 유저 Create 유스케이스
 export class CreateUserUsecase {

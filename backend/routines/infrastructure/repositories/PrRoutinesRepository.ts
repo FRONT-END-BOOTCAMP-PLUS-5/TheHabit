@@ -1,5 +1,5 @@
-import { IRoutinesRepository } from '@/backend/routines/domains/repositories/IRoutinesRepository';
-import { Routine } from '@/backend/routines/domains/entities/routine';
+import { IRoutinesRepository } from '@/backend/routines/domain/repositories/IRoutinesRepository';
+import { Routine } from '@/backend/routines/domain/entities/routine';
 import prisma from '@/public/utils/prismaClient';
 
 export class PrRoutinesRepository implements IRoutinesRepository {

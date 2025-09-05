@@ -1,5 +1,5 @@
-import { IPushSubscriptionRepository } from '@/backend/notifications/domains/repositories/IPushSubscriptionRepository';
-import { UnsubscribePushNotificationRequestDto } from '@/backend/notifications/applications/dtos/PushSubscriptionDto';
+import { IPushSubscriptionRepository } from '@/backend/notifications/domain/repositories/IPushSubscriptionRepository';
+import { UnsubscribePushNotificationRequestDto } from '@/backend/notifications/application/dtos/PushSubscriptionDto';
 
 export class UnsubscribePushNotificationUseCase {
   constructor(private readonly pushSubscriptionRepository: IPushSubscriptionRepository) {}

@@ -1,5 +1,5 @@
-import { IRoutineCompletionsRepository } from '@/backend/routine-completions/domains/repositories/IRoutineCompletionsRepository';
-import { RoutineCompletionDto, RoutineCompletionDtoMapper } from '@/backend/routine-completions/applications/dtos/RoutineCompletionDto';
+import { IRoutineCompletionsRepository } from '@/backend/routine-completions/domain/repositories/IRoutineCompletionsRepository';
+import { RoutineCompletionDto, RoutineCompletionDtoMapper } from '@/backend/routine-completions/application/dtos/RoutineCompletionDto';
 
 export class GetRoutineCompletionsUseCase {
   constructor(private readonly routineCompletionsRepository: IRoutineCompletionsRepository) {}

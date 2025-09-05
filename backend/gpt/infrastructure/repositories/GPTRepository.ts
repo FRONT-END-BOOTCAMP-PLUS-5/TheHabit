@@ -1,6 +1,6 @@
-import { IGPTRepository } from '@/backend/gpt/domains/repositories/IGPTRepository';
+import { IGPTRepository } from '@/backend/gpt/domain/repositories/IGPTRepository';
 import OpenAI from 'openai';
-import { GPTEntity } from '@/backend/gpt/domains/entities/GPTEntity';
+import { GPTEntity } from '@/backend/gpt/domain/entities/GPTEntity';
 import { GPT_PROMPT } from '@/public/consts/gptPrompt';
 
 export class GPTRepository implements IGPTRepository {

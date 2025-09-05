@@ -1,4 +1,4 @@
-import { GPTEntity } from '@/backend/gpt/domains/entities/GPTEntity';
+import { GPTEntity } from '@/backend/gpt/domain/entities/GPTEntity';
 
 export interface IGPTRepository {
   //create

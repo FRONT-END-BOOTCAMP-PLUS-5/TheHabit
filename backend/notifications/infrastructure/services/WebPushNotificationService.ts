@@ -2,7 +2,7 @@ import webPush from 'web-push';
 import {
   IPushNotificationService,
   NotificationPayload,
-} from '@/backend/notifications/domains/services/IPushNotificationService';
+} from '@/backend/notifications/domain/services/IPushNotificationService';
 
 export class WebPushNotificationService implements IPushNotificationService {
   constructor() {

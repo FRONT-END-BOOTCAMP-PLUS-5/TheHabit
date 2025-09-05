@@ -1,6 +1,6 @@
 import prisma from '@/public/utils/prismaClient';
-import { IPushSubscriptionRepository } from '@/backend/notifications/domains/repositories/IPushSubscriptionRepository';
-import { PushSubscription } from '@/backend/notifications/domains/entities/PushSubscription';
+import { IPushSubscriptionRepository } from '@/backend/notifications/domain/repositories/IPushSubscriptionRepository';
+import { PushSubscription } from '@/backend/notifications/domain/entities/PushSubscription';
 
 export class PrPushSubscriptionRepository implements IPushSubscriptionRepository {
   async create(

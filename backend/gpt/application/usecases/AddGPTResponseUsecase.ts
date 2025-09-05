@@ -1,6 +1,6 @@
-import { GPTRequestDto } from '@/backend/gpt/applications/dtos/GPTRequestDto';
-import { IGPTRepository } from '@/backend/gpt/domains/repositories/IGPTRepository';
-import { GPTEntity } from '@/backend/gpt/domains/entities/GPTEntity';
+import { GPTRequestDto } from '@/backend/gpt/application/dtos/GPTRequestDto';
+import { IGPTRepository } from '@/backend/gpt/domain/repositories/IGPTRepository';
+import { GPTEntity } from '@/backend/gpt/domain/entities/GPTEntity';
 
 export class AddGPTResponseUsecase {
   constructor(public readonly GPTRepository: IGPTRepository) {}

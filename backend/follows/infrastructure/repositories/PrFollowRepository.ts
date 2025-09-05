@@ -1,12 +1,12 @@
-import { IUserRepository } from '@/backend/users/domains/repositories/IUserRepository';
-import { User } from '@/backend/users/domains/entities/UserEntity';
+import { IUserRepository } from '@/backend/users/domain/repositories/IUserRepository';
+import { User } from '@/backend/users/domain/entities/UserEntity';
 import prisma from '@/public/utils/prismaClient';
-import { IFollowRepository } from '@/backend/follows/domains/repositories/IFollowRepository';
+import { IFollowRepository } from '@/backend/follows/domain/repositories/IFollowRepository';
 import {
   Follower,
   FollowerFollowing,
   Following,
-} from '@/backend/follows/domains/entities/FollowEntity';
+} from '@/backend/follows/domain/entities/FollowEntity';
 
 export class PrFollowRepository implements IFollowRepository {
   /**

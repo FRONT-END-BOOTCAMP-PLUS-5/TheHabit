@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { getDashboardRoutines } from '@/libs/api/routines.api';
-import { DashboardRoutineDto } from '@/backend/routines/applications/dtos/RoutineDto';
+import { DashboardRoutineDto } from '@/backend/routines/application/dtos/RoutineDto';
 
 /**
  * 대시보드용 루틴 목록을 조회하는 훅 (완료 상태 포함)

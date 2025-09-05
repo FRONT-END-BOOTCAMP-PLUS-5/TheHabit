@@ -3,7 +3,7 @@ import { createRoutine } from '@/libs/api/routines.api';
 import {
   CreateRoutineRequestDto,
   ReadRoutineResponseDto,
-} from '@/backend/routines/applications/dtos/RoutineDto';
+} from '@/backend/routines/application/dtos/RoutineDto';
 import { Toast } from '@/app/_components/toasts/Toast';
 
 /**

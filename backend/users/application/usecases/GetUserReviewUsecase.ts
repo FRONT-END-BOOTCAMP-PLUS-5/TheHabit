@@ -1,5 +1,5 @@
-import { IUserRepository } from '@/backend/users/domains/repositories/IUserRepository';
-import { UserReviewEntity } from '@/backend/users/domains/entities/UserReviewEntity';
+import { IUserRepository } from '@/backend/users/domain/repositories/IUserRepository';
+import { UserReviewEntity } from '@/backend/users/domain/entities/UserReviewEntity';
 
 export class GetUserReviewUsecase {
   constructor(private readonly userRepo: IUserRepository) {}

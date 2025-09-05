@@ -1,5 +1,5 @@
 import { requestGPT } from '@/libs/api/gpt.api';
-import { GPTRequestDto } from '@/backend/gpt/applications/dtos/GPTRequestDto';
+import { GPTRequestDto } from '@/backend/gpt/application/dtos/GPTRequestDto';
 import { useQuery } from '@tanstack/react-query';
 import { ApiResponse } from '@/backend/shared/types/ApiResponse';
 

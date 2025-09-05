@@ -1,5 +1,5 @@
-import { IChallengeRepository } from '@/backend/challenges/domains/repositories/IChallengeRepository';
-import { Challenge } from '@/backend/challenges/domains/entities/Challenge';
+import { IChallengeRepository } from '@/backend/challenges/domain/repositories/IChallengeRepository';
+import { Challenge } from '@/backend/challenges/domain/entities/Challenge';
 
 export interface CompleteChallengeRequestDto {
   challengeId: number;

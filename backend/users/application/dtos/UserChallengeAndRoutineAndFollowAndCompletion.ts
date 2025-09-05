@@ -1,4 +1,4 @@
-import { UserChallengeAndRoutineAndFollowAndCompletion } from '@/backend/users/domains/entities/UserChallengeAndRoutineAndFollowAndCompletion';
+import { UserChallengeAndRoutineAndFollowAndCompletion } from '@/backend/users/domain/entities/UserChallengeAndRoutineAndFollowAndCompletion';
 
 export interface UserChallengeAndRoutineAndFollowAndCompletionDto {
   readonly id: string;

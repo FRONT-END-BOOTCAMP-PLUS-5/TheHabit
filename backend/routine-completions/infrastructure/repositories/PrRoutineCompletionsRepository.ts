@@ -1,5 +1,5 @@
-import { IRoutineCompletionsRepository } from '@/backend/routine-completions/domains/repositories/IRoutineCompletionsRepository';
-import { RoutineCompletion } from '@/backend/routine-completions/domains/entities/routine-completion/routineCompletion';
+import { IRoutineCompletionsRepository } from '@/backend/routine-completions/domain/repositories/IRoutineCompletionsRepository';
+import { RoutineCompletion } from '@/backend/routine-completions/domain/entities/routineCompletion';
 import { s3Service } from '@/backend/shared/services/s3.service';
 import prisma from '@/public/utils/prismaClient';
 

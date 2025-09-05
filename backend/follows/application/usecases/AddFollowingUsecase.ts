@@ -1,4 +1,4 @@
-import { IFollowRepository } from '@/backend/follows/domains/repositories/IFollowRepository';
+import { IFollowRepository } from '@/backend/follows/domain/repositories/IFollowRepository';
 
 export class AddFollowingUsecase {
   constructor(private readonly followRepo: IFollowRepository) {}

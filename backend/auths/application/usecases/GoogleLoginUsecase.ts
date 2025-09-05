@@ -1,6 +1,6 @@
-import { User } from '@/backend/users/domains/entities/UserEntity';
-import { IUserRepository } from '@/backend/users/domains/repositories/IUserRepository';
-import { LoginResponseDto } from '@/backend/auths/applications/dtos/LoginResponseDto';
+import { User } from '@/backend/users/domain/entities/UserEntity';
+import { IUserRepository } from '@/backend/users/domain/repositories/IUserRepository';
+import { LoginResponseDto } from '@/backend/auths/application/dtos/LoginResponseDto';
 
 export interface GoogleUserInfo {
   email: string;
@@ -11,13 +11,13 @@ export interface GoogleUserInfo {
 
 
 export class GoogleLoginUsecase {
-  constructor(private readonly userRepository: IUserRepository) {}
+  constructor(private readonly userRepository: IUserRepository) { }
 
   async execute(googleUserInfo: GoogleUserInfo): Promise<LoginResponseDto> {
     try {
       // 1. 이메일로 기존 회원 찾기
       const existingUser = await this.findUserByEmail(googleUserInfo.email);
-      
+
       if (existingUser) {
         return this.handleExistingUser(existingUser);
       } else {
@@ -43,11 +43,11 @@ export class GoogleLoginUsecase {
 
   private handleExistingUser(user: User): LoginResponseDto {
     return {
-        id: user.id || '',
-        email: user.email || '',
-        nickname: user.nickname,
-        name: user.username,
-        profileImg: user.profileImg || '',
+      id: user.id || '',
+      email: user.email || '',
+      nickname: user.nickname,
+      name: user.username,
+      profileImg: user.profileImg || '',
     };
   }
 
@@ -55,10 +55,10 @@ export class GoogleLoginUsecase {
     try {
       // 2. 신규 회원 생성
       const newUser = this.createNewUser(googleUserInfo);
-      
+
       // 3. 회원 저장
       const savedUser = await this.saveUser(newUser);
-      
+
       if (!savedUser) {
         throw new Error('새로운 사용자 저장에 실패했습니다.');
       }
@@ -92,7 +92,7 @@ export class GoogleLoginUsecase {
     );
   }
 
-    private generateNickname(name: string): string {
+  private generateNickname(name: string): string {
     const timestamp = Date.now().toString().slice(-6);
     const randomStr = Math.random().toString(36).substr(2, 5);
     return `${name}_${timestamp}_${randomStr}`;

@@ -1,8 +1,8 @@
 import prisma from '@/public/utils/prismaClient';
-import { IUserRepository } from '@/backend/users/domains/repositories/IUserRepository';
-import { User } from '@/backend/users/domains/entities/UserEntity';
-import { RoutineCompletion } from '@/backend/routine-completions/domains/entities/routine-completion/routineCompletion';
-import { UserReviewEntity } from '@/backend/users/domains/entities/UserReviewEntity';
+import { IUserRepository } from '@/backend/users/domain/repositories/IUserRepository';
+import { User } from '@/backend/users/domain/entities/UserEntity';
+import { RoutineCompletion } from '@/backend/routine-completions/domain/entities/routineCompletion';
+import { UserReviewEntity } from '@/backend/users/domain/entities/UserReviewEntity';
 import { Prisma } from '@prisma/client';
 import { s3Service } from '@/backend/shared/services/s3.service';
 

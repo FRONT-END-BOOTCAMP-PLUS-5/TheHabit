@@ -1,6 +1,6 @@
 import prisma from '@/public/utils/prismaClient';
-import { INotificationRepository } from '@/backend/notifications/domains/repositories/INotificationRepository';
-import { Notification } from '@/backend/notifications/domains/entities/Notification';
+import { INotificationRepository } from '@/backend/notifications/domain/repositories/INotificationRepository';
+import { Notification } from '@/backend/notifications/domain/entities/Notification';
 
 export class PrNotificationRepository implements INotificationRepository {
   async create(notification: Notification): Promise<Notification> {

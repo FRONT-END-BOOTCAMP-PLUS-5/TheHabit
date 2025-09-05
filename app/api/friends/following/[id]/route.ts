@@ -1,15 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { PrFollowRepository } from '@/backend/follows/infrastructures/repositories/PrFollowRepository';
-import { GetFollowingByToUserIdUsecase } from '@/backend/follows/applications/usecases/GetFollowingByFromUserIdUsecase';
-import { AddFollowingUsecase } from '@/backend/follows/applications/usecases/AddFollowingUsecase';
-import { DeleteUnfollowUsecase } from '@/backend/follows/applications/usecases/DeleteUnfollowUsecase';
-import { PrNotificationRepository } from '@/backend/notifications/infrastructures/repositories/PrNotificationRepository';
-import { CreateNotificationUsecase } from '@/backend/notifications/applications/usecases/CreateNotificationUsecase';
+import { PrFollowRepository } from '@/backend/follows/infrastructure/repositories/PrFollowRepository';
+import { GetFollowingByToUserIdUsecase } from '@/backend/follows/application/usecases/GetFollowingByFromUserIdUsecase';
+import { AddFollowingUsecase } from '@/backend/follows/application/usecases/AddFollowingUsecase';
+import { DeleteUnfollowUsecase } from '@/backend/follows/application/usecases/DeleteUnfollowUsecase';
+import { PrNotificationRepository } from '@/backend/notifications/infrastructure/repositories/PrNotificationRepository';
+import { CreateNotificationUsecase } from '@/backend/notifications/application/usecases/CreateNotificationUsecase';
 import { PrUserRepository } from '@/backend/users/infrastructure/repositories/PrUserRepository';
 import { GetUserUsecase } from '@/backend/users/application/usecases/GetUserUsecase';
-import { SendPushNotificationUseCase } from '@/backend/notifications/applications/usecases/SendPushNotificationUseCase';
-import { PrPushSubscriptionRepository } from '@/backend/notifications/infrastructures/repositories/PrPushSubscriptionRepository';
-import { WebPushNotificationService } from '@/backend/notifications/infrastructures/services/WebPushNotificationService';
+import { SendPushNotificationUseCase } from '@/backend/notifications/application/usecases/SendPushNotificationUseCase';
+import { PrPushSubscriptionRepository } from '@/backend/notifications/infrastructure/repositories/PrPushSubscriptionRepository';
+import { WebPushNotificationService } from '@/backend/notifications/infrastructure/services/WebPushNotificationService';
 
 const repository = new PrFollowRepository();
 const notificationRepository = new PrNotificationRepository();

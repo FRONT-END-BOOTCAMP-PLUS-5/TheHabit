@@ -1,4 +1,4 @@
-import { Dashboard } from '@/backend/dashboards/domain/entity/Dashboard';
+import { Dashboard } from '@/backend/dashboards/domain/entities/Dashboard';
 
 // 대시보드 리포지토리 인터페이스
 export interface IDashboardRepository {
