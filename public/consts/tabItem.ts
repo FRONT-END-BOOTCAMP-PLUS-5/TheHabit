@@ -7,34 +7,29 @@ import activeFeedbackIcon from '@/public/icons/activeFeedback.svg';
 import activeAlarmIcon from '@/public/icons/activeAlarm.svg';
 import activeProfileIcon from '@/public/icons/activeProfile.svg';
 
-export const getTabItems = (nickname: string) => ([
+export const tabItem = (nickname?: string) => ([
   {
     name: 'search',
     icon: searchIcon,
-    href: '/user/follow',
+    href: nickname ? '/user/follow' : '/login',
     isHover: activeSearchIcon,
   },
-
   {
     name: 'feedback',
     icon: feedbackIcon,
-    href: `/user/feedback/${nickname}`,
+    href: nickname ? `/user/feedback/${nickname}` : '/login',
     isHover: activeFeedbackIcon,
   },
-  
   {
-    name: 'alarm',
+    name: 'notification',
     icon: alarmIcon,
-    href: '/alarm',
+    href: '/user/notifications',
     isHover: activeAlarmIcon,
   },
   {
     name: 'profile',
     icon: profileIcon,
-    href: `/user/profile/${nickname}`,
+    href: nickname ? `/user/profile/${nickname}` : '/login',
     isHover: activeProfileIcon,
   },
 ]);
-
-// 기존 코드와의 호환성을 위한 기본 export
-export const tabItem = getTabItems('');

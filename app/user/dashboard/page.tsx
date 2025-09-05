@@ -15,6 +15,7 @@ const MainPage: React.FC = async () => {
   const { user } = session;
 
   // 닉네임이 있으면 개인 대시보드로 리다이렉트(구글 로그인은 한글이 있으므로 인코딩)
+  console.log(user);
   if (user.nickname) {
     redirect(`/user/dashboard/${encodeURIComponent(user.nickname)}`);
   } else {

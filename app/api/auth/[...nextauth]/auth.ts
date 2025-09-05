@@ -105,7 +105,13 @@ export const authOptions = {
             name: userInfo.name,
             picture: userInfo.picture,
             sub: userInfo.sub,
+            
           });
+          user.id = result?.id;
+          user.nickname = result?.nickname;
+          user.email = result?.email;
+          user.profileImg = result?.profileImg;
+          user.name = result?.name;
         } else if (provider === 'kakao') {
           result = await kakaoLoginUsecase.execute({
             id: userInfo.sub,
@@ -114,12 +120,13 @@ export const authOptions = {
             profile_image: userInfo.picture,
           });
         }
-        return result;
       }
-      return !!user;
+      return true;
     },
 
     async jwt({ token, user }: { token: JWT; user: User }) {
+      console.log('1. jwt user', user);
+      console.log('2. jwt token', token);
       if (user) {
         token.nickname = user.nickname || undefined;
         token.email = user.email || undefined;
@@ -130,9 +137,15 @@ export const authOptions = {
 
     async session({ session, token }: { session: Session; token: JWT }) {
       if (token) {
+        // JWT의 데이터를 세션에 매핑
         session.user.nickname = token.nickname as string;
         session.user.email = token.email as string;
         session.user.id = token.id as string;
+        session.user.profileImg = token.profileImg || null;
+        session.user.profileImgPath = token.profileImgPath || null;
+        session.user.username = token.username as string;
+        
+      
       }
       return session;
     },
@@ -143,8 +156,12 @@ export const authOptions = {
         return `${baseUrl}/login/google-callback`;
       }
       
-      // 로그인 후 리다이렉트
+      // 로그인 후 리다이렉트 - 대시보드로 이동
       if (url.startsWith('/')) {
+        // 온보딩이 필요한 사용자를 위해 대시보드로 이동 (대시보드에서 온보딩 여부 판단)
+        if (url === '/user/dashboard') {
+          return `${baseUrl}/user/dashboard`;
+        }
         const redirectUrl = `${baseUrl}${url}`;
         return redirectUrl;
       }

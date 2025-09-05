@@ -62,6 +62,8 @@
   }
 }
 
+/* 뱃지 고정 glow 효과 - 움직이지 않는 노란색 계열 */
+
 .animate-slide-up {
   animation: slide-up 0.3s ease-out forwards;
 }

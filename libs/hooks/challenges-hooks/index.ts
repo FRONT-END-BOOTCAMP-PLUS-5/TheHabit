@@ -1,10 +1,9 @@
-// Query 훅들 (데이터 조회)
+export { useCreateChallenge } from './useCreateChallenge';
+export { useDeleteChallenge } from './useDeleteChallenge';
 export { useGetAllChallenges } from './useGetAllChallenges';
 export { useGetChallengeById } from './useGetChallengeById';
 export { useGetChallengesByCategory } from './useGetChallengesByCategory';
 export { useGetChallengesByNickname } from './useGetChallengesByNickname';
-
-// Mutation 훅들 (데이터 변경)
-export { useCreateChallenge } from './useCreateChallenge';
 export { useUpdateChallenge } from './useUpdateChallenge';
-export { useDeleteChallenge } from './useDeleteChallenge';
+export { useExtendChallenge } from './useExtendChallenge';
+export { useCompleteChallenge } from './useCompleteChallenge';

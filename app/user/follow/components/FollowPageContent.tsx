@@ -76,7 +76,7 @@ export const FollowPageContent = () => {
           <BackComponent
             nickname={userInfo?.nickname || ''}
             className={
-              'text-[40px] text-[#93d50b] cursor-pointer inline pl-[20px] absolute top-[-4px] left-0'
+              'text-[40px] text-[#000] cursor-pointer inline pl-[20px] absolute top-[-4px] left-0'
             }
           />
         </div>

@@ -13,7 +13,7 @@ export class PrChallengeRepository implements IChallengeRepository {
         userId: challenge.userId,
         categoryId: challenge.categoryId,
         active: challenge.active,
-        completion_progress: 'in_progress', // 기본값 in_progress로 설정
+        completion_progress: 'in_progress',
       },
     });
 
@@ -25,7 +25,8 @@ export class PrChallengeRepository implements IChallengeRepository {
       createdChallenge.userId,
       createdChallenge.categoryId,
       createdChallenge.active,
-      createdChallenge.id,
+      createdChallenge.completion_progress,
+      createdChallenge.id
     );
   }
 
@@ -41,6 +42,7 @@ export class PrChallengeRepository implements IChallengeRepository {
           challenge.userId,
           challenge.categoryId,
           challenge.active,
+          challenge.completion_progress,
           challenge.id
         )
     );
@@ -61,8 +63,41 @@ export class PrChallengeRepository implements IChallengeRepository {
       challenge.userId,
       challenge.categoryId,
       challenge.active,
+      challenge.completion_progress,
       challenge.id
     );
+  }
+
+  async findByIdWithUser(
+    id: number
+  ): Promise<{ challenge: Challenge; userNickname: string } | null> {
+    const challenge = await prisma.challenge.findUnique({
+      where: { id },
+      include: {
+        user: {
+          select: {
+            nickname: true,
+          },
+        },
+      },
+    });
+
+    if (!challenge) return null;
+
+    return {
+      challenge: new Challenge(
+        challenge.name,
+        challenge.createdAt,
+        challenge.endAt,
+        challenge.color,
+        challenge.userId,
+        challenge.categoryId,
+        challenge.active,
+        challenge.completion_progress,
+        challenge.id
+      ),
+      userNickname: challenge.user.nickname,
+    };
   }
 
   async findByNickname(nickname: string): Promise<Challenge[]> {
@@ -89,6 +124,7 @@ export class PrChallengeRepository implements IChallengeRepository {
             challenge.userId,
             challenge.categoryId,
             challenge.active,
+            challenge.completion_progress,
             challenge.id
           )
       );
@@ -115,6 +151,7 @@ export class PrChallengeRepository implements IChallengeRepository {
           challenge.userId,
           challenge.categoryId,
           challenge.active,
+          challenge.completion_progress,
           challenge.id
         )
     );
@@ -152,6 +189,7 @@ export class PrChallengeRepository implements IChallengeRepository {
       updatedChallenge.userId,
       updatedChallenge.categoryId,
       updatedChallenge.active,
+      updatedChallenge.completion_progress,
       updatedChallenge.id
     );
   }

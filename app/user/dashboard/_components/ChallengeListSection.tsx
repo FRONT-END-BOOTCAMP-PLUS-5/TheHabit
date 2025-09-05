@@ -10,9 +10,11 @@ import { useModalStore } from '@/libs/stores/modalStore';
 import AddChallengeForm from './AddChallengeForm';
 import { useGetDashboardByNickname } from '@/libs/hooks/dashboard-hooks/useGetDashboardByNickname';
 import { useParams } from 'next/navigation';
+import { useUserPage } from '@/libs/hooks/user-hooks/useUserPage';
 import { ChallengeDto } from '@/backend/challenges/applications/dtos/ChallengeDto';
 import AllChallengeList from './AllChallengeList';
 import CategoryChallengeList from './CategoryChallengeList';
+import HistoryChallengeList from './HistoryChallengeList';
 import { Toast } from '@/app/_components/toasts/Toast';
 
 const ChallengeListSection: React.FC = () => {
@@ -22,7 +24,9 @@ const ChallengeListSection: React.FC = () => {
   const { openModal } = useModalStore();
   const params = useParams();
   const nickname = params.nickname as string;
-  const { data: dashboard, error, isLoading } = useGetDashboardByNickname(nickname);
+  const { getSessionNickname } = useUserPage(nickname);
+  const isOwner = getSessionNickname === nickname;
+  const { data: dashboard, error, isLoading, refetch } = useGetDashboardByNickname(nickname);
 
   // 에러 처리
   useEffect(() => {
@@ -73,6 +77,60 @@ const ChallengeListSection: React.FC = () => {
   // 선택된 날짜에 해당하는 활성 챌린지들만 필터링
   const getActiveChallengesForSelectedDate = () => {
     if (!dashboard?.challenge || !Array.isArray(dashboard.challenge)) {
+      console.log('대시보드 데이터가 없거나 challenge가 배열이 아님');
+      return [];
+    }
+
+    console.log('전체 챌린지 개수:', dashboard.challenge.length);
+    console.log('선택된 날짜:', selectedDate.toISOString());
+
+    const filteredChallenges = dashboard.challenge.filter(challenge => {
+      // challenge 객체가 유효한지 확인
+      if (!challenge || typeof challenge !== 'object') {
+        console.log('챌린지 객체가 유효하지 않음:', challenge);
+        return false;
+      }
+
+      // 필수 속성들이 존재하는지 확인
+      if (!challenge.id || !challenge.createdAt || !challenge.endAt) {
+        console.log('필수 속성 누락:', {
+          id: challenge.id,
+          createdAt: challenge.createdAt,
+          endAt: challenge.endAt,
+        });
+        return false;
+      }
+
+      // active가 true인 챌린지만 필터링
+      if (challenge.active !== true) {
+        console.log('비활성 챌린지 제외:', challenge.name, 'active:', challenge.active);
+        return false;
+      }
+
+      // completionProgress가 'in_progress'인 챌린지만 필터링
+      if (challenge.completionProgress !== 'in_progress') {
+        console.log(
+          '진행중이 아닌 챌린지 제외:',
+          challenge.name,
+          'completionProgress:',
+          challenge.completionProgress
+        );
+        return false;
+      }
+
+      const isInPeriod = isDateInChallengePeriod(challenge, selectedDate);
+      console.log(`챌린지 "${challenge.name}": 기간 내 포함 여부 = ${isInPeriod}`);
+
+      return isInPeriod;
+    });
+
+    console.log('필터링 후 챌린지 개수:', filteredChallenges.length);
+    return filteredChallenges;
+  };
+
+  // 완료/실패된 챌린지들 필터링 (in_progress가 아닌 챌린지들 + active가 false인 챌린지들)
+  const getHistoryChallenges = () => {
+    if (!dashboard?.challenge || !Array.isArray(dashboard.challenge)) {
       return [];
     }
 
@@ -82,17 +140,8 @@ const ChallengeListSection: React.FC = () => {
         return false;
       }
 
-      // 필수 속성들이 존재하는지 확인
-      if (!challenge.id || !challenge.createdAt || !challenge.endAt) {
-        return false;
-      }
-
-      // active가 true인 챌린지만 필터링
-      if (challenge.active !== true) {
-        return false;
-      }
-
-      return isDateInChallengePeriod(challenge, selectedDate);
+      // completionProgress가 'in_progress'가 아니면서 동시에 active가 false인 챌린지들
+      return challenge.completionProgress !== 'in_progress' && challenge.active === false;
     });
   };
 
@@ -123,17 +172,17 @@ const ChallengeListSection: React.FC = () => {
           <button
             onClick={() => {
               setHasError(false);
-              window.location.reload();
+              refetch();
             }}
             className='px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors text-sm font-medium'
           >
             다시 시도
           </button>
           <button
-            onClick={() => window.location.reload()}
-            className='px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700 transition-colors text-sm font-medium'
+            onClick={() => refetch()}
+            className='px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-600 transition-colors text-sm font-medium'
           >
-            페이지 새로고침
+            데이터 새로고침
           </button>
         </div>
       </div>
@@ -180,6 +229,26 @@ const ChallengeListSection: React.FC = () => {
     );
   }
 
+  // 데이터 비어있음 처리 (에러가 아닌 정상 응답이지만 비어있는 경우)
+  const isEmpty =
+    !dashboard || !Array.isArray(dashboard.challenge) || dashboard.challenge.length === 0;
+  if (isEmpty) {
+    return (
+      <section className='flex flex-col gap-2 px-3 py-2 w-full relative mb-10'>
+        <WeeklySlide onDateSelect={handleDateSelect} />
+        <div className='flex flex-col gap-4 items-center justify-center text-center py-8'>
+          <div className='text-2xl font-bold text-secondary'>아직 등록된 챌린지가 없어요</div>
+          <div className='text-gray-500'>새 챌린지를 만들어 오늘부터 시작해보세요.</div>
+          {isOwner && (
+            <div className='mt-2'>
+              <AddChallengeButton onClick={handleOpenAddChallengeModal} />
+            </div>
+          )}
+        </div>
+      </section>
+    );
+  }
+
   return (
     <section className='flex flex-col gap-2 px-3 py-2 w-full relative mb-10'>
       <WeeklySlide onDateSelect={handleDateSelect} />
@@ -195,20 +264,39 @@ const ChallengeListSection: React.FC = () => {
               style={{
                 marginBottom: 8,
                 display: 'flex',
-                width: '50%',
+                width: '70%', // 50%에서 70%로 증가
                 justifyContent: 'center',
               }}
               buttonStyle='solid'
-              className='custom-radio-group w-full max-w-md'
+              className='custom-radio-group w-full max-w-lg' // max-w-md에서 max-w-lg로 증가
             >
-              <Radio.Button value='all' className='flex-1 text-center'>
+              <Radio.Button
+                value='all'
+                className='flex-1 flex justify-center items-center text-center px-3 py-3 text-base font-medium whitespace-nowrap leading-tight'
+              >
                 전체
               </Radio.Button>
-              <Radio.Button value='category' className='flex-1 text-center'>
+              <Radio.Button
+                value='category'
+                className='flex-1 flex justify-center items-center text-center px-3 py-3 text-base font-medium whitespace-nowrap leading-tight'
+              >
                 카테고리
+              </Radio.Button>
+              <Radio.Button
+                value='history'
+                className='flex-1 flex justify-center items-center text-center px-3 py-3 text-base font-medium whitespace-nowrap leading-tight'
+              >
+                완료/실패
               </Radio.Button>
             </Radio.Group>
           </div>
+
+          {/* 새 챌린지 추가 버튼을 라디오 버튼 아래에 배치 (소유자에게만 표시) */}
+          {isOwner && (
+            <div className='flex justify-center w-full'>
+              <AddChallengeButton onClick={handleOpenAddChallengeModal} />
+            </div>
+          )}
         </div>
         {selectedSort === 'all' ? (
           <AllChallengeList
@@ -216,20 +304,25 @@ const ChallengeListSection: React.FC = () => {
             routines={dashboard?.routines || []}
             routineCompletions={dashboard?.routineCompletions || []}
             selectedDate={selectedDate}
+            nickname={nickname}
+            isOwner={isOwner}
           />
-        ) : (
+        ) : selectedSort === 'category' ? (
           dashboard && (
             <CategoryChallengeList
-              dashboard={dashboard}
               challenges={getActiveChallengesForSelectedDate()}
               routines={dashboard?.routines || []}
               routineCompletions={dashboard?.routineCompletions || []}
               selectedDate={selectedDate}
+              onRoutineAdded={undefined}
+              nickname={nickname}
+              isOwner={isOwner}
             />
           )
-        )}
+        ) : selectedSort === 'history' ? (
+          <HistoryChallengeList challenges={getHistoryChallenges()} nickname={nickname} />
+        ) : null}
       </div>
-      <AddChallengeButton onClick={handleOpenAddChallengeModal} />
     </section>
   );
 };

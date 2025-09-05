@@ -4,26 +4,30 @@ import ChallengesAccordion from '@/app/_components/challenges-accordion/Challeng
 import { ChallengeDto } from '@/backend/challenges/applications/dtos/ChallengeDto';
 import { ReadRoutineResponseDto } from '@/backend/routines/applications/dtos/RoutineDto';
 import { RoutineCompletionDto } from '@/backend/routine-completions/applications/dtos/RoutineCompletionDto';
-import { DashboardDto } from '@/backend/dashboards/application/dtos/DashboardDto';
+import type { DashboardDto } from '@/backend/dashboards/application/dtos/DashboardDto';
 interface CategoryChallengeListProps {
-  dashboard: DashboardDto;
   challenges: ChallengeDto[];
   routines: ReadRoutineResponseDto[];
   routineCompletions: RoutineCompletionDto[];
   selectedDate?: Date;
-  onFeedbackClick?: (challengeId: number) => void;
   onRoutineAdded?: () => void;
+  nickname?: string; // 사용자 닉네임 추가
+  isOwner?: boolean;
+  onFeedbackClick?: (challengeId: number) => void;
+  dashboard?: DashboardDto;
 }
 
-const CategoryChallengeList: React.FC<CategoryChallengeListProps> = ({
-  dashboard,
-  challenges,
-  routines,
-  routineCompletions,
-  selectedDate,
-  onFeedbackClick,
-  onRoutineAdded,
-}) => {
+const CategoryChallengeList: React.FC<CategoryChallengeListProps> = props => {
+  const {
+    challenges,
+    routines,
+    routineCompletions,
+    selectedDate = new Date(),
+    onRoutineAdded,
+    nickname = '',
+    isOwner = false,
+    onFeedbackClick,
+  } = props;
   const renderCategory = (categoryId: number, categoryName: string) => {
     const categoryChallenges = challenges.filter(challenge => challenge.categoryId === categoryId);
 
@@ -33,30 +37,24 @@ const CategoryChallengeList: React.FC<CategoryChallengeListProps> = ({
           <h2>{categoryName}</h2>
         </div>
         <div className='flex flex-col gap-0.5'>
-          {!dashboard ? (
-            <div className='text-center py-4 text-gray-500 text-sm'>
-              챌린지 데이터를 불러오는 중...
-            </div>
-          ) : dashboard.challenge && dashboard.challenge.length > 0 ? (
-            categoryChallenges.length > 0 ? (
-              categoryChallenges.map(challenge => (
-                <ChallengesAccordion
-                  key={challenge.id}
-                  challenge={challenge}
-                  routines={routines}
-                  routineCompletions={routineCompletions}
-                  onFeedbackClick={onFeedbackClick}
-                  selectedDate={selectedDate || new Date()}
-                  onRoutineAdded={onRoutineAdded}
-                />
-              ))
-            ) : (
-              <div className='text-center py-4 text-gray-500 text-sm'>
-                {selectedDate?.toLocaleDateString()}에 {categoryName} 카테고리의 챌린지가 없습니다
-              </div>
-            )
+          {categoryChallenges.length > 0 ? (
+            categoryChallenges.map(challenge => (
+              <ChallengesAccordion
+                key={challenge.id}
+                challenge={challenge}
+                routines={routines}
+                routineCompletions={routineCompletions}
+                selectedDate={selectedDate}
+                onRoutineAdded={onRoutineAdded}
+                nickname={nickname}
+                isOwner={isOwner}
+                onFeedbackClick={onFeedbackClick}
+              />
+            ))
           ) : (
-            <div className='text-center py-4 text-gray-500 text-sm'>챌린지가 없습니다</div>
+            <div className='text-center py-4 text-gray-500 text-sm'>
+              {selectedDate.toLocaleDateString()}에 {categoryName} 카테고리의 챌린지가 없습니다
+            </div>
           )}
         </div>
       </div>

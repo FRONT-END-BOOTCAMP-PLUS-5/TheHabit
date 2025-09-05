@@ -37,6 +37,7 @@ export class LoginUsecase {
         nickname: user.nickname,
         name: user.username,
         email: user.email || '',
+        profileImg: user.profileImg || '',
       };
       return successResponse;
     } catch (error) {

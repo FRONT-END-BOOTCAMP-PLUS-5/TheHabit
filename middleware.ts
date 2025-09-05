@@ -14,8 +14,8 @@ export default function middleware(req: NextRequest) {
     method: req.method,
   });
   
-  // 이미 로그인한 사용자가 메인(온보딩) 페이지에 접근하는 것을 차단
-  if (token && (pathname === '/' || pathname.startsWith('/onboarding'))) {
+  // 이미 로그인한 사용자가 메인 페이지에 접근하는 것을 차단 (온보딩은 제외)
+  if (token && pathname === '/') {
     return NextResponse.redirect(new URL('/user/dashboard', req.url));
   }
   

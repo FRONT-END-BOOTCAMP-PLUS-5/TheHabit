@@ -26,7 +26,8 @@ export class AddChallengeUseCase {
       challenge.color,
       user.id as string,
       challenge.categoryId,
-      challenge.active
+      challenge.active,
+      challenge.completionProgress || 'in_progress' // 기본값으로 'in_progress' 설정
     );
     const createdChallenge = await this.challengeRepository.create(challengeEntity);
     return createdChallenge;
