@@ -59,9 +59,7 @@ export const LoginForm = () => {
         setError('이메일 또는 비밀번호가 올바르지 않습니다.');
       } else if (result?.ok) {
         Toast.success('로그인 성공! 🎉');
-        setTimeout(() => {
-          router.push(`/user/dashboard/${userInfo?.nickname}`);
-        }, 3000);
+        // router.push(`/user/dashboard/${userInfo?.nickname}`);
       } else {
         setError('로그인 처리 중 예상치 못한 오류가 발생했습니다.');
       }
