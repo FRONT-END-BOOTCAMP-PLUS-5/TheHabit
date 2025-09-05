@@ -7,6 +7,7 @@ import { Controller, FormProvider, useForm } from 'react-hook-form';
 import { Button } from '@/app/_components/buttons/Button';
 import { useSignUp } from '@/libs/hooks/signup/useSignUp';
 import { useRouter } from 'next/navigation';
+import Toast from '@/app/_components/toasts/Toast';
 
 interface ISignupForm {
   username: string;
@@ -58,10 +59,13 @@ export const SignUpForm = () => {
       }
 
       await signUp(formData);
-      // 회원가입 성공 후 로그인 페이지로 이동
-      router.push('/login');
+      Toast.success('회원가입 성공! 🎉');
+
+      setTimeout(() => {
+        router.push('/login');
+      }, 3000);
     } catch (error) {
-      console.error(error);
+      Toast.error('회원가입 실패! ❌');
     }
   };
 
