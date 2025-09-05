@@ -87,7 +87,6 @@ npm start
 # 예) feat : 로그인 기능 추가
 
 # 바로 아래 공백은 지우지 마세요 (제목과 본문의 분리를 위함)
-git@github.com:FRONT-END-BOOTCAMP-PLUS-5/TheHabit.git
 ################
 # 본문(구체적인 내용)을 아랫줄에 작성
 # 여러 줄의 메시지를 작성할 땐 "-"로 구분 (한 줄은 72자 이내)
