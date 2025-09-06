@@ -4,10 +4,10 @@ import { v4 as uuidv4 } from 'uuid';
 
 class S3Service {
   private s3 = new S3Client({
-    region: process.env.AWS_REGION,
+    region: process.env.AWS_REGION_ENV,
     credentials: {
-      accessKeyId: process.env.AWS_ACCESS_KEY_ID as string,
-      secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY as string,
+      accessKeyId: process.env.AWS_ACCESS_KEY_ID_ENV as string,
+      secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY_ENV as string,
     },
   });
 
@@ -20,7 +20,7 @@ class S3Service {
       const buffer = Buffer.from(arrayBuffer);
 
       const command = new PutObjectCommand({
-        Bucket: process.env.AMPLIFY_BUCKET as string,
+        Bucket: process.env.AMPLIFY_BUCKET_ENV as string,
         Key: key,
         ContentType: type,
         Body: buffer,
@@ -28,7 +28,7 @@ class S3Service {
 
       await this.s3.send(command);
 
-      const imageUrl = `https://${process.env.AMPLIFY_BUCKET}.s3.${process.env.AWS_REGION}.amazonaws.com/${key}`;
+      const imageUrl = `https://${process.env.AMPLIFY_BUCKET_ENV}.s3.${process.env.AWS_REGION_ENV}.amazonaws.com/${key}`;
 
       return { imageUrl, key };
     } catch (e) {
@@ -40,7 +40,7 @@ class S3Service {
   async deleteImage(key: string): Promise<boolean> {
     try {
       const deleteCommand = new DeleteObjectCommand({
-        Bucket: process.env.AMPLIFY_BUCKET as string,
+        Bucket: process.env.AMPLIFY_BUCKET_ENV as string,
         Key: key,
       });
 
