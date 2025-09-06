@@ -35,7 +35,8 @@ export const TabNavigation = () => {
   }
 
   const handleClick = (href: string) => {
-    if (href === '/user/follow' || href === '/user/notifications') {
+    console.log(href);
+    if (href === '/') {
       setIsOpen(prev => !prev);
     } else {
       router.push(href);

@@ -11,7 +11,7 @@ export const tabItem = (nickname?: string) => ([
   {
     name: 'search',
     icon: searchIcon,
-    href: '/user/follow',
+    href: nickname ? `/user/follow/` : '/',
     isHover: activeSearchIcon,
   },
   {
@@ -23,7 +23,7 @@ export const tabItem = (nickname?: string) => ([
   {
     name: 'notification',
     icon: alarmIcon,
-    href: '/user/notifications',
+    href: nickname ? `/user/notifications` : '/',
     isHover: activeAlarmIcon,
   },
   {
