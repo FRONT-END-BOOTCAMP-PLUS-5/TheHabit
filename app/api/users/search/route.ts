@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { PrUserRepository } from '@/backend/users/infrastructures/repositories/PrUserRepository';
+import { PrUserRepository } from '@/backend/users/infrastructure/repositories/PrUserRepository';
 import { ApiResponse } from '@/backend/shared/types/ApiResponse';
-import { GetUsersUsecase } from '@/backend/users/applications/usecases/GetUsersUsecase';
-import { UserDto } from '@/backend/users/applications/dtos/UserDto';
-import { GetFollowingByToUserIdUsecase } from '@/backend/follows/applications/usecases/GetFollowingByFromUserIdUsecase';
-import { PrFollowRepository } from '@/backend/follows/infrastructures/repositories/PrFollowRepository';
+import { GetUsersUsecase } from '@/backend/users/application/usecases/GetUsersUsecase';
+import { UserDto } from '@/backend/users/application/dtos/UserDto';
+import { GetFollowingByToUserIdUsecase } from '@/backend/follows/application/usecases/GetFollowingByFromUserIdUsecase';
+import { PrFollowRepository } from '@/backend/follows/infrastructure/repositories/PrFollowRepository';
 const userRepository = new PrUserRepository();
 const followRepository = new PrFollowRepository();
 

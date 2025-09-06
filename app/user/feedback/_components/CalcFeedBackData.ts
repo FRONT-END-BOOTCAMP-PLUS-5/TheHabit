@@ -1,9 +1,9 @@
 import { getChallengeDays } from '@/app/user/feedback/_components/FeedBackDays';
-import { ChallengeDto } from '@/backend/challenges/applications/dtos/ChallengeDto';
-import { RoutineCompletionDto } from '@/backend/routine-completions/applications/dtos/RoutineCompletionDto';
+import { ChallengeDto } from '@/backend/challenges/application/dtos/ChallengeDto';
+import { RoutineCompletionDto } from '@/backend/routine-completions/application/dtos/RoutineCompletionDto';
 import { CATEGORY_CONFIG } from '@/public/consts/categoryConfig';
 import { getDateString } from '@/public/utils/dateUtils';
-import { ReadRoutineResponseDto } from '@/backend/routines/applications/dtos/RoutineDto';
+import { ReadRoutineResponseDto } from '@/backend/routines/application/dtos/RoutineDto';
 
 // 단일 챌린지의 진행률 계산
 export const calculateSingleChallengeProgress = (

@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from 'next/server';
 
 export default function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
+  console.log('pathname', pathname);
+
+  const token2 = req.cookies.get('_Secure-next-auth.session-token');
 
   const token = req.cookies.get('next-auth.session-token')?.value;
   const onboarding = req.cookies.get('onboarding')?.value;

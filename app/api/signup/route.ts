@@ -1,7 +1,7 @@
 // backend/users/signup/route.ts
 import { NextRequest, NextResponse } from 'next/server';
-import { CreateUserUsecase } from '@/backend/auths/applications/usecases/CreateUserUsecase';
-import { PrUserRepository } from '@/backend/users/infrastructures/repositories/PrUserRepository';
+import { CreateUserUsecase } from '@/backend/auths/application/usecases/CreateUserUsecase';
+import { PrUserRepository } from '@/backend/users/infrastructure/repositories/PrUserRepository';
 
 const userRepository = new PrUserRepository();
 
@@ -9,10 +9,10 @@ export async function POST(request: NextRequest) {
   try {
     // FormData 처리
     console.log('🚀 [Signup API] 회원가입 요청 시작');
-    
+
     const formData = await request.formData();
-     console.log('📋 [Signup API] FormData 키들:', Array.from(formData.keys()));
-    
+    console.log('📋 [Signup API] FormData 키들:', Array.from(formData.keys()));
+
     // 1. 요청 데이터 파싱
     const email = formData.get('email') as string;
     const password = formData.get('password') as string;

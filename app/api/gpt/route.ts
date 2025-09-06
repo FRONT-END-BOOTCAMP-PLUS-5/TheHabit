@@ -1,6 +1,6 @@
-import { GPTRequestDto } from '@/backend/gpt/applications/dtos/GPTRequestDto';
-import { AddGPTResponseUsecase } from '@/backend/gpt/applications/usecases/AddGPTResponseUsecase';
-import { GPTRepository } from '@/backend/gpt/infrastructures/repositories/GPTRepository';
+import { GPTRequestDto } from '@/backend/gpt/application/dtos/GPTRequestDto';
+import { AddGPTResponseUsecase } from '@/backend/gpt/application/usecases/AddGPTResponseUsecase';
+import { GPTRepository } from '@/backend/gpt/infrastructure/repositories/GPTRepository';
 import { ApiResponse } from '@/backend/shared/types/ApiResponse';
 import { NextRequest, NextResponse } from 'next/server';
 

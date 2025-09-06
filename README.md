@@ -1,10 +1,37 @@
+- [더:해빛(The:Habit)](#더해빛thehabit)
+  * [실행 방법](#실행-방법)
+    + [1. 프로젝트 clone](#1-프로젝트-clone)
+    + [2. 프로젝트 의존성 설치](#2-프로젝트-의존성-설치)
+    + [3. 환경 변수 설정](#3-환경-변수-설정)
+    + [4. 실행](#4-실행)
+  * [Team Anymate](#team-anymate)
+    + [컨벤션](#컨벤션)
+  * [프로젝트 개요](#프로젝트-개요)
+    + [특정 행동의 습관화에 필요한 시간에 따른 챌린지를 제공하는 웹 애플리케이션](#특정-행동의-습관화에-필요한-시간에-따른-챌린지를-제공하는-웹-애플리케이션)
+    + [기술 스택](#기술-스택)
+      - [Runtime](#runtime)
+      - [전역 상태 관리](#전역-상태-관리)
+      - [프레임워크](#프레임워크)
+      - [인증 / 인가](#인증--인가)
+      - [Frontend](#frontend)
+  * [기능 소개](#기능-소개)
+    + [메인 시스템 소개](#메인-시스템-소개)
+    + [회원가입 / 로그인](#회원가입--로그인)
+    + [메인 대시보드](#메인-대시보드)
+    + [피드백](#피드백)
+    + [유저 페이지](#유저-페이지)
+    + [Next-PWA를 활용한 푸시 알림 (2025.08.31 시점 개발중)](#next-pwa를-활용한-푸시-알림-20250831-시점-개발중)
+  * [트러블 슈팅](#트러블-슈팅)
+- [프로젝트 아키텍처 소개 (클린 아키텍처 적용)](#프로젝트-아키텍처-소개-클린-아키텍처-적용)
+
+<hr/>
+
 # 더:해빛(The:Habit)
 > 더 밝게, 해처럼 빛나는 당신의 내일, 더:해빛과 함께 즐거운 습관화
 <img width="3840" height="2160" alt="image" src="https://github.com/user-attachments/assets/a5c5382f-5e66-43aa-a4dd-ec762944a21c" />
 
 ## 실행 방법
 
-> 이 프로젝트는 런타임으로 bun을 사용하고 있어 bun 기준으로 기재하였습니다. npm도 동일하게 사용 가능합니다.
 
 ### 1. 프로젝트 clone
 ```bash
@@ -14,7 +41,11 @@ cd TheHabit
 
 ### 2. 프로젝트 의존성 설치
 ```bash
+# bun 이용시
 bun install
+
+# npm 이용시
+npm install
 ```
 
 ### 3. 환경 변수 설정
@@ -23,11 +54,21 @@ bun install
 ### 4. 실행
 ```bash
 # 개발 서버 실행
+# bun 이용시
 bun run dev
 
+# npm 이용시
+npm run dev
+
 # 빌드 및 시작
+
+# bun 이용시
 bun run build
 bun start
+
+# npm 이용시
+npm run build
+npm start
 ```
 
 
@@ -35,10 +76,9 @@ bun start
 | <img src="https://avatars.githubusercontent.com/u/47844901?v=4" width="200" height="200"/> | <img src="https://avatars.githubusercontent.com/u/180416062?v=4" width="200" height="200"/> | <img src="https://avatars.githubusercontent.com/u/113508075?v=4" width="200" height="200"/> | <img src="https://avatars.githubusercontent.com/u/132253329?v=4" width="200" height="200"/> | <img src="https://avatars.githubusercontent.com/u/170381300?v=4" width="200" height="200"/> |
 |:---:|:---:|:---:|:---:|:---:|
 | **정승민**<br/>[@HarenKei](https://github.com/HarenKei) | **김강현**<br/>[@developer-kanghyun](https://github.com/developer-kanghyun) | **조현돈**<br/>[@chohyundon](https://github.com/chohyundon) | **김동우**<br/>[@devdongwoo](https://github.com/devdongwoo) | **유상현**<br/>[@YSangH](https://github.com/YSangH) |
-| 🟩 프로젝트 리딩<br/>🟦 Frontend (대시보드 및 라우팅 구조 정립)<br/>🟧 Backend (클린 아키텍처 구현, 패턴 정립)<br/>🟩 배포<br/>🟩 프레젠테이션 발표 | 🟧 Backend (루틴 CRUD 로직 및 API)<br/>🟩 PWA 기능 구현 (푸시 알림)<br/>🟦 Frontend (알림 페이지) | 🟩 UI/UX 디자인<br/>🟦 Frontend (활동 피드백 및 분석)<br/>🟧 Backend (GPT API 피드백 및 분석) | 🟦 Frontend (유저 프로필 페이지)<br/>🟧 Backend (유저 프로필 CRUD 로직 및 API) | 🟦 Frontend (회원가입 및 로그인)<br/>🟧 Backend (유저 인증/인가) |
+| 🟩 프로젝트 리딩<br/>🟦 Frontend (대시보드 및 라우팅 구조 정립)<br/>🟧 [Backend (클린 아키텍처 구현, 패턴 정립)](#프로젝트-아키텍처-소개-클린-아키텍처-적용)<br/>🟩 배포<br/>🟩 프레젠테이션 발표 | 🟧 Backend (루틴 CRUD 로직 및 API)<br/>🟩 PWA 기능 구현 (푸시 알림)<br/>🟦 Frontend (알림 페이지) | 🟩 UI/UX 디자인<br/>🟦 Frontend (활동 피드백 및 분석)<br/>🟧 Backend (GPT API 피드백 및 분석) | 🟦 Frontend (유저 프로필 페이지)<br/>🟧 Backend (유저 프로필 CRUD 로직 및 API) | 🟦 Frontend (회원가입 및 로그인)<br/>🟧 Backend (유저 인증/인가) |
 
 ### 컨벤션
-> 팀원 중 git 사용 경험이 적은 인원이 있어 원활하게 컨벤션이 지켜지지 않았습니다. 양해 부탁드립니다.
 - 커밋 메시지 컨벤션 (템플릿 및 commitlinting 적용)
 ```markdown
 ################
@@ -47,7 +87,6 @@ bun start
 # 예) feat : 로그인 기능 추가
 
 # 바로 아래 공백은 지우지 마세요 (제목과 본문의 분리를 위함)
-
 ################
 # 본문(구체적인 내용)을 아랫줄에 작성
 # 여러 줄의 메시지를 작성할 땐 "-"로 구분 (한 줄은 72자 이내)
@@ -80,46 +119,40 @@ bun start
 ### 기술 스택
 <img width="3840" height="2160" alt="image" src="https://github.com/user-attachments/assets/4fbcb26b-3f97-4001-98cd-45f877a06184" />
 
+> 기술 스택은 '왜 사용했나' 에 집중하여 기재하였습니다.
+
 #### Runtime
 - **Bun**
-  - 새로운 JavaScript 런타임을 경험하기 위해 사용
-  - npm과 동일하게 의존성 설치 및 실행 가능
-- **Node.js (옵션)**
-  - 기존 JavaScript 런타임으로 Bun이 호환되지 않는 패키지 실행 시 사용 가능
+  - 새로운 JavaScript 런타임을 경험하기 위해 사용하였습니다.
 
 ---
 
-#### 전역 상태관리
+#### 전역 상태 관리
 - **Zustand**
-  - `Modal provider`의 전역 상태 관리를 위해 사용
-  - 간단하고 직관적인 상태 관리 패턴 제공
+  - `Modal provider`의 전역 상태 관리를 위해 사용하였습니다.
 
 ---
 
 #### 프레임워크
-- **Next.js 15^**
-  - 서버사이드 렌더링(SSR) 및 정적 사이트 생성(SSG) 지원
-  - 최신 App Router 및 React 18 기능 사용 가능
+- **Next.js 15**
+  - `layout`, `app router` 등 React 19^를 편리하게 사용할 수 있어 사용하였습니다.
+  - `node.js` 기반 풀 스택 프로젝트를 진행하기 위해 사용하였습니다.
+  - `SSR`을 위해 사용하였습니다.
 
 ---
 
 #### 인증 / 인가
 - **NextAuth**
-  - OAuth 기반 소셜 로그인 및 사용자 인증 관리
-  - JWT 토큰, 세션 관리 등 제공
+  - OAuth 기반 소셜 로그인 및 사용자 인증 관리에 사용했습니다.
 
 ---
 
 #### Frontend
 - **TypeScript**
-  - 정적 타입 체킹을 통해 안정적인 코드 작성 가능
+  - 정적 타입 체킹을 통해 안정적인 코드 작성을 위해 사용하였습니다.
 - **React**
-  - UI를 선언적으로 렌더링하고 컴포넌트 단위 개발 가능
 - **Tailwind CSS**
-  - 유틸리티 클래스 기반 스타일링
 - **Antd UI 라이브러리**
-  - 다양한 UI 컴포넌트 제공
-  - 빠른 UI 개발 가능
   
 
 ## 기능 소개
@@ -163,6 +196,7 @@ bun start
 <img width="3840" height="2160" alt="image" src="https://github.com/user-attachments/assets/ad2e4a84-b471-46c0-8aa2-4e15d784d7a9" />
 <img width="3840" height="2160" alt="image" src="https://github.com/user-attachments/assets/5798ba97-fda8-4134-b2d9-44ef6d0048a2" />
 
+> <a href="https://heibondk.tistory.com/525">위 lightningCSS 관련 트러블 슈팅을 정리한 포스팅</a>
 
 # 프로젝트 아키텍처 소개 (클린 아키텍처 적용)
 계층형 클린 아키텍처를 적용하여 관심사를 분리하고, 각 계층별 의존성을 최소화하였습니다.<br/>

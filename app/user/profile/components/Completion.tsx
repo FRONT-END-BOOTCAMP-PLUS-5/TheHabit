@@ -10,7 +10,7 @@ import { USER_ROUTINE_COMPLETION_BTN } from '@/public/consts/userRoutineCompleti
 import { BUTTON_CLASS, CATEGORY_COLOR } from '@/public/consts/userRoutineCompletionsBtnColor';
 
 import { useModalStore } from '@/libs/stores/modalStore';
-import { CreateRoutineCompletionResponseDto } from '@/backend/routine-completions/applications/dtos/RoutineCompletionDto';
+import { CreateRoutineCompletionResponseDto } from '@/backend/routine-completions/application/dtos/RoutineCompletionDto';
 import UserRoutineCompletion from '@/app/user/profile/components/UserRoutineCompletion';
 import NoneImg from '@/app/_components/none/NoneImg';
 import { ButtonSkeleton, Skeleton } from '@/app/_components/skeleton/Skeleton';

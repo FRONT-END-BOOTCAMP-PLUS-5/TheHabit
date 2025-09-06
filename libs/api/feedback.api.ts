@@ -1,4 +1,4 @@
-import { AddFeedbackDto } from '@/backend/feedbacks/applications/dtos/AddfeedbackDto';
+import { AddFeedbackDto } from '@/backend/feedbacks/application/dtos/AddfeedbackDto';
 import { axiosInstance } from '@/public/utils/axiosInstance';
 import { ApiResponse } from '@/backend/shared/types/ApiResponse';
 

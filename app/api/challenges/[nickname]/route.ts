@@ -1,6 +1,6 @@
 import { NextResponse, NextRequest } from "next/server";
-import { GetChallengesByNicknameUsecase } from "@/backend/challenges/applications/usecases/GetChallengesByNicknameUsecase";
-import { PrChallengeRepository } from "@/backend/challenges/infrastructures/repositories/PrChallengeRepository";
+import { GetChallengesByNicknameUsecase } from "@/backend/challenges/application/usecases/GetChallengesByNicknameUsecase";
+import { PrChallengeRepository } from "@/backend/challenges/infrastructure/repositories/PrChallengeRepository";
 
 const repository = new PrChallengeRepository();
 const usecase = new GetChallengesByNicknameUsecase(repository);

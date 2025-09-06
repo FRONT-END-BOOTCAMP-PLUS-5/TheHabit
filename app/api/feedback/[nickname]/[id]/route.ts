@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/public/utils/prismaClient';
 import { ApiResponse } from '@/backend/shared/types/ApiResponse';
-import { AddFeedbackDto } from '@/backend/feedbacks/applications/dtos/AddfeedbackDto';
+import { AddFeedbackDto } from '@/backend/feedbacks/application/dtos/AddfeedbackDto';
 
 export const GET = async (
   _req: NextRequest,

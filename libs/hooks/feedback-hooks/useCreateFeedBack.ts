@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { FeedbackApi } from '@/libs/api/feedback.api';
-import { AddFeedbackDto } from '@/backend/feedbacks/applications/dtos/AddfeedbackDto';
+import { AddFeedbackDto } from '@/backend/feedbacks/application/dtos/AddfeedbackDto';
 
 export const useCreateFeedBack = () => {
   const queryClient = useQueryClient();

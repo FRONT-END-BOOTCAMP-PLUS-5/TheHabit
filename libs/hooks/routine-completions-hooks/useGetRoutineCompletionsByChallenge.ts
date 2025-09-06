@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { getRoutineCompletionsByNickname } from '@/libs/api/routine-completions.api';
-import { RoutineCompletionDto } from '@/backend/routine-completions/applications/dtos/RoutineCompletionDto';
+import { RoutineCompletionDto } from '@/backend/routine-completions/application/dtos/RoutineCompletionDto';
 
 /**
  * 특정 사용자의 모든 루틴 완료 목록을 조회하는 훅

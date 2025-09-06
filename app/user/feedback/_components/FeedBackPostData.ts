@@ -1,6 +1,6 @@
 import { FeedbackApi, getFeedBackByChallengeId } from '@/libs/api/feedback.api';
 import { requestGPT } from '@/libs/api/gpt.api';
-import { RoutineCompletionDto } from '@/backend/routine-completions/applications/dtos/RoutineCompletionDto';
+import { RoutineCompletionDto } from '@/backend/routine-completions/application/dtos/RoutineCompletionDto';
 import { ValidateFeedBackGPTResponse } from '@/app/user/feedback/_components/ValidateFeedBackGPTResponse';
 import { AxiosError } from 'axios';
 
