@@ -6,12 +6,15 @@ import React, { useState, useEffect } from 'react';
 import { tabItem } from '@/public/consts/tabItem';
 import homeIcon from '@/public/icons/home.svg';
 import { useGetUserInfo } from '@/libs/hooks/user-hooks/useGetUserInfo';
-
+import { useRouter } from 'next/navigation';
+import ConfirmModal from '@/app/_components/modals/ConfirmModal';
 
 export const TabNavigation = () => {
+  const router = useRouter();
   const [isHover, setIsHover] = useState<string>('');
   const [mounted, setMounted] = useState(false);
   const { userInfo } = useGetUserInfo();
+  const [isOpen, setIsOpen] = useState(false);
   const nickname = userInfo?.nickname;
 
   useEffect(() => {
@@ -31,28 +34,54 @@ export const TabNavigation = () => {
     return null;
   }
 
+  const handleClick = (href: string) => {
+    console.log(href);
+    if (href === '/') {
+      setIsOpen(prev => !prev);
+    } else {
+      router.push(href);
+    }
+  };
+
   return (
-    <nav className='fixed bottom-4 left-1/2 -translate-x-1/2 w-[90%] max-w-[480px] z-50'>
-      <ul className='relative h-16 flex justify-around bg-white shadow-[0_6px_24px_rgba(0,0,0,0.12)] items-center rounded-2xl mx-auto px-2'>
-        {tabItem(nickname).map((item, i) => (
-          <li key={i}>
-            <Link href={item.href || ''} className='w-12 h-12 flex justify-center items-center'>
-              <Image
-                src={isHover === item.name ? item.isHover : item.icon}
-                alt={item.name}
-                className='w-7 h-7'
-                onMouseLeave={isMouseOut}
-                onMouseEnter={() => isMouseHover(item.name)}
-              />
+    <>
+      <nav className='fixed bottom-4 left-1/2 -translate-x-1/2 w-[90%] max-w-[480px] z-50'>
+        <ul className='relative h-16 flex justify-around bg-white shadow-[0_6px_24px_rgba(0,0,0,0.12)] items-center rounded-2xl mx-auto px-2'>
+          {tabItem(nickname).map((item, i) => (
+            <li key={i}>
+              <button
+                onClick={() => handleClick(item.href)}
+                className='cursor-pointer w-12 h-12 flex justify-center items-center'
+              >
+                <Image
+                  src={isHover === item.name ? item.isHover : item.icon}
+                  alt={item.name}
+                  className='w-7 h-7'
+                  onMouseLeave={isMouseOut}
+                  onMouseEnter={() => isMouseHover(item.name)}
+                />
+              </button>
+            </li>
+          ))}
+          <div className='absolute -top-6 left-1/2 -translate-x-1/2 w-16 h-16 bg-[#93D50B] cursor-pointer hover:scale-105 transition-transform duration-200 hover:opacity-95 flex items-center justify-center rounded-full shadow-lg'>
+            <Link href={userInfo?.nickname ? `/user/dashboard/${userInfo.nickname}` : '/'}>
+              <Image src={homeIcon} alt='홈으로 이동' className='w-8 h-8' />
             </Link>
-          </li>
-        ))}
-        <div className='absolute -top-6 left-1/2 -translate-x-1/2 w-16 h-16 bg-[#93D50B] cursor-pointer hover:scale-105 transition-transform duration-200 hover:opacity-95 flex items-center justify-center rounded-full shadow-lg'>
-          <Link href={userInfo?.nickname ? `/user/dashboard/${userInfo.nickname}` : '/login'}>
-            <Image src={homeIcon} alt='홈으로 이동' className='w-8 h-8' />
-          </Link>
-        </div>
-      </ul>
-    </nav>
+          </div>
+        </ul>
+      </nav>
+      {isOpen && (
+        <ConfirmModal
+          type='positive'
+          isOpen={isOpen}
+          title='로그인을 진행해주세요'
+          description='로그인 페이지로 이동하시겠습니까?'
+          onClose={() => setIsOpen(false)}
+          onConfirm={() => router.push('/login')}
+        >
+          <span></span>
+        </ConfirmModal>
+      )}
+    </>
   );
 };

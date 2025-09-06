@@ -13,19 +13,23 @@ export const ProfileImage = ({
 }) => {
   return (
     <>
-      {imageSrc && (
+      {imageSrc ? (
         <div
-          className={`w-${wrapperWidth} h-${wrapperHeight} rounded-full overflow-hidden border-primary border-2`}
+          className={`w-${wrapperWidth} h-${wrapperHeight} rounded-full overflow-hidden border-primary border-2 relative aspect-square`}
         >
           <Image
             src={imageSrc}
             alt='프로필'
-            layout='responsive'
-            width={120}
-            height={120}
-            className={'w-full h-full object-cover'}
-            style={{ minHeight: '100%' }}
+            fill
+            className={'object-cover'}
+            // sizes='(max-width: 768px) 100vw, 120px'
           />
+        </div>
+      ) : (
+        <div
+          className={`w-${wrapperWidth} h-${wrapperHeight} rounded-full overflow-hidden border-1 border-gray-300  relative aspect-square`}
+        >
+          <Image src='/icons/user.svg' alt='프로필' fill className={'object-cover'} />
         </div>
       )}
     </>

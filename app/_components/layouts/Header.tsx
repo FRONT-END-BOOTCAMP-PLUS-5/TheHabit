@@ -9,9 +9,11 @@ import { useGetUserInfo } from '@/libs/hooks/user-hooks/useGetUserInfo';
 import { useGetDashboardByNickname } from '@/libs/hooks/dashboard-hooks/useGetDashboardByNickname';
 import { useMemo } from 'react';
 import { calculateSingleChallengeProgress } from '@/app/user/feedback/_components/CalcFeedBackData';
+import { useRouter } from 'next/navigation';
 
 //TODO : 최장 스트릭 정보 가져오기
 const Header: React.FC = () => {
+  const router = useRouter();
   const { openModal } = useModalStore();
   const { userInfo } = useGetUserInfo();
   const nickname = userInfo?.nickname || '';
@@ -56,15 +58,30 @@ const Header: React.FC = () => {
       <h1 className={'text-3xl font-black text-primary flex-3'}>
         <Link href='/'>The:Habit</Link>
       </h1>
-      <button
-        className='flex flex-2 items-center justify-end gap-1 pr-4 cursor-pointer'
-        onClick={handleOpenModal}
-      >
-        <Image src={CompleteIcon} alt='challenge progress' width={24} height={24} />
-        <div className='text-xl font-extrabold bg-gradient-to-r from-[#FF6D00] via-[#FF9800] to-[#FFC107] bg-clip-text text-transparent'>
-          {longestStreak}
-        </div>
-      </button>
+      {!nickname ? (
+        <button
+          onClick={() => router.push('/login')}
+          className=' flex flex-2 items-center justify-end gap-1 pr-4'
+        >
+          <Image
+            src='/icons/login.svg'
+            alt='login'
+            width={24}
+            height={24}
+            className='w-7 h-7 cursor-pointer hover:scale-105 transition-transform duration-200 hover:opacity-95'
+          />
+        </button>
+      ) : (
+        <button
+          className='flex flex-2 items-center justify-end gap-1 pr-4 cursor-pointer'
+          onClick={handleOpenModal}
+        >
+          <Image src={CompleteIcon} alt='challenge progress' width={24} height={24} />
+          <div className='text-xl font-extrabold bg-gradient-to-r from-[#FF6D00] via-[#FF9800] to-[#FFC107] bg-clip-text text-transparent'>
+            {longestStreak}
+          </div>
+        </button>
+      )}
     </header>
   );
 };
