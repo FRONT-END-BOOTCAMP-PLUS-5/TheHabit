@@ -4,7 +4,7 @@ export default function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
   console.log('pathname', pathname);
   
-  const token = req.cookies.get('next-auth.session-token');
+const token = req.cookies.get('_Secure-next-auth.session-token');
 
   console.log('🔍 Middleware 실행:', {
     pathname: pathname,
