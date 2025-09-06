@@ -14,7 +14,7 @@ const UserProfileSection: React.FC<UserProfileSectionProps> = () => {
 
   // 세션 정보 가져오기
   const { data: session } = useSession();
-  
+
   // 세션 정보 콘솔 로그로 확인
   console.log('🏷️ Session Nickname:', session?.user?.nickname);
 

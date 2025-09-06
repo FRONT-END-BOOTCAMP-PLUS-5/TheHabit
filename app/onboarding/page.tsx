@@ -1,4 +1,4 @@
-import { OnBoardingStep } from '@/app/onboarding/_components/onBoardingStep';
+import { OnBoardingStep } from '@/app/onboarding/_components/OnBoardingStep';
 
 const OnBoardingPage = () => {
   return (
