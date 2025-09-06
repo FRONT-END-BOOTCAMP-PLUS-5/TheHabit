@@ -1,7 +1,7 @@
-import { IRoutinesRepository } from '@/backend/routines/domains/repositories/IRoutinesRepository';
-import { IChallengeRepository } from '@/backend/challenges/domains/repositories/IChallengeRepository';
-import { SendPushNotificationUseCase } from '@/backend/notifications/applications/usecases/SendPushNotificationUseCase';
-import { NotificationPayload } from '@/backend/notifications/domains/services/IPushNotificationService';
+import { IRoutinesRepository } from '@/backend/routines/domain/repositories/IRoutinesRepository';
+import { IChallengeRepository } from '@/backend/challenges/domain/repositories/IChallengeRepository';
+import { SendPushNotificationUseCase } from '@/backend/notifications/application/usecases/SendPushNotificationUseCase';
+import { NotificationPayload } from '@/backend/notifications/domain/services/IPushNotificationService';
 
 export class ProcessRoutineAlertsUseCase {
   constructor(
