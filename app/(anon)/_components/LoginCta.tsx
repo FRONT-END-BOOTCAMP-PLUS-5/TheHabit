@@ -45,8 +45,9 @@ export const LoginCta: React.FC = () => {
           onClose={() => setRedirect(false)}
           onConfirm={() => handleLogin()}
           confirmDisabled={false}
-          children={<div className='text-xs opacity-90'>로그인 페이지로 이동합니다.</div>}
-        />
+        >
+          <div className='text-xs opacity-90'>로그인 페이지로 이동합니다.</div>
+        </ConfirmModal>
       )}
     </section>
   );

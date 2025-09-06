@@ -78,8 +78,9 @@ export const TabNavigation = () => {
           description='로그인 페이지로 이동하시겠습니까?'
           onClose={() => setIsOpen(false)}
           onConfirm={() => router.push('/login')}
-          children={<div className=''></div>}
-        />
+        >
+          <span></span>
+        </ConfirmModal>
       )}
     </>
   );
