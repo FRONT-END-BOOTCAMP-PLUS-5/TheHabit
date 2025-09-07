@@ -6,7 +6,7 @@ import CloseModal from '@/public/icons/icon_close.svg';
 
 interface FloatingModalProps {
   modalTitle: string;
-  modalDescription: string;
+  modalDescription?: string;
   children: React.ReactNode;
   isOpen?: boolean;
   onClose?: () => void;

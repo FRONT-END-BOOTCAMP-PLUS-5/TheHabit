@@ -1,13 +1,13 @@
 'use client';
 
-import { useGetUserInfo } from '@/libs/hooks/user-hooks/useGetUserInfo';
+import { useSession } from 'next-auth/react';
 import { usePathname } from 'next/navigation';
 import React from 'react';
 
 export const FeedBackHeader = () => {
-  const { userInfo } = useGetUserInfo();
-  const nickname = userInfo?.nickname;
-  const username = userInfo?.username;
+  const { data: session } = useSession();
+  const nickname = session?.user?.nickname;
+  const username = session?.user?.username;
   const pathname = usePathname();
 
   const isFeedbackListPage = nickname ? pathname === `/user/feedback/${nickname}` : false;
