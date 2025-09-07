@@ -17,19 +17,19 @@ export const tabItem = (nickname?: string) => ([
   {
     name: 'feedback',
     icon: feedbackIcon,
-    href: nickname ? `/user/feedback/${nickname}` : '/login',
+    href: nickname ? `/user/feedback/${nickname}` : '/feedback',
     isHover: activeFeedbackIcon,
   },
   {
     name: 'notification',
     icon: alarmIcon,
-    href: '/user/notifications',
+    href: nickname ? `/user/notifications` : '/',
     isHover: activeAlarmIcon,
   },
   {
     name: 'profile',
     icon: profileIcon,
-    href: nickname ? `/user/profile/${nickname}` : '/login',
+    href: nickname ? `/user/profile/${nickname}` : '/profile',
     isHover: activeProfileIcon,
   },
 ]);

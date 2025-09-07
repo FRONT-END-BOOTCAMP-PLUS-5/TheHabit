@@ -3,7 +3,6 @@ import UserProfileSection from '@/app/_components/user-profile-section/UserProfi
 import ChallengeListSection from '@/app/user/dashboard/_components/ChallengeListSection';
 
 const MainPage: React.FC = async () => {
-
   return (
     <main className='px-2 py-2'>
       <UserProfileSection />
