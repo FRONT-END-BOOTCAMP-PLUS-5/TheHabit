@@ -1,7 +1,7 @@
 'use client';
 
 import { usePathname } from 'next/navigation';
-import { TabNavigation } from '@/app/_components/tab-navigations/TabNavigation';
+import { TabNavigation } from '@/app/_components/layouts/TabNavigation';
 import Header from '@/app/_components/layouts/Header';
 import { useLayoutRoute } from '@/public/utils/layoutRoute';
 
