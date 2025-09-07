@@ -49,6 +49,7 @@ model Challenge {
   category            ChallengeCategory @relation(fields: [categoryId], references: [id])
   user                User              @relation(fields: [userId], references: [id], onDelete: Cascade)
   routines            Routine[]
+
   @@map("challenges")
 }
 

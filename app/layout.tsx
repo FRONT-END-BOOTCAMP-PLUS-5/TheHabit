@@ -1,4 +1,4 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import '@/app/globals.css';
 import QueryProvider from '@/app/_components/providers/QueryProvider';
 import ModalProvider from '@/app/_components/providers/ModalProvider';
@@ -22,7 +22,6 @@ export const metadata: Metadata = {
     maximumScale: 1,
     userScalable: false,
   },
-  themeColor: '#000000',
   icons: {
     icon: [
       {
@@ -44,6 +43,14 @@ export const metadata: Metadata = {
       },
     ],
   },
+};
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+  themeColor: '#000000',
 };
 
 const RootLayout = ({

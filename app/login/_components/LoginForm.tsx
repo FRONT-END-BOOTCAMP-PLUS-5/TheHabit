@@ -39,7 +39,7 @@ export const LoginForm = () => {
   // 이미 로그인된 경우 메인 페이지로 리다이렉트
   useEffect(() => {
     const nickname = userInfo?.nickname;
-    if (userInfo && !isUserInfoLoading) {
+    if (userInfo && !isUserInfoLoading && nickname) {
       router.push(`/user/dashboard/${nickname}`);
     }
   }, [userInfo, isUserInfoLoading, router]);
@@ -59,7 +59,8 @@ export const LoginForm = () => {
         setError('이메일 또는 비밀번호가 올바르지 않습니다.');
       } else if (result?.ok) {
         Toast.success('로그인 성공! 🎉');
-        // router.push(`/user/dashboard/${userInfo?.nickname}`);
+        // 세션 업데이트 후 리다이렉트
+        window.location.href = '/user/dashboard';
       } else {
         setError('로그인 처리 중 예상치 못한 오류가 발생했습니다.');
       }
