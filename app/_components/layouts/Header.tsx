@@ -11,7 +11,6 @@ import { useMemo } from 'react';
 import { calculateSingleChallengeProgress } from '@/app/user/feedback/_components/CalcFeedBackData';
 import { useRouter } from 'next/navigation';
 
-//TODO : 최장 스트릭 정보 가져오기
 const Header: React.FC = () => {
   const router = useRouter();
   const { openModal } = useModalStore();
@@ -34,7 +33,7 @@ const Header: React.FC = () => {
       );
 
       let maxRun = 0;
-      let run = 0;
+      let run = 1;
       for (const v of dailyCompletions) {
         if (v === true) {
           run += 1;

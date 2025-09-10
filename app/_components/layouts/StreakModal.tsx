@@ -79,7 +79,7 @@ const StreakModal: React.FC = () => {
       <h2 className='text-xl font-bold mb-1'>최장 스트릭</h2>
       <div className='text-sm text-gray-600 mb-4'>{bestChallengeName}</div>
       <div className='flex items-center gap-2 mb-6'>
-        <span className='text-3xl font-extrabold text-primary'>{longestStreak}</span>
+        <span className='text-3xl font-extrabold text-primary'>{longestStreak + 1}</span>
         <span className='text-gray-600'>일 연속</span>
       </div>
 

@@ -144,9 +144,62 @@ const ChallengesAccordion: React.FC<ChallengesAccordionProps> = ({
 
   const [isOpen, setIsOpen] = useState<boolean>(false);
 
+  // 챌린지 전체 기간 동안의 완료율 계산 (연장 모달용)
+  const getChallengeCompletionRatio = () => {
+    const challengeRoutines = routines.filter(routine => routine.challengeId === challenge.id);
+    if (challengeRoutines.length === 0) return 0;
+
+    // 챌린지 기간 계산
+    const startDate = new Date(challenge.createdAt);
+    const endDate = new Date(challenge.endAt);
+    const today = new Date();
+
+    // 오늘까지의 유효한 날짜 범위
+    const effectiveEndDate = today < endDate ? today : endDate;
+
+    // 챌린지 기간 내의 모든 날짜 생성
+    const challengeDays = [];
+    const currentDate = new Date(startDate);
+    while (currentDate <= effectiveEndDate) {
+      challengeDays.push(new Date(currentDate));
+      currentDate.setDate(currentDate.getDate() + 1);
+    }
+
+    // 각 날짜별로 완료된 루틴 수 계산
+    let totalPossibleCompletions = 0;
+    let actualCompletions = 0;
+
+    challengeDays.forEach(date => {
+      const dateString = date.toISOString().split('T')[0];
+
+      challengeRoutines.forEach(routine => {
+        totalPossibleCompletions++;
+
+        // 해당 날짜에 이 루틴이 완료되었는지 확인
+        const isCompleted = routineCompletions.some(completion => {
+          const completionDate = new Date(completion.createdAt);
+          const completionDateString = completionDate.toISOString().split('T')[0];
+
+          return (
+            completion.routineId === routine.id &&
+            completionDateString === dateString &&
+            completion.content &&
+            completion.content.trim() !== ''
+          );
+        });
+
+        if (isCompleted) {
+          actualCompletions++;
+        }
+      });
+    });
+
+    return totalPossibleCompletions > 0 ? (actualCompletions / totalPossibleCompletions) * 100 : 0;
+  };
+
   // 챌린지 연장 모달 표시 조건 확인
   useEffect(() => {
-    // 21일 또는 66일 챌린지이고, 오늘이 종료일 이후이고, 아직 진행 중인 상태일 때
+    // 21일 또는 66일 챌린지이고, 아직 진행 중인 상태일 때
     if (
       (challengeType === '21일' || challengeType === '66일') &&
       challenge.completionProgress === 'in_progress'
@@ -158,8 +211,11 @@ const ChallengesAccordion: React.FC<ChallengesAccordionProps> = ({
       const todayOnly = new Date(today.getFullYear(), today.getMonth(), today.getDate());
       const endDateOnly = new Date(endDate.getFullYear(), endDate.getMonth(), endDate.getDate());
 
-      // 오늘이 종료일 이후이고, 모든 루틴이 완료되었을 때 연장 모달 표시
-      if (todayOnly >= endDateOnly && completedRatio === 100) {
+      // 챌린지 전체 기간 동안의 완료율 계산
+      const challengeCompletionRatio = getChallengeCompletionRatio();
+
+      // 오늘이 종료일 당일 또는 이후이고, 모든 루틴이 완료되었을 때 연장 모달 표시
+      if (todayOnly >= endDateOnly && challengeCompletionRatio === 100) {
         // 연장 모달 표시
         openModal(
           <ChallengeExtensionContent
@@ -178,7 +234,7 @@ const ChallengesAccordion: React.FC<ChallengesAccordionProps> = ({
         );
       }
     }
-  }, [challenge, challengeType, completedRatio, nickname, openModal, onRoutineAdded]);
+  }, [challenge, challengeType, routines, routineCompletions, nickname, openModal, onRoutineAdded]);
   const contentRef = useRef<HTMLDivElement>(null);
   const [contentHeight, setContentHeight] = useState<number>(0);
 
