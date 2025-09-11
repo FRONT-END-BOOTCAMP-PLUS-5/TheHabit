@@ -1,7 +1,7 @@
 import { IGPTRepository } from '@/backend/gpt/domain/repositories/IGPTRepository';
 import OpenAI from 'openai';
 import { GPTEntity } from '@/backend/gpt/domain/entities/GPTEntity';
-import { GPT_PROMPT } from '@/public/consts/gptPrompt';
+import { GPT_PROMPT } from '@/public/consts/AIPrompt';
 
 export class GPTRepository implements IGPTRepository {
   private readonly client: OpenAI;
