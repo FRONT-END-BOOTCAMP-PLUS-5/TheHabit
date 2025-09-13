@@ -25,9 +25,9 @@ export const FeedBackById = ({ id, nickname }: { id: number; nickname: string })
             {CATEGORY_CONFIG.find(category => category.id === challenge?.categoryId)?.name}
           </span>
           <span className='text-3xl font-bold'>{challenge?.name}</span>
-          {feedBackData?.data?.gptResponseContent ? (
+          {feedBackData?.data?.aiResponseContent ? (
             <span className='text-md text-gray-600 mt-4'>
-              {feedBackData?.data?.gptResponseContent}
+              {feedBackData?.data?.aiResponseContent}
             </span>
           ) : (
             <span className='text-md text-gray-600 mt-4'>

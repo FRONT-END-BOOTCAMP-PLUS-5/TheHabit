@@ -7,7 +7,7 @@ import React from 'react';
 export const FeedBackHeader = () => {
   const { data: session } = useSession();
   const nickname = session?.user?.nickname;
-  const username = session?.user?.username;
+  const username = session?.user?.name;
   const pathname = usePathname();
 
   const isFeedbackListPage = nickname ? pathname === `/user/feedback/${nickname}` : false;
