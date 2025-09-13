@@ -1,7 +1,7 @@
 import { RoutineCompletionDto } from '@/backend/routine-completions/application/dtos/RoutineCompletionDto';
 import { getRoutinesByChallenge } from '@/libs/api/routines.api';
 
-export const ValidateFeedBackGPTResponse = async (
+export const ValidateFeedBackAiResponse = async (
   challengeId: number,
   routineCompletion: RoutineCompletionDto[],
   nickname: string
@@ -21,7 +21,7 @@ export const ValidateFeedBackGPTResponse = async (
 
     // 루틴이 없으면 진행 중단
     if (routineWithCompletion.length === 0) {
-      return undefined;
+      return [];
     }
 
     const routineStatusMessages = routineWithCompletion?.map(routine => {
