@@ -25,8 +25,8 @@ export class GeminiProvider {
       ],
     });
 
-    const anyResult = result as any;
-    const responseText = anyResult?.response?.text?.() ?? anyResult?.text ?? '';
+    const anyResult = result;
+    const responseText = anyResult?.text ?? '';
     return typeof responseText === 'string' ? responseText : String(responseText ?? '');
   }
 }
