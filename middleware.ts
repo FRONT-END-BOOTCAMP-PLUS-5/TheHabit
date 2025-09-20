@@ -13,7 +13,7 @@ export default function middleware(req: NextRequest) {
 
   // 온보딩 완료 사용자는 온보딩 페이지 접근 불가
   if (onboarding === 'done' && isOnboardingPath) {
-    return NextResponse.redirect(new URL(token ? '/user/dashboard' : '/dashboard', req.url));
+    return NextResponse.redirect(new URL(token ? '/user/dashboard' : '/', req.url));
   }
 
   if (onboarding !== 'done' && !token && !isOnboardingPath) {
