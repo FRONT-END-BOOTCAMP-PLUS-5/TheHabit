@@ -1,14 +1,14 @@
-import { AddFeedbackDto } from '@/backend/feedbacks/application/dtos/AddfeedbackDto';
+import { FeedbackDto } from '@/backend/feedbacks/application/dtos/FeedbackDto';
 import { axiosInstance } from '@/public/utils/axiosInstance';
 import { ApiResponse } from '@/backend/shared/types/ApiResponse';
 
 export const FeedbackApi = async (
-  feedBack: AddFeedbackDto,
+  feedBack: FeedbackDto,
   nickname: string
-): Promise<ApiResponse<AddFeedbackDto>> => {
+): Promise<ApiResponse<FeedbackDto>> => {
   try {
     const response = await axiosInstance.post(`/api/feedback/${encodeURIComponent(nickname)}`, {
-      gptResponseContent: feedBack.gptResponseContent,
+      aiResponseContent: feedBack.aiResponseContent,
       challengeId: feedBack.challengeId,
     });
 
@@ -22,7 +22,7 @@ export const FeedbackApi = async (
 export const getFeedBackByChallengeId = async (
   challengeId: number,
   nickname: string
-): Promise<ApiResponse<AddFeedbackDto>> => {
+): Promise<ApiResponse<FeedbackDto>> => {
   try {
     const response = await axiosInstance.get(
       `/api/feedback/${encodeURIComponent(nickname)}/${challengeId}`
@@ -37,7 +37,7 @@ export const getFeedBackByChallengeId = async (
 export const getFeedBackByChallengeIdAndNickname = async (
   challengeId: number,
   nickname: string
-): Promise<ApiResponse<AddFeedbackDto>> => {
+): Promise<ApiResponse<FeedbackDto>> => {
   try {
     const response = await axiosInstance.get(
       `/api/feedback/${encodeURIComponent(nickname)}/${challengeId}`

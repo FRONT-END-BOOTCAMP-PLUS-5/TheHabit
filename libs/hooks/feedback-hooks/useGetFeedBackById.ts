@@ -1,10 +1,10 @@
 import { useQuery } from '@tanstack/react-query';
 import { getFeedBackByChallengeId } from '@/libs/api/feedback.api';
 import { ApiResponse } from '@/backend/shared/types/ApiResponse';
-import { AddFeedbackDto } from '@/backend/feedbacks/application/dtos/AddfeedbackDto';
+import { FeedbackDto } from '@/backend/feedbacks/application/dtos/FeedbackDto';
 
 export const useGetFeedBackById = (id: number, nickname: string) => {
-  return useQuery<ApiResponse<AddFeedbackDto>>({
+  return useQuery<ApiResponse<FeedbackDto>>({
     queryKey: ['feedBack', id, nickname],
     queryFn: () => getFeedBackByChallengeId(id, nickname),
     staleTime: 5 * 60 * 1000,
