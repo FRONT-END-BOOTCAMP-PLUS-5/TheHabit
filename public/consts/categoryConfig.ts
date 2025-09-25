@@ -3,6 +3,8 @@ import BookIcon from '@/public/icons/icon_study.svg';
 import DevelopIcon from '@/public/icons/icon_develop.png';
 import GuitarIcon from '@/public/icons/icon_guitar.png';
 
+export type CategoryConfigType = typeof CATEGORY_CONFIG;
+
 export const CATEGORY_CONFIG = [
   {
     name: '건강',

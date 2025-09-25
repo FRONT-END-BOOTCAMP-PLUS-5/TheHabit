@@ -30,7 +30,7 @@ export const LoginCta: React.FC = () => {
         <button
           aria-label='로그인 페이지로 이동'
           title='로그인'
-          className='cursor-pointer flex-shrink-0 inline-flex items-center justify-center h-10 px-4 rounded-lg bg-white text-primary font-semibold transition duration-200 ease-out hover:scale-105 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-white motion-reduce:transition-none motion-reduce:transform-none'
+          className='cursor-pointer h-10 px-4 rounded-lg bg-white text-primary font-semibold transition duration-200 ease-out hover:scale-105'
           onClick={handleLogin}
         >
           로그인

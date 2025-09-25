@@ -3,6 +3,7 @@
 import { FEEDBACK_DESCRIPTION } from '@/public/consts/feedBackItem';
 import Image from 'next/image';
 import React from 'react';
+import NotCompletedIcon from '@/public/icons/notCompleted.svg';
 
 export const FeedBackList: React.FC = () => {
   return (
@@ -17,7 +18,7 @@ export const FeedBackList: React.FC = () => {
         </h2>
         {Array.from({ length: 21 }).map((_, index) => (
           <div key={index} className='w-full mx-auto flex items-center justify-center'>
-            <Image src='/icons/notCompleted.svg' alt='notCompleted' width={25} height={25} />
+            <Image src={NotCompletedIcon} alt='notCompleted' width={25} height={25} />
           </div>
         ))}
       </div>
