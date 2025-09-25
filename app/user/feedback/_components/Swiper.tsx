@@ -3,7 +3,11 @@
 // app/user/feedback/_components/Swiper.tsx
 import React from 'react';
 import Image from 'next/image';
-import { FeedBackEmptyIcon, FeedBackErrorIcon, FeedBackSuccessIcon } from './FeedbackIcon';
+import {
+  FeedBackEmptyIcon,
+  FeedBackErrorIcon,
+  FeedBackSuccessIcon,
+} from '@/app/user/feedback/_components/FeedbackIcon';
 
 export const SlideContent: React.FC<{
   src?: string;
