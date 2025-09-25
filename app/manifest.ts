@@ -13,19 +13,19 @@ export default function manifest(): MetadataRoute.Manifest {
     scope: '/',
     icons: [
       {
-        src: '/images/icons/manifest-192x192.png',
+        src: '/images/icons/logo-192.png',
         sizes: '192x192',
         type: 'image/png',
         purpose: 'maskable',
       },
       {
-        src: '/images/icons/manifest-512x512.png',
+        src: '/images/icons/logo-512.png',
         sizes: '512x512',
         type: 'image/png',
         purpose: 'maskable',
       },
       {
-        src: '/images/icons/apple-touch-icon.png',
+        src: '/images/icons/logo-180.png',
         sizes: '180x180',
         type: 'image/png',
       },

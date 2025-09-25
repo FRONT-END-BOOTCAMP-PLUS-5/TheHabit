@@ -1,13 +1,12 @@
 'use client';
 
-import Image from 'next/image';
 import Link from 'next/link';
 import React, { useState, useEffect } from 'react';
 import { tabItem } from '@/public/consts/tabItem';
-import homeIcon from '@/public/icons/home.svg';
 import { useGetUserInfo } from '@/libs/hooks/user-hooks/useGetUserInfo';
 import { useRouter } from 'next/navigation';
 import ConfirmModal from '@/app/_components/modals/ConfirmModal';
+import Image from 'next/image';
 
 export const TabNavigation = () => {
   const router = useRouter();
@@ -35,7 +34,6 @@ export const TabNavigation = () => {
   }
 
   const handleClick = (href: string) => {
-    console.log(href);
     if (href === '/') {
       setIsOpen(prev => !prev);
     } else {
@@ -56,18 +54,18 @@ export const TabNavigation = () => {
                 <Image
                   src={isHover === item.name ? item.isHover : item.icon}
                   alt={item.name}
-                  className='w-7 h-7'
+                  title={item.name}
                   onMouseLeave={isMouseOut}
                   onMouseEnter={() => isMouseHover(item.name)}
                 />
               </button>
             </li>
           ))}
-          <div className='absolute -top-6 left-1/2 -translate-x-1/2 w-16 h-16 bg-[#93D50B] cursor-pointer hover:scale-105 transition-transform duration-200 hover:opacity-95 flex items-center justify-center rounded-full shadow-lg'>
+          <li className='absolute -top-6 left-1/2 -translate-x-1/2 w-16 h-16 bg-[#93D50B] cursor-pointer hover:scale-105 transition-transform duration-200 hover:opacity-95 flex items-center justify-center rounded-full shadow-lg'>
             <Link href={userInfo?.nickname ? `/user/dashboard/${userInfo.nickname}` : '/'}>
-              <Image src={homeIcon} alt='홈으로 이동' className='w-8 h-8' />
+              <Image src='/icons/home.svg' alt='홈으로 이동' width={24} height={24} />
             </Link>
-          </div>
+          </li>
         </ul>
       </nav>
       {isOpen && (
