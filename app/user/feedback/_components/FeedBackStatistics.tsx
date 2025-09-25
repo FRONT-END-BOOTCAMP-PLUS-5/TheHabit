@@ -15,10 +15,6 @@ export const FeedBackStatistics: React.FC<{ dashBoardData: DashboardDto }> = ({
 }) => {
   const { challenge, routines, routineCompletions } = dashBoardData;
 
-  const categoryById = CATEGORY_CONFIG.map(category => ({
-    [category.id]: category,
-  }));
-
   // 슬라이드에 전달할 최소 데이터만 구성
   const slidesData = useMemo(() => {
     return challenge.map(challenge => {
@@ -43,7 +39,7 @@ export const FeedBackStatistics: React.FC<{ dashBoardData: DashboardDto }> = ({
         categoryName: category?.name,
       };
     });
-  }, [challenge, routines, routineCompletions, categoryById]);
+  }, [challenge, routines, routineCompletions]);
 
   if (!challenge || challenge.length === 0) {
     return (
@@ -78,8 +74,8 @@ export const FeedBackStatistics: React.FC<{ dashBoardData: DashboardDto }> = ({
           <SwiperSlide key={slide.id}>
             <SlideContent
               name={slide.name}
-              src={slide.src}
-              color={slide.color}
+              categorySrc={slide.src}
+              categoryColor={slide.color}
               dailyCompletions={slide.dailyCompletions}
               categoryName={slide.categoryName}
             />

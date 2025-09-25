@@ -16,7 +16,7 @@ interface WeeklySlideProps {
   onDateSelect?: (date: Date) => void;
 }
 
-const WeeklySlide: React.FC<WeeklySlideProps> = ({ onDateSelect: _onDateSelect }) => {
+const WeeklySlide: React.FC<WeeklySlideProps> = () => {
   // useMemo로 날짜 계산 최적화
   const weekDays = useMemo(() => {
     const today = new Date();

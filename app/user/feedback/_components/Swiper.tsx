@@ -9,30 +9,38 @@ import {
   FeedBackSuccessIcon,
 } from '@/app/user/feedback/_components/FeedbackIcon';
 
-export const SlideContent: React.FC<{
-  src?: string;
+type SlideContentProps = {
   name?: string;
-  color?: string;
+  categorySrc?: string;
   categoryName?: string;
+  categoryColor?: string;
   dailyCompletions: (boolean | null)[];
-}> = React.memo(({ name, src, color, dailyCompletions, categoryName }) => {
+};
+
+export const SlideContent: React.FC<SlideContentProps> = React.memo(function SlideContent({
+  name,
+  categorySrc,
+  categoryName,
+  categoryColor,
+  dailyCompletions,
+}) {
   return (
     <div className='p-5'>
       <h3 className='text-xl font-bold flex items-center relative'>
         <p className='w-2/3 whitespace-nowrap overflow-hidden text-ellipsis'>{name}</p>
-        {src && (
+        {categorySrc && (
           <div
             className='absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-2 px-2.5 py-1 rounded-full shadow-md backdrop-blur-sm border'
-            style={{ backgroundColor: `${color}22`, borderColor: color }}
+            style={{ backgroundColor: `${categoryColor}22`, borderColor: categoryColor }}
           >
             <Image
-              src={src}
-              alt={name || ''}
+              src={categorySrc}
+              alt={categoryName || ''}
               width={18}
               height={18}
               className='rounded-full border border-white/50 shadow-sm'
             />
-            <span className='text-sm font-bold' style={{ color: color }}>
+            <span className='text-sm font-bold' style={{ color: categoryColor }}>
               {categoryName}
             </span>
           </div>
