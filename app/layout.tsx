@@ -8,7 +8,7 @@ import ToastProvider from '@/app/_components/providers/ToastProvider';
 import LayoutProvider from '@/app/_components/providers/LayoutProvider';
 
 export const metadata: Metadata = {
-  title: 'TheHabit - 습관 관리 앱',
+  title: 'TheHabit -   습관 관리 앱',
   description: '당신의 습관을 체계적으로 관리하는 Progressive Web App',
   manifest: '/manifest.json',
   appleWebApp: {
