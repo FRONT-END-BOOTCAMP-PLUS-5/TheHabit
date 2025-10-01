@@ -25,18 +25,9 @@ interface ISignupItem {
 }
 
 export const SignupItem: ISignupItem[] = [
+
   {
     id: 1,
-    label: '이름',
-    name: 'username',
-    type: 'text',
-    placeholder: '이름',
-    required: true,
-    regEx: Rex.username.korean,
-    errorMessage: '이름을 입력해주세요',
-  },
-  {
-    id: 2,
     label: '이메일',
     name: 'email',
     type: 'email',
@@ -46,7 +37,7 @@ export const SignupItem: ISignupItem[] = [
     errorMessage: '올바른 이메일 형식을 입력하세요',
   },
   {
-    id: 3,
+    id: 2,
     label: '비밀번호',
     name: 'password',
     type: 'password',
@@ -56,7 +47,7 @@ export const SignupItem: ISignupItem[] = [
     errorMessage: '8-15자의 영문 대소문자, 숫자, 특수문자를 포함하세요',
   },
   {
-    id: 4,
+    id: 3,
     label: '비밀번호 확인',
     name: 'passwordConfirm',
     type: 'password',

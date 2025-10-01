@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { useForm } from 'react-hook-form';
-import { CreateRoutineRequestDto } from '@/backend/routines/applications/dtos/RoutineDto';
+import { CreateRoutineRequestDto } from '@/backend/routines/application/dtos/RoutineDto';
 import { getEmojiByNumber, getEmojiNumbers } from '@/public/consts/routineItem';
 import { useModalStore } from '@/libs/stores/modalStore';
 import { useCreateRoutine } from '@/libs/hooks/routines-hooks/useCreateRoutine';

@@ -1,6 +1,6 @@
 import NoneSearchData from '@/app/_components/none/NoneSearchData';
 import React from 'react';
-import { newUserDto } from '@/backend/users/applications/dtos/UserDto';
+import { newUserDto } from '@/backend/users/application/dtos/UserDto';
 import { ProfileImage } from '@/app/_components/profile-images/ProfileImage';
 import NoneProfile from '@/app/_components/none/NoneProfile';
 import { Button } from '@/app/_components/buttons/Button';

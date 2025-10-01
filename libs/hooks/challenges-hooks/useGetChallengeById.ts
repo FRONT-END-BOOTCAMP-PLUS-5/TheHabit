@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { getChallengeById } from '@/libs/api/challenges.api';
-import { ChallengeDto } from '@/backend/challenges/applications/dtos/ChallengeDto';
+import { ChallengeDto } from '@/backend/challenges/application/dtos/ChallengeDto';
 
 /**
  * 특정 챌린지 상세 정보를 조회하는 훅

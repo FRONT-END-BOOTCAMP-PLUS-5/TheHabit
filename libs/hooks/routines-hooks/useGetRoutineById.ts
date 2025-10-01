@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { getRoutineById } from '@/libs/api/routines.api';
-import { ReadRoutineResponseDto } from '@/backend/routines/applications/dtos/RoutineDto';
+import { ReadRoutineResponseDto } from '@/backend/routines/application/dtos/RoutineDto';
 
 /**
  * 특정 루틴 상세 정보를 조회하는 훅

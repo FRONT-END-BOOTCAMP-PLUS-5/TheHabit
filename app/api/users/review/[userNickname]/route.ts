@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { CreateUserReviewUsecase } from '@/backend/users/applications/usecases/CreateUserReviewUsecase';
-import { PrUserRepository } from '@/backend/users/infrastructures/repositories/PrUserRepository';
-import { GetUserReviewUsecase } from '@/backend/users/applications/usecases/GetUserReviewUsecase';
-import { DeleteReviewEmotionByUserUsecase } from '@/backend/users/applications/usecases/DeleteReviewByUserUsecase';
+import { CreateUserReviewUsecase } from '@/backend/users/application/usecases/CreateUserReviewUsecase';
+import { PrUserRepository } from '@/backend/users/infrastructure/repositories/PrUserRepository';
+import { GetUserReviewUsecase } from '@/backend/users/application/usecases/GetUserReviewUsecase';
+import { DeleteReviewEmotionByUserUsecase } from '@/backend/users/application/usecases/DeleteReviewByUserUsecase';
 import { ApiResponse } from '@/backend/shared/types/ApiResponse';
-import { UserReviewDto } from '@/backend/users/applications/dtos/UserReviewDto';
+import { UserReviewDto } from '@/backend/users/application/dtos/UserReviewDto';
 
 const repository = new PrUserRepository();
 

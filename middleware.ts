@@ -1,33 +1,38 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getToken } from 'next-auth/jwt';
 
-export default async function middleware(req: NextRequest) {
+export default function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
-  const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
-  const isLoggedIn = !!token;
-  const nickname =
-    typeof token?.nickname === 'string' && token.nickname.length > 0 ? token.nickname : undefined;
-  const onboardingDone = req.cookies.get('onboarding')?.value === 'done';
+  console.log('pathname', pathname);
 
-  // 이미 로그인한 사용자가 메인(온보딩) 접근 시 대시보드로
-  if (isLoggedIn && (pathname === '/' || pathname.startsWith('/onboarding'))) {
-    const target = nickname ? `/user/dashboard/${nickname}` : '/user/dashboard';
-    return NextResponse.redirect(new URL(target, req.url));
+  const token2 = req.cookies.get('_Secure-next-auth.session-token');
+
+  const token = req.cookies.get('next-auth.session-token')?.value;
+  const onboarding = req.cookies.get('onboarding')?.value;
+
+  const isOnboardingPath = pathname.startsWith('/onboarding');
+
+  // 온보딩 완료 사용자는 온보딩 페이지 접근 불가
+  if (onboarding === 'done' && isOnboardingPath) {
+    return NextResponse.redirect(new URL(token ? '/user/dashboard' : '/dashboard', req.url));
   }
 
-  // 온보딩을 완료하지 않았고, 루트 접근 시 온보딩으로 유도
-  if (!isLoggedIn && !onboardingDone && pathname === '/') {
+  if (onboarding !== 'done' && !token && !isOnboardingPath) {
     return NextResponse.redirect(new URL('/onboarding', req.url));
   }
 
+  // 이미 로그인한 사용자가 메인 페이지에 접근하는 것을 차단 (온보딩은 제외)
+  if (token && pathname === '/') {
+    return NextResponse.redirect(new URL('/user/dashboard', req.url));
+  }
+
   // /user 경로는 로그인이 필요함 (메인 온보딩 페이지는 제외)
-  if (!isLoggedIn && pathname.startsWith('/user')) {
-    return NextResponse.redirect(new URL('/login', req.url));
+  if (!token && pathname.startsWith('/user')) {
+    return NextResponse.redirect(new URL('/', req.url));
   }
 
   return NextResponse.next();
 }
 
 export const config = {
-  matcher: ['/', '/user/:path*', '/onboarding/:path*'],
+  matcher: ['/user/:path*', '/', '/onboarding/:path*'],
 };

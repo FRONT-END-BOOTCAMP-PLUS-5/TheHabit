@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/app/api/auth/[...nextauth]/auth';
-import { PrPushSubscriptionRepository } from '@/backend/notifications/infrastructures/repositories/PrPushSubscriptionRepository';
-import { SubscribePushNotificationUseCase } from '@/backend/notifications/applications/usecases/SubscribePushNotificationUseCase';
+import { PrPushSubscriptionRepository } from '@/backend/notifications/infrastructure/repositories/PrPushSubscriptionRepository';
+import { SubscribePushNotificationUseCase } from '@/backend/notifications/application/usecases/SubscribePushNotificationUseCase';
 import { ApiResponse } from '@/backend/shared/types/ApiResponse';
-import { PushSubscriptionDto } from '@/backend/notifications/applications/dtos/PushSubscriptionDto';
+import { PushSubscriptionDto } from '@/backend/notifications/application/dtos/PushSubscriptionDto';
 
 // Repository와 UseCase 인스턴스 생성
 const pushSubscriptionRepository = new PrPushSubscriptionRepository();

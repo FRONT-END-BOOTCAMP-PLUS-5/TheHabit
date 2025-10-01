@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { newUserDto } from '@/backend/users/applications/dtos/UserDto';
+import { newUserDto } from '@/backend/users/application/dtos/UserDto';
 import { getUsers } from '@/libs/api/users.api';
 
 export const useGetUsers = (nickname: string, fromUserId: string, keyword: string) => {

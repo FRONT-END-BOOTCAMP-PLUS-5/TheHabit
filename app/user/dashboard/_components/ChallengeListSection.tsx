@@ -11,7 +11,7 @@ import AddChallengeForm from './AddChallengeForm';
 import { useGetDashboardByNickname } from '@/libs/hooks/dashboard-hooks/useGetDashboardByNickname';
 import { useParams } from 'next/navigation';
 import { useUserPage } from '@/libs/hooks/user-hooks/useUserPage';
-import { ChallengeDto } from '@/backend/challenges/applications/dtos/ChallengeDto';
+import { ChallengeDto } from '@/backend/challenges/application/dtos/ChallengeDto';
 import AllChallengeList from './AllChallengeList';
 import CategoryChallengeList from './CategoryChallengeList';
 import HistoryChallengeList from './HistoryChallengeList';

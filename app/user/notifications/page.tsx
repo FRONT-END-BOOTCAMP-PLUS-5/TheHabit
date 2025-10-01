@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import { NotificationList } from './_components/NotificationList';
 import { PushSubscriptionToggle } from './_components/PushSubscriptionToggle';
-import { Notification } from '@/backend/notifications/domains/entities/Notification';
+import { Notification } from '@/backend/notifications/domain/entities/Notification';
 import { LoadingSpinner } from '@/app/_components/loading/LoadingSpinner';
 import { useRouter } from 'next/navigation';
 

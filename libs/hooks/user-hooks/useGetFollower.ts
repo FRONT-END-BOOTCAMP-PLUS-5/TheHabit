@@ -1,6 +1,6 @@
 import { useQuery, UseQueryOptions } from '@tanstack/react-query';
 import { getFollowerByToUserId } from '@/libs/api/follows.api';
-import { FollowerDto } from '@/backend/follows/applications/dtos/FollowerDto';
+import { FollowerDto } from '@/backend/follows/application/dtos/FollowerDto';
 
 type FollowerQueryResponse = {
   success: boolean;

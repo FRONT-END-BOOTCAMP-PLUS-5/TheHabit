@@ -3,7 +3,7 @@ import { ApiResponse } from '@/backend/shared/types/ApiResponse';
 import {
   RoutineCompletionDto,
   CreateRoutineCompletionRequestDto,
-} from '@/backend/routine-completions/applications/dtos/RoutineCompletionDto';
+} from '@/backend/routine-completions/application/dtos/RoutineCompletionDto';
 
 // 루틴 완료 생성 (이미지 업로드 포함)
 export const createRoutineCompletion = async (

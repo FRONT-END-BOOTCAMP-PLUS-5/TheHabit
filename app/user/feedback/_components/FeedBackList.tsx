@@ -7,7 +7,6 @@ import { FeedBackCategoryProgress } from '@/app/user/feedback/_components/FeedBa
 import { FeedBackDescription } from '@/app/user/feedback/_components/FeedBackDescription';
 import { FeedBackDetail } from '@/app/user/feedback/_components/FeedBackDetail';
 import { FeedBackBarChart } from '@/app/user/feedback/_components/FeedBackBarChart';
-import { useGetUserInfo } from '@/libs/hooks/user-hooks/useGetUserInfo';
 import { FeedBackSkeleton } from '@/app/user/feedback/_components/FeedBackSkeleton';
 
 const FEEDBACK_CATEGORIES = [
@@ -19,9 +18,7 @@ interface FeedBackListProps {
   nickname?: string;
 }
 
-export const FeedBackList: React.FC<FeedBackListProps> = ({ nickname: nicknameProp }) => {
-  const { userInfo } = useGetUserInfo();
-  const nickname = nicknameProp ?? userInfo?.nickname;
+export const FeedBackList: React.FC<FeedBackListProps> = ({ nickname }) => {
   const { data: dashBoardData, isLoading } = useGetDashboardByNickname(nickname || '');
   const [selectedCategoryName, setSelectedCategoryName] = useState<string>('통계');
 

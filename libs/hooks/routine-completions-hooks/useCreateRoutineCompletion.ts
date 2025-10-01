@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { RoutineCompletionDto, CreateRoutineCompletionRequestDto } from '@/backend/routine-completions/applications/dtos/RoutineCompletionDto';
+import { RoutineCompletionDto, CreateRoutineCompletionRequestDto } from '@/backend/routine-completions/application/dtos/RoutineCompletionDto';
 import { createRoutineCompletion } from '@/libs/api/routine-completions.api';
 import { ApiResponse } from '@/backend/shared/types/ApiResponse';
 import { Toast } from '@/app/_components/toasts/Toast';

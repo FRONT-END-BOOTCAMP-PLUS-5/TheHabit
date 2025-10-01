@@ -1,8 +1,8 @@
 import { IDashboardRepository } from '@/backend/dashboards/domain/repository/IDashboardRepository';
-import { Dashboard } from '@/backend/dashboards/domain/entity/Dashboard';
+import { Dashboard } from '@/backend/dashboards/domain/entities/Dashboard';
 
 export class GetDashboardByNicknameUsecase {
-  constructor(private dashboardRepository: IDashboardRepository) { }
+  constructor(private dashboardRepository: IDashboardRepository) {}
 
   async execute(nickname: string): Promise<Dashboard | null> {
     try {

@@ -6,6 +6,8 @@ import CustomInput from '@/app/_components/inputs/CustomInput';
 import { Controller, FormProvider, useForm } from 'react-hook-form';
 import { Button } from '@/app/_components/buttons/Button';
 import { useSignUp } from '@/libs/hooks/signup/useSignUp';
+import { useRouter } from 'next/navigation';
+import Toast from '@/app/_components/toasts/Toast';
 
 interface ISignupForm {
   username: string;
@@ -19,6 +21,7 @@ interface ISignupForm {
 }
 
 export const SignUpForm = () => {
+  const router = useRouter();
   const methods = useForm<ISignupForm>({
     mode: 'onChange',
     defaultValues: {
@@ -56,8 +59,13 @@ export const SignUpForm = () => {
       }
 
       await signUp(formData);
+      Toast.success('회원가입 성공! 🎉');
+
+      setTimeout(() => {
+        router.push('/login');
+      }, 3000);
     } catch (error) {
-      console.error(error);
+      Toast.error('회원가입 실패! ❌');
     }
   };
 

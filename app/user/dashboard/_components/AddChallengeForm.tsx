@@ -1,8 +1,8 @@
 'use client';
 import React, { useEffect, useMemo } from 'react';
 import { useForm } from 'react-hook-form';
-import { AddChallengeRequestDto } from '@/backend/challenges/applications/dtos/AddChallengeDto';
-import { ChallengeDto } from '@/backend/challenges/applications/dtos/ChallengeDto';
+import { AddChallengeRequestDto } from '@/backend/challenges/application/dtos/AddChallengeDto';
+import { ChallengeDto } from '@/backend/challenges/application/dtos/ChallengeDto';
 import Image from 'next/image';
 import HealthIcon from '@/public/icons/icon_health.png';
 import BookIcon from '@/public/icons/icon_study.svg';

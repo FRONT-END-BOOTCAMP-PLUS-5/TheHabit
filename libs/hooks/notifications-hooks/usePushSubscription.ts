@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { subscribePushNotification, unsubscribePushNotification } from '@/libs/api/notifications.api';
-import { PushSubscriptionDto } from '@/backend/notifications/applications/dtos/PushSubscriptionDto';
+import { PushSubscriptionDto } from '@/backend/notifications/application/dtos/PushSubscriptionDto';
 
 /**
  * 푸시 알림 구독을 관리하는 훅

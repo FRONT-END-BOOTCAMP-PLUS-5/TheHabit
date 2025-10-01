@@ -1,6 +1,6 @@
 'use client';
 
-import { UserChallengeAndRoutineAndFollowAndCompletionDto } from '@/backend/users/applications/dtos/UserChallengeAndRoutineAndFollowAndCompletion';
+import { UserChallengeAndRoutineAndFollowAndCompletionDto } from '@/backend/users/application/dtos/UserChallengeAndRoutineAndFollowAndCompletion';
 
 export const ChallengeSelectComponent = ({
   getUserData,

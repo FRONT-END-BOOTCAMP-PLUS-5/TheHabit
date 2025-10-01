@@ -3,7 +3,7 @@ import {
   PushSubscriptionDto, 
   CreatePushSubscriptionRequestDto,
   UnsubscribePushNotificationRequestDto 
-} from '@/backend/notifications/applications/dtos/PushSubscriptionDto';
+} from '@/backend/notifications/application/dtos/PushSubscriptionDto';
 import { ApiResponse } from '@/backend/shared/types/ApiResponse';
 
 // 1. 푸시 알림 구독

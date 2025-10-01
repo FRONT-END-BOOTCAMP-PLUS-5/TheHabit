@@ -4,7 +4,7 @@ import {
   InfiniteData, // InfiniteData를 import 합니다.
 } from '@tanstack/react-query';
 import { getUserRoutineCompletion } from '@/libs/api/routines.api';
-import { CreateRoutineCompletionResponseDto } from '@/backend/routine-completions/applications/dtos/RoutineCompletionDto';
+import { CreateRoutineCompletionResponseDto } from '@/backend/routine-completions/application/dtos/RoutineCompletionDto';
 
 interface IUserCompletions {
   data: CreateRoutineCompletionResponseDto[];

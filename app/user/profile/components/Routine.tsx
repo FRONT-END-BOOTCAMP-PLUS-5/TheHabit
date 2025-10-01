@@ -1,6 +1,6 @@
 'use client';
 
-import { UserChallengeAndRoutineAndFollowAndCompletionDto } from '@/backend/users/applications/dtos/UserChallengeAndRoutineAndFollowAndCompletion';
+import { UserChallengeAndRoutineAndFollowAndCompletionDto } from '@/backend/users/application/dtos/UserChallengeAndRoutineAndFollowAndCompletion';
 import { EMOJI_MAP } from '@/public/consts/routineItem';
 import { getYearAndMonthAndDay } from '@/public/utils/dateUtils';
 import { TextSkeleton } from '@/app/_components/skeleton/Skeleton';

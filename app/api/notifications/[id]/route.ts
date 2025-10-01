@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/app/api/auth/[...nextauth]/auth';
-import { PrNotificationRepository } from '@/backend/notifications/infrastructures/repositories/PrNotificationRepository';
-import { MarkNotificationAsReadUsecase } from '@/backend/notifications/applications/usecases/MarkNotificationAsReadUsecase';
+import { PrNotificationRepository } from '@/backend/notifications/infrastructure/repositories/PrNotificationRepository';
+import { MarkNotificationAsReadUsecase } from '@/backend/notifications/application/usecases/MarkNotificationAsReadUsecase';
 import { ApiResponse } from '@/backend/shared/types/ApiResponse';
-import { Notification } from '@/backend/notifications/domains/entities/Notification';
+import { Notification } from '@/backend/notifications/domain/entities/Notification';
 
 const repository = new PrNotificationRepository();
 

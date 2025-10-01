@@ -3,7 +3,7 @@ import { updateRoutine } from '@/libs/api/routines.api';
 import {
   UpdateRoutineRequestDto,
   ReadRoutineResponseDto,
-} from '@/backend/routines/applications/dtos/RoutineDto';
+} from '@/backend/routines/application/dtos/RoutineDto';
 import { ApiResponse } from '@/backend/shared/types/ApiResponse';
 
 /**

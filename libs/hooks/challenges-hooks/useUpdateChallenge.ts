@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { updateChallenge } from '@/libs/api/challenges.api';
-import { AddChallengeRequestDto } from '@/backend/challenges/applications/dtos/AddChallengeDto';
-import { ChallengeDto } from '@/backend/challenges/applications/dtos/ChallengeDto';
+import { AddChallengeRequestDto } from '@/backend/challenges/application/dtos/AddChallengeDto';
+import { ChallengeDto } from '@/backend/challenges/application/dtos/ChallengeDto';
 
 interface UpdateChallengeParams {
   id: number;

@@ -1,12 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { PrUserRepository } from '@/backend/users/infrastructures/repositories/PrUserRepository';
-import { DeleteUserUsecase } from '@/backend/users/applications/usecases/DeleteUserUsecase';
-import { GetUserChallengeAndRoutineAndFollowAndCompletion } from '@/backend/users/applications/usecases/GetUserChallengeAndRoutineAndFollowAndCompletion';
+import { PrUserRepository } from '@/backend/users/infrastructure/repositories/PrUserRepository';
+import { DeleteUserUsecase } from '@/backend/users/application/usecases/DeleteUserUsecase';
+import { GetUserChallengeAndRoutineAndFollowAndCompletion } from '@/backend/users/application/usecases/GetUserChallengeAndRoutineAndFollowAndCompletion';
 import { ApiResponse } from '@/backend/shared/types/ApiResponse';
 import {
   UserChallengeAndRoutineAndFollowAndCompletionDto,
   UserChallengeAndRoutineAndFollowAndCompletionDtoMapper,
-} from '@/backend/users/applications/dtos/UserChallengeAndRoutineAndFollowAndCompletion';
+} from '@/backend/users/application/dtos/UserChallengeAndRoutineAndFollowAndCompletion';
 
 const repository = new PrUserRepository();
 

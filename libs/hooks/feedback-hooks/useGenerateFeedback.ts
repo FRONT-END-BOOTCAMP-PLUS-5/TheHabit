@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { RoutineCompletionDto } from '@/backend/routine-completions/applications/dtos/RoutineCompletionDto';
+import { RoutineCompletionDto } from '@/backend/routine-completions/application/dtos/RoutineCompletionDto';
 import { FeedBackPostData } from '@/app/user/feedback/_components/FeedBackPostData';
 
 export interface GenerateFeedbackInput {

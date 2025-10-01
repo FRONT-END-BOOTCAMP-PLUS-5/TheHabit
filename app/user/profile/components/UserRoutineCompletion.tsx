@@ -10,7 +10,7 @@ import {
   deleteUserRoutineCompletionEmotion,
   getUserRoutineCompletionReview,
 } from '@/libs/api/users.api';
-import { UserReviewDto } from '@/backend/users/applications/dtos/UserReviewDto';
+import { UserReviewDto } from '@/backend/users/application/dtos/UserReviewDto';
 import NoneImg from '@/app/_components/none/NoneImg';
 import { useGetUserInfo } from '@/libs/hooks/user-hooks/useGetUserInfo';
 

@@ -1,18 +1,18 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { AddRoutineCompletionUseCase } from '@/backend/routine-completions/applications/usecases/AddRoutineCompletionUseCase';
-import { UpdateRoutineCompletionUseCase } from '@/backend/routine-completions/applications/usecases/UpdateRoutineCompletionUseCase';
-import { DeleteRoutineCompletionUseCase } from '@/backend/routine-completions/applications/usecases/DeleteRoutineCompletionUseCase';
-import { GetRoutineCompletionsUseCase } from '@/backend/routine-completions/applications/usecases/GetRoutineCompletionsUseCase';
-import { PrRoutineCompletionsRepository } from '@/backend/routine-completions/infrastructures/repositories/PrRoutineCompletionsRepository';
+import { AddRoutineCompletionUseCase } from '@/backend/routine-completions/application/usecases/AddRoutineCompletionUseCase';
+import { UpdateRoutineCompletionUseCase } from '@/backend/routine-completions/application/usecases/UpdateRoutineCompletionUseCase';
+import { DeleteRoutineCompletionUseCase } from '@/backend/routine-completions/application/usecases/DeleteRoutineCompletionUseCase';
+import { GetRoutineCompletionsUseCase } from '@/backend/routine-completions/application/usecases/GetRoutineCompletionsUseCase';
+import { PrRoutineCompletionsRepository } from '@/backend/routine-completions/infrastructure/repositories/PrRoutineCompletionsRepository';
 import { s3Service } from '@/backend/shared/services/s3.service';
-import { RoutineCompletionDto, RoutineCompletionDtoMapper } from '@/backend/routine-completions/applications/dtos/RoutineCompletionDto';
+import { RoutineCompletionDto, RoutineCompletionDtoMapper } from '@/backend/routine-completions/application/dtos/RoutineCompletionDto';
 import { ApiResponse } from '@/backend/shared/types/ApiResponse';
-import { PrNotificationRepository } from '@/backend/notifications/infrastructures/repositories/PrNotificationRepository';
-import { CreateNotificationUsecase } from '@/backend/notifications/applications/usecases/CreateNotificationUsecase';
-import { PrUserRepository } from '@/backend/users/infrastructures/repositories/PrUserRepository';
-import { GetUserUsecase } from '@/backend/users/applications/usecases/GetUserUsecase';
-import { PrFollowRepository } from '@/backend/follows/infrastructures/repositories/PrFollowRepository';
-import { GetFollowerByToUserIdUsecase } from '@/backend/follows/applications/usecases/GetFollowerByToUserIdUsecase';
+import { PrNotificationRepository } from '@/backend/notifications/infrastructure/repositories/PrNotificationRepository';
+import { CreateNotificationUsecase } from '@/backend/notifications/application/usecases/CreateNotificationUsecase';
+import { PrUserRepository } from '@/backend/users/infrastructure/repositories/PrUserRepository';
+import { GetUserUsecase } from '@/backend/users/application/usecases/GetUserUsecase';
+import { PrFollowRepository } from '@/backend/follows/infrastructure/repositories/PrFollowRepository';
+import { GetFollowerByToUserIdUsecase } from '@/backend/follows/application/usecases/GetFollowerByToUserIdUsecase';
 
 const createAddRoutineCompletionUseCase = () => {
   const repository = new PrRoutineCompletionsRepository();

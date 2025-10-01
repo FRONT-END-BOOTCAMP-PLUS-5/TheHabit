@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { PrFollowRepository } from '@/backend/follows/infrastructures/repositories/PrFollowRepository';
-import { GetFollowerByToUserIdUsecase } from '@/backend/follows/applications/usecases/GetFollowerByToUserIdUsecase';
+import { PrFollowRepository } from '@/backend/follows/infrastructure/repositories/PrFollowRepository';
+import { GetFollowerByToUserIdUsecase } from '@/backend/follows/application/usecases/GetFollowerByToUserIdUsecase';
 
 const repository = new PrFollowRepository();
 

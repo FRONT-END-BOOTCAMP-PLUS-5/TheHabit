@@ -13,6 +13,7 @@ import { useGetUserInfo } from '@/libs/hooks/user-hooks/useGetUserInfo';
 import { RoutineComponent } from '@/app/user/profile/components/Routine';
 import LogOut from '@/app/user/profile/edit/_components/LogOut';
 import ConfirmModal from '@/app/_components/modals/ConfirmModal';
+import { signOut } from 'next-auth/react';
 
 const UserProfileEditPage = () => {
   const router = useRouter();
@@ -26,7 +27,18 @@ const UserProfileEditPage = () => {
     const response = await deleteUserRegister(userInfo?.nickname || '');
     if (response.data) {
       setOpen(false);
+      
+      // 1. NextAuth 세션 무효화
+      await signOut({ 
+        redirect: false,
+        callbackUrl: '/login'
+      });
+      
+      // 2. 로그인 페이지로 강제 이동
       router.push('/login');
+      
+      // 3. 페이지 새로고침으로 모든 상태 초기화
+      window.location.href = '/login';
     }
   };
 

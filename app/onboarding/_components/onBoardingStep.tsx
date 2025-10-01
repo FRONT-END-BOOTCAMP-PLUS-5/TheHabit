@@ -3,11 +3,14 @@
 import { useState } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
+// import { useSession } from 'next-auth/react';
 import { ONBOARDING_LIST } from '@/public/consts/onboarding';
 
-export const OnBoardingStep = () => {
+export const OnBoardingStepComponent = () => {
   const [currentStep, setCurrentStep] = useState(0);
   const router = useRouter();
+  // const { data: session } = useSession();
+  // const userNickname = session?.user?.nickname;
 
   const currentOnboarding = ONBOARDING_LIST[currentStep];
 
@@ -17,7 +20,16 @@ export const OnBoardingStep = () => {
     } else {
       // 온보딩 완료 표시 쿠키 설정 후 로그인 페이지로 이동
       document.cookie = `onboarding=done; path=/; max-age=${60 * 60 * 24 * 365}`;
-      router.push('/login');
+      router.push('/dashboard');
+
+      // 로그인 상태에 따라 다른 페이지로 이동
+      // if (session?.user) {
+      //   // 로그인이 되어있으면 대시보드로
+      //   router.push(`/user/dashboard/${userNickname}`);
+      // } else {
+      //   // 로그인이 안되어있으면 랜딩 페이지로
+      //   router.push('/');
+      // }
     }
   };
 
@@ -28,8 +40,8 @@ export const OnBoardingStep = () => {
         {ONBOARDING_LIST.map((item, index) => (
           <div
             key={item?.id}
-            className={`w-3 h-3 rounded-full transition-colors duration-300 ${
-              index === currentStep ? 'bg-green-500' : 'bg-gray-300'
+            className={`w-3 h-3 rounded-full transition-colors duration-300 mb-3 ${
+              index === currentStep ? 'bg-primary' : 'bg-gray-300'
             }`}
           />
         ))}
@@ -66,7 +78,7 @@ export const OnBoardingStep = () => {
       {/* 다음 버튼 */}
       <div className='w-full'>
         <button
-          className='w-full text-lg font-semibold text-white bg-green-500 hover:bg-green-600 transition-colors duration-200 rounded-xl h-14'
+          className='w-full text-lg font-semibold text-white bg-primary cursor-pointer rounded-xl h-14 transition duration-200 ease-out hover:scale-105 hover:shadow-lg active:scale-95'
           onClick={handleNext}
           type='button'
         >

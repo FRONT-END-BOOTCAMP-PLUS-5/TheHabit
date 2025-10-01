@@ -1,5 +1,5 @@
-import { ReadRoutineResponseDto } from '@/backend/routines/applications/dtos/RoutineDto';
-import { RoutineCompletionDto } from '@/backend/routine-completions/applications/dtos/RoutineCompletionDto';
+import { ReadRoutineResponseDto } from '@/backend/routines/application/dtos/RoutineDto';
+import { RoutineCompletionDto } from '@/backend/routine-completions/application/dtos/RoutineCompletionDto';
 
 // 한국어로 포맷된 날짜 문자열 가져오기
 export const getKoreanDate = (): string => {

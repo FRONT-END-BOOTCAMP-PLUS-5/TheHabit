@@ -2,9 +2,9 @@
 
 import { useState } from 'react';
 import { CHALLENGE_COLORS } from '@/public/consts/challengeColors';
-import { ChallengeDto } from '@/backend/challenges/applications/dtos/ChallengeDto';
-import { ReadRoutineResponseDto } from '@/backend/routines/applications/dtos/RoutineDto';
-import { RoutineCompletionDto } from '@/backend/routine-completions/applications/dtos/RoutineCompletionDto';
+import { ChallengeDto } from '@/backend/challenges/application/dtos/ChallengeDto';
+import { ReadRoutineResponseDto } from '@/backend/routines/application/dtos/RoutineDto';
+import { RoutineCompletionDto } from '@/backend/routine-completions/application/dtos/RoutineCompletionDto';
 import { EmojiDisplay } from '@/app/_components/emoji/EmojiDisplay';
 import { useModalStore } from '@/libs/stores/modalStore';
 import { useGetUserInfo } from '@/libs/hooks/user-hooks/useGetUserInfo';

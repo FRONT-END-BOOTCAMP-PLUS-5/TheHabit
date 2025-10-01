@@ -1,9 +1,9 @@
 'use client';
 
 import ChallengesAccordion from '@/app/_components/challenges-accordion/ChallengesAccordion';
-import { ChallengeDto } from '@/backend/challenges/applications/dtos/ChallengeDto';
-import { ReadRoutineResponseDto } from '@/backend/routines/applications/dtos/RoutineDto';
-import { RoutineCompletionDto } from '@/backend/routine-completions/applications/dtos/RoutineCompletionDto';
+import { ChallengeDto } from '@/backend/challenges/application/dtos/ChallengeDto';
+import { ReadRoutineResponseDto } from '@/backend/routines/application/dtos/RoutineDto';
+import { RoutineCompletionDto } from '@/backend/routine-completions/application/dtos/RoutineCompletionDto';
 import type { DashboardDto } from '@/backend/dashboards/application/dtos/DashboardDto';
 interface CategoryChallengeListProps {
   challenges: ChallengeDto[];

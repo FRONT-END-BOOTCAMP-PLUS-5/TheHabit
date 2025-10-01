@@ -1,6 +1,6 @@
 'use client';
 
-import { ChallengeDto } from '@/backend/challenges/applications/dtos/ChallengeDto';
+import { ChallengeDto } from '@/backend/challenges/application/dtos/ChallengeDto';
 import ChallengesAccordion from '@/app/_components/challenges-accordion/ChallengesAccordion';
 
 interface HistoryChallengeListProps {

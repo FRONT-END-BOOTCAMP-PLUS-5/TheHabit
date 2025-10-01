@@ -1,7 +1,7 @@
 import { isSameDate } from './dateUtils';
-import { ChallengeDto } from '@/backend/challenges/applications/dtos/ChallengeDto';
-import { ReadRoutineResponseDto } from '@/backend/routines/applications/dtos/RoutineDto';
-import { RoutineCompletionDto } from '@/backend/routine-completions/applications/dtos/RoutineCompletionDto';
+import { ChallengeDto } from '@/backend/challenges/application/dtos/ChallengeDto';
+import { ReadRoutineResponseDto } from '@/backend/routines/application/dtos/RoutineDto';
+import { RoutineCompletionDto } from '@/backend/routine-completions/application/dtos/RoutineCompletionDto';
 
 /**
  * 챌린지 완료 진행 상황을 나타내는 enum

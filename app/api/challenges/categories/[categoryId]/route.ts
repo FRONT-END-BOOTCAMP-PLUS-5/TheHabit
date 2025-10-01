@@ -1,9 +1,9 @@
 // GET /api/challenges/categories/[categoryId] - 카테고리별 챌린지 목록 조회
 import { NextRequest, NextResponse } from 'next/server';
-import { PrChallengeRepository } from '@/backend/challenges/infrastructures/repositories/PrChallengeRepository';
-import { GetChallengesByCategoryUsecase } from '@/backend/challenges/applications/usecases/GetChallengesByCategoryUsecase';
-import { ChallengeDtoMapper } from '@/backend/challenges/applications/dtos/ChallengeDto';
-import { ChallengeDto } from '@/backend/challenges/applications/dtos/ChallengeDto';
+import { PrChallengeRepository } from '@/backend/challenges/infrastructure/repositories/PrChallengeRepository';
+import { GetChallengesByCategoryUsecase } from '@/backend/challenges/application/usecases/GetChallengesByCategoryUsecase';
+import { ChallengeDtoMapper } from '@/backend/challenges/application/dtos/ChallengeDto';
+import { ChallengeDto } from '@/backend/challenges/application/dtos/ChallengeDto';
 
 const createGetChallengesByCategoryUsecase = () => {
   const repository = new PrChallengeRepository();

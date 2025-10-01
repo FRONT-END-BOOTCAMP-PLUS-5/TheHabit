@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { PrUserRepository } from '@/backend/users/infrastructures/repositories/PrUserRepository';
-import { UpdateUserNameUsecase } from '@/backend/users/applications/usecases/UpdateUserNameUsecase';
+import { PrUserRepository } from '@/backend/users/infrastructure/repositories/PrUserRepository';
+import { UpdateUserNameUsecase } from '@/backend/users/application/usecases/UpdateUserNameUsecase';
 
 const repository = new PrUserRepository();
 
