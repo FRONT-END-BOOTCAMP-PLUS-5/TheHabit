@@ -33,9 +33,9 @@ export const NotificationSettings = () => {
     try {
       // Service Worker가 준비될 때까지 기다림
       await navigator.serviceWorker.ready;
-      
+
       const registration = await navigator.serviceWorker.getRegistration('/sw.js');
-      
+
       if (registration) {
         const subscription = await registration.pushManager.getSubscription();
         if (subscription) {
@@ -49,7 +49,7 @@ export const NotificationSettings = () => {
             });
             const data = await response.json();
             console.log('✅ 서버 구독 상태:', data.isSubscribed);
-            
+
             if (!data.isSubscribed) {
               console.log('⚠️ 서버와 불일치 - 브라우저 구독 제거');
               await subscription.unsubscribe();
@@ -83,7 +83,8 @@ export const NotificationSettings = () => {
       console.log('✅ 구독 성공, 상태를 true로 설정');
       setIsSubscribed(true);
       setPermission('granted');
-      
+      console.log('subscription', subscription);
+
       // 구독 성공 - 서버 API가 성공했으므로 상태는 true
       console.log('🎉 구독 완료!');
     } catch (error) {
@@ -95,7 +96,7 @@ export const NotificationSettings = () => {
   const handleUnsubscribe = async () => {
     try {
       console.log('🔕 구독 해제 시작...');
-      
+
       // 먼저 브라우저 구독 제거
       const registration = await navigator.serviceWorker.getRegistration('/sw.js');
       if (registration) {
@@ -105,15 +106,18 @@ export const NotificationSettings = () => {
           console.log('✅ 브라우저 구독 해제 완료');
         }
       }
-      
+
       // 서버에서도 구독 제거 시도 (실패해도 무관)
       try {
         await unsubscribeFromNotifications();
         console.log('✅ 서버 구독 해제 완료');
       } catch (serverError) {
-        console.log('⚠️ 서버 구독 해제 실패 (무관):', serverError instanceof Error ? serverError.message : '알 수 없는 오류');
+        console.log(
+          '⚠️ 서버 구독 해제 실패 (무관):',
+          serverError instanceof Error ? serverError.message : '알 수 없는 오류'
+        );
       }
-      
+
       console.log('✅ 구독 해제 완료, 상태 false로 설정');
       setIsSubscribed(false);
     } catch (error) {
@@ -142,9 +146,7 @@ export const NotificationSettings = () => {
 
         <div className='flex items-center gap-2'>
           {permission === 'denied' && (
-            <span className='text-xs text-red-500 mr-2'>
-              브라우저 설정에서 알림을 허용해주세요
-            </span>
+            <span className='text-xs text-red-500 mr-2'>브라우저 설정에서 알림을 허용해주세요</span>
           )}
 
           {/* iOS 스타일 토글 스위치 */}
@@ -153,7 +155,7 @@ export const NotificationSettings = () => {
             disabled={isSubscribing || isUnsubscribing || permission === 'denied'}
             className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none ${
               isSubscribed ? 'bg-[#34A853]' : 'bg-gray-200'
-            } ${(isSubscribing || isUnsubscribing) ? 'opacity-50' : ''}`}
+            } ${isSubscribing || isUnsubscribing ? 'opacity-50' : ''}`}
           >
             <span
               className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${

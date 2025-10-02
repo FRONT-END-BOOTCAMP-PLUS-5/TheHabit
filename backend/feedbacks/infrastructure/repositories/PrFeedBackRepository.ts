@@ -6,7 +6,7 @@ export class PrFeedBackRepository implements FeedBackRepository {
   async create(feedBack: FeedBackEntity): Promise<FeedBackEntity> {
     const createdFeedBack = await prisma.feedback.create({
       data: {
-        gptResponseContent: feedBack.gptResponseContent.join(','),
+        gptResponseContent: feedBack.aiResponseContent.join(','),
         challengeId: feedBack.challengeId,
       },
     });

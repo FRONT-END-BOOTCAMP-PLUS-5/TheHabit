@@ -21,7 +21,11 @@ const createSendPushNotificationUseCase = () => {
 // Factory for ProcessRoutineAlertsUseCase
 const createProcessRoutineAlertsUseCase = () => {
   const sendPushNotificationUseCase = createSendPushNotificationUseCase();
-  return new ProcessRoutineAlertsUseCase(routinesRepository, challengeRepository, sendPushNotificationUseCase);
+  return new ProcessRoutineAlertsUseCase(
+    routinesRepository,
+    challengeRepository,
+    sendPushNotificationUseCase
+  );
 };
 
 export const GET = async (): Promise<NextResponse<ApiResponse<null>>> => {
@@ -46,7 +50,7 @@ export const GET = async (): Promise<NextResponse<ApiResponse<null>>> => {
           message: '루틴 알림 처리 중 오류가 발생했습니다.',
         },
       },
-      { status: 500 },
+      { status: 500 }
     );
   }
 };

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/public/utils/prismaClient';
 import { ApiResponse } from '@/backend/shared/types/ApiResponse';
-import { AddFeedbackDto } from '@/backend/feedbacks/application/dtos/AddfeedbackDto';
+import { FeedbackDto } from '@/backend/feedbacks/application/dtos/FeedbackDto';
 import { FeedBackEntity } from '@/backend/feedbacks/domain/entities/FeedBackEntity';
 import { PrFeedBackRepository } from '@/backend/feedbacks/infrastructure/repositories/PrFeedBackRepository';
 import { AddFeedBackUsecase } from '@/backend/feedbacks/application/usecases/AddFeedBackUsecase';
@@ -13,12 +13,21 @@ export const POST = async (
   const { nickname } = await params;
   const body = await request.json();
 
-  if (!body.gptResponseContent || !body.challengeId || !nickname) {
+  // Backward compatibility: accept both aiResponseContent and aiResponse
+  const aiResponseContent: unknown = body.aiResponseContent ?? body.aiResponse;
+  const challengeIdNumber = Number(body.challengeId);
+
+  if (
+    typeof aiResponseContent !== 'string' ||
+    aiResponseContent.trim().length === 0 ||
+    Number.isNaN(challengeIdNumber) ||
+    !nickname
+  ) {
     const errorResponse: ApiResponse<null> = {
       success: false,
       error: {
         code: 'INVALID_REQUEST',
-        message: 'gptResponseContent, challengeId 또는 nickname이 없습니다.',
+        message: 'aiResponseContent, challengeId 또는 nickname이 없습니다.',
       },
     };
     return NextResponse.json(errorResponse, { status: 400 });
@@ -27,7 +36,7 @@ export const POST = async (
   try {
     // 소유권 확인: 해당 nickname의 사용자 챌린지인지 검증
     const challenge = await prisma.challenge.findFirst({
-      where: { id: Number(body.challengeId), user: { nickname } },
+      where: { id: challengeIdNumber, user: { nickname } },
       select: { id: true },
     });
 
@@ -42,18 +51,15 @@ export const POST = async (
     const feedbackRepo = new PrFeedBackRepository();
     const feedBackUseCase = new AddFeedBackUsecase(feedbackRepo);
 
-    const entity = new FeedBackEntity(
-      String(body.gptResponseContent).split('\n'),
-      Number(body.challengeId)
-    );
+    const entity = new FeedBackEntity(String(aiResponseContent).split('\n'), challengeIdNumber);
 
     const result = await feedBackUseCase.execute(entity);
 
-    const successResponse: ApiResponse<AddFeedbackDto> = {
+    const successResponse: ApiResponse<FeedbackDto> = {
       success: true,
       data: {
         challengeId: result.challengeId,
-        gptResponseContent: result.gptResponseContent.join('\n'),
+        aiResponseContent: result.aiResponseContent.join('\n'),
       },
       message: '피드백 데이터 저장에 성공했습니다.',
     };

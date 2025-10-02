@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/public/utils/prismaClient';
 import { ApiResponse } from '@/backend/shared/types/ApiResponse';
-import { AddFeedbackDto } from '@/backend/feedbacks/application/dtos/AddfeedbackDto';
+import { FeedbackDto } from '@/backend/feedbacks/application/dtos/FeedbackDto';
 
 export const GET = async (
   _req: NextRequest,
@@ -28,10 +28,10 @@ export const GET = async (
       select: { gptResponseContent: true, challengeId: true },
     });
 
-    const successResponse: ApiResponse<AddFeedbackDto> = {
+    const successResponse: ApiResponse<FeedbackDto> = {
       success: true,
       data: {
-        gptResponseContent: (feedback?.gptResponseContent ?? '').split(',').join('\n'),
+        aiResponseContent: (feedback?.gptResponseContent ?? '').split(',').join('\n'),
         challengeId: feedback?.challengeId ?? Number(id),
       },
       message: '피드백 조회에 성공했습니다.',

@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { FeedbackApi } from '@/libs/api/feedback.api';
-import { AddFeedbackDto } from '@/backend/feedbacks/application/dtos/AddfeedbackDto';
+import { FeedbackDto } from '@/backend/feedbacks/application/dtos/FeedbackDto';
 
 export const useCreateFeedBack = () => {
   const queryClient = useQueryClient();
@@ -9,18 +9,18 @@ export const useCreateFeedBack = () => {
   return useMutation<
     {
       success: boolean;
-      data?: AddFeedbackDto;
+      data?: FeedbackDto;
       message?: string;
       error?: { code: string; message: string };
     },
     Error,
-    AddFeedbackDto & { nickname: string },
+    FeedbackDto & { nickname: string },
     {
       nickname: string;
     }
   >({
-    mutationFn: ({ gptResponseContent, challengeId, nickname }) =>
-      FeedbackApi({ gptResponseContent, challengeId }, nickname),
+    mutationFn: ({ aiResponseContent, challengeId, nickname }) =>
+      FeedbackApi({ aiResponseContent, challengeId }, nickname),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['feedBack'] });
     },

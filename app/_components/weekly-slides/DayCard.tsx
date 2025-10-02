@@ -5,8 +5,8 @@ interface DayCardProps {
   date: number;
   month?: string;
   isToday: boolean;
-  isSelected: boolean;
-  onClick: () => void;
+  isSelected?: boolean;
+  onClick?: () => void;
 }
 
 const DayCard: React.FC<DayCardProps> = ({ day, date, month, isToday, isSelected, onClick }) => {
