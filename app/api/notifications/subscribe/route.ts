@@ -29,7 +29,10 @@ export async function POST(request: NextRequest): Promise<NextResponse<ApiRespon
     }
 
     // 2. 요청 데이터 파싱
-    const { endpoint, p256dh, auth } = await request.json();
+    const body = await request.json();
+    const endpoint = body.endpoint;
+    const p256dh = body.keys?.p256dh || body.p256dh;
+    const auth = body.keys?.auth || body.auth;
 
     // 3. 필수 데이터 검증
     if (!endpoint || !p256dh || !auth) {
