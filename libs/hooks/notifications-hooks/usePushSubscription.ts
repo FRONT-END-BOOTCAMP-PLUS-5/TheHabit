@@ -90,8 +90,8 @@ export const usePushSubscription = () => {
         });
       }
 
-      // 4. VAPID 공개 키 (환경변수에서 가져와야 함)
-      const vapidPublicKey = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY;
+      // 4. VAPID 공개 키 
+      const vapidPublicKey = 'BBi1jqUqvyk3Aba94TeJKCslEt6Ex-Bs_dlyLmANtC6odleLD0a4CaDAn1UwZtg2pKbBsk8lz07unNIxcMgerH4';
       if (!vapidPublicKey) {
         throw new Error('VAPID 공개 키가 설정되지 않았습니다.');
       }

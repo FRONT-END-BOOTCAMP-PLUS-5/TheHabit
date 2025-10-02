@@ -15,6 +15,7 @@
     "@ant-design/v5-patch-for-react-19": "^1.0.3",
     "@aws-sdk/client-s3": "^3.864.0",
     "@aws-sdk/s3-request-presigner": "^3.864.0",
+    "@google/genai": "^1.21.0",
     "@prisma/client": "^6.13.0",
     "@tanstack/react-query": "^5.84.1",
     "@types/lodash": "^4.17.20",
@@ -35,6 +36,7 @@
     "react-toastify": "^11.0.5",
     "recharts": "^3.1.2",
     "swiper": "^11.2.10",
+    "uuid": "^13.0.0",
     "web-push": "^3.6.7",
     "zustand": "^5.0.7"
   },
@@ -48,6 +50,7 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@types/uuid": "^11.0.0",
     "@types/web-push": "^3.6.4",
     "autoprefixer": "^10.4.21",
     "eslint": "^9",
