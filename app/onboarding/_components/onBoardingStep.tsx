@@ -20,7 +20,7 @@ export const OnBoardingStepComponent = () => {
     } else {
       // 온보딩 완료 표시 쿠키 설정 후 로그인 페이지로 이동
       document.cookie = `onboarding=done; path=/; max-age=${60 * 60 * 24 * 365}`;
-      router.push('/dashboard');
+      router.push('/');
 
       // 로그인 상태에 따라 다른 페이지로 이동
       // if (session?.user) {
