@@ -1,10 +1,10 @@
 'use client';
 
 import React, { useState } from 'react';
-import { FeedBackBar } from '@/app/(anon)/feedback/_components/FeedBackBar';
-import { FeedBackStatics } from '@/app/(anon)/feedback/_components/FeedBackStatics';
-import { FeedBackList } from '@/app/(anon)/feedback/_components/FeedBackList';
-import FeedBackCurrentList from '@/app/(anon)/feedback/_components/FeedBackCurrentList';
+import { FeedBackBar } from '@/app/demo/feedback/_components/FeedBackBar';
+import { FeedBackStatics } from '@/app/demo/feedback/_components/FeedBackStatics';
+import { FeedBackList } from '@/app/demo/feedback/_components/FeedBackList';
+import FeedBackCurrentList from '@/app/demo/feedback/_components/FeedBackCurrentList';
 
 export const FeedbackNav: React.FC = () => {
   const FEEDBACK_CATEGORIES = [

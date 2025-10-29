@@ -1,10 +1,10 @@
 'use client';
 
 import React from 'react';
-import UserProfileSection from '@/app/(anon)/_components/UserProfileSection';
-import { UserProfileButton } from '@/app/(anon)/profile/_components/UserProfileButton';
-import { LoginCta } from '@/app/(anon)/_components/LoginCta';
-import { RoutineCompletion } from '@/app/(anon)/profile/_components/RoutineCompletion';
+import UserProfileSection from '@/app/demo/_components/UserProfileSection';
+import { UserProfileButton } from '@/app/demo/profile/_components/UserProfileButton';
+import { LoginCta } from '@/app/demo/_components/LoginCta';
+import { RoutineCompletion } from '@/app/demo/profile/_components/RoutineCompletion';
 
 export const UserProfile: React.FC = () => {
   return (

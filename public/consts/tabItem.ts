@@ -17,7 +17,7 @@ export const tabItem = (nickname?: string) => ([
   {
     name: 'feedback',
     icon: feedbackIcon,
-    href: nickname ? `/user/feedback/${nickname}` : '/feedback',
+    href: nickname ? `/user/feedback/${nickname}` : '/demo/feedback',
     isHover: activeFeedbackIcon,
   },
   {
@@ -29,7 +29,7 @@ export const tabItem = (nickname?: string) => ([
   {
     name: 'profile',
     icon: profileIcon,
-    href: nickname ? `/user/profile/${nickname}` : '/profile',
+    href: nickname ? `/user/profile/${nickname}` : '/demo/profile',
     isHover: activeProfileIcon,
   },
 ]);

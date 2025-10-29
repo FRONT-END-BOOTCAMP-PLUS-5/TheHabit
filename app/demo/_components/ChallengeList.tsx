@@ -2,7 +2,7 @@
 
 import WeeklySlide from '@/app/_components/weekly-slides/WeeklySlide';
 import { useState } from 'react';
-import { LoginCta } from '@/app/(anon)/_components/LoginCta';
+import { LoginCta } from '@/app/demo/_components/LoginCta';
 
 const ChallengeListSection: React.FC = () => {
   const [, setSelectedDate] = useState<Date>(new Date());
