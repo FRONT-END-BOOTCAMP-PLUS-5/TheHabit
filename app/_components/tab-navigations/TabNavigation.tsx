@@ -62,7 +62,7 @@ export const TabNavigation = () => {
             </li>
           ))}
           <li className='absolute -top-6 left-1/2 -translate-x-1/2 w-16 h-16 bg-[#93D50B] cursor-pointer hover:scale-105 transition-transform duration-200 hover:opacity-95 flex items-center justify-center rounded-full shadow-lg'>
-            <Link href={userInfo?.nickname ? `/user/dashboard/${userInfo.nickname}` : '/'}>
+            <Link href={userInfo?.nickname ? `/user/dashboard/${userInfo.nickname}` : '/demo'}>
               <Image src='/icons/home.svg' alt='홈으로 이동' width={24} height={24} />
             </Link>
           </li>

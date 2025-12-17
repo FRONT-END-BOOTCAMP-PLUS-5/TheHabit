@@ -1,4 +1,4 @@
-import { UserProfile } from '@/app/(anon)/profile/_components/UserProfile';
+import { UserProfile } from '@/app/demo/profile/_components/UserProfile';
 
 const UserProfilePage = () => {
   return (

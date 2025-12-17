@@ -2,7 +2,7 @@ import React from 'react';
 
 import { TabNavigation } from '@/app/_components/tab-navigations/TabNavigation';
 import type { Metadata } from 'next';
-import Header from '@/app/(anon)/_components/Header';
+import Header from '@/app/demo/_components/Header';
 
 export const metadata: Metadata = {
   title: { default: '비회원 홈', template: '%s | TheHabit' },

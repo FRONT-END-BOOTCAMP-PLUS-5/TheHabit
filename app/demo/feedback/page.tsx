@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { FeedbackNav } from '@/app/(anon)/feedback/_components/FeedbackNav';
+import { FeedbackNav } from '@/app/demo/feedback/_components/FeedbackNav';
 
 const FeedbackPage: React.FC = () => {
   return (

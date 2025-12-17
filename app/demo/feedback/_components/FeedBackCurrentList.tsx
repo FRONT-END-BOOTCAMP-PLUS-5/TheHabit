@@ -3,7 +3,7 @@
 import { NONE_USER_CATEGORY_CONFIG } from '@/public/consts/noneUserCategory';
 import Image from 'next/image';
 import React, { useState } from 'react';
-import { LoginCta } from '@/app/(anon)/_components/LoginCta';
+import { LoginCta } from '@/app/demo/_components/LoginCta';
 
 const FeedBackCurrentList: React.FC = () => {
   const [openId, setOpenId] = useState<number | null>(null);
