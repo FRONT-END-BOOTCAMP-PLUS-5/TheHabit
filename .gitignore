@@ -30,8 +30,9 @@ yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
-# env files (can opt-in for committing if needed)
-.env*
+# env files
+.env*.local      # 모든 .local 파일 (비밀키)
+.env.production  # 서버에 직접 배치 (프로덕션 DB 포함)
 
 # vercel
 .vercel
