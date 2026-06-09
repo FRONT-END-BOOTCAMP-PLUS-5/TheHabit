@@ -31,7 +31,7 @@ export const FeedBackById = ({ id, nickname }: { id: number; nickname: string })
             </span>
           ) : (
             <span className='text-md text-gray-600 mt-4'>
-              루틴을 생성해주세요! 피드백을 받을 수 있어요.
+              아직 생성된 피드백이 없어요. 피드백 탭에서 생성해주세요.
             </span>
           )}
         </div>

@@ -5,6 +5,7 @@ import { ChallengeDto } from '@/backend/challenges/application/dtos/ChallengeDto
 import { ReadRoutineResponseDto } from '@/backend/routines/application/dtos/RoutineDto';
 import { RoutineCompletionDto } from '@/backend/routine-completions/application/dtos/RoutineCompletionDto';
 import type { DashboardDto } from '@/backend/dashboards/application/dtos/DashboardDto';
+import { getKoreanDateFromDate } from '@/public/utils/dateUtils';
 interface CategoryChallengeListProps {
   challenges: ChallengeDto[];
   routines: ReadRoutineResponseDto[];
@@ -53,7 +54,7 @@ const CategoryChallengeList: React.FC<CategoryChallengeListProps> = props => {
             ))
           ) : (
             <div className='text-center py-4 text-gray-500 text-sm'>
-              {selectedDate.toLocaleDateString()}에 {categoryName} 카테고리의 챌린지가 없습니다
+              {getKoreanDateFromDate(selectedDate)}에 {categoryName} 카테고리의 챌린지가 없습니다
             </div>
           )}
         </div>

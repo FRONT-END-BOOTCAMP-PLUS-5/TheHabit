@@ -8,7 +8,8 @@ import { ONBOARDING_LIST } from '@/public/consts/onboarding';
 
 const ONBOARDING_COOKIE = 'onboarding=done';
 
-const isOnboardingDone = () => document.cookie.includes(ONBOARDING_COOKIE);
+const isOnboardingDone = () =>
+  document.cookie.split('; ').some(c => c === ONBOARDING_COOKIE);
 
 export const OnBoardingStepComponent = () => {
   const [currentStep, setCurrentStep] = useState(0);

@@ -2,6 +2,7 @@
 
 import CategoryChallengeList from '@/app/user/dashboard/_components/CategoryChallengeList';
 import ConfirmModal from '@/app/_components/modals/ConfirmModal';
+import { Toast } from '@/app/_components/toasts/Toast';
 import { useGetDashboardByNickname } from '@/libs/hooks/dashboard-hooks/useGetDashboardByNickname';
 import { useGenerateFeedback } from '@/libs/hooks/feedback-hooks/useGenerateFeedback';
 import { useRouter } from 'next/navigation';
@@ -43,6 +44,7 @@ export const FeedBackDetail: React.FC<{ nickname: string }> = ({ nickname }) => 
       router.push(`/user/feedback/${nickname}/${selectedChallengeId}`);
     } catch (error) {
       console.error(error);
+      Toast.error('피드백 생성에 실패했습니다.');
     } finally {
       setIsSubmitting(false);
       setIsConfirmOpen(false);

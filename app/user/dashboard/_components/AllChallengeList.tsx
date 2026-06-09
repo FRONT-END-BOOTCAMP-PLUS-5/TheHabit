@@ -4,6 +4,7 @@ import ChallengesAccordion from '@/app/_components/challenges-accordion/Challeng
 import { ChallengeDto } from '@/backend/challenges/application/dtos/ChallengeDto';
 import { ReadRoutineResponseDto } from '@/backend/routines/application/dtos/RoutineDto';
 import { RoutineCompletionDto } from '@/backend/routine-completions/application/dtos/RoutineCompletionDto';
+import { getKoreanDateFromDate } from '@/public/utils/dateUtils';
 
 interface AllChallengeListProps {
   challenges: ChallengeDto[];
@@ -41,7 +42,7 @@ const AllChallengeList: React.FC<AllChallengeListProps> = ({
         ))
       ) : (
         <div className='text-center py-8 text-gray-500'>
-          {selectedDate.toLocaleDateString()}에 해당하는 챌린지가 없습니다
+          {getKoreanDateFromDate(selectedDate)}에 해당하는 챌린지가 없습니다
         </div>
       )}
     </div>

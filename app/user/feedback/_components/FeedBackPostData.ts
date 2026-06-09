@@ -1,6 +1,6 @@
 import { FeedbackApi, getFeedBackByChallengeId } from '@/libs/api/feedback.api';
 import { RoutineCompletionDto } from '@/backend/routine-completions/application/dtos/RoutineCompletionDto';
-import { ValidateFeedBackAiResponse } from '@/app/user/feedback/_components/ValidateFeedBacAiResponse';
+import { ValidateFeedBackAiResponse } from '@/app/user/feedback/_components/ValidateFeedBackAiResponse';
 import { AxiosError } from 'axios';
 import { requestAI } from '@/libs/api/ai.api';
 

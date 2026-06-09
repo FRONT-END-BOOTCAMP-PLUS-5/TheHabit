@@ -31,7 +31,7 @@ export const GET = async (
     const successResponse: ApiResponse<FeedbackDto> = {
       success: true,
       data: {
-        aiResponseContent: (feedback?.gptResponseContent ?? '').split(',').join('\n'),
+        aiResponseContent: feedback?.gptResponseContent ?? '',
         challengeId: feedback?.challengeId ?? Number(id),
       },
       message: '피드백 조회에 성공했습니다.',
@@ -39,18 +39,11 @@ export const GET = async (
 
     return NextResponse.json(successResponse);
   } catch (error: unknown) {
-    if (error instanceof Error) {
-      return NextResponse.json(error.message, { status: 500 });
-    }
-
+    const message = error instanceof Error ? error.message : '피드백 조회에 실패했습니다.';
     const errorResponse: ApiResponse<null> = {
       success: false,
-      error: {
-        code: 'INTERNAL_SERVER_ERROR',
-        message: '피드백 조회에 실패했습니다.',
-      },
+      error: { code: 'INTERNAL_SERVER_ERROR', message },
     };
-
     return NextResponse.json(errorResponse, { status: 500 });
   }
 };
