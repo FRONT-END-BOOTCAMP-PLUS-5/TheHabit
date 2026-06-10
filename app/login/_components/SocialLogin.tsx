@@ -5,8 +5,6 @@ import React from 'react';
 import { signIn } from 'next-auth/react';
 
 export const SocialLogin = () => {
-
-
   return (
     <div className='flex flex-col w-full gap-3'>
       <h3 className='text-xl text-center'>SNS 계정으로 로그인하기</h3>

@@ -1,6 +1,6 @@
 import { User } from '@/backend/users/domain/entities/UserEntity';
 import { UserChallengeAndRoutineAndFollowAndCompletion } from '@/backend/users/domain/entities/UserChallengeAndRoutineAndFollowAndCompletion';
-import { RoutineCompletion } from '@prisma/client';
+import { RoutineCompletion } from '@/backend/routine-completions/domain/entities/routineCompletion';
 import { UserReviewEntity } from '@/backend/users/domain/entities/UserReviewEntity';
 
 export interface IUserRepository {

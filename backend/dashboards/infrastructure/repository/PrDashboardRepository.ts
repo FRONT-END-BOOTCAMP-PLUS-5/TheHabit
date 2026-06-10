@@ -3,37 +3,94 @@ import { Dashboard } from '@/backend/dashboards/domain/entities/Dashboard';
 import { Challenge } from '@/backend/challenges/domain/entities/Challenge';
 import { Routine } from '@/backend/routines/domain/entities/routine';
 import { RoutineCompletion } from '@/backend/routine-completions/domain/entities/routineCompletion';
-import prisma from '@/public/utils/prismaClient';
+import { getSupabaseAdmin } from '@/public/utils/supabase/server';
+
+type CompletionRow = {
+  id: number;
+  created_at: string;
+  proof_img_url: string | null;
+  routine_id: number;
+  content: string | null;
+};
+
+type RoutineRow = {
+  id: number;
+  routine_title: string;
+  alert_time: string | null;
+  emoji: number;
+  challenge_id: number;
+  created_at: string;
+  updated_at: string;
+  routines_completions: CompletionRow[] | null;
+};
+
+type ChallengeRow = {
+  id: number;
+  name: string;
+  created_at: string;
+  end_at: string;
+  color: string;
+  user_id: string;
+  category_id: number;
+  active: boolean;
+  completion_progress: string;
+  routines: RoutineRow[] | null;
+};
+
+type UserDashboardRow = {
+  id: string;
+  challenges: ChallengeRow[] | null;
+};
+
+const DASHBOARD_SELECT = `
+  id,
+  challenges (
+    id,
+    name,
+    created_at,
+    end_at,
+    color,
+    user_id,
+    category_id,
+    active,
+    completion_progress,
+    routines (
+      id,
+      routine_title,
+      alert_time,
+      emoji,
+      challenge_id,
+      created_at,
+      updated_at,
+      routines_completions (
+        id,
+        created_at,
+        proof_img_url,
+        routine_id,
+        content
+      )
+    )
+  )
+`;
 
 export class PrDashboardRepository implements IDashboardRepository {
-  // 사용자 닉네임으로 대시보드 조회
   async findByNickname(nickname: string): Promise<Dashboard | null> {
     try {
-      // 사용자 정보와 함께 챌린지와 루틴을 join해서 조회
-      const userData = await prisma.user.findUnique({
-        where: { nickname },
-        include: {
-          challenges: {
-            include: {
-              routines: {
-                include: {
-                  completions: true, // 루틴 완료 정보도 함께 가져오기
-                },
-              },
-              category: true, // 챌린지 카테고리 정보도 함께
-            },
-          },
-        },
-      });
+      const supabase = getSupabaseAdmin();
+      const { data, error } = await supabase
+        .from('users')
+        .select(DASHBOARD_SELECT)
+        .eq('nickname', nickname)
+        .maybeSingle();
 
-      if (!userData) {
+      if (error) {
+        throw new Error(error.message);
+      }
+      if (!data) {
         return null;
       }
 
-      // Dashboard 엔티티로 변환
-      const dashboard = this.mapToDashboard(userData);
-
-      return dashboard;
+      return this.mapToDashboard(data as UserDashboardRow);
     } catch (error) {
       throw new Error(
         `대시보드 조회에 실패했습니다: ${error instanceof Error ? error.message : '알 수 없는 오류'}`
@@ -41,40 +98,16 @@ export class PrDashboardRepository implements IDashboardRepository {
     }
   }
 
-  // 모든 사용자의 대시보드 조회
   async findAll(): Promise<Dashboard[]> {
     try {
-      // 모든 사용자의 챌린지와 루틴을 join해서 조회
-      const allUsersData = await prisma.user.findMany({
-        include: {
-          challenges: {
-            include: {
-              routines: {
-                include: {
-                  completions: true,
-                },
-              },
-              category: true,
-            },
-            select: {
-              id: true,
-              name: true,
-              createdAt: true,
-              endAt: true,
-              color: true,
-              userId: true,
-              categoryId: true,
-              active: true,
-              completion_progress: true,
-            },
-          },
-        },
-      });
+      const supabase = getSupabaseAdmin();
+      const { data, error } = await supabase.from('users').select(DASHBOARD_SELECT);
 
-      // 각 사용자별로 Dashboard 엔티티로 변환
-      const dashboards = allUsersData.map(userData => this.mapToDashboard(userData));
+      if (error) {
+        throw new Error(error.message);
+      }
 
-      return dashboards;
+      return (data ?? []).map(userData => this.mapToDashboard(userData as UserDashboardRow));
     } catch (error) {
       throw new Error(
         `전체 대시보드 조회에 실패했습니다: ${error instanceof Error ? error.message : '알 수 없는 오류'}`
@@ -82,116 +115,62 @@ export class PrDashboardRepository implements IDashboardRepository {
     }
   }
 
-  // Prisma 결과를 Dashboard 엔티티로 변환하는 헬퍼 메서드
-  private mapToDashboard(userData: {
-    id: string;
-    challenges: Array<{
-      id: number;
-      name: string;
-      createdAt: Date;
-      endAt: Date;
-      color: string;
-      userId: string;
-      categoryId: number;
-      active: boolean;
-      completion_progress: string;
-      routines: Array<{
-        id: number;
-        routineTitle: string;
-        alertTime: Date | null;
-        emoji: number;
-        challengeId: number;
-        createdAt: Date;
-        updatedAt: Date;
-        completions: Array<{
-          id: number;
-          createdAt: Date;
-          proofImgUrl: string | null;
-          routineId: number;
-          content: string | null;
-        }>;
-      }>;
-    }>;
-  }): Dashboard {
-    const challenges = userData.challenges || [];
+  private mapToDashboard(userData: UserDashboardRow): Dashboard {
+    const challenges = userData.challenges ?? [];
 
     if (challenges.length === 0) {
-      // 챌린지가 없는 경우 빈 배열로 대시보드를 구성
       return new Dashboard([], [], 0, []);
     }
 
-    // 모든 챌린지들을 Challenge 엔티티로 변환
     const challengeEntities = challenges.map(
       challengeData =>
         new Challenge(
           challengeData.name,
-          challengeData.createdAt,
-          challengeData.endAt,
+          new Date(challengeData.created_at),
+          new Date(challengeData.end_at),
           challengeData.color,
-          challengeData.userId,
-          challengeData.categoryId,
+          challengeData.user_id,
+          challengeData.category_id,
           challengeData.active,
           challengeData.completion_progress || 'in_progress',
-          challengeData.id // id
+          challengeData.id
         )
     );
 
-    // 모든 챌린지의 루틴들을 수집
     const allRoutines: Routine[] = [];
     challenges.forEach(challengeData => {
-      const routines = challengeData.routines.map(
-        (routineData: {
-          id: number;
-          routineTitle: string;
-          alertTime: Date | null;
-          emoji: number;
-          challengeId: number;
-          createdAt: Date;
-          updatedAt: Date;
-          completions: Array<{
-            id: number;
-            createdAt: Date;
-            proofImgUrl: string | null;
-            routineId: number;
-            content: string | null;
-          }>;
-        }) => {
-          // Routine 엔티티 생성
-          const routine = new Routine(
-            routineData.id,
-            routineData.routineTitle,
-            routineData.alertTime,
-            routineData.emoji,
-            routineData.challengeId,
-            routineData.createdAt,
-            routineData.updatedAt
-          );
-
-          return routine;
-        }
-      );
+      const routines = (challengeData.routines ?? []).map(routineData => {
+        return new Routine(
+          routineData.id,
+          routineData.routine_title,
+          routineData.alert_time ? new Date(routineData.alert_time) : null,
+          routineData.emoji,
+          routineData.challenge_id,
+          new Date(routineData.created_at),
+          new Date(routineData.updated_at)
+        );
+      });
       allRoutines.push(...routines);
     });
 
-    // 모든 루틴의 completions를 수집
     const allCompletions: RoutineCompletion[] = [];
     challenges.forEach(challengeData => {
-      challengeData.routines.forEach(routineData => {
-        routineData.completions.forEach(completionData => {
-          const completion = new RoutineCompletion(
-            completionData.id,
-            '',
-            completionData.routineId,
-            completionData.createdAt,
-            completionData.proofImgUrl,
-            completionData.content
+      (challengeData.routines ?? []).forEach(routineData => {
+        (routineData.routines_completions ?? []).forEach(completionData => {
+          allCompletions.push(
+            new RoutineCompletion(
+              completionData.id,
+              '',
+              completionData.routine_id,
+              new Date(completionData.created_at),
+              completionData.proof_img_url,
+              completionData.content
+            )
           );
-          allCompletions.push(completion);
         });
       });
     });
 
-    // Dashboard 엔티티 생성 (모든 챌린지, 모든 루틴, 모든 완료 기록 포함)
     return new Dashboard(challengeEntities, allRoutines, allRoutines.length, allCompletions);
   }
 }

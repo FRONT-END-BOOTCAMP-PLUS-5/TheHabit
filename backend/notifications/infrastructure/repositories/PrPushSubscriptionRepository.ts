@@ -1,72 +1,84 @@
-import prisma from '@/public/utils/prismaClient';
 import { IPushSubscriptionRepository } from '@/backend/notifications/domain/repositories/IPushSubscriptionRepository';
 import { PushSubscription } from '@/backend/notifications/domain/entities/PushSubscription';
+import { assertSupabaseData } from '@/backend/shared/utils/supabaseHelpers';
+import { getSupabaseAdmin } from '@/public/utils/supabase/server';
+
+type PushSubscriptionRow = {
+  id: number;
+  endpoint: string;
+  p256dh: string;
+  auth: string;
+  user_id: string | null;
+  created_at: string;
+};
+
+function toPushSubscription(row: PushSubscriptionRow): PushSubscription {
+  return new PushSubscription(
+    row.id,
+    row.endpoint,
+    row.p256dh,
+    row.auth,
+    row.user_id,
+    new Date(row.created_at)
+  );
+}
 
 export class PrPushSubscriptionRepository implements IPushSubscriptionRepository {
   async create(
     subscription: Omit<PushSubscription, 'id' | 'createdAt'>
   ): Promise<PushSubscription> {
-    const createdSubscription = await prisma.pushSubscription.create({
-      data: {
+    const supabase = getSupabaseAdmin();
+    const { data, error } = await supabase
+      .from('push_subscriptions')
+      .insert({
         endpoint: subscription.endpoint,
         p256dh: subscription.p256dh,
         auth: subscription.auth,
-        userId: subscription.userId,
-      },
-    });
+        user_id: subscription.userId,
+      })
+      .select()
+      .single();
 
-    return new PushSubscription(
-      createdSubscription.id,
-      createdSubscription.endpoint,
-      createdSubscription.p256dh,
-      createdSubscription.auth,
-      createdSubscription.userId,
-      createdSubscription.createdAt
-    );
+    return toPushSubscription(assertSupabaseData<PushSubscriptionRow>(data, error));
   }
 
   async findByEndpoint(endpoint: string): Promise<PushSubscription | null> {
-    const subscription = await prisma.pushSubscription.findUnique({
-      where: { endpoint },
-    });
+    const supabase = getSupabaseAdmin();
+    const { data } = await supabase
+      .from('push_subscriptions')
+      .select()
+      .eq('endpoint', endpoint)
+      .maybeSingle();
 
-    if (!subscription) return null;
+    if (!data) return null;
 
-    return new PushSubscription(
-      subscription.id,
-      subscription.endpoint,
-      subscription.p256dh,
-      subscription.auth,
-      subscription.userId,
-      subscription.createdAt
-    );
+    return toPushSubscription(data as PushSubscriptionRow);
   }
 
   async findByUserId(userId: string | null): Promise<PushSubscription[]> {
-    const subscriptions = await prisma.pushSubscription.findMany({
-      where: { userId },
-    });
+    const supabase = getSupabaseAdmin();
+    const query = supabase.from('push_subscriptions').select();
 
-    return subscriptions.map(
-      subscription =>
-        new PushSubscription(
-          subscription.id,
-          subscription.endpoint,
-          subscription.p256dh,
-          subscription.auth,
-          subscription.userId,
-          subscription.createdAt
-        )
-    );
+    const { data, error } =
+      userId === null
+        ? await query.is('user_id', null)
+        : await query.eq('user_id', userId);
+
+    if (error) throw new Error(error.message);
+
+    return (data ?? []).map((row) => toPushSubscription(row as PushSubscriptionRow));
   }
 
   async deleteByEndpoint(endpoint: string): Promise<boolean> {
     try {
-      await prisma.pushSubscription.delete({
-        where: { endpoint },
-      });
-      return true;
-    } catch (error) {
+      const supabase = getSupabaseAdmin();
+      const { error } = await supabase
+        .from('push_subscriptions')
+        .delete()
+        .eq('endpoint', endpoint);
+
+      return !error;
+    } catch {
       return false;
     }
   }
@@ -75,25 +87,35 @@ export class PrPushSubscriptionRepository implements IPushSubscriptionRepository
     try {
       console.log('🗑️ 구독 해제 시도:', { userId, endpoint: endpoint.substring(0, 50) + '...' });
 
-      // 먼저 해당 구독이 존재하는지 확인
-      const existingSubscription = await prisma.pushSubscription.findFirst({
-        where: {
-          userId,
-          endpoint,
-        },
-      });
+      const supabase = getSupabaseAdmin();
+
+      const existingQuery = supabase
+        .from('push_subscriptions')
+        .select()
+        .eq('endpoint', endpoint);
+
+      const { data: existingSubscription } =
+        userId === null
+          ? await existingQuery.is('user_id', null).maybeSingle()
+          : await existingQuery.eq('user_id', userId).maybeSingle();
 
       console.log('🔍 기존 구독 찾기 결과:', existingSubscription ? '존재함' : '없음');
 
-      const result = await prisma.pushSubscription.deleteMany({
-        where: {
-          userId,
-          endpoint,
-        },
-      });
+      const deleteQuery = supabase.from('push_subscriptions').delete().eq('endpoint', endpoint);
 
-      console.log('🗑️ 삭제 결과:', { count: result.count });
-      return result.count > 0;
+      const { data, error } =
+        userId === null
+          ? await deleteQuery.is('user_id', null).select('id')
+          : await deleteQuery.eq('user_id', userId).select('id');
+
+      if (error) {
+        console.error('🚨 구독 해제 중 오류:', error);
+        return false;
+      }
+
+      const count = data?.length ?? 0;
+      console.log('🗑️ 삭제 결과:', { count });
+      return count > 0;
     } catch (error) {
       console.error('🚨 구독 해제 중 오류:', error);
       return false;

@@ -1,133 +1,120 @@
 import { IChallengeRepository } from '@/backend/challenges/domain/repositories/IChallengeRepository';
 import { Challenge } from '@/backend/challenges/domain/entities/Challenge';
-import prisma from '@/public/utils/prismaClient';
+import { assertSupabaseData } from '@/backend/shared/utils/supabaseHelpers';
+import { getSupabaseAdmin } from '@/public/utils/supabase/server';
+
+type ChallengeRow = {
+  id: number;
+  name: string;
+  created_at: string;
+  end_at: string;
+  color: string;
+  user_id: string;
+  category_id: number;
+  active: boolean;
+  completion_progress: string;
+};
+
+function toChallenge(row: ChallengeRow): Challenge {
+  return new Challenge(
+    row.name,
+    new Date(row.created_at),
+    new Date(row.end_at),
+    row.color,
+    row.user_id,
+    row.category_id,
+    row.active,
+    row.completion_progress,
+    row.id
+  );
+}
 
 export class PrChallengeRepository implements IChallengeRepository {
   async create(challenge: Challenge): Promise<Challenge> {
-    const createdChallenge = await prisma.challenge.create({
-      data: {
+    const supabase = getSupabaseAdmin();
+    const { data, error } = await supabase
+      .from('challenges')
+      .insert({
         name: challenge.name,
-        createdAt: challenge.createdAt,
-        endAt: challenge.endAt,
+        created_at: challenge.createdAt.toISOString(),
+        end_at: challenge.endAt.toISOString(),
         color: challenge.color,
-        userId: challenge.userId,
-        categoryId: challenge.categoryId,
+        user_id: challenge.userId,
+        category_id: challenge.categoryId,
         active: challenge.active,
         completion_progress: 'in_progress',
-      },
-    });
+      })
+      .select()
+      .single();
 
-    return new Challenge(
-      createdChallenge.name,
-      createdChallenge.createdAt,
-      createdChallenge.endAt,
-      createdChallenge.color,
-      createdChallenge.userId,
-      createdChallenge.categoryId,
-      createdChallenge.active,
-      createdChallenge.completion_progress,
-      createdChallenge.id
-    );
+    return toChallenge(assertSupabaseData<ChallengeRow>(data, error));
   }
 
   async findAll(): Promise<Challenge[]> {
-    const challenges = await prisma.challenge.findMany();
-    return challenges.map(
-      challenge =>
-        new Challenge(
-          challenge.name,
-          challenge.createdAt,
-          challenge.endAt,
-          challenge.color,
-          challenge.userId,
-          challenge.categoryId,
-          challenge.active,
-          challenge.completion_progress,
-          challenge.id
-        )
-    );
+    const supabase = getSupabaseAdmin();
+    const { data, error } = await supabase.from('challenges').select();
+
+    if (error) throw new Error(error.message);
+
+    return (data ?? []).map((row) => toChallenge(row as ChallengeRow));
   }
 
   async findById(id: number): Promise<Challenge | null> {
-    const challenge = await prisma.challenge.findUnique({
-      where: { id },
-    });
+    const supabase = getSupabaseAdmin();
+    const { data } = await supabase.from('challenges').select().eq('id', id).maybeSingle();
 
-    if (!challenge) return null;
+    if (!data) return null;
 
-    return new Challenge(
-      challenge.name,
-      challenge.createdAt,
-      challenge.endAt,
-      challenge.color,
-      challenge.userId,
-      challenge.categoryId,
-      challenge.active,
-      challenge.completion_progress,
-      challenge.id
-    );
+    return toChallenge(data as ChallengeRow);
   }
 
   async findByIdWithUser(
     id: number
   ): Promise<{ challenge: Challenge; userNickname: string } | null> {
-    const challenge = await prisma.challenge.findUnique({
-      where: { id },
-      include: {
-        user: {
-          select: {
-            nickname: true,
-          },
-        },
-      },
-    });
+    const supabase = getSupabaseAdmin();
+    const { data, error } = await supabase
+      .from('challenges')
+      .select('*, users(nickname)')
+      .eq('id', id)
+      .maybeSingle();
 
-    if (!challenge) return null;
+    if (error) throw new Error(error.message);
+    if (!data) return null;
+
+    const { users, ...challengeRow } = data as ChallengeRow & {
+      users: { nickname: string } | null;
+    };
+
+    if (!users?.nickname) return null;
 
     return {
-      challenge: new Challenge(
-        challenge.name,
-        challenge.createdAt,
-        challenge.endAt,
-        challenge.color,
-        challenge.userId,
-        challenge.categoryId,
-        challenge.active,
-        challenge.completion_progress,
-        challenge.id
-      ),
-      userNickname: challenge.user.nickname,
+      challenge: toChallenge(challengeRow),
+      userNickname: users.nickname,
     };
   }
 
   async findByNickname(nickname: string): Promise<Challenge[]> {
     console.log('🔍 닉네임으로 챌린지 조회 시작:', nickname);
     try {
-      const challenges = await prisma.challenge.findMany({
-        where: { user: { nickname } },
-        include: {
-          user: {
-            select: {
-              nickname: true,
-            },
-          },
-        },
-      });
+      const supabase = getSupabaseAdmin();
 
-      return challenges.map(
-        challenge =>
-          new Challenge(
-            challenge.name,
-            challenge.createdAt,
-            challenge.endAt,
-            challenge.color,
-            challenge.userId,
-            challenge.categoryId,
-            challenge.active,
-            challenge.completion_progress,
-            challenge.id
-          )
-      );
+      const { data: user, error: userError } = await supabase
+        .from('users')
+        .select('id')
+        .eq('nickname', nickname)
+        .maybeSingle();
+
+      if (userError) throw new Error(userError.message);
+      if (!user) return [];
+
+      const { data, error } = await supabase
+        .from('challenges')
+        .select()
+        .eq('user_id', user.id);
+
+      if (error) throw new Error(error.message);
+
+      return (data ?? []).map((row) => toChallenge(row as ChallengeRow));
     } catch (error) {
       console.error('닉네임으로 챌린지 조회 중 오류:', error);
       throw new Error(
@@ -137,69 +124,44 @@ export class PrChallengeRepository implements IChallengeRepository {
   }
 
   async findByCategoryId(categoryId: number): Promise<Challenge[]> {
-    const challenges = await prisma.challenge.findMany({
-      where: { categoryId },
-    });
+    const supabase = getSupabaseAdmin();
+    const { data, error } = await supabase
+      .from('challenges')
+      .select()
+      .eq('category_id', categoryId);
 
-    return challenges.map(
-      challenge =>
-        new Challenge(
-          challenge.name,
-          challenge.createdAt,
-          challenge.endAt,
-          challenge.color,
-          challenge.userId,
-          challenge.categoryId,
-          challenge.active,
-          challenge.completion_progress,
-          challenge.id
-        )
-    );
+    if (error) throw new Error(error.message);
+
+    return (data ?? []).map((row) => toChallenge(row as ChallengeRow));
   }
 
   async update(id: number, challenge: Partial<Challenge>): Promise<Challenge | null> {
-    const updateData: {
-      name?: string;
-      createdAt?: Date;
-      endAt?: Date;
-      color?: string;
-      userId?: string;
-      categoryId?: number;
-      active?: boolean;
-    } = {};
+    const updateData: Record<string, unknown> = {};
 
     if (challenge.name !== undefined) updateData.name = challenge.name;
-    if (challenge.createdAt !== undefined) updateData.createdAt = challenge.createdAt;
-    if (challenge.endAt !== undefined) updateData.endAt = challenge.endAt;
+    if (challenge.createdAt !== undefined) updateData.created_at = challenge.createdAt.toISOString();
+    if (challenge.endAt !== undefined) updateData.end_at = challenge.endAt.toISOString();
     if (challenge.color !== undefined) updateData.color = challenge.color;
-    if (challenge.userId !== undefined) updateData.userId = challenge.userId;
-    if (challenge.categoryId !== undefined) updateData.categoryId = challenge.categoryId;
+    if (challenge.userId !== undefined) updateData.user_id = challenge.userId;
+    if (challenge.categoryId !== undefined) updateData.category_id = challenge.categoryId;
     if (challenge.active !== undefined) updateData.active = challenge.active;
 
-    const updatedChallenge = await prisma.challenge.update({
-      where: { id },
-      data: updateData,
-    });
+    const supabase = getSupabaseAdmin();
+    const { data, error } = await supabase
+      .from('challenges')
+      .update(updateData)
+      .eq('id', id)
+      .select()
+      .single();
 
-    return new Challenge(
-      updatedChallenge.name,
-      updatedChallenge.createdAt,
-      updatedChallenge.endAt,
-      updatedChallenge.color,
-      updatedChallenge.userId,
-      updatedChallenge.categoryId,
-      updatedChallenge.active,
-      updatedChallenge.completion_progress,
-      updatedChallenge.id
-    );
+    return toChallenge(assertSupabaseData<ChallengeRow>(data, error));
   }
 
   async delete(id: number): Promise<boolean> {
     try {
-      await prisma.challenge.delete({
-        where: { id },
-      });
-      return true;
+      const supabase = getSupabaseAdmin();
+      const { error } = await supabase.from('challenges').delete().eq('id', id);
+      return !error;
     } catch (teenieping: unknown) {
       if (teenieping instanceof Error) {
         console.error(`챌린지 삭제 중 오류 발생: ${teenieping.message}`);
@@ -212,10 +174,16 @@ export class PrChallengeRepository implements IChallengeRepository {
 
   async deleteByUserId(userId: string): Promise<boolean> {
     try {
-      const result = await prisma.challenge.deleteMany({
-        where: { userId },
-      });
-      return result.count > 0;
+      const supabase = getSupabaseAdmin();
+      const { data, error } = await supabase
+        .from('challenges')
+        .delete()
+        .eq('user_id', userId)
+        .select('id');
+
+      if (error) return false;
+
+      return (data?.length ?? 0) > 0;
     } catch (teenieping: unknown) {
       if (teenieping instanceof Error) {
         console.error(`사용자 챌린지 삭제 중 오류 발생: ${teenieping.message}`);

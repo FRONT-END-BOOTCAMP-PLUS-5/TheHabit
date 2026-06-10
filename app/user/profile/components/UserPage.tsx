@@ -11,14 +11,10 @@ import { ChallengeSelectComponent } from '@/app/user/profile/components/Challeng
 import NoneProfile from '@/app/_components/none/NoneProfile';
 import { AvatarSkeleton, ButtonSkeleton, TextSkeleton } from '@/app/_components/skeleton/Skeleton';
 import { BackComponent } from '@/app/_components/back/Back';
+import LogOut from '@/app/user/profile/edit/_components/LogOut';
+import { useUserPage } from '@/libs/hooks/user-hooks/useUserPage';
 
-export const UserPage = ({
-  userNickname,
-  sessionNickname,
-}: {
-  userNickname: string;
-  sessionNickname: string;
-}) => {
+export const UserPage = ({ userNickname }: { userNickname: string }) => {
   const router = useRouter();
   const [getUserData, setUserData] = useState<UserChallengeAndRoutineAndFollowAndCompletionDto>({
     id: '',
@@ -35,6 +31,8 @@ export const UserPage = ({
   const [getShow, setShow] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const selectWrapperRef = useRef<HTMLDivElement>(null);
+  const { isOwnProfile, getSessionNickname } = useUserPage(userNickname, getUserData.id);
+  const editNickname = getSessionNickname || getUserData.nickname || userNickname;
 
   const fetchData = useCallback(async () => {
     setIsLoading(true);
@@ -84,11 +82,14 @@ export const UserPage = ({
     };
   }, [getUserData, getSelectedChallengeId]);
 
+  const actionButtonClass =
+    'w-full h-11 rounded-xl text-base font-bold text-white shadow-md transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] cursor-pointer';
+
   return (
     <main>
       <section id='top' className='flex mt-10 justify-center px-4 sm:px-5'>
         <section id='top_wrapper' className='flex flex-col w-full max-w-lg'>
-          {sessionNickname != userNickname && <BackComponent />}
+          {!isOwnProfile && <BackComponent />}
           <div
             id='user_wrapper'
             className='flex flex-col items-center sm:flex-row sm:items-end justify-between gap-4 px-1 sm:px-5'
@@ -139,7 +140,7 @@ export const UserPage = ({
                 )}
                 <div
                   id='challenge'
-                  className={`relative ${sessionNickname === userNickname ? '' : 'ml-0'} w-full`}
+                  className={`relative ${isOwnProfile ? '' : 'ml-0'} w-full`}
                   ref={selectWrapperRef}
                 >
                   <div className='w-full min-h-[54px] line-clamp-2'>
@@ -188,7 +189,7 @@ export const UserPage = ({
             >
               {isLoading ? (
                 <TextSkeleton lines={2} className='w-[60px]' />
-              ) : sessionNickname === userNickname ? (
+              ) : isOwnProfile ? (
                 <div
                   className='cursor-pointer text-center'
                   onClick={() => {
@@ -214,7 +215,7 @@ export const UserPage = ({
               )}
               {isLoading ? (
                 <TextSkeleton lines={2} className='w-[60px]' />
-              ) : sessionNickname === userNickname ? (
+              ) : isOwnProfile ? (
                 <div
                   className='cursor-pointer text-center'
                   onClick={() => {
@@ -240,39 +241,38 @@ export const UserPage = ({
               )}
             </div>
           </div>
-          <div
-            id='button_wrapper'
-            className={`flex flex-col gap-3 mt-8 px-1 sm:px-5 sm:flex-row ${sessionNickname != userNickname ? 'justify-end' : 'justify-center'}`}
-          >
+          <div id='button_wrapper' className='mt-8 px-1 sm:px-5 flex flex-col gap-4 max-w-md mx-auto w-full'>
             {isLoading ? (
-              <ButtonSkeleton width={'w-full sm:w-[200px]'} className='h-[44px] rounded-[10px]' />
+              <div className={`grid gap-3 ${isOwnProfile ? 'grid-cols-1 sm:grid-cols-2' : 'grid-cols-1'}`}>
+                <ButtonSkeleton width='w-full' className='h-11 rounded-xl' />
+                {isOwnProfile && <ButtonSkeleton width='w-full' className='h-11 rounded-xl' />}
+              </div>
             ) : (
-              <Button
-                className={
-                  'w-full sm:w-[200px] z-20 bg-[#FFC70A] text-white px-4 py-2 rounded-[10px] text-lg font-bold shadow-lg cursor-pointer hover:animate-float transition-all duration-300 hover:scale-105 sm:hover:scale-110'
-                }
-                onClick={() => {
-                  router.push(`/user/dashboard/${userNickname}`);
-                }}
-              >
-                대시보드 보러가기
-              </Button>
+              <div className={`grid gap-3 ${isOwnProfile ? 'grid-cols-1 sm:grid-cols-2' : 'grid-cols-1'}`}>
+                <Button
+                  className={`${actionButtonClass} bg-[#FFC70A] hover:bg-[#e6b309]`}
+                  onClick={() => {
+                    router.push(`/user/dashboard/${userNickname}`);
+                  }}
+                >
+                  대시보드
+                </Button>
+                {isOwnProfile && (
+                  <Button
+                    className={`${actionButtonClass} bg-[#48a9a0] hover:bg-[#3d9189]`}
+                    onClick={() => {
+                      router.push(`/user/profile/edit/${encodeURIComponent(editNickname)}`);
+                    }}
+                  >
+                    프로필 편집
+                  </Button>
+                )}
+              </div>
             )}
-            {isLoading ? (
-              <ButtonSkeleton width={'w-full sm:w-[200px]'} className='h-[44px] rounded-[10px]' />
-            ) : sessionNickname === userNickname ? (
-              <Button
-                className={
-                  'w-full sm:w-[200px] z-20 bg-[#48a9a0] text-white px-4 py-2 rounded-[10px] text-lg font-bold shadow-lg cursor-pointer hover:animate-float transition-all duration-300 hover:scale-105 sm:hover:scale-110'
-                }
-                onClick={() => {
-                  router.push(`/user/profile/edit/${sessionNickname}`);
-                }}
-              >
-                프로필 편집
-              </Button>
-            ) : (
-              <></>
+            {!isLoading && isOwnProfile && (
+              <div className='pt-3 border-t border-gray-100'>
+                <LogOut variant='outline' />
+              </div>
             )}
           </div>
 

@@ -1,10 +1,31 @@
 import { NextRequest, NextResponse } from 'next/server';
-import prisma from '@/public/utils/prismaClient';
+import { getSupabaseAdmin } from '@/public/utils/supabase/server';
 import { ApiResponse } from '@/backend/shared/types/ApiResponse';
 import { FeedbackDto } from '@/backend/feedbacks/application/dtos/FeedbackDto';
 import { FeedBackEntity } from '@/backend/feedbacks/domain/entities/FeedBackEntity';
 import { PrFeedBackRepository } from '@/backend/feedbacks/infrastructure/repositories/PrFeedBackRepository';
 import { AddFeedBackUsecase } from '@/backend/feedbacks/application/usecases/AddFeedBackUsecase';
+
+async function verifyChallengeOwnership(nickname: string, challengeId: number): Promise<boolean> {
+  const supabase = getSupabaseAdmin();
+
+  const { data: user } = await supabase
+    .from('users')
+    .select('id')
+    .eq('nickname', nickname)
+    .maybeSingle();
+
+  if (!user) return false;
+
+  const { data: challenge } = await supabase
+    .from('challenges')
+    .select('id')
+    .eq('id', challengeId)
+    .eq('user_id', user.id)
+    .maybeSingle();
+
+  return !!challenge;
+}
 
 export const POST = async (
   request: NextRequest,
@@ -13,7 +34,6 @@ export const POST = async (
   const { nickname } = await params;
   const body = await request.json();
 
-  // Backward compatibility: accept both aiResponseContent and aiResponse
   const aiResponseContent: unknown = body.aiResponseContent ?? body.aiResponse;
   const challengeIdNumber = Number(body.challengeId);
 
@@ -34,13 +54,9 @@ export const POST = async (
   }
 
   try {
-    // 소유권 확인: 해당 nickname의 사용자 챌린지인지 검증
-    const challenge = await prisma.challenge.findFirst({
-      where: { id: challengeIdNumber, user: { nickname } },
-      select: { id: true },
-    });
+    const isOwner = await verifyChallengeOwnership(nickname, challengeIdNumber);
 
-    if (!challenge) {
+    if (!isOwner) {
       const errorResponse: ApiResponse<null> = {
         success: false,
         error: { code: 'FORBIDDEN', message: '해당 사용자 챌린지가 아닙니다.' },

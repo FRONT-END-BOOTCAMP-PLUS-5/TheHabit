@@ -47,7 +47,8 @@ export const POST = async (request: NextRequest): Promise<NextResponse> => {
     };
     return NextResponse.json(successResponse);
   } catch (error: unknown) {
-    const message = error instanceof Error ? error.message : 'aiResponseContent 저장에 실패했습니다.';
+    const message =
+      error instanceof Error ? error.message : 'aiResponseContent 저장에 실패했습니다.';
     const errorResponse: ApiResponse<null> = {
       success: false,
       error: { code: 'INTERNAL_SERVER_ERROR', message },

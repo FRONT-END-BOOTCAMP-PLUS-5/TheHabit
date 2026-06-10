@@ -11,6 +11,7 @@ import AddChallengeForm from './AddChallengeForm';
 import { useGetDashboardByNickname } from '@/libs/hooks/dashboard-hooks/useGetDashboardByNickname';
 import { useParams } from 'next/navigation';
 import { useUserPage } from '@/libs/hooks/user-hooks/useUserPage';
+import { useGetUserByNickname } from '@/libs/hooks/user-hooks/useGetUserByNickname';
 import { ChallengeDto } from '@/backend/challenges/application/dtos/ChallengeDto';
 import AllChallengeList from './AllChallengeList';
 import CategoryChallengeList from './CategoryChallengeList';
@@ -24,8 +25,8 @@ const ChallengeListSection: React.FC = () => {
   const { openModal } = useModalStore();
   const params = useParams();
   const nickname = params.nickname as string;
-  const { getSessionNickname } = useUserPage(nickname);
-  const isOwner = getSessionNickname === nickname;
+  const { data: profileUser } = useGetUserByNickname(nickname);
+  const { isOwnProfile: isOwner } = useUserPage(nickname, profileUser?.data?.id);
   const { data: dashboard, error, isLoading, refetch } = useGetDashboardByNickname(nickname);
 
   // 에러 처리

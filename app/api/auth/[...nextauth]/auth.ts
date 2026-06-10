@@ -105,12 +105,12 @@ export const authOptions = {
             name: userInfo.name,
             picture: userInfo.picture,
             sub: userInfo.sub,
-
           });
           user.id = result?.id;
           user.nickname = result?.nickname;
           user.email = result?.email;
           user.profileImg = result?.profileImg;
+          user.username = result?.name;
           user.name = result?.name;
         } else if (provider === 'kakao') {
           result = await kakaoLoginUsecase.execute({
@@ -119,35 +119,47 @@ export const authOptions = {
             nickname: userInfo.name,
             profile_image: userInfo.picture,
           });
+          user.id = result?.id;
+          user.nickname = result?.nickname;
+          user.email = result?.email;
+          user.profileImg = result?.profileImg;
+          user.username = result?.name;
+          user.name = result?.name;
         }
       }
       return true;
     },
 
-    async jwt({ token, user }: { token: JWT; user: User }) {
-      console.log('1. jwt user', user);
-      console.log('2. jwt token', token);
+    async jwt({ token, user }: { token: JWT; user?: User }) {
       if (user) {
-        token.nickname = user.nickname || undefined;
-        token.email = user.email || undefined;
-        token.id = user.id || undefined;
+        return {
+          ...token,
+          id: user.id,
+          email: user.email,
+          nickname: user.nickname,
+          username: user.username,
+          profileImg: user.profileImg,
+          profileImgPath: user.profileImgPath,
+          createdAt: user.createdAt,
+          updatedAt: user.updatedAt,
+        };
       }
       return token;
     },
 
     async session({ session, token }: { session: Session; token: JWT }) {
-      if (token) {
-        // JWT의 데이터를 세션에 매핑
-        session.user.nickname = token.nickname as string;
-        session.user.email = token.email as string;
-        session.user.id = token.id as string;
-        session.user.profileImg = token.profileImg || null;
-        session.user.profileImgPath = token.profileImgPath || null;
-        session.user.username = token.username as string;
-
-
-      }
-      return session;
+      return {
+        ...session,
+        user: {
+          ...session.user,
+          id: token.id ?? '',
+          email: token.email ?? session.user.email ?? '',
+          nickname: token.nickname ?? '',
+          username: token.username ?? '',
+          profileImg: token.profileImg ?? null,
+          profileImgPath: token.profileImgPath ?? null,
+        },
+      };
     },
 
     async redirect({ url, baseUrl }: { url: string; baseUrl: string; }) {

@@ -7,7 +7,7 @@ export const FeedbackApi = async (
   nickname: string
 ): Promise<ApiResponse<FeedbackDto>> => {
   try {
-    const response = await axiosInstance.post(`/api/feedback/${encodeURIComponent(nickname)}`, {
+    const response = await axiosInstance.post(`/api/feedback/${nickname}`, {
       aiResponseContent: feedBack.aiResponseContent,
       challengeId: feedBack.challengeId,
     });
@@ -24,13 +24,10 @@ export const getFeedBackByChallengeId = async (
   nickname: string
 ): Promise<ApiResponse<FeedbackDto>> => {
   try {
-    const response = await axiosInstance.get(
-      `/api/feedback/${encodeURIComponent(nickname)}/${challengeId}`
-    );
+    const response = await axiosInstance.get(`/api/feedback/${nickname}/${challengeId}`);
     return response.data;
   } catch (error) {
     console.error('피드백 조회 실패:', error);
     throw error;
   }
 };
-

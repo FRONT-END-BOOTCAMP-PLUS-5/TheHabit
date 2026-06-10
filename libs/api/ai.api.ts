@@ -6,7 +6,7 @@ import { AI_PROVIDER } from '@/public/consts/AiProvider';
 export const requestAI = async (requestInput: AiRequestDto): Promise<ApiResponse<AiRequestDto>> => {
   const response = await axiosInstance.post('/api/ai', {
     aiResponseContent: requestInput.aiResponseContent,
-    provider: AI_PROVIDER.GEMINI,
+    provider: AI_PROVIDER.OPENAI,
   });
 
   return response.data;

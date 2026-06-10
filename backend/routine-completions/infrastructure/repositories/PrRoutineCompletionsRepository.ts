@@ -1,7 +1,28 @@
 import { IRoutineCompletionsRepository } from '@/backend/routine-completions/domain/repositories/IRoutineCompletionsRepository';
 import { RoutineCompletion } from '@/backend/routine-completions/domain/entities/routineCompletion';
 import { s3Service } from '@/backend/shared/services/s3.service';
-import prisma from '@/public/utils/prismaClient';
+import { assertSupabaseData } from '@/backend/shared/utils/supabaseHelpers';
+import { getSupabaseAdmin } from '@/public/utils/supabase/server';
+
+type RoutineCompletionRow = {
+  id: number;
+  user_id: string;
+  routine_id: number;
+  created_at: string;
+  proof_img_url: string | null;
+  content: string | null;
+};
+
+function toRoutineCompletion(row: RoutineCompletionRow): RoutineCompletion {
+  return new RoutineCompletion(
+    row.id,
+    row.user_id,
+    row.routine_id,
+    new Date(row.created_at),
+    row.proof_img_url,
+    row.content
+  );
+}
 
 export class PrRoutineCompletionsRepository implements IRoutineCompletionsRepository {
   async uploadImage(file: File): Promise<{ imageUrl: string; key: string }> {
@@ -16,23 +37,19 @@ export class PrRoutineCompletionsRepository implements IRoutineCompletionsReposi
   async create(
     routineCompletion: Omit<RoutineCompletion, 'id' | 'createdAt'>
   ): Promise<RoutineCompletion> {
-    const createdCompletion = await prisma.routineCompletion.create({
-      data: {
-        userId: routineCompletion.userId,
-        routineId: routineCompletion.routineId,
-        proofImgUrl: routineCompletion.proofImgUrl,
+    const supabase = getSupabaseAdmin();
+    const { data, error } = await supabase
+      .from('routines_completions')
+      .insert({
+        user_id: routineCompletion.userId,
+        routine_id: routineCompletion.routineId,
+        proof_img_url: routineCompletion.proofImgUrl,
         content: routineCompletion.content,
-      },
-    });
+      })
+      .select()
+      .single();
 
-    return new RoutineCompletion(
-      createdCompletion.id,
-      createdCompletion.userId,
-      createdCompletion.routineId,
-      createdCompletion.createdAt,
-      createdCompletion.proofImgUrl,
-      createdCompletion.content
-    );
+    return toRoutineCompletion(assertSupabaseData<RoutineCompletionRow>(data, error));
   }
 
   async createByNickname(request: {
@@ -41,88 +58,95 @@ export class PrRoutineCompletionsRepository implements IRoutineCompletionsReposi
     content: string;
     proofImgUrl: string | null;
   }): Promise<RoutineCompletion> {
-    const user = await prisma.user.findUnique({
-      where: { nickname: request.nickname },
-    });
+    const supabase = getSupabaseAdmin();
 
+    const { data: user, error: userError } = await supabase
+      .from('users')
+      .select('id')
+      .eq('nickname', request.nickname)
+      .maybeSingle();
+
+    if (userError) {
+      throw new Error(userError.message);
+    }
     if (!user) {
       throw new Error(`사용자를 찾을 수 없습니다: ${request.nickname}`);
     }
 
-    const createdCompletion = await prisma.routineCompletion.create({
-      data: {
-        userId: user.id,
-        routineId: request.routineId,
+    const { data, error } = await supabase
+      .from('routines_completions')
+      .insert({
+        user_id: user.id,
+        routine_id: request.routineId,
         content: request.content,
-        proofImgUrl: request.proofImgUrl,
-      },
-    });
+        proof_img_url: request.proofImgUrl,
+      })
+      .select()
+      .single();
 
-    return new RoutineCompletion(
-      createdCompletion.id,
-      createdCompletion.userId,
-      createdCompletion.routineId,
-      createdCompletion.createdAt,
-      createdCompletion.proofImgUrl,
-      createdCompletion.content
-    );
+    return toRoutineCompletion(assertSupabaseData<RoutineCompletionRow>(data, error));
   }
 
   async findByRoutineId(routineId: number): Promise<RoutineCompletion[]> {
-    const completions = await prisma.routineCompletion.findMany({
-      where: { routineId },
-    });
+    const supabase = getSupabaseAdmin();
+    const { data, error } = await supabase
+      .from('routines_completions')
+      .select()
+      .eq('routine_id', routineId);
 
-    return completions.map(completion => new RoutineCompletion(
-      completion.id,
-      completion.userId,
-      completion.routineId,
-      completion.createdAt,
-      completion.proofImgUrl,
-      completion.content
-    ));
+    if (error) {
+      throw new Error(error.message);
+    }
+
+    return (data ?? []).map(row => toRoutineCompletion(row as RoutineCompletionRow));
   }
 
-
   async findById(completionId: number): Promise<RoutineCompletion | null> {
-    const completion = await prisma.routineCompletion.findUnique({
-      where: { id: completionId },
-    });
+    const supabase = getSupabaseAdmin();
+    const { data, error } = await supabase
+      .from('routines_completions')
+      .select()
+      .eq('id', completionId)
+      .maybeSingle();
 
-    if (!completion) return null;
+    if (error) {
+      throw new Error(error.message);
+    }
+    if (!data) {
+      return null;
+    }
 
-    return new RoutineCompletion(
-      completion.id,
-      completion.userId,
-      completion.routineId,
-      completion.createdAt,
-      completion.proofImgUrl,
-      completion.content
-    );
+    return toRoutineCompletion(data as RoutineCompletionRow);
   }
 
   async findByNickname(nickname: string): Promise<RoutineCompletion[]> {
     console.log('🔍 닉네임으로 루틴 완료 조회 시작:', nickname);
     try {
-      const completions = await prisma.routineCompletion.findMany({
-        where: { user: { nickname } },
-        include: {
-          user: {
-            select: {
-              nickname: true,
-            },
-          },
-        },
-      });
+      const supabase = getSupabaseAdmin();
 
-      return completions.map(completion => new RoutineCompletion(
-        completion.id,
-        completion.userId,
-        completion.routineId,
-        completion.createdAt,
-        completion.proofImgUrl,
-        completion.content
-      ));
+      const { data: user, error: userError } = await supabase
+        .from('users')
+        .select('id')
+        .eq('nickname', nickname)
+        .maybeSingle();
+
+      if (userError) {
+        throw new Error(userError.message);
+      }
+      if (!user) {
+        return [];
+      }
+
+      const { data, error } = await supabase
+        .from('routines_completions')
+        .select()
+        .eq('user_id', user.id);
+
+      if (error) {
+        throw new Error(error.message);
+      }
+
+      return (data ?? []).map(row => toRoutineCompletion(row as RoutineCompletionRow));
     } catch (error) {
       console.error('닉네임으로 루틴 완료 조회 중 오류:', error);
       throw new Error(
@@ -132,21 +156,18 @@ export class PrRoutineCompletionsRepository implements IRoutineCompletionsReposi
   }
 
   async findByUserIdAndRoutineId(userId: string, routineId: number): Promise<RoutineCompletion[]> {
-    const completions = await prisma.routineCompletion.findMany({
-      where: {
-        userId,
-        routineId,
-      },
-    });
+    const supabase = getSupabaseAdmin();
+    const { data, error } = await supabase
+      .from('routines_completions')
+      .select()
+      .eq('user_id', userId)
+      .eq('routine_id', routineId);
 
-    return completions.map(completion => new RoutineCompletion(
-      completion.id,
-      completion.userId,
-      completion.routineId,
-      completion.createdAt,
-      completion.proofImgUrl,
-      completion.content
-    ));
+    if (error) {
+      throw new Error(error.message);
+    }
+
+    return (data ?? []).map(row => toRoutineCompletion(row as RoutineCompletionRow));
   }
 
   async findByNicknameAndRoutineId(
@@ -155,28 +176,32 @@ export class PrRoutineCompletionsRepository implements IRoutineCompletionsReposi
   ): Promise<RoutineCompletion[]> {
     console.log('🔍 닉네임과 루틴ID로 완료 조회 시작:', nickname, routineId);
     try {
-      const completions = await prisma.routineCompletion.findMany({
-        where: {
-          user: { nickname },
-          routineId,
-        },
-        include: {
-          user: {
-            select: {
-              nickname: true,
-            },
-          },
-        },
-      });
+      const supabase = getSupabaseAdmin();
 
-      return completions.map(completion => new RoutineCompletion(
-        completion.id,
-        completion.userId,
-        completion.routineId,
-        completion.createdAt,
-        completion.proofImgUrl,
-        completion.content
-      ));
+      const { data: user, error: userError } = await supabase
+        .from('users')
+        .select('id')
+        .eq('nickname', nickname)
+        .maybeSingle();
+
+      if (userError) {
+        throw new Error(userError.message);
+      }
+      if (!user) {
+        return [];
+      }
+
+      const { data, error } = await supabase
+        .from('routines_completions')
+        .select()
+        .eq('user_id', user.id)
+        .eq('routine_id', routineId);
+
+      if (error) {
+        throw new Error(error.message);
+      }
+
+      return (data ?? []).map(row => toRoutineCompletion(row as RoutineCompletionRow));
     } catch (error) {
       console.error('닉네임과 루틴ID로 완료 조회 중 오류:', error);
       throw new Error(
@@ -189,30 +214,32 @@ export class PrRoutineCompletionsRepository implements IRoutineCompletionsReposi
     completionId: number,
     routineCompletion: Partial<RoutineCompletion>
   ): Promise<RoutineCompletion> {
-    const updatedCompletion = await prisma.routineCompletion.update({
-      where: { id: completionId },
-      data: {
+    const supabase = getSupabaseAdmin();
+    const { data, error } = await supabase
+      .from('routines_completions')
+      .update({
         ...(routineCompletion.proofImgUrl !== undefined && {
-          proofImgUrl: routineCompletion.proofImgUrl,
+          proof_img_url: routineCompletion.proofImgUrl,
         }),
-      },
-    });
+      })
+      .eq('id', completionId)
+      .select()
+      .single();
 
-    return new RoutineCompletion(
-      updatedCompletion.id,
-      updatedCompletion.userId,
-      updatedCompletion.routineId,
-      updatedCompletion.createdAt,
-      updatedCompletion.proofImgUrl,
-      updatedCompletion.content
-    );
+    return toRoutineCompletion(assertSupabaseData<RoutineCompletionRow>(data, error));
   }
 
   async delete(completionId: number): Promise<boolean> {
     try {
-      await prisma.routineCompletion.delete({
-        where: { id: completionId },
-      });
+      const supabase = getSupabaseAdmin();
+      const { error } = await supabase
+        .from('routines_completions')
+        .delete()
+        .eq('id', completionId);
+
+      if (error) {
+        throw new Error(error.message);
+      }
       return true;
     } catch (error) {
       if (error instanceof Error) throw new Error(error.message);

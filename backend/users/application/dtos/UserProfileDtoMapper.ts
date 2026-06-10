@@ -4,6 +4,7 @@ import { UserProfileDto } from './UserProfileDto';
 export class UserProfileDtoMapper {
   static fromEntity(entity: User): UserProfileDto {
     return {
+      id: entity.id ?? '',
       username: entity.username,
       nickname: entity.nickname,
       profileImg: entity.profileImg || null,

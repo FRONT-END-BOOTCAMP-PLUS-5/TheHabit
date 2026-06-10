@@ -7,7 +7,7 @@ import { LoadingSpinner } from '@/app/_components/loading/LoadingSpinner';
 
 const UserProfilePage = () => {
   const { nickname: slugNickname } = useParams();
-  const { getNickname, isLoading, getSessionNickname } = useUserPage(slugNickname);
+  const { getNickname, isLoading } = useUserPage(slugNickname);
   return (
     <>
       {isLoading ? (
@@ -15,7 +15,7 @@ const UserProfilePage = () => {
           <LoadingSpinner />
         </div>
       ) : (
-        <UserPage userNickname={getNickname} sessionNickname={getSessionNickname} />
+        <UserPage userNickname={getNickname} />
       )}
     </>
   );

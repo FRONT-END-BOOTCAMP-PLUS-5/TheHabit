@@ -3,23 +3,18 @@
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-// import { useSession } from 'next-auth/react';
 import { ONBOARDING_LIST } from '@/public/consts/onboarding';
-
-const ONBOARDING_COOKIE = 'onboarding=done';
-
-const isOnboardingDone = () =>
-  document.cookie.split('; ').some(c => c === ONBOARDING_COOKIE);
+import { fetchOnboardingStatus } from '@/public/consts/onboardingConsts';
 
 export const OnBoardingStepComponent = () => {
   const [currentStep, setCurrentStep] = useState(0);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const router = useRouter();
-  // const { data: session } = useSession();
-  // const userNickname = session?.user?.nickname;
 
   useEffect(() => {
-    const redirectIfDone = () => {
-      if (isOnboardingDone()) {
+    const redirectIfDone = async () => {
+      const done = await fetchOnboardingStatus();
+      if (done) {
         router.replace('/demo');
       }
     };
@@ -38,12 +33,20 @@ export const OnBoardingStepComponent = () => {
 
   const currentOnboarding = ONBOARDING_LIST[currentStep];
 
-  const handleNext = () => {
+  const handleNext = async () => {
     if (currentStep < ONBOARDING_LIST.length - 1) {
       setCurrentStep(currentStep + 1);
-    } else {
-      document.cookie = `${ONBOARDING_COOKIE}; path=/; max-age=${60 * 60 * 24 * 365}`;
+      return;
+    }
+
+    setIsSubmitting(true);
+    try {
+      const res = await fetch('/api/onboarding/complete', { method: 'POST' });
+      if (!res.ok) throw new Error('온보딩 완료 처리에 실패했습니다.');
       router.replace('/demo');
+    } catch (error) {
+      console.error(error);
+      setIsSubmitting(false);
     }
   };
 
@@ -92,11 +95,16 @@ export const OnBoardingStepComponent = () => {
       {/* 다음 버튼 */}
       <div className='w-full'>
         <button
-          className='w-full text-lg font-semibold text-white bg-primary cursor-pointer rounded-xl h-14 transition duration-200 ease-out hover:scale-105 hover:shadow-lg active:scale-95'
+          className='w-full text-lg font-semibold text-white bg-primary cursor-pointer rounded-xl h-14 transition duration-200 ease-out hover:scale-105 hover:shadow-lg active:scale-95 disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:scale-100'
           onClick={handleNext}
           type='button'
+          disabled={isSubmitting}
         >
-          {currentStep === ONBOARDING_LIST.length - 1 ? '시작하기' : '다음으로'}
+          {isSubmitting
+            ? '처리 중...'
+            : currentStep === ONBOARDING_LIST.length - 1
+              ? '시작하기'
+              : '다음으로'}
         </button>
       </div>
     </>

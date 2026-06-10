@@ -143,7 +143,10 @@ const UserProfileEditPage = () => {
             </div>
           </div>
           <div id='button_wrapper' className='flex justify-end gap-10 mt-10 px-5'>
-            <LogOut />
+            <LogOut
+              variant='primary'
+              className='w-[100px] h-8 text-sm rounded-lg shadow-md'
+            />
             <button
               color='default'
               className='w-[100px]

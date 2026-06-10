@@ -1,28 +1,46 @@
 import { IRoutinesRepository } from '@/backend/routines/domain/repositories/IRoutinesRepository';
 import { Routine } from '@/backend/routines/domain/entities/routine';
-import prisma from '@/public/utils/prismaClient';
+import { assertSupabaseData } from '@/backend/shared/utils/supabaseHelpers';
+import { getSupabaseAdmin } from '@/public/utils/supabase/server';
+
+type RoutineRow = {
+  id: number;
+  routine_title: string;
+  alert_time: string | null;
+  emoji: number;
+  challenge_id: number;
+  created_at: string;
+  updated_at: string;
+};
+
+function toRoutine(row: RoutineRow): Routine {
+  return new Routine(
+    row.id,
+    row.routine_title,
+    row.alert_time ? new Date(row.alert_time) : null,
+    row.emoji,
+    row.challenge_id,
+    new Date(row.created_at),
+    new Date(row.updated_at)
+  );
+}
 
 export class PrRoutinesRepository implements IRoutinesRepository {
   async create(routine: Omit<Routine, 'id' | 'createdAt'>): Promise<Routine> {
-    const createdRoutine = await prisma.routine.create({
-      data: {
-        routineTitle: routine.routineTitle,
-        alertTime: routine.alertTime,
+    const supabase = getSupabaseAdmin();
+    const { data, error } = await supabase
+      .from('routines')
+      .insert({
+        routine_title: routine.routineTitle,
+        alert_time: routine.alertTime?.toISOString() ?? null,
         emoji: routine.emoji,
-        challengeId: routine.challengeId,
-        updatedAt: routine.updatedAt,
-      },
-    });
+        challenge_id: routine.challengeId,
+        updated_at: routine.updatedAt.toISOString(),
+      })
+      .select()
+      .single();
 
-    return new Routine(
-      createdRoutine.id,
-      createdRoutine.routineTitle,
-      createdRoutine.alertTime,
-      createdRoutine.emoji,
-      createdRoutine.challengeId,
-      createdRoutine.createdAt,
-      createdRoutine.updatedAt
-    );
+    return toRoutine(assertSupabaseData<RoutineRow>(data, error));
   }
 
   async createByNickname(request: {
@@ -32,196 +50,209 @@ export class PrRoutinesRepository implements IRoutinesRepository {
     challengeId: number;
     nickname: string;
   }): Promise<Routine> {
-    const challenge = await prisma.challenge.findFirst({
-      where: {
-        id: request.challengeId,
-        user: {
-          nickname: request.nickname,
-        },
-      },
-    });
+    const supabase = getSupabaseAdmin();
 
-    if (!challenge) {
-      throw new Error(`챌린지 ID ${request.challengeId}는 사용자 '${request.nickname}'의 챌린지가 아닙니다.`);
+    const { data: user, error: userError } = await supabase
+      .from('users')
+      .select('id')
+      .eq('nickname', request.nickname)
+      .maybeSingle();
+
+    if (userError) {
+      throw new Error(userError.message);
+    }
+    if (!user) {
+      throw new Error(`사용자를 찾을 수 없습니다: ${request.nickname}`);
     }
 
-    const createdRoutine = await prisma.routine.create({
-      data: {
-        routineTitle: request.routineTitle,
-        alertTime: request.alertTime,
-        emoji: request.emoji,
-        challengeId: request.challengeId,
-        updatedAt: new Date(),
-      },
-    });
+    const { data: challenge, error: challengeError } = await supabase
+      .from('challenges')
+      .select('id')
+      .eq('id', request.challengeId)
+      .eq('user_id', user.id)
+      .maybeSingle();
 
-    return new Routine(
-      createdRoutine.id,
-      createdRoutine.routineTitle,
-      createdRoutine.alertTime,
-      createdRoutine.emoji,
-      createdRoutine.challengeId,
-      createdRoutine.createdAt,
-      createdRoutine.updatedAt
-    );
+    if (challengeError) {
+      throw new Error(challengeError.message);
+    }
+    if (!challenge) {
+      throw new Error(
+        `챌린지 ID ${request.challengeId}는 사용자 '${request.nickname}'의 챌린지가 아닙니다.`
+      );
+    }
+
+    const { data, error } = await supabase
+      .from('routines')
+      .insert({
+        routine_title: request.routineTitle,
+        alert_time: request.alertTime?.toISOString() ?? null,
+        emoji: request.emoji,
+        challenge_id: request.challengeId,
+        updated_at: new Date().toISOString(),
+      })
+      .select()
+      .single();
+
+    return toRoutine(assertSupabaseData<RoutineRow>(data, error));
   }
 
   async findByChallengeId(challengeId: number): Promise<Routine[]> {
-    const routines = await prisma.routine.findMany({
-      where: { challengeId },
-    });
+    const supabase = getSupabaseAdmin();
+    const { data, error } = await supabase
+      .from('routines')
+      .select()
+      .eq('challenge_id', challengeId);
 
-    return routines.map(routine =>
-      new Routine(
-        routine.id,
-        routine.routineTitle,
-        routine.alertTime,
-        routine.emoji,
-        routine.challengeId,
-        routine.createdAt,
-        routine.updatedAt
-      )
-    );
+    if (error) {
+      throw new Error(error.message);
+    }
+
+    return (data ?? []).map(row => toRoutine(row as RoutineRow));
   }
 
   async findByUserId(userId: string): Promise<Routine[]> {
-    const routines = await prisma.routine.findMany({
-      where: {
-        // User-Routine 관계를 통해 조회
-        // 실제 스키마에 따라 수정 필요
-        challenge: {
-          userId: userId,
-        },
-      },
-    });
+    const supabase = getSupabaseAdmin();
 
-    return routines.map(routine =>
-      new Routine(
-        routine.id,
-        routine.routineTitle,
-        routine.alertTime,
-        routine.emoji,
-        routine.challengeId,
-        routine.createdAt,
-        routine.updatedAt
-      )
-    );
+    const { data: challenges, error: challengeError } = await supabase
+      .from('challenges')
+      .select('id')
+      .eq('user_id', userId);
+
+    if (challengeError) {
+      throw new Error(challengeError.message);
+    }
+
+    const challengeIds = (challenges ?? []).map(c => c.id);
+    if (challengeIds.length === 0) {
+      return [];
+    }
+
+    const { data, error } = await supabase
+      .from('routines')
+      .select()
+      .in('challenge_id', challengeIds);
+
+    if (error) {
+      throw new Error(error.message);
+    }
+
+    return (data ?? []).map(row => toRoutine(row as RoutineRow));
   }
 
   async findByNickname(nickname: string): Promise<Routine[]> {
-    const routines = await prisma.routine.findMany({
-      where: {
-        challenge: {
-          user: { nickname },
-        },
-      },
-    });
+    const supabase = getSupabaseAdmin();
 
-    return routines.map(routine =>
-      new Routine(
-        routine.id,
-        routine.routineTitle,
-        routine.alertTime,
-        routine.emoji,
-        routine.challengeId,
-        routine.createdAt,
-        routine.updatedAt
-      )
-    );
+    const { data: user, error: userError } = await supabase
+      .from('users')
+      .select('id')
+      .eq('nickname', nickname)
+      .maybeSingle();
+
+    if (userError) {
+      throw new Error(userError.message);
+    }
+    if (!user) {
+      return [];
+    }
+
+    const { data: challenges, error: challengeError } = await supabase
+      .from('challenges')
+      .select('id')
+      .eq('user_id', user.id);
+
+    if (challengeError) {
+      throw new Error(challengeError.message);
+    }
+
+    const challengeIds = (challenges ?? []).map(c => c.id);
+    if (challengeIds.length === 0) {
+      return [];
+    }
+
+    const { data, error } = await supabase
+      .from('routines')
+      .select()
+      .in('challenge_id', challengeIds);
+
+    if (error) {
+      throw new Error(error.message);
+    }
+
+    return (data ?? []).map(row => toRoutine(row as RoutineRow));
   }
 
   async findById(routineId: number): Promise<Routine | null> {
-    const routine = await prisma.routine.findUnique({
-      where: { id: routineId },
-    });
+    const supabase = getSupabaseAdmin();
+    const { data, error } = await supabase
+      .from('routines')
+      .select()
+      .eq('id', routineId)
+      .maybeSingle();
 
-    if (!routine) return null;
+    if (error) {
+      throw new Error(error.message);
+    }
+    if (!data) {
+      return null;
+    }
 
-    return new Routine(
-      routine.id,
-      routine.routineTitle,
-      routine.alertTime,
-      routine.emoji,
-      routine.challengeId,
-      routine.createdAt,
-      routine.updatedAt
-    );
+    return toRoutine(data as RoutineRow);
   }
 
   async findAll(): Promise<Routine[]> {
-    const routines = await prisma.routine.findMany();
+    const supabase = getSupabaseAdmin();
+    const { data, error } = await supabase.from('routines').select();
 
-    return routines.map(routine =>
-      new Routine(
-        routine.id,
-        routine.routineTitle,
-        routine.alertTime,
-        routine.emoji,
-        routine.challengeId,
-        routine.createdAt,
-        routine.updatedAt
-      )
-    );
+    if (error) {
+      throw new Error(error.message);
+    }
+
+    return (data ?? []).map(row => toRoutine(row as RoutineRow));
   }
 
   async findByAlertTime(alertTime: Date): Promise<Routine[]> {
-    // 1분 범위로 조회 (alertTime ~ alertTime + 1분)
     const endTime = new Date(alertTime.getTime() + 60000);
+    const supabase = getSupabaseAdmin();
 
-    const routines = await prisma.routine.findMany({
-      where: {
-        alertTime: {
-          gte: alertTime,
-          lt: endTime,
-        },
-      },
-    });
+    const { data, error } = await supabase
+      .from('routines')
+      .select()
+      .gte('alert_time', alertTime.toISOString())
+      .lt('alert_time', endTime.toISOString());
 
-    return routines.map(routine =>
-      new Routine(
-        routine.id,
-        routine.routineTitle,
-        routine.alertTime,
-        routine.emoji,
-        routine.challengeId,
-        routine.createdAt,
-        routine.updatedAt
-      )
-    );
+    if (error) {
+      throw new Error(error.message);
+    }
+
+    return (data ?? []).map(row => toRoutine(row as RoutineRow));
   }
 
   async update(routineId: number, routine: Partial<Routine>): Promise<Routine> {
-    const updatedRoutine = await prisma.routine.update({
-      where: { id: routineId },
-      data: {
-        ...(routine.routineTitle && { routineTitle: routine.routineTitle }),
+    const supabase = getSupabaseAdmin();
+    const { data, error } = await supabase
+      .from('routines')
+      .update({
+        ...(routine.routineTitle && { routine_title: routine.routineTitle }),
         ...(routine.alertTime !== undefined && {
-          alertTime: routine.alertTime,
+          alert_time: routine.alertTime?.toISOString() ?? null,
         }),
         ...(routine.emoji && { emoji: routine.emoji }),
-        updatedAt: new Date(),
-      },
-    });
+        updated_at: new Date().toISOString(),
+      })
+      .eq('id', routineId)
+      .select()
+      .single();
 
-    return new Routine(
-      updatedRoutine.id,
-      updatedRoutine.routineTitle,
-      updatedRoutine.alertTime,
-      updatedRoutine.emoji,
-      updatedRoutine.challengeId,
-      updatedRoutine.createdAt,
-      updatedRoutine.updatedAt
-    );
+    return toRoutine(assertSupabaseData<RoutineRow>(data, error));
   }
 
   async delete(routineId: number): Promise<boolean> {
-    try {
-      await prisma.routine.delete({
-        where: { id: routineId },
-      });
-      return true;
-    } catch (error) {
+    const supabase = getSupabaseAdmin();
+    const { error } = await supabase.from('routines').delete().eq('id', routineId);
+
+    if (error) {
       return false;
     }
+    return true;
   }
 }
