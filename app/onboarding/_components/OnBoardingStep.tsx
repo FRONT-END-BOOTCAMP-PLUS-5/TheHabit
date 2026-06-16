@@ -1,35 +1,16 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
+import { useSession } from 'next-auth/react';
 import { ONBOARDING_LIST } from '@/public/consts/onboarding';
-import { fetchOnboardingStatus } from '@/public/consts/onboardingConsts';
 
 export const OnBoardingStepComponent = () => {
   const [currentStep, setCurrentStep] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const router = useRouter();
-
-  useEffect(() => {
-    const redirectIfDone = async () => {
-      const done = await fetchOnboardingStatus();
-      if (done) {
-        router.replace('/demo');
-      }
-    };
-
-    redirectIfDone();
-
-    const handlePageShow = (event: PageTransitionEvent) => {
-      if (event.persisted) {
-        redirectIfDone();
-      }
-    };
-
-    window.addEventListener('pageshow', handlePageShow);
-    return () => window.removeEventListener('pageshow', handlePageShow);
-  }, [router]);
+  const { data: session, update } = useSession();
 
   const currentOnboarding = ONBOARDING_LIST[currentStep];
 
@@ -43,7 +24,13 @@ export const OnBoardingStepComponent = () => {
     try {
       const res = await fetch('/api/onboarding/complete', { method: 'POST' });
       if (!res.ok) throw new Error('온보딩 완료 처리에 실패했습니다.');
-      router.replace('/demo');
+      const data = (await res.json()) as { redirectTo?: string };
+
+      if (session?.user) {
+        await update();
+      }
+
+      router.replace(data.redirectTo ?? '/demo');
     } catch (error) {
       console.error(error);
       setIsSubmitting(false);

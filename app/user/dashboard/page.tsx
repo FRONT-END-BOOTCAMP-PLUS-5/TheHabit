@@ -1,26 +1,25 @@
-import React from 'react';
 import { redirect } from 'next/navigation';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/app/api/auth/[...nextauth]/auth';
+import { getSupabaseAdmin } from '@/public/utils/supabase/server';
 
-const MainPage: React.FC = async () => {
-  // 서버에서 세션 정보 가져오기
+export default async function page() {
   const session = await getServerSession(authOptions);
 
   if (!session?.user) {
-    // 세션이 없으면 로그인 페이지로 리다이렉트
     redirect('/login');
   }
 
-  const { user } = session;
+  const supabase = getSupabaseAdmin();
+  const { data } = await supabase
+    .from('users')
+    .select('onboarding_completed')
+    .eq('id', session.user.id)
+    .single();
 
-  // 닉네임이 있으면 개인 대시보드로 리다이렉트(구글 로그인은 한글이 있으므로 인코딩)
-  if (user.nickname) {
-    redirect(`/user/dashboard/${encodeURIComponent(user.nickname)}`);
-  } else {
-    // 닉네임이 없는 경우 온보딩으로
+  if (!data?.onboarding_completed) {
     redirect('/onboarding');
   }
-};
 
-export default MainPage;
+  return redirect(`/user/dashboard/${encodeURIComponent(session?.user?.nickname)}`);
+}

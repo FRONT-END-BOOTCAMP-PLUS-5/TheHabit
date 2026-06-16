@@ -14,6 +14,7 @@ declare module 'next-auth' {
       nickname: string;
       profileImg: string | null;
       profileImgPath: string | null;
+      onboardingCompleted?: boolean;
       createdAt?: Date;
       updatedAt?: Date;
     } & DefaultSession['user']; // 기존 name, image 등을 유지하기 위함
@@ -42,6 +43,7 @@ declare module 'next-auth/jwt' {
     nickname?: string;
     profileImg?: string | null;
     profileImgPath?: string | null;
+    onboardingCompleted?: boolean;
     createdAt?: Date;
     updatedAt?: Date;
     isNewUser?: boolean;

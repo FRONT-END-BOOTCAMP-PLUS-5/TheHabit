@@ -9,6 +9,7 @@ import { GoogleLoginUsecase } from '@/backend/auths/application/usecases/GoogleL
 import KakaoProvider from 'next-auth/providers/kakao';
 import { KakaoLoginUsecase } from '@/backend/auths/application/usecases/KakaoLoginUsecase';
 import { LoginResponseDto } from '@/backend/auths/application/dtos/LoginResponseDto';
+import { getSupabaseAdmin } from '@/public/utils/supabase/server';
 
 // 소셜 로그인 타입 정의
 type SocialProvider = 'google' | 'kakao';
@@ -130,8 +131,23 @@ export const authOptions = {
       return true;
     },
 
-    async jwt({ token, user }: { token: JWT; user?: User }) {
-      if (user) {
+    async jwt({
+      token,
+      user,
+      trigger,
+    }: {
+      token: JWT;
+      user?: User;
+      trigger?: 'signIn' | 'signUp' | 'update';
+    }) {
+      if (user?.id) {
+        const supabase = getSupabaseAdmin();
+        const { data } = await supabase
+          .from('users')
+          .select('onboarding_completed')
+          .eq('id', user.id)
+          .maybeSingle();
+
         return {
           ...token,
           id: user.id,
@@ -142,8 +158,24 @@ export const authOptions = {
           profileImgPath: user.profileImgPath,
           createdAt: user.createdAt,
           updatedAt: user.updatedAt,
+          onboardingCompleted: data?.onboarding_completed === true,
         };
       }
+
+      if (trigger === 'update' && token.id) {
+        const supabase = getSupabaseAdmin();
+        const { data } = await supabase
+          .from('users')
+          .select('onboarding_completed')
+          .eq('id', token.id)
+          .maybeSingle();
+
+        return {
+          ...token,
+          onboardingCompleted: data?.onboarding_completed === true,
+        };
+      }
+
       return token;
     },
 
@@ -158,11 +190,12 @@ export const authOptions = {
           username: token.username ?? '',
           profileImg: token.profileImg ?? null,
           profileImgPath: token.profileImgPath ?? null,
+          onboardingCompleted: token.onboardingCompleted ?? false,
         },
       };
     },
 
-    async redirect({ url, baseUrl }: { url: string; baseUrl: string; }) {
+    async redirect({ url, baseUrl }: { url: string; baseUrl: string }) {
       // Google 콜백 URL인 경우 처리
       if (url.includes('/login/google-callback')) {
         return `${baseUrl}/login/google-callback`;

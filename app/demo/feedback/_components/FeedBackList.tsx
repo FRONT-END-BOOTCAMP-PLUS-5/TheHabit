@@ -1,5 +1,3 @@
-'use client';
-
 import { FEEDBACK_DESCRIPTION } from '@/public/consts/feedBackItem';
 import Image from 'next/image';
 import React from 'react';

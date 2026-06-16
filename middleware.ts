@@ -1,21 +1,28 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { getToken } from 'next-auth/jwt';
 
-export default function middleware(req: NextRequest) {
+export default async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
-  const token2 = req.cookies.get('_Secure-next-auth.session-token');
+  const token = await getToken({
+    req,
+    secret: process.env.NEXTAUTH_SECRET,
+  });
 
-  const token = req.cookies.get('next-auth.session-token')?.value;
-  const onboarding = req.cookies.get('onboarding')?.value;
+  const isLoggedIn = !!token?.id;
 
+  const onboardingDone = token?.onboardingCompleted === true;
   const isOnboardingPath = pathname.startsWith('/onboarding');
 
-  // 온보딩 완료 사용자는 온보딩 페이지 접근 불가
-  if (onboarding === 'done' && isOnboardingPath) {
-    return NextResponse.redirect(new URL(token ? '/user/dashboard' : '/demo', req.url));
+  // 로그인 + 온보딩 완료 사용자는 온보딩 페이지 접근 불가
+  if (onboardingDone && isOnboardingPath) {
+    return NextResponse.redirect(new URL('/user/dashboard', req.url));
   }
 
-  if (pathname === '/' && !isOnboardingPath) {
+  if (pathname === '/') {
+    if (isLoggedIn && onboardingDone) {
+      return NextResponse.redirect(new URL('/user/dashboard', req.url));
+    }
     return NextResponse.redirect(new URL('/onboarding', req.url));
   }
 
