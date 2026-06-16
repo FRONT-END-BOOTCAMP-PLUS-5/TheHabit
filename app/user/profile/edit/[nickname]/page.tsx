@@ -13,10 +13,11 @@ import { useGetUserInfo } from '@/libs/hooks/user-hooks/useGetUserInfo';
 import { RoutineComponent } from '@/app/user/profile/components/Routine';
 import LogOut from '@/app/user/profile/edit/_components/LogOut';
 import ConfirmModal from '@/app/_components/modals/ConfirmModal';
-import { signOut } from 'next-auth/react';
+import { signOut, useSession } from 'next-auth/react';
 
 const UserProfileEditPage = () => {
   const router = useRouter();
+  const { status } = useSession();
   const { userInfo, update } = useGetUserInfo();
   const [profilePreview, setProfilePreview] = useState<string | null>(userInfo?.profileImg || '');
   const [open, setOpen] = useState<boolean>(false);
@@ -69,6 +70,13 @@ const UserProfileEditPage = () => {
       });
     }
   };
+
+  useEffect(() => {
+    if (status === 'loading') return;
+    if (status === 'unauthenticated') {
+      router.replace('/login');
+    }
+  }, [status, router]);
 
   useEffect(() => {
     if (userInfo?.profileImg) {

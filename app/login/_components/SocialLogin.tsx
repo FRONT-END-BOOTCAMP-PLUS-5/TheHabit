@@ -17,15 +17,6 @@ export const SocialLogin = () => {
           className='cursor-pointer hover:scale-110 transition-all duration-300'
           onClick={() => signIn('google', { callbackUrl: '/user/dashboard' })}
         />
-
-        <Image
-          src='/icons/kakao.svg'
-          alt='kakao 로그인'
-          width={60}
-          height={60}
-          className='cursor-pointer hover:scale-110 transition-all duration-300'
-          onClick={() => signIn('kakao', { callbackUrl: '/user/dashboard' })}
-        />
       </div>
     </div>
   );

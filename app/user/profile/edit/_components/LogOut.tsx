@@ -25,10 +25,7 @@ const LogOut = ({
   'data-testid': dataTestId = 'logout-button',
 }: LogOutProps) => {
   const handleLogout = async () => {
-    await signOut({
-      redirect: false,
-      callbackUrl: '/login',
-    });
+    await signOut({ callbackUrl: '/login', redirect: true });
   };
   return (
     <button

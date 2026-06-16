@@ -1,18 +1,14 @@
 import { LoginUsecase } from '@/backend/auths/application/usecases/LoginUsecase';
 import { PrUserRepository } from '@/backend/users/infrastructure/repositories/PrUserRepository';
 import { LoginRequestDto } from '@/backend/auths/application/dtos/LoginRequestDto';
-import { Session, User, Account, Profile } from 'next-auth';
+import { User, Account, Profile } from 'next-auth';
 import { JWT } from 'next-auth/jwt';
+import type { AuthOptions } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import GoogleProvider from 'next-auth/providers/google';
 import { GoogleLoginUsecase } from '@/backend/auths/application/usecases/GoogleLoginUsecase';
-import KakaoProvider from 'next-auth/providers/kakao';
-import { KakaoLoginUsecase } from '@/backend/auths/application/usecases/KakaoLoginUsecase';
 import { LoginResponseDto } from '@/backend/auths/application/dtos/LoginResponseDto';
 import { getSupabaseAdmin } from '@/public/utils/supabase/server';
-
-// 소셜 로그인 타입 정의
-type SocialProvider = 'google' | 'kakao';
 
 interface SocialUserInfo {
   email: string;
@@ -21,62 +17,46 @@ interface SocialUserInfo {
   sub: string;
 }
 
-const providers = [
-  CredentialsProvider({
-    name: 'Credentials',
-    credentials: {
-      email: { label: 'email', type: 'email' },
-      password: { label: 'password', type: 'password' },
-    },
+const getSocialSubject = (
+  account: Account | null,
+  profile: Profile | undefined,
+  user: User
+): string => {
+  const profileWithSubject = profile as { sub?: string; id?: string | number } | undefined;
+  return (
+    account?.providerAccountId ||
+    profileWithSubject?.sub ||
+    String(profileWithSubject?.id ?? '') ||
+    user.id ||
+    ''
+  );
+};
 
-    async authorize(credentials) {
-      const { email, password } = credentials ?? {};
+const applyLoginResultToUser = (user: User, result: LoginResponseDto) => {
+  user.id = result.id;
+  user.nickname = result.nickname;
+  user.email = result.email;
+  user.profileImg = result.profileImg;
+  user.username = result.name;
+  user.name = result.name;
+};
 
-      if (!email || !password) {
-        return null;
-      }
+const buildTokenFromUser = async (token: JWT, user: User): Promise<JWT> => {
+  const onboardingCompleted = user.id ? await fetchOnboardingCompleted(user.id) : false;
 
-      try {
-        const loginUsecase = new LoginUsecase(new PrUserRepository());
-        const loginRequestdto: LoginRequestDto = { email, password };
-
-        const result = await loginUsecase.execute(loginRequestdto);
-        return result;
-      } catch (error) {
-        console.error('로그인 처리 중 오류가 발생했습니다:', error);
-        return null;
-      }
-    },
-  }),
-  ...(process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET
-    ? [
-        GoogleProvider({
-          clientId: process.env.GOOGLE_CLIENT_ID,
-          clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-          authorization: {
-            params: {
-              prompt: 'consent',
-              access_type: 'offline',
-              response_type: 'code',
-            },
-          },
-        }),
-      ]
-    : []),
-  ...(process.env.KAKAO_CLIENT_ID && process.env.KAKAO_CLIENT_SECRET
-    ? [
-        KakaoProvider({
-          clientId: process.env.KAKAO_CLIENT_ID,
-          clientSecret: process.env.KAKAO_CLIENT_SECRET,
-          authorization: {
-            params: {
-              scope: 'profile_nickname profile_image account_email',
-            },
-          },
-        }),
-      ]
-    : []),
-];
+  return {
+    ...token,
+    id: user.id,
+    email: user.email,
+    nickname: user.nickname,
+    username: user.username ?? user.name ?? '',
+    profileImg: user.profileImg ?? null,
+    profileImgPath: user.profileImgPath ?? null,
+    createdAt: user.createdAt,
+    updatedAt: user.updatedAt,
+    onboardingCompleted,
+  };
+};
 
 async function fetchOnboardingCompleted(userId: string): Promise<boolean> {
   try {
@@ -99,93 +79,116 @@ async function fetchOnboardingCompleted(userId: string): Promise<boolean> {
   }
 }
 
-export const authOptions = {
+const providers = [
+  CredentialsProvider({
+    name: 'Credentials',
+    credentials: {
+      email: { label: 'email', type: 'email' },
+      password: { label: 'password', type: 'password' },
+    },
+
+    async authorize(credentials) {
+      const { email, password } = credentials ?? {};
+
+      if (!email || !password) {
+        return null;
+      }
+
+      try {
+        const loginUsecase = new LoginUsecase(new PrUserRepository());
+        const loginRequestdto: LoginRequestDto = { email, password };
+        const result = await loginUsecase.execute(loginRequestdto);
+
+        if (!result) {
+          return null;
+        }
+
+        return {
+          id: result.id,
+          email: result.email,
+          nickname: result.nickname,
+          name: result.name,
+          username: result.name,
+          profileImg: result.profileImg,
+        };
+      } catch (error) {
+        console.error('로그인 처리 중 오류가 발생했습니다:', error);
+        return null;
+      }
+    },
+  }),
+  ...(process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET
+    ? [
+        GoogleProvider({
+          clientId: process.env.GOOGLE_CLIENT_ID,
+          clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+          authorization: {
+            params: {
+              prompt: 'consent',
+              access_type: 'offline',
+              response_type: 'code',
+            },
+          },
+        }),
+      ]
+    : []),
+];
+
+export const authOptions: AuthOptions = {
   secret: process.env.NEXTAUTH_SECRET,
+  pages: {
+    signIn: '/login',
+    error: '/login',
+  },
+  useSecureCookies: process.env.NODE_ENV === 'production',
   session: {
-    strategy: 'jwt' as const,
+    strategy: 'jwt',
+    maxAge: 30 * 24 * 60 * 60,
   },
   providers,
   callbacks: {
-    async signIn({
-      user,
-      account,
-      profile,
-    }: {
-      user: User;
-      account: Account | null;
-      profile: Profile;
-    }) {
-      // 소셜 로그인 처리
-      if (account?.provider === 'google' || account?.provider === 'kakao') {
-        const provider = account.provider as SocialProvider;
-
-        const userInfo: SocialUserInfo = {
-          email: user.email || '',
-          name: user.name || '',
-          picture: user.image || undefined,
-          sub: (profile as { sub?: string }).sub || user.id || '',
-        };
-        const userRepository = new PrUserRepository();
-        const googleLoginUsecase = new GoogleLoginUsecase(userRepository);
-        const kakaoLoginUsecase = new KakaoLoginUsecase(userRepository);
-
-        let result: LoginResponseDto | null = null;
-
-        if (provider === 'google') {
-          result = await googleLoginUsecase.execute({
-            email: userInfo.email,
-            name: userInfo.name,
-            picture: userInfo.picture,
-            sub: userInfo.sub,
-          });
-          user.id = result?.id;
-          user.nickname = result?.nickname;
-          user.email = result?.email;
-          user.profileImg = result?.profileImg;
-          user.username = result?.name;
-          user.name = result?.name;
-        } else if (provider === 'kakao') {
-          result = await kakaoLoginUsecase.execute({
-            id: userInfo.sub,
-            email: userInfo.email,
-            nickname: userInfo.name,
-            profile_image: userInfo.picture,
-          });
-          user.id = result?.id;
-          user.nickname = result?.nickname;
-          user.email = result?.email;
-          user.profileImg = result?.profileImg;
-          user.username = result?.name;
-          user.name = result?.name;
-        }
+    async signIn({ user, account, profile }) {
+      if (account?.provider !== 'google') {
+        return true;
       }
-      return true;
+
+      const userInfo: SocialUserInfo = {
+        email: user.email || '',
+        name: user.name || '',
+        picture: user.image || undefined,
+        sub: getSocialSubject(account, profile, user),
+      };
+
+      if (!userInfo.sub) {
+        console.error('Google 로그인 식별자(sub)를 찾을 수 없습니다.');
+        return false;
+      }
+
+      try {
+        const googleLoginUsecase = new GoogleLoginUsecase(new PrUserRepository());
+        const result = await googleLoginUsecase.execute({
+          email: userInfo.email,
+          name: userInfo.name,
+          picture: userInfo.picture,
+          sub: userInfo.sub,
+        });
+
+        if (!result?.id) {
+          console.error('Google 로그인 처리 결과가 유효하지 않습니다.');
+          return false;
+        }
+
+        applyLoginResultToUser(user, result);
+        return true;
+      } catch (error) {
+        console.error('Google 로그인 처리 중 오류:', error);
+        return false;
+      }
     },
 
-    async jwt({
-      token,
-      user,
-      trigger,
-    }: {
-      token: JWT;
-      user?: User;
-      trigger?: 'signIn' | 'signUp' | 'update';
-    }) {
-      if (user?.id) {
-        const onboardingCompleted = await fetchOnboardingCompleted(user.id);
-
-        return {
-          ...token,
-          id: user.id,
-          email: user.email,
-          nickname: user.nickname,
-          username: user.username,
-          profileImg: user.profileImg,
-          profileImgPath: user.profileImgPath,
-          createdAt: user.createdAt,
-          updatedAt: user.updatedAt,
-          onboardingCompleted,
-        };
+    async jwt({ token, user, trigger }) {
+      if (user) {
+        return buildTokenFromUser(token, user);
       }
 
       if (trigger === 'update' && token.id) {
@@ -200,41 +203,29 @@ export const authOptions = {
       return token;
     },
 
-    async session({ session, token }: { session: Session; token: JWT }) {
-      return {
-        ...session,
-        user: {
-          ...session.user,
-          id: token.id ?? '',
-          email: token.email ?? session.user.email ?? '',
-          nickname: token.nickname ?? '',
-          username: token.username ?? '',
-          profileImg: token.profileImg ?? null,
-          profileImgPath: token.profileImgPath ?? null,
-          onboardingCompleted: token.onboardingCompleted ?? false,
-        },
-      };
+    async session({ session, token }) {
+      session.user.id = token.id ?? '';
+      session.user.email = token.email ?? session.user.email ?? '';
+      session.user.nickname = token.nickname ?? '';
+      session.user.username = token.username ?? '';
+      session.user.profileImg = token.profileImg ?? null;
+      session.user.profileImgPath = token.profileImgPath ?? null;
+      session.user.onboardingCompleted = token.onboardingCompleted ?? false;
+
+      return session;
     },
 
-    async redirect({ url, baseUrl }: { url: string; baseUrl: string }) {
-      // Google 콜백 URL인 경우 처리
-      if (url.includes('/login/google-callback')) {
-        return `${baseUrl}/login/google-callback`;
-      }
-
-      // 로그인 후 리다이렉트 - 대시보드로 이동
+    async redirect({ url, baseUrl }) {
       if (url.startsWith('/')) {
-        // 온보딩이 필요한 사용자를 위해 대시보드로 이동 (대시보드에서 온보딩 여부 판단)
-        if (url === '/user/dashboard') {
-          return `${baseUrl}/user/dashboard`;
-        }
-        const redirectUrl = `${baseUrl}${url}`;
-        return redirectUrl;
+        return `${baseUrl}${url}`;
       }
 
-      // 외부 URL인 경우 홈으로 리다이렉트
-      if (new URL(url).origin === baseUrl) {
-        return url;
+      try {
+        if (new URL(url).origin === baseUrl) {
+          return url;
+        }
+      } catch (error) {
+        console.error('리다이렉트 URL 파싱 실패:', error);
       }
 
       return baseUrl;
