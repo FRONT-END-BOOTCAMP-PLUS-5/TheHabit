@@ -24,12 +24,16 @@ const LogOut = ({
   variant = 'outline',
   'data-testid': dataTestId = 'logout-button',
 }: LogOutProps) => {
+  const handleLogout = async () => {
+    await signOut({
+      redirect: false,
+      callbackUrl: '/login',
+    });
+  };
   return (
     <button
       type='button'
-      onClick={async () => {
-        await signOut({ callbackUrl: '/login' });
-      }}
+      onClick={handleLogout}
       className={className ?? `${baseClassName} ${variantClassName[variant]}`}
       data-testid={dataTestId}
     >

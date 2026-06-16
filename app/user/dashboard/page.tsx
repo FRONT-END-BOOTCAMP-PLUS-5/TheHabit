@@ -11,11 +11,16 @@ export default async function page() {
   }
 
   const supabase = getSupabaseAdmin();
-  const { data } = await supabase
+  const { data, error } = await supabase
     .from('users')
     .select('onboarding_completed')
     .eq('id', session.user.id)
-    .single();
+    .maybeSingle();
+
+  if (error) {
+    console.error('온보딩 상태 조회 실패:', error);
+    redirect('/onboarding');
+  }
 
   if (!data?.onboarding_completed) {
     redirect('/onboarding');

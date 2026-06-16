@@ -21,59 +21,90 @@ interface SocialUserInfo {
   sub: string;
 }
 
+const providers = [
+  CredentialsProvider({
+    name: 'Credentials',
+    credentials: {
+      email: { label: 'email', type: 'email' },
+      password: { label: 'password', type: 'password' },
+    },
+
+    async authorize(credentials) {
+      const { email, password } = credentials ?? {};
+
+      if (!email || !password) {
+        return null;
+      }
+
+      try {
+        const loginUsecase = new LoginUsecase(new PrUserRepository());
+        const loginRequestdto: LoginRequestDto = { email, password };
+
+        const result = await loginUsecase.execute(loginRequestdto);
+        return result;
+      } catch (error) {
+        console.error('로그인 처리 중 오류가 발생했습니다:', error);
+        return null;
+      }
+    },
+  }),
+  ...(process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET
+    ? [
+        GoogleProvider({
+          clientId: process.env.GOOGLE_CLIENT_ID,
+          clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+          authorization: {
+            params: {
+              prompt: 'consent',
+              access_type: 'offline',
+              response_type: 'code',
+            },
+          },
+        }),
+      ]
+    : []),
+  ...(process.env.KAKAO_CLIENT_ID && process.env.KAKAO_CLIENT_SECRET
+    ? [
+        KakaoProvider({
+          clientId: process.env.KAKAO_CLIENT_ID,
+          clientSecret: process.env.KAKAO_CLIENT_SECRET,
+          authorization: {
+            params: {
+              scope: 'profile_nickname profile_image account_email',
+            },
+          },
+        }),
+      ]
+    : []),
+];
+
+async function fetchOnboardingCompleted(userId: string): Promise<boolean> {
+  try {
+    const supabase = getSupabaseAdmin();
+    const { data, error } = await supabase
+      .from('users')
+      .select('onboarding_completed')
+      .eq('id', userId)
+      .maybeSingle();
+
+    if (error) {
+      console.error('온보딩 상태 조회 실패:', error);
+      return false;
+    }
+
+    return data?.onboarding_completed === true;
+  } catch (error) {
+    console.error('Supabase 온보딩 상태 조회 중 오류:', error);
+    return false;
+  }
+}
+
 export const authOptions = {
   secret: process.env.NEXTAUTH_SECRET,
   session: {
     strategy: 'jwt' as const,
   },
-  providers: [
-    CredentialsProvider({
-      name: 'Credentials',
-      credentials: {
-        email: { label: 'email', type: 'email' },
-        password: { label: 'password', type: 'password' },
-      },
-
-      async authorize(credentials) {
-        const { email, password } = credentials ?? {};
-
-        if (!email || !password) {
-          return null;
-        }
-
-        try {
-          const loginUsecase = new LoginUsecase(new PrUserRepository());
-          const loginRequestdto: LoginRequestDto = { email, password };
-
-          const result = await loginUsecase.execute(loginRequestdto);
-          return result;
-        } catch (error) {
-          console.error('로그인 처리 중 오류가 발생했습니다:', error);
-          return null;
-        }
-      },
-    }),
-    GoogleProvider({
-      clientId: process.env.GOOGLE_CLIENT_ID!,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
-      authorization: {
-        params: {
-          prompt: 'consent',
-          access_type: 'offline',
-          response_type: 'code',
-        },
-      },
-    }),
-    KakaoProvider({
-      clientId: process.env.KAKAO_CLIENT_ID!,
-      clientSecret: process.env.KAKAO_CLIENT_SECRET!,
-      authorization: {
-        params: {
-          scope: 'profile_nickname profile_image account_email',
-        },
-      },
-    }),
-  ],
+  providers,
   callbacks: {
     async signIn({
       user,
@@ -141,12 +172,7 @@ export const authOptions = {
       trigger?: 'signIn' | 'signUp' | 'update';
     }) {
       if (user?.id) {
-        const supabase = getSupabaseAdmin();
-        const { data } = await supabase
-          .from('users')
-          .select('onboarding_completed')
-          .eq('id', user.id)
-          .maybeSingle();
+        const onboardingCompleted = await fetchOnboardingCompleted(user.id);
 
         return {
           ...token,
@@ -158,21 +184,16 @@ export const authOptions = {
           profileImgPath: user.profileImgPath,
           createdAt: user.createdAt,
           updatedAt: user.updatedAt,
-          onboardingCompleted: data?.onboarding_completed === true,
+          onboardingCompleted,
         };
       }
 
       if (trigger === 'update' && token.id) {
-        const supabase = getSupabaseAdmin();
-        const { data } = await supabase
-          .from('users')
-          .select('onboarding_completed')
-          .eq('id', token.id)
-          .maybeSingle();
+        const onboardingCompleted = await fetchOnboardingCompleted(token.id);
 
         return {
           ...token,
-          onboardingCompleted: data?.onboarding_completed === true,
+          onboardingCompleted,
         };
       }
 
