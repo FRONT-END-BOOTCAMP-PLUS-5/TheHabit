@@ -1,5 +1,5 @@
-importScripts('https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js');
-importScripts('https://www.gstatic.com/firebasejs/8.10.1/firebase-messaging.js');
+importScripts('https://www.gstatic.com/firebasejs/12.15.0/firebase-app-compat.js');
+importScripts('https://www.gstatic.com/firebasejs/12.15.0/firebase-messaging-compat.js');
 
 const firebaseConfig = {
   apiKey: 'AIzaSyAmbrfcXgsUjAtABXmpKt6Qg_3gCNYLTcU',
@@ -14,12 +14,36 @@ firebase.initializeApp(firebaseConfig);
 
 const messaging = firebase.messaging();
 
-messaging.onBackgroundMessage((payload) => {
-  const title = payload.notification.title + " (onBackgroundMessage)";
-  const notificationOptions = {
-    body: payload.notification.body,
-    icon: "https://avatars.githubusercontent.com/sasha1107",
-  };
+messaging.onBackgroundMessage(payload => {
+  console.log('[firebase-messaging-sw] background 수신:', payload);
 
-  self.registration.showNotification(title, notificationOptions);
+  const title = payload.notification?.title ?? payload.data?.title ?? 'TheHabit';
+  const body = payload.notification?.body ?? payload.data?.body ?? '새 알림이 도착했습니다.';
+
+  return self.registration.showNotification(title, {
+    body,
+    icon: '/images/icons/manifest-192x192.png',
+    data: { ...payload.data, url: payload.data?.url ?? '/user/notifications' },
+  });
+});
+
+self.addEventListener('notificationclick', event => {
+  event.notification.close();
+
+  const url = event.notification.data?.url ?? '/user/notifications';
+
+  event.waitUntil(
+    clients.matchAll({ type: 'window', includeUncontrolled: true }).then(clientList => {
+      for (const client of clientList) {
+        if ('focus' in client) {
+          client.navigate(url);
+          return client.focus();
+        }
+      }
+
+      if (clients.openWindow) {
+        return clients.openWindow(url);
+      }
+    })
+  );
 });

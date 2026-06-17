@@ -7,6 +7,7 @@ import NextAuthSessionProvider from '@/app/_components/providers/NextAuthSession
 import { pretendard } from '@/public/fonts/font';
 import ToastProvider from '@/app/_components/providers/ToastProvider';
 import LayoutProvider from '@/app/_components/providers/LayoutProvider';
+import FcmMessagingProvider from '@/app/_components/providers/FcmMessagingProvider';
 
 export const metadata: Metadata = {
   title: 'TheHabit -   습관 관리 앱',
@@ -73,10 +74,12 @@ const RootLayout = ({
           <NextAuthSessionProvider>
             <QueryProvider>
               <ModalProvider>
-                <LayoutProvider>
-                  {children}
-                  <ToastProvider />
-                </LayoutProvider>
+                <FcmMessagingProvider>
+                  <LayoutProvider>
+                    {children}
+                    <ToastProvider />
+                  </LayoutProvider>
+                </FcmMessagingProvider>
               </ModalProvider>
             </QueryProvider>
           </NextAuthSessionProvider>
