@@ -9,11 +9,10 @@ export class AddChallengeUseCase {
   constructor(
     private readonly challengeRepository: IChallengeRepository,
     private readonly userRepository: IUserRepository
-  ) { }
+  ) {}
 
   // 챌린지 등록 실행
   async execute(challenge: AddChallengeRequestDto): Promise<Challenge> {
-
     const user = await this.userRepository.findByNickname(challenge.nickname);
     if (!user) {
       throw new Error('유저를 찾을 수 없습니다');

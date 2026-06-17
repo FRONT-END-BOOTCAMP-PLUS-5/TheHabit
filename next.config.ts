@@ -8,7 +8,6 @@ const nextConfig: NextConfig = {
     register: true,
     skipWaiting: true,
     disable: true, // PWA 완전 비활성화 (테스트용)
-    sw: 'worker/index.ts',
     runtimeCaching: [
       {
         urlPattern: /^https?.*/,

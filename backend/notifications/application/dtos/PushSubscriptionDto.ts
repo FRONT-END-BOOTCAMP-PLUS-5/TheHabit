@@ -29,7 +29,9 @@ export class PushSubscriptionDtoMapper {
       id: subscription.id,
       endpoint: subscription.endpoint,
       userId: subscription.userId,
-      createdAt: subscription.createdAt ? subscription.createdAt.toISOString() : new Date().toISOString(),
+      createdAt: subscription.createdAt
+        ? subscription.createdAt.toISOString()
+        : new Date().toISOString(),
     };
   }
 

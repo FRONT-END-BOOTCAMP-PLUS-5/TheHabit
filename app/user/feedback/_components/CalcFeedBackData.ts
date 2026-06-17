@@ -47,7 +47,7 @@ export const calculateSingleChallengeProgress = (
 
   // 완료된 날짜 수/유효 날짜 수 계산 (미래 날짜 제외)
   const completedDays = dailyCompletions.filter(completion => completion === true).length;
-  const totalValidDays = days;
+  const totalValidDays = dailyCompletions.filter(completion => completion !== null).length;
 
   // 진행률 계산
   const progressPercent =
@@ -66,13 +66,16 @@ export const calculateSingleChallengeProgress = (
 export const calculateCategoryProgress = (
   categoryChallenges: ChallengeDto[],
   routines: ReadRoutineResponseDto[],
-  routineCompletions: RoutineCompletionDto[],
-  days: number = 21
+  routineCompletions: RoutineCompletionDto[]
 ) => {
   // 각 챌린지별 진행률 계산
-  const challengesWithProgress = categoryChallenges.map(challenge =>
-    calculateSingleChallengeProgress(challenge, routines, routineCompletions, days)
-  );
+  const challengesWithProgress = categoryChallenges.map(challenge => {
+    const start = new Date(challenge.createdAt);
+    const end = new Date(challenge.endAt);
+    const challengeDays = Math.round((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24));
+
+    return calculateSingleChallengeProgress(challenge, routines, routineCompletions, challengeDays);
+  });
 
   // 카테고리 전체 진행률 계산
   const totalCompletedDays = challengesWithProgress.reduce(

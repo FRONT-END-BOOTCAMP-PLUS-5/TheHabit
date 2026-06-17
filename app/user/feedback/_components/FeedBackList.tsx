@@ -21,8 +21,10 @@ interface FeedBackListProps {
 export const FeedBackList: React.FC<FeedBackListProps> = ({ nickname }) => {
   const { data: dashBoardData, isLoading } = useGetDashboardByNickname(nickname || '');
   const [selectedCategoryName, setSelectedCategoryName] = useState<string>('통계');
+  const [isFeedbackGenerating, setIsFeedbackGenerating] = useState(false);
 
   const handleModal = (name: string) => {
+    if (isFeedbackGenerating) return;
     setSelectedCategoryName(name);
   };
 
@@ -34,11 +36,14 @@ export const FeedBackList: React.FC<FeedBackListProps> = ({ nickname }) => {
             return (
               <div key={linkItem.id} className='w-1/2 flex items-center justify-center'>
                 <button
-                  className={`text-xl font-bold cursor-pointer ${
+                  className={`text-xl font-bold ${
+                    isFeedbackGenerating ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'
+                  } ${
                     selectedCategoryName === linkItem.name
                       ? 'border-b-3 border-primary w-1/3 pb-2'
                       : 'border-b-3 border-transparent w-1/3 pb-2'
                   }`}
+                  disabled={isFeedbackGenerating}
                   onClick={() => handleModal(linkItem.name)}
                 >
                   <p>{linkItem.name}</p>
@@ -64,7 +69,7 @@ export const FeedBackList: React.FC<FeedBackListProps> = ({ nickname }) => {
               )}
             </div>
           ) : (
-            <FeedBackDetail nickname={nickname} />
+            <FeedBackDetail nickname={nickname} onSubmittingChange={setIsFeedbackGenerating} />
           )}
         </>
       )}

@@ -9,23 +9,18 @@ export interface GenerateFeedbackInput {
 }
 
 export interface GenerateFeedbackResult {
-  gptResponseContent?: string;
+  gptResponseContent: string;
 }
 
 export const useGenerateFeedback = () => {
   const queryClient = useQueryClient();
 
-  return useMutation<GenerateFeedbackResult | void, Error, GenerateFeedbackInput>({
+  return useMutation<GenerateFeedbackResult, Error, GenerateFeedbackInput>({
     mutationFn: async ({ challengeId, routineCompletions, nickname }) => {
       const result = await FeedBackPostData(challengeId, routineCompletions, nickname);
-      // FeedBackPostData may return string or undefined; normalize to object
-      if (typeof result === 'string') {
-        return { gptResponseContent: result };
-      }
-      return;
+      return { gptResponseContent: result };
     },
     onSuccess: async (_data, variables) => {
-      // Invalidate specific feedback query so detail page shows fresh data
       await queryClient.invalidateQueries({ queryKey: ['feedBack', variables.challengeId] });
     },
   });

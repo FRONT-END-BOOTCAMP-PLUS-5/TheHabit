@@ -66,7 +66,7 @@
         async function registerServiceWorker() {
             try {
                 if ('serviceWorker' in navigator) {
-                    const registration = await navigator.serviceWorker.register('/sw.js');
+                    const registration = await navigator.serviceWorker.register('/firebase-messaging-sw.js');
                     await navigator.serviceWorker.ready;
                     log('✅ Service Worker 등록 성공');
                     log('Scope: ' + registration.scope);
@@ -79,7 +79,7 @@
         
         async function subscribeUser() {
             try {
-                const registration = await navigator.serviceWorker.getRegistration('/sw.js');
+                const registration = await navigator.serviceWorker.getRegistration();
                 if (!registration) {
                     log('❌ Service Worker가 등록되지 않았습니다');
                     return;

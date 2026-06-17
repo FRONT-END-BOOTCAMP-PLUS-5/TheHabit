@@ -1,11 +1,10 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { subscribePushNotification, unsubscribePushNotification } from '@/libs/api/notifications.api';
+import {
+  subscribePushNotification,
+  unsubscribePushNotification,
+} from '@/libs/api/notifications.api';
 import { PushSubscriptionDto } from '@/backend/notifications/application/dtos/PushSubscriptionDto';
 
-/**
- * 푸시 알림 구독을 관리하는 훅
- * @returns 구독/구독해제 mutation들과 헬퍼 함수들
- */
 export const usePushSubscription = () => {
   const queryClient = useQueryClient();
 
@@ -26,7 +25,7 @@ export const usePushSubscription = () => {
     },
   });
 
-  // 구독 해제 mutation  
+  // 구독 해제 mutation
   const unsubscribeMutation = useMutation<
     {
       success: boolean;
@@ -72,13 +71,24 @@ export const usePushSubscription = () => {
         throw new Error('알림 권한이 거부되었습니다.');
       }
 
-      // 3. 서비스 워커 등록 및 준비 대기
-      const registration = await navigator.serviceWorker.register('/sw.js');
+      // 3. 서비스 워커 등록 및 준비 대기 (예전 sw.js 등록 정리)
+      const registrations = await navigator.serviceWorker.getRegistrations();
+      await Promise.all(
+        registrations
+          .filter(reg => {
+            const scriptUrl =
+              reg.active?.scriptURL || reg.installing?.scriptURL || reg.waiting?.scriptURL || '';
+            return scriptUrl.endsWith('/sw.js');
+          })
+          .map(reg => reg.unregister())
+      );
+
+      const registration = await navigator.serviceWorker.register('/firebase-messaging-sw.js');
       await navigator.serviceWorker.ready;
-      
+
       // 서비스 워커가 활성 상태가 될 때까지 추가 대기
       if (registration.active === null) {
-        await new Promise((resolve) => {
+        await new Promise(resolve => {
           const checkActive = () => {
             if (registration.active) {
               resolve(void 0);
@@ -90,8 +100,8 @@ export const usePushSubscription = () => {
         });
       }
 
-      // 4. VAPID 공개 키 
-      const vapidPublicKey = 'BBi1jqUqvyk3Aba94TeJKCslEt6Ex-Bs_dlyLmANtC6odleLD0a4CaDAn1UwZtg2pKbBsk8lz07unNIxcMgerH4';
+      // 4. VAPID 공개 키
+      const vapidPublicKey = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY;
       if (!vapidPublicKey) {
         throw new Error('VAPID 공개 키가 설정되지 않았습니다.');
       }
@@ -120,7 +130,7 @@ export const usePushSubscription = () => {
   // 구독 해제
   const unsubscribeFromNotifications = async () => {
     try {
-      const registration = await navigator.serviceWorker.getRegistration('/sw.js');
+      const registration = await navigator.serviceWorker.getRegistration();
       if (!registration) {
         throw new Error('서비스 워커를 찾을 수 없습니다.');
       }
@@ -147,13 +157,13 @@ export const usePushSubscription = () => {
     // Mutations
     subscribeMutation,
     unsubscribeMutation,
-    
+
     // Helper functions
     isPushSupported,
     requestNotificationPermission,
     subscribeToNotifications,
     unsubscribeFromNotifications,
-    
+
     // States
     isSubscribing: subscribeMutation.isPending,
     isUnsubscribing: unsubscribeMutation.isPending,

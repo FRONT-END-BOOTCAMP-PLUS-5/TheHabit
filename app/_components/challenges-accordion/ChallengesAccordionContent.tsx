@@ -376,7 +376,7 @@ export const ChallengesAccordionContent = ({
       )}
 
       {/* 새로운 루틴 추가 버튼 또는 피드백 받기 버튼 */}
-      {(isOwner || onFeedbackClick) && (
+      {isOwner && (
         <div className='flex justify-center'>
           <button
             className={`px-6 py-3 rounded-full text-base font-bold shadow-lg cursor-pointer hover:animate-float transition-all duration-300 hover:scale-110 ${

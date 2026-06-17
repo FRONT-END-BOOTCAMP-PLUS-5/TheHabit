@@ -67,7 +67,7 @@ export const POST = async (
     const feedbackRepo = new PrFeedBackRepository();
     const feedBackUseCase = new AddFeedBackUsecase(feedbackRepo);
 
-    const entity = new FeedBackEntity(String(aiResponseContent).split('\n'), challengeIdNumber);
+    const entity = new FeedBackEntity(String(aiResponseContent).trim(), challengeIdNumber);
 
     const result = await feedBackUseCase.execute(entity);
 
@@ -75,7 +75,7 @@ export const POST = async (
       success: true,
       data: {
         challengeId: result.challengeId,
-        aiResponseContent: result.aiResponseContent.join('\n'),
+        aiResponseContent: result.aiResponseContent,
       },
       message: '피드백 데이터 저장에 성공했습니다.',
     };

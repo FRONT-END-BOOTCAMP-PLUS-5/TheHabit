@@ -15,7 +15,7 @@ export class PrFeedBackRepository implements FeedBackRepository {
     const { data, error } = await supabase
       .from('challenge_feedbacks')
       .insert({
-        gpt_response_content: feedBack.aiResponseContent.join(','),
+        gpt_response_content: feedBack.aiResponseContent,
         challenge_id: feedBack.challengeId,
       })
       .select()
@@ -24,7 +24,7 @@ export class PrFeedBackRepository implements FeedBackRepository {
     const createdFeedBack = assertSupabaseData<ChallengeFeedbackRow>(data, error);
 
     return new FeedBackEntity(
-      createdFeedBack.gpt_response_content.split(','),
+      createdFeedBack.gpt_response_content,
       createdFeedBack.challenge_id,
       createdFeedBack.id
     );
@@ -39,7 +39,7 @@ export class PrFeedBackRepository implements FeedBackRepository {
       .maybeSingle();
 
     return new FeedBackEntity(
-      feedBack?.gpt_response_content?.split(',') ?? [],
+      feedBack?.gpt_response_content ?? '',
       feedBack?.challenge_id ?? 0,
       feedBack?.id
     );

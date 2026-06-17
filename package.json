@@ -24,6 +24,7 @@
     "axios": "^1.11.0",
     "bcryptjs": "^3.0.2",
     "emoji-picker-react": "^4.13.2",
+    "firebase": "^12.15.0",
     "lodash": "^4.17.21",
     "next": "15.5.18",
     "next-auth": "^4.24.11",

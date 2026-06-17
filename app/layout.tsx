@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import Script from 'next/script';
 import '@/app/globals.css';
 import QueryProvider from '@/app/_components/providers/QueryProvider';
 import ModalProvider from '@/app/_components/providers/ModalProvider';
@@ -80,23 +81,7 @@ const RootLayout = ({
             </QueryProvider>
           </NextAuthSessionProvider>
         </div>
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              if ('serviceWorker' in navigator) {
-                window.addEventListener('load', () => {
-                  navigator.serviceWorker.register('/sw.js')
-                    .then((registration) => {
-                      console.log('SW registered: ', registration);
-                    })
-                    .catch((registrationError) => {
-                      console.log('SW registration failed: ', registrationError);
-                    });
-                });
-              }
-            `,
-          }}
-        />
+        <Script src='/service-worker.js' strategy='afterInteractive' />
       </body>
     </html>
   );
