@@ -10,7 +10,11 @@ const showForegroundNotification = async (payload: MessagePayload) => {
 
   Toast.info(`${title}: ${body}`);
 
-  if (typeof window === 'undefined' || Notification.permission !== 'granted') {
+  if (
+    typeof window === 'undefined' ||
+    !('Notification' in window) ||
+    Notification.permission !== 'granted'
+  ) {
     return;
   }
 
@@ -41,7 +45,11 @@ const showForegroundNotification = async (payload: MessagePayload) => {
 /** 앱이 포그라운드일 때 FCM 메시지 수신 — 알림 권한이 허용된 경우 전역에서 리스닝 */
 export const useForegroundMessaging = () => {
   useEffect(() => {
-    if (typeof window === 'undefined' || Notification.permission !== 'granted') {
+    if (
+      typeof window === 'undefined' ||
+      !('Notification' in window) ||
+      Notification.permission !== 'granted'
+    ) {
       return;
     }
 
@@ -49,15 +57,19 @@ export const useForegroundMessaging = () => {
     let cancelled = false;
 
     const setup = async () => {
-      const messaging = await getFirebaseMessaging();
-      if (!messaging || cancelled) {
-        return;
-      }
+      try {
+        const messaging = await getFirebaseMessaging();
+        if (!messaging || cancelled) {
+          return;
+        }
 
-      unsubscribe = onMessage(messaging, payload => {
-        console.log('FCM foreground 수신:', payload);
-        showForegroundNotification(payload);
-      });
+        unsubscribe = onMessage(messaging, payload => {
+          console.log('FCM foreground 수신:', payload);
+          void showForegroundNotification(payload);
+        });
+      } catch (error) {
+        console.error('FCM foreground 리스너 등록 실패:', error);
+      }
     };
 
     setup();
