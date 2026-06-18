@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { registerFcmToken } from '@/libs/firebase/messaging';
+import { clearFcmToken, saveFcmToken } from '@/libs/api/notifications.api';
 
 type BrowserPermission = 'default' | 'granted' | 'denied' | 'unsupported';
 
@@ -78,10 +79,6 @@ export const NotificationsPageContent = () => {
   const [pushError, setPushError] = useState<string | null>(null);
   const [permission, setPermission] = useState<BrowserPermission>('default');
 
-  useEffect(() => {
-    setPermission(getBrowserPermission());
-  }, []);
-
   const unreadCount = MOCK_NOTIFICATIONS.filter(n => !n.isRead).length;
   const filtered =
     activeTab === 'unread' ? MOCK_NOTIFICATIONS.filter(n => !n.isRead) : MOCK_NOTIFICATIONS;
@@ -90,6 +87,11 @@ export const NotificationsPageContent = () => {
     setPushError(null);
 
     if (pushEnabled) {
+      try {
+        await clearFcmToken();
+      } catch (error) {
+        console.error('FCM 토큰 삭제 실패:', error);
+      }
       setPushEnabled(false);
       return;
     }
@@ -100,8 +102,10 @@ export const NotificationsPageContent = () => {
     if (result === 'granted') {
       try {
         const token = await registerFcmToken();
+
         if (token) {
           console.log('FCM token:', token);
+          await saveFcmToken(token);
         }
       } catch (error) {
         console.error('FCM 토큰 등록 실패:', error);

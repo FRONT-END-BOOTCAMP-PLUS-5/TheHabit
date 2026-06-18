@@ -8,6 +8,7 @@ const firebaseConfig = {
   storageBucket: 'miniprojext-8206f.firebasestorage.app',
   messagingSenderId: '267555140660',
   appId: '1:267555140660:web:4b0384399affdedeea8661',
+  measurementId: 'G-C20B9YTZM7',
 };
 
 firebase.initializeApp(firebaseConfig);
